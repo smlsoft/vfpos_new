@@ -1,0 +1,114 @@
+name: dedepos
+description: dede pos project.
+
+publish_to: 'none' 
+
+version: 1.2.0+10
+
+environment:
+  sdk: ">=2.18.4 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  audio_session: any
+  auto_size_text: any
+  awesome_dialog: any
+  cached_network_image: any
+  cupertino_icons: any
+  dart_ping_ios: any
+  decorated_icon: any
+  device_info_plus: any
+  dio: any
+  equatable: any
+  esc_pos_printer: any
+  flutter_barcode_listener: any
+  flutter_bloc: any
+  flutter_cache_manager: any
+  flutter_launcher_icons: any
+  flutter_spinkit: any
+  flutter_staggered_grid_view: any
+  flutter_svg: any
+  flutter_vibrate: any
+  font_awesome_flutter: any
+  get_storage: any
+  html: any
+  http: any
+  image: any
+  intl: any
+  just_audio: any
+  loader_overlay: any
+  material_tag_editor: any
+  page_transition: any
+  path_provider: any
+  pattern_formatter: any
+  scroll_to_index: any
+  shared_preferences: any
+  split_view: any
+  text_to_speech: any
+  visibility_detector: any
+  qr_flutter: any
+  countdown_progress_indicator: any
+  decimal: any
+  promptpay:
+    path: packages/promptpay
+  lugentpayment:
+    path: packages/lugentpay
+  flutter_rounded_date_picker:
+    path: packages/flutter_rounded_date_picker
+  buddhist_datetime_dateformat_sns: any
+  get_localization: any
+  fullscreen: any
+  web_socket_channel: any
+  permission_handler: any
+  flutter_usb_printer: any
+  objectbox: any
+  json_annotation: any
+  json_serializable: any
+  objectbox_generator: any
+  objectbox_flutter_libs: any
+  archive: any
+  connectivity_plus: ^3.0.3
+  get: ^4.6.5
+  loading_animation_widget: ^1.2.0+4
+  flutter_draggable_gridview: ^0.0.7
+  qr_code_scanner: ^1.0.1
+  localstore: ^1.3.5
+  charset_converter: ^2.1.1
+  
+dev_dependencies:
+  flutter_driver:
+    sdk: flutter
+  analyzer: any
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+  build_runner: any
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_logo.png"
+  flutter_lints: any
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/audios/
+    - assets/images/
+    - assets/images/qrpay/
+    - assets/flags/
+    - assets/fonts/
+     
+  fonts:
+    - family: prompt
+      fonts:
+        - asset: assets/fonts/prompt/Prompt-Regular.ttf
+        - asset: assets/fonts/prompt/Prompt-Bold.ttf
+        - asset: assets/fonts/prompt/Prompt-SemiBold.ttf
+

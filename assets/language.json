@@ -1,0 +1,2585 @@
+[
+    {
+        "code": "active_table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Table unavalible"
+            },
+            {
+                "code": "th",
+                "text": "กำลังใช้โต๊ะ"
+            },
+            {
+                "code": "lo",
+                "text": "ການໃຊ້ໂຕະ"
+            },
+            {
+                "code": "ch",
+                "text": "Table unavalible"
+            }
+        ]
+    },
+    {
+        "code": "address",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Address"
+            },
+            {
+                "code": "th",
+                "text": "ที่อยู่"
+            },
+            {
+                "code": "lo",
+                "text": "ທີ່ຢູ່"
+            },
+            {
+                "code": "ch",
+                "text": "Address"
+            }
+        ]
+    },
+    {
+        "code": "all",
+        "langs": [
+            {
+                "code": "en",
+                "text": "All"
+            },
+            {
+                "code": "th",
+                "text": "ทั้งหมด"
+            },
+            {
+                "code": "lo",
+                "text": "ທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "All"
+            }
+        ]
+    },
+    {
+        "code": "and",
+        "langs": [
+            {
+                "code": "en",
+                "text": "and"
+            },
+            {
+                "code": "th",
+                "text": "และ"
+            },
+            {
+                "code": "lo",
+                "text": "ແລະ"
+            },
+            {
+                "code": "ch",
+                "text": "and"
+            }
+        ]
+    },
+    {
+        "code": "back",
+        "langs": [
+            {
+                "code": "en",
+                "text": "cancel"
+            },
+            {
+                "code": "th",
+                "text": "ยกเลิก"
+            },
+            {
+                "code": "lo",
+                "text": "ຍົກເລີກ"
+            },
+            {
+                "code": "ch",
+                "text": "cancel"
+            }
+        ]
+    },
+    {
+        "code": "money_symbol",
+        "langs": [
+            {
+                "code": "en",
+                "text": "money_symbol"
+            },
+            {
+                "code": "th",
+                "text": "บาท"
+            },
+            {
+                "code": "lo",
+                "text": "ບາດແຜ"
+            },
+            {
+                "code": "ch",
+                "text": "money_symbol"
+            }
+        ]
+    },
+    {
+        "code": "barcode",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Barcode"
+            },
+            {
+                "code": "th",
+                "text": "บาร์โค๊ด"
+            },
+            {
+                "code": "lo",
+                "text": "ມັດມານ"
+            },
+            {
+                "code": "ch",
+                "text": "Barcode"
+            }
+        ]
+    },
+    {
+        "code": "bill_cancel",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Receipt cacel"
+            },
+            {
+                "code": "th",
+                "text": "ยกเลิกใบเสร็จ"
+            },
+            {
+                "code": "lo",
+                "text": "ຍົກເລີກໃບຮັບເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Receipt cacel"
+            }
+        ]
+    },
+    {
+        "code": "bill_discount_save",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Save"
+            },
+            {
+                "code": "th",
+                "text": "บิลนี้ประหยัด"
+            },
+            {
+                "code": "lo",
+                "text": "ບັນຊີລາຍການນີ້ແມ່ນເສດຖະກິດ."
+            },
+            {
+                "code": "ch",
+                "text": "Money Save"
+            }
+        ]
+    },
+    {
+        "code": "bill_pay_list",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Receiving"
+            },
+            {
+                "code": "th",
+                "text": "รายการรับเงิน"
+            },
+            {
+                "code": "lo",
+                "text": "ໄດ້ຮັບເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Receiving"
+            }
+        ]
+    },
+    {
+        "code": "blank",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Blank"
+            },
+            {
+                "code": "th",
+                "text": "ว่าง"
+            },
+            {
+                "code": "lo",
+                "text": "ອິດສະລະ"
+            },
+            {
+                "code": "ch",
+                "text": "Blank"
+            }
+        ]
+    },
+    {
+        "code": "cancel",
+        "langs": [
+            {
+                "code": "en",
+                "text": "cancel"
+            },
+            {
+                "code": "th",
+                "text": "ยกเลิก"
+            },
+            {
+                "code": "lo",
+                "text": "ຍົກເລີກ"
+            },
+            {
+                "code": "ch",
+                "text": "cancel"
+            }
+        ]
+    },
+    {
+        "code": "cancel_order",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cancel Order"
+            },
+            {
+                "code": "th",
+                "text": "ยกเลิกรายการสั่งอาหาร"
+            },
+            {
+                "code": "lo",
+                "text": "ຍົກເລີກການສັ່ງຊື້ອາຫານ"
+            },
+            {
+                "code": "ch",
+                "text": "Cancel Order"
+            }
+        ]
+    },
+    {
+        "code": "cash",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cash"
+            },
+            {
+                "code": "th",
+                "text": "เงินสด"
+            },
+            {
+                "code": "lo",
+                "text": "ເງິນສົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Cash"
+            }
+        ]
+    },
+    {
+        "code": "cheque",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cheque"
+            },
+            {
+                "code": "th",
+                "text": "เช็ต"
+            },
+            {
+                "code": "lo",
+                "text": "ເຊັກ"
+            },
+            {
+                "code": "ch",
+                "text": "Cheque"
+            }
+        ]
+    },
+    {
+        "code": "clear_cash",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cash clearing"
+            },
+            {
+                "code": "th",
+                "text": "ล้างเงินสด"
+            },
+            {
+                "code": "lo",
+                "text": "ເງິນສົດເງິນສົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Cash clearing"
+            }
+        ]
+    },
+    {
+        "code": "clear_hold_bill",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Deltete holding order"
+            },
+            {
+                "code": "th",
+                "text": "ลบบิลพัก"
+            },
+            {
+                "code": "lo",
+                "text": "ຊົດອີກ"
+            },
+            {
+                "code": "ch",
+                "text": "Deltete holding order"
+            }
+        ]
+    },
+    {
+        "code": "close",
+        "langs": [
+            {
+                "code": "en",
+                "text": "off"
+            },
+            {
+                "code": "th",
+                "text": "ปิด"
+            },
+            {
+                "code": "lo",
+                "text": "ປິດ"
+            },
+            {
+                "code": "ch",
+                "text": "off"
+            }
+        ]
+    },
+    {
+        "code": "close_table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Bill summary/Close"
+            },
+            {
+                "code": "th",
+                "text": "สรุปบิล/ปิดโต๊ะ"
+            },
+            {
+                "code": "lo",
+                "text": "ໃບບິນສະຫຼຸບ / ປິດຕາຕະລາງ"
+            },
+            {
+                "code": "ch",
+                "text": "Bill summary/Close"
+            }
+        ]
+    },
+    {
+        "code": "combine_table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Join  table bill"
+            },
+            {
+                "code": "th",
+                "text": "รวมโต๊ะ"
+            },
+            {
+                "code": "lo",
+                "text": "ໂຕະ"
+            },
+            {
+                "code": "ch",
+                "text": "Join  table bill"
+            }
+        ]
+    },
+    {
+        "code": "count",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Sequense"
+            },
+            {
+                "code": "th",
+                "text": "ลำดับ"
+            },
+            {
+                "code": "lo",
+                "text": "ຈໍານວນ"
+            },
+            {
+                "code": "ch",
+                "text": "Sequense"
+            }
+        ]
+    },
+    {
+        "code": "coupon",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Coupon"
+            },
+            {
+                "code": "th",
+                "text": "คูปอง"
+            },
+            {
+                "code": "lo",
+                "text": "ຄູປອງ"
+            },
+            {
+                "code": "ch",
+                "text": "Coupon"
+            }
+        ]
+    },
+    {
+        "code": "credit_card",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Credit card"
+            },
+            {
+                "code": "th",
+                "text": "บัตรเครดิต"
+            },
+            {
+                "code": "lo",
+                "text": "ບັດ​ເຄຣ​ດິດ"
+            },
+            {
+                "code": "ch",
+                "text": "Credit card"
+            }
+        ]
+    },
+    {
+        "code": "delete",
+        "langs": [
+            {
+                "code": "en",
+                "text": "delete"
+            },
+            {
+                "code": "th",
+                "text": "ลบ"
+            },
+            {
+                "code": "lo",
+                "text": "ລົບ"
+            },
+            {
+                "code": "ch",
+                "text": "delete"
+            }
+        ]
+    },
+    {
+        "code": "delete_confirm",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Delete  (yes/no)"
+            },
+            {
+                "code": "th",
+                "text": "ต้องการลบหรือไม่"
+            },
+            {
+                "code": "lo",
+                "text": "ຕ້ອງການລຶບຫຼືບໍ່"
+            },
+            {
+                "code": "ch",
+                "text": "Delete  (yes/no)"
+            }
+        ]
+    },
+    {
+        "code": "description",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Details"
+            },
+            {
+                "code": "th",
+                "text": "รายละเอียด"
+            },
+            {
+                "code": "lo",
+                "text": "ລາຍລະອຽດ"
+            },
+            {
+                "code": "ch",
+                "text": "Details"
+            }
+        ]
+    },
+    {
+        "code": "discount",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Discount"
+            },
+            {
+                "code": "th",
+                "text": "ส่วนลด"
+            },
+            {
+                "code": "lo",
+                "text": "ສ່ວນຫຼຸດ"
+            },
+            {
+                "code": "ch",
+                "text": "Discount"
+            }
+        ]
+    },
+    {
+        "code": "discount_and_promoiton",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Discount/promotion"
+            },
+            {
+                "code": "th",
+                "text": "รายการส่วนลด/โปรโมชั่น"
+            },
+            {
+                "code": "lo",
+                "text": "ຫຼຸດລາຄາ / ໂປໂມຊັ່ນ"
+            },
+            {
+                "code": "ch",
+                "text": "Discount/promotion"
+            }
+        ]
+    },
+    {
+        "code": "discount_cancel",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Discount cancel"
+            },
+            {
+                "code": "th",
+                "text": "ยกเลิกส่วนลด"
+            },
+            {
+                "code": "lo",
+                "text": "ຍົກເລີກການ"
+            },
+            {
+                "code": "ch",
+                "text": "Discount cancel"
+            }
+        ]
+    },
+    {
+        "code": "discount_plus",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Additional Discount"
+            },
+            {
+                "code": "th",
+                "text": "ลดอีก"
+            },
+            {
+                "code": "lo",
+                "text": "ລົດລົງ"
+            },
+            {
+                "code": "ch",
+                "text": "Additional Discount"
+            }
+        ]
+    },
+    {
+        "code": "doc_date",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Date"
+            },
+            {
+                "code": "th",
+                "text": "วันที่"
+            },
+            {
+                "code": "lo",
+                "text": "ວັນທີ"
+            },
+            {
+                "code": "ch",
+                "text": "Date"
+            }
+        ]
+    },
+    {
+        "code": "doc_no",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Document Number"
+            },
+            {
+                "code": "th",
+                "text": "เลขที่"
+            },
+            {
+                "code": "lo",
+                "text": "ຈໍານວນ"
+            },
+            {
+                "code": "ch",
+                "text": "Document Number"
+            }
+        ]
+    },
+    {
+        "code": "doc_number",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Document Number"
+            },
+            {
+                "code": "th",
+                "text": "เอกสารเลขที่"
+            },
+            {
+                "code": "lo",
+                "text": "ເອກະສານ"
+            },
+            {
+                "code": "ch",
+                "text": "Document Number"
+            }
+        ]
+    },
+    {
+        "code": "doc_time",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Time"
+            },
+            {
+                "code": "th",
+                "text": "เวลา"
+            },
+            {
+                "code": "lo",
+                "text": "ເວລາ"
+            },
+            {
+                "code": "ch",
+                "text": "Time"
+            }
+        ]
+    },
+    {
+        "code": "emp_code",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Staff code"
+            },
+            {
+                "code": "th",
+                "text": "รหัสพนักงาน"
+            },
+            {
+                "code": "lo",
+                "text": "ລະຫັດພະນັກງານ"
+            },
+            {
+                "code": "ch",
+                "text": "Staff code"
+            }
+        ]
+    },
+    {
+        "code": "exit",
+        "langs": [
+            {
+                "code": "en",
+                "text": "exit"
+            },
+            {
+                "code": "th",
+                "text": "ออก"
+            },
+            {
+                "code": "lo",
+                "text": "ປະຖິ້ມ"
+            },
+            {
+                "code": "ch",
+                "text": "exit"
+            }
+        ]
+    },
+    {
+        "code": "get_hold_bill",
+        "langs": [
+            {
+                "code": "en",
+                "text": "get holding bill"
+            },
+            {
+                "code": "th",
+                "text": "ดึงบิลพัก"
+            },
+            {
+                "code": "lo",
+                "text": "ດຶງໃບບິນ"
+            },
+            {
+                "code": "ch",
+                "text": "get holding bill"
+            }
+        ]
+    },
+    {
+        "code": "good_return",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Product return"
+            },
+            {
+                "code": "th",
+                "text": "รับคืนสินค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ໄດ້ຮັບຜະລິດຕະພັນກັບຄືນ"
+            },
+            {
+                "code": "ch",
+                "text": "Product return"
+            }
+        ]
+    },
+    {
+        "code": "hold_bill",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Bill holding"
+            },
+            {
+                "code": "th",
+                "text": "พักบิล"
+            },
+            {
+                "code": "lo",
+                "text": "ບັນຊີ"
+            },
+            {
+                "code": "ch",
+                "text": "Bill holding"
+            }
+        ]
+    },
+    {
+        "code": "info",
+        "langs": [
+            {
+                "code": "en",
+                "text": "infomation"
+            },
+            {
+                "code": "th",
+                "text": "รายละเอียด"
+            },
+            {
+                "code": "lo",
+                "text": "ລາຍລະອຽດ"
+            },
+            {
+                "code": "ch",
+                "text": "infomation"
+            }
+        ]
+    },
+    {
+        "code": "is",
+        "langs": [
+            {
+                "code": "en",
+                "text": "is"
+            },
+            {
+                "code": "th",
+                "text": "เป็น"
+            },
+            {
+                "code": "lo",
+                "text": "ແມ່ນ"
+            },
+            {
+                "code": "ch",
+                "text": "is"
+            }
+        ]
+    },
+    {
+        "code": "item_code",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Product code"
+            },
+            {
+                "code": "th",
+                "text": "รหัสสินค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ລະ​ຫັດ​ຜະ​ລິດ​ຕະ​ພັນ"
+            },
+            {
+                "code": "ch",
+                "text": "Product code"
+            }
+        ]
+    },
+    {
+        "code": "item_name",
+        "langs": [
+            {
+                "code": "en",
+                "text": "product name"
+            },
+            {
+                "code": "th",
+                "text": "ชื่อสินค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ຊື່​ຜະ​ລິດ​ຕະ​ພັນ"
+            },
+            {
+                "code": "ch",
+                "text": "product name"
+            }
+        ]
+    },
+    {
+        "code": "item_not_found",
+        "langs": [
+            {
+                "code": "en",
+                "text": "product not found"
+            },
+            {
+                "code": "th",
+                "text": "ไม่พบสินค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ບໍ່ມີສິນຄ້າ"
+            },
+            {
+                "code": "ch",
+                "text": "product not found"
+            }
+        ]
+    },
+    {
+        "code": "line",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Line"
+            },
+            {
+                "code": "th",
+                "text": "บรรทัด"
+            },
+            {
+                "code": "lo",
+                "text": "ເສັ້ນ"
+            },
+            {
+                "code": "ch",
+                "text": "Line"
+            }
+        ]
+    },
+    {
+        "code": "list",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Detail list"
+            },
+            {
+                "code": "th",
+                "text": "รายการ"
+            },
+            {
+                "code": "lo",
+                "text": "ລາຍຊື່"
+            },
+            {
+                "code": "ch",
+                "text": "Detail list"
+            }
+        ]
+    },
+    {
+        "code": "login",
+        "langs": [
+            {
+                "code": "en",
+                "text": "login"
+            },
+            {
+                "code": "th",
+                "text": "เข้าสู่ระบบ"
+            },
+            {
+                "code": "lo",
+                "text": "ເຂົ້າ​ສູ່​ລະ​ບົບ"
+            },
+            {
+                "code": "ch",
+                "text": "login"
+            }
+        ]
+    },
+    {
+        "code": "main_screen",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Main screen"
+            },
+            {
+                "code": "th",
+                "text": "หน้าหลัก"
+            },
+            {
+                "code": "lo",
+                "text": ""
+            },
+            {
+                "code": "ch",
+                "text": "Main screen"
+            }
+        ]
+    },
+    {
+        "code": "max",
+        "langs": [
+            {
+                "code": "en",
+                "text": "maximun"
+            },
+            {
+                "code": "th",
+                "text": "สูงสุด"
+            },
+            {
+                "code": "lo",
+                "text": "ສູງສຸດ"
+            },
+            {
+                "code": "ch",
+                "text": "maximun"
+            }
+        ]
+    },
+    {
+        "code": "minus",
+        "langs": [
+            {
+                "code": "en",
+                "text": "discount"
+            },
+            {
+                "code": "th",
+                "text": "ลด"
+            },
+            {
+                "code": "lo",
+                "text": "ລົດລົງ"
+            },
+            {
+                "code": "ch",
+                "text": "discount"
+            }
+        ]
+    },
+    {
+        "code": "money_symbol",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Currency symbol"
+            },
+            {
+                "code": "th",
+                "text": "บาท"
+            },
+            {
+                "code": "lo",
+                "text": "ບາດແຜ"
+            },
+            {
+                "code": "ch",
+                "text": "Currency symbol"
+            }
+        ]
+    },
+    {
+        "code": "move_table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Move table bill"
+            },
+            {
+                "code": "th",
+                "text": "ย้ายโต๊ะ"
+            },
+            {
+                "code": "lo",
+                "text": "ຍ້າຍໂຕະ"
+            },
+            {
+                "code": "ch",
+                "text": "Move table bill"
+            }
+        ]
+    },
+    {
+        "code": "name",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Name"
+            },
+            {
+                "code": "th",
+                "text": "ชื่อ"
+            },
+            {
+                "code": "lo",
+                "text": "ຊື່"
+            },
+            {
+                "code": "ch",
+                "text": "Name"
+            }
+        ]
+    },
+    {
+        "code": "ok",
+        "langs": [
+            {
+                "code": "en",
+                "text": "OK"
+            },
+            {
+                "code": "th",
+                "text": "รับทราบ"
+            },
+            {
+                "code": "lo",
+                "text": "ຮັບຮູ້"
+            },
+            {
+                "code": "ch",
+                "text": "OK"
+            }
+        ]
+    },
+    {
+        "code": "one",
+        "langs": [
+            {
+                "code": "en",
+                "text": "one"
+            },
+            {
+                "code": "th",
+                "text": "หนึ่ง"
+            },
+            {
+                "code": "lo",
+                "text": "ຫນຶ່ງ"
+            },
+            {
+                "code": "ch",
+                "text": "one"
+            }
+        ]
+    },
+    {
+        "code": "open_cash_drawer",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cash drawer Open"
+            },
+            {
+                "code": "th",
+                "text": "เปิดลิ้นชัก"
+            },
+            {
+                "code": "lo",
+                "text": "ເປີດຕູ້ລິ້ນຊັກ"
+            },
+            {
+                "code": "ch",
+                "text": "Cash drawer Open"
+            }
+        ]
+    },
+    {
+        "code": "open_table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Open table"
+            },
+            {
+                "code": "th",
+                "text": "เปิดโต๊ะใหม่"
+            },
+            {
+                "code": "lo",
+                "text": "ເປີດໂຕະໃຫມ່"
+            },
+            {
+                "code": "ch",
+                "text": "Open table"
+            }
+        ]
+    },
+    {
+        "code": "order_will_lost",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Order is Cancel"
+            },
+            {
+                "code": "th",
+                "text": "รายการจะถูกยกเลิก"
+            },
+            {
+                "code": "lo",
+                "text": "ບັນຊີລາຍຊື່ຈະຖືກຍົກເລີກ."
+            },
+            {
+                "code": "ch",
+                "text": "Order is Cancel"
+            }
+        ]
+    },
+    {
+        "code": "password",
+        "langs": [
+            {
+                "code": "en",
+                "text": "password"
+            },
+            {
+                "code": "th",
+                "text": "รหัสผ่าน"
+            },
+            {
+                "code": "lo",
+                "text": "ລະຫັດຜ່ານ"
+            },
+            {
+                "code": "ch",
+                "text": "password"
+            }
+        ]
+    },
+    {
+        "code": "pay",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Payment"
+            },
+            {
+                "code": "th",
+                "text": "จ่าย"
+            },
+            {
+                "code": "lo",
+                "text": "ຈ່າຍ"
+            },
+            {
+                "code": "ch",
+                "text": "Payment"
+            }
+        ]
+    },
+    {
+        "code": "pay_amount",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Payment"
+            },
+            {
+                "code": "th",
+                "text": "ชำระเงิน"
+            },
+            {
+                "code": "lo",
+                "text": "ຈ່າຍ"
+            },
+            {
+                "code": "ch",
+                "text": "Payment"
+            }
+        ]
+    },
+    {
+        "code": "piece",
+        "langs": [
+            {
+                "code": "en",
+                "text": "detail list"
+            },
+            {
+                "code": "th",
+                "text": "รายการ"
+            },
+            {
+                "code": "lo",
+                "text": "ລາຍຊື່"
+            },
+            {
+                "code": "ch",
+                "text": "detail list"
+            }
+        ]
+    },
+    {
+        "code": "plus",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Add"
+            },
+            {
+                "code": "th",
+                "text": "เพิ่ม"
+            },
+            {
+                "code": "lo",
+                "text": "ເພີ່ມ​ຂຶ້ນ"
+            },
+            {
+                "code": "ch",
+                "text": "Add"
+            }
+        ]
+    },
+    {
+        "code": "pos_number",
+        "langs": [
+            {
+                "code": "en",
+                "text": "POS number"
+            },
+            {
+                "code": "th",
+                "text": "หมายเลขเครื่องPOS"
+            },
+            {
+                "code": "lo",
+                "text": "ເລກ POS"
+            },
+            {
+                "code": "ch",
+                "text": "POS number"
+            }
+        ]
+    },
+    {
+        "code": "pos_screen",
+        "langs": [
+            {
+                "code": "en",
+                "text": "POS screen"
+            },
+            {
+                "code": "th",
+                "text": "หน้าจอขาย"
+            },
+            {
+                "code": "lo",
+                "text": "ຫນ້າຈໍການຂາຍ"
+            },
+            {
+                "code": "ch",
+                "text": "POS screen"
+            }
+        ]
+    },
+    {
+        "code": "price",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Price"
+            },
+            {
+                "code": "th",
+                "text": "ราคา"
+            },
+            {
+                "code": "lo",
+                "text": "ລາຄາ"
+            },
+            {
+                "code": "ch",
+                "text": "Price"
+            }
+        ]
+    },
+    {
+        "code": "price_update",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Update Price"
+            },
+            {
+                "code": "th",
+                "text": "แก้ราคา"
+            },
+            {
+                "code": "lo",
+                "text": "ລາຄາ"
+            },
+            {
+                "code": "ch",
+                "text": "Update Price"
+            }
+        ]
+    },
+    {
+        "code": "print_bill_full",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Tax Invoice"
+            },
+            {
+                "code": "th",
+                "text": "ใบกำกับอย่างเต็ม"
+            },
+            {
+                "code": "lo",
+                "text": "ການຊີ້ນໍາຢ່າງເຕັມທີ່"
+            },
+            {
+                "code": "ch",
+                "text": "Tax Invoice"
+            }
+        ]
+    },
+    {
+        "code": "promptpay",
+        "langs": [
+            {
+                "code": "en",
+                "text": "PromptPay"
+            },
+            {
+                "code": "th",
+                "text": "พร้อมเพย์"
+            },
+            {
+                "code": "lo",
+                "text": "ວ່ອງໄວ"
+            },
+            {
+                "code": "ch",
+                "text": "PromptPay"
+            }
+        ]
+    },
+    {
+        "code": "qty",
+        "langs": [
+            {
+                "code": "en",
+                "text": "quantity"
+            },
+            {
+                "code": "th",
+                "text": "จำนวน"
+            },
+            {
+                "code": "lo",
+                "text": "ປະລິມານ"
+            },
+            {
+                "code": "ch",
+                "text": "quantity"
+            }
+        ]
+    },
+    {
+        "code": "qty_update",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Update quantity"
+            },
+            {
+                "code": "th",
+                "text": "แก้จำนวน"
+            },
+            {
+                "code": "lo",
+                "text": "ການຜິດຖຽງກັນ"
+            },
+            {
+                "code": "ch",
+                "text": "Update quantity"
+            }
+        ]
+    },
+    {
+        "code": "receive_money",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Change"
+            },
+            {
+                "code": "th",
+                "text": "รับเงินทอน"
+            },
+            {
+                "code": "lo",
+                "text": "ໄດ້ຮັບການປ່ຽນແປງ"
+            },
+            {
+                "code": "ch",
+                "text": "Change"
+            }
+        ]
+    },
+    {
+        "code": "remark",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Remark"
+            },
+            {
+                "code": "th",
+                "text": "หมายเหตุ"
+            },
+            {
+                "code": "lo",
+                "text": "ຫມາຍ​ເຫດ​"
+            },
+            {
+                "code": "ch",
+                "text": "Remark"
+            }
+        ]
+    },
+    {
+        "code": "reprint_bill",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Re-print receipt"
+            },
+            {
+                "code": "th",
+                "text": "พิมพ์ใบเสร็จใหม่"
+            },
+            {
+                "code": "lo",
+                "text": "ການພິມໃບຮັບເງິນໃຫມ່"
+            },
+            {
+                "code": "ch",
+                "text": "Re-print receipt"
+            }
+        ]
+    },
+    {
+        "code": "restart",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Start"
+            },
+            {
+                "code": "th",
+                "text": "เริ่มใหม่"
+            },
+            {
+                "code": "lo",
+                "text": "ເລີ່ມ​ຕົ້ນ​ການ​ອີກ​ເທື່ອ​ຫນຶ່ງ"
+            },
+            {
+                "code": "ch",
+                "text": "Start"
+            }
+        ]
+    },
+    {
+        "code": "rolus",
+        "langs": [
+            {
+                "code": "en",
+                "text": "position"
+            },
+            {
+                "code": "th",
+                "text": "ตำแหน่ง"
+            },
+            {
+                "code": "lo",
+                "text": "ຕໍາແຫນ່ງ"
+            },
+            {
+                "code": "ch",
+                "text": "position"
+            }
+        ]
+    },
+    {
+        "code": "save",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Save"
+            },
+            {
+                "code": "th",
+                "text": "บันทึก"
+            },
+            {
+                "code": "lo",
+                "text": "ບັນທຶກ"
+            },
+            {
+                "code": "ch",
+                "text": "Save"
+            }
+        ]
+    },
+    {
+        "code": "save_error",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Not Save"
+            },
+            {
+                "code": "th",
+                "text": "บันทึกไม่สำเร็จ"
+            },
+            {
+                "code": "lo",
+                "text": "ສະຖິຕິທີ່ບໍ່ປະສົບຜົນສໍາເລັດ"
+            },
+            {
+                "code": "ch",
+                "text": "Not Save"
+            }
+        ]
+    },
+    {
+        "code": "search_customer",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Customer Search"
+            },
+            {
+                "code": "th",
+                "text": "ค้นหาลูกค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ຊອກຫາລູກຄ້າ"
+            },
+            {
+                "code": "ch",
+                "text": "Customer Search"
+            }
+        ]
+    },
+    {
+        "code": "search_product",
+        "langs": [
+            {
+                "code": "en",
+                "text": "ProductS Search"
+            },
+            {
+                "code": "th",
+                "text": "ค้นหาสินค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ຄົ້ນຫາຜະລິດຕະພັນ"
+            },
+            {
+                "code": "ch",
+                "text": "ProductS Search"
+            }
+        ]
+    },
+    {
+        "code": "select_employee",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Saleperson"
+            },
+            {
+                "code": "th",
+                "text": "พนักงานขาย"
+            },
+            {
+                "code": "lo",
+                "text": "ຜູ້ຂາຍ"
+            },
+            {
+                "code": "ch",
+                "text": "Saleperson"
+            }
+        ]
+    },
+    {
+        "code": "select_member",
+        "langs": [
+            {
+                "code": "en",
+                "text": "customer"
+            },
+            {
+                "code": "th",
+                "text": "ลูกค้า"
+            },
+            {
+                "code": "lo",
+                "text": "ລູກຄ້າ"
+            },
+            {
+                "code": "ch",
+                "text": "customer"
+            }
+        ]
+    },
+    {
+        "code": "select_table_first",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Choose table befor order"
+            },
+            {
+                "code": "th",
+                "text": "เลือกโต๊ะก่อนทำรายการ"
+            },
+            {
+                "code": "lo",
+                "text": "ເລືອກຕາຕະລາງກ່ອນທີ່ຈະເຮັດທຸລະກໍາ."
+            },
+            {
+                "code": "ch",
+                "text": "Choose table befor order"
+            }
+        ]
+    },
+    {
+        "code": "send",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Settlement Keyin"
+            },
+            {
+                "code": "th",
+                "text": "บันทึกนำส่งเงิน"
+            },
+            {
+                "code": "lo",
+                "text": "ເກັບ​ເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Settlement Keyin"
+            }
+        ]
+    },
+    {
+        "code": "send_cash",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cash"
+            },
+            {
+                "code": "th",
+                "text": "เงินสด"
+            },
+            {
+                "code": "lo",
+                "text": "ເງິນສົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Cash"
+            }
+        ]
+    },
+    {
+        "code": "send_coupon",
+        "langs": [
+            {
+                "code": "en",
+                "text": "coupon"
+            },
+            {
+                "code": "th",
+                "text": "คูปอง"
+            },
+            {
+                "code": "lo",
+                "text": "ຄູປອງ"
+            },
+            {
+                "code": "ch",
+                "text": "coupon"
+            }
+        ]
+    },
+    {
+        "code": "send_credit",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Credit card"
+            },
+            {
+                "code": "th",
+                "text": "บัตรเครดิต"
+            },
+            {
+                "code": "lo",
+                "text": "ບັດ​ເຄຣ​ດິດ"
+            },
+            {
+                "code": "ch",
+                "text": "Credit card"
+            }
+        ]
+    },
+    {
+        "code": "send_money",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Settle"
+            },
+            {
+                "code": "th",
+                "text": "ส่งเงิน"
+            },
+            {
+                "code": "lo",
+                "text": "ສົ່ງເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Settle"
+            }
+        ]
+    },
+    {
+        "code": "send_promtpay",
+        "langs": [
+            {
+                "code": "en",
+                "text": "PromptPay"
+            },
+            {
+                "code": "th",
+                "text": "พร้อมเพย์"
+            },
+            {
+                "code": "lo",
+                "text": "ວ່ອງໄວ"
+            },
+            {
+                "code": "ch",
+                "text": "PromptPay"
+            }
+        ]
+    },
+    {
+        "code": "send_total",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total Settlement"
+            },
+            {
+                "code": "th",
+                "text": "รวมมูลค่านำส่ง"
+            },
+            {
+                "code": "lo",
+                "text": "ມູນຄ່າການຈັດສົ່ງທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Total Settlement"
+            }
+        ]
+    },
+    {
+        "code": "send_transfer",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Transfer"
+            },
+            {
+                "code": "th",
+                "text": "เงินโอน"
+            },
+            {
+                "code": "lo",
+                "text": "ໂອນເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Transfer"
+            }
+        ]
+    },
+    {
+        "code": "send_wallet",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Transfer"
+            },
+            {
+                "code": "th",
+                "text": "เงินโอน"
+            },
+            {
+                "code": "lo",
+                "text": "ໂອນເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Transfer"
+            }
+        ]
+    },
+    {
+        "code": "speech_to_text_off",
+        "langs": [
+            {
+                "code": "en",
+                "text": "mute"
+            },
+            {
+                "code": "th",
+                "text": "ปิดเสียงพูดแล้ว"
+            },
+            {
+                "code": "lo",
+                "text": "ເຢັນສຽງ"
+            },
+            {
+                "code": "ch",
+                "text": "mute"
+            }
+        ]
+    },
+    {
+        "code": "speech_to_text_on",
+        "langs": [
+            {
+                "code": "en",
+                "text": "un mute"
+            },
+            {
+                "code": "th",
+                "text": "เปิดเสียงพูดแล้ว"
+            },
+            {
+                "code": "lo",
+                "text": "ລົມ"
+            },
+            {
+                "code": "ch",
+                "text": "un mute"
+            }
+        ]
+    },
+    {
+        "code": "split_table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Separate table bill"
+            },
+            {
+                "code": "th",
+                "text": "แยกโต๊ะ"
+            },
+            {
+                "code": "lo",
+                "text": "ຕາຕະລາງແຍກຕ່າງຫາກ"
+            },
+            {
+                "code": "ch",
+                "text": "Separate table bill"
+            }
+        ]
+    },
+    {
+        "code": "surname",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Surname"
+            },
+            {
+                "code": "th",
+                "text": "นามสกุล"
+            },
+            {
+                "code": "lo",
+                "text": "ນາມສະກຸນ"
+            },
+            {
+                "code": "ch",
+                "text": "Surname"
+            }
+        ]
+    },
+    {
+        "code": "table",
+        "langs": [
+            {
+                "code": "en",
+                "text": "table"
+            },
+            {
+                "code": "th",
+                "text": "โต๊ะ"
+            },
+            {
+                "code": "lo",
+                "text": "ໂຕະ"
+            },
+            {
+                "code": "ch",
+                "text": "table"
+            }
+        ]
+    },
+    {
+        "code": "telephone",
+        "langs": [
+            {
+                "code": "en",
+                "text": "phone number"
+            },
+            {
+                "code": "th",
+                "text": "เบอร์โทร"
+            },
+            {
+                "code": "lo",
+                "text": "ເບີ​ໂທລະ​ສັບ"
+            },
+            {
+                "code": "ch",
+                "text": "phone number"
+            }
+        ]
+    },
+    {
+        "code": "thankyou",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Thank you"
+            },
+            {
+                "code": "th",
+                "text": "ขอบคุณที่ใช้บริการ"
+            },
+            {
+                "code": "lo",
+                "text": "ຂອບໃຈສໍາລັບການໃຊ້ບໍລິການ"
+            },
+            {
+                "code": "ch",
+                "text": "Thank you"
+            }
+        ]
+    },
+    {
+        "code": "title",
+        "langs": [
+            {
+                "code": "en",
+                "text": "DEDE POS"
+            },
+            {
+                "code": "th",
+                "text": "dede POS"
+            },
+            {
+                "code": "lo",
+                "text": "dede pos"
+            },
+            {
+                "code": "ch",
+                "text": "DEDE POS"
+            }
+        ]
+    },
+    {
+        "code": "total",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total"
+            },
+            {
+                "code": "th",
+                "text": "รวม"
+            },
+            {
+                "code": "lo",
+                "text": "ຮ່ວມກັນ"
+            },
+            {
+                "code": "ch",
+                "text": "Total"
+            }
+        ]
+    },
+    {
+        "code": "total_after_discount_and_promoiton",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total After discount / Promotion"
+            },
+            {
+                "code": "th",
+                "text": "รวมเงินหลังหักส่วนลด/โปรโมชั่น"
+            },
+            {
+                "code": "lo",
+                "text": "ລວມເງິນທັງຫມົດຫຼັງຈາກຫຼຸດລາຄາ / ໂປໂມຊັ່ນ"
+            },
+            {
+                "code": "ch",
+                "text": "Total After discount / Promotion"
+            }
+        ]
+    },
+    {
+        "code": "total_amount",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total"
+            },
+            {
+                "code": "th",
+                "text": "รวมเงินทั้งสิ้น"
+            },
+            {
+                "code": "lo",
+                "text": "ຈໍາເປັນເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Total"
+            }
+        ]
+    },
+    {
+        "code": "total_diff",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Change"
+            },
+            {
+                "code": "th",
+                "text": "เงินทอน"
+            },
+            {
+                "code": "lo",
+                "text": "ແປງ"
+            },
+            {
+                "code": "ch",
+                "text": "Change"
+            }
+        ]
+    },
+    {
+        "code": "total_discount",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total discount"
+            },
+            {
+                "code": "th",
+                "text": "รวมส่วนลดทั้งสิ้น"
+            },
+            {
+                "code": "lo",
+                "text": "ສ່ວນຫຼຸດທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Total discount"
+            }
+        ]
+    },
+    {
+        "code": "total_more_diff",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Addition pament"
+            },
+            {
+                "code": "th",
+                "text": "ต้องชำระอีก"
+            },
+            {
+                "code": "lo",
+                "text": "ຕ້ອງຈ່າຍອີກຄັ້ງ"
+            },
+            {
+                "code": "ch",
+                "text": "Addition pament"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total Payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระรวมทั้งสิ้น"
+            },
+            {
+                "code": "lo",
+                "text": "ການຈ່າຍເງິນທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Total Payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_card",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Credit card payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยบัตรเครดิต"
+            },
+            {
+                "code": "lo",
+                "text": "ການຊໍາລະເງິນດ້ວຍບັດເຄດິດ"
+            },
+            {
+                "code": "ch",
+                "text": "Credit card payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_cash",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cash payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยเงินสด"
+            },
+            {
+                "code": "lo",
+                "text": "ການຊໍາລະເງິນດ້ວຍເງິນສົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Cash payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_cheque",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Cheque payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยเช็ค"
+            },
+            {
+                "code": "lo",
+                "text": "ການຈ່າຍເງິນດ້ວຍການກວດສອບ"
+            },
+            {
+                "code": "ch",
+                "text": "Cheque payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_coupon",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Coupon discount"
+            },
+            {
+                "code": "th",
+                "text": "รวมหักคูปอง"
+            },
+            {
+                "code": "lo",
+                "text": "ການລວບລວມຂອງຄູປອງ"
+            },
+            {
+                "code": "ch",
+                "text": "Coupon discount"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_diff",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Different amount"
+            },
+            {
+                "code": "th",
+                "text": "ยอดคงเหลือหรือปัดเศษ"
+            },
+            {
+                "code": "lo",
+                "text": "ຈໍານວນທີ່ຍັງເຫຼືອຫຼືການຖູແຂ້ວ"
+            },
+            {
+                "code": "ch",
+                "text": "Different amount"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_discount",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total after discount"
+            },
+            {
+                "code": "th",
+                "text": "รวมหักส่วนลด"
+            },
+            {
+                "code": "lo",
+                "text": "ສ່ວນຫຼຸດທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Total after discount"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_half",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Half payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยคนละครึ่ง"
+            },
+            {
+                "code": "lo",
+                "text": "ເຄິ່ງຫນຶ່ງຂອງແຕ່ລະການຈ່າຍ"
+            },
+            {
+                "code": "ch",
+                "text": "Half payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_promptpay",
+        "langs": [
+            {
+                "code": "en",
+                "text": "PromptPay"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยพร้อมเพย์"
+            },
+            {
+                "code": "lo",
+                "text": "ການຊໍາລະເງິນທີ່ມີວ່ອງໄວ"
+            },
+            {
+                "code": "ch",
+                "text": "PromptPay"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_transfer",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Transfer payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยการโอน"
+            },
+            {
+                "code": "lo",
+                "text": "ການຊໍາລະເງິນໂດຍການໂອນເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Transfer payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_amount_wallet",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Wallet Payment"
+            },
+            {
+                "code": "th",
+                "text": "ยอดชำระด้วยWallet"
+            },
+            {
+                "code": "lo",
+                "text": "ການຊໍາລະເງິນກັບ Wallet"
+            },
+            {
+                "code": "ch",
+                "text": "Wallet Payment"
+            }
+        ]
+    },
+    {
+        "code": "total_pay_bill",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total Payment"
+            },
+            {
+                "code": "th",
+                "text": "ชำระเงินทั้งหมด"
+            },
+            {
+                "code": "lo",
+                "text": "ການຈ່າຍເງິນທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Total Payment"
+            }
+        ]
+    },
+    {
+        "code": "total_qty",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Total Quantity"
+            },
+            {
+                "code": "th",
+                "text": "รวมจำนวน"
+            },
+            {
+                "code": "lo",
+                "text": "ຈໍານວນທັງຫມົດ"
+            },
+            {
+                "code": "ch",
+                "text": "Total Quantity"
+            }
+        ]
+    },
+    {
+        "code": "transfer",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Transfers"
+            },
+            {
+                "code": "th",
+                "text": "เงินโอน"
+            },
+            {
+                "code": "lo",
+                "text": "ໂອນເງິນ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Transfers"
+            }
+        ]
+    },
+    {
+        "code": "unit_name",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Unit"
+            },
+            {
+                "code": "th",
+                "text": "หน่วยนับ"
+            },
+            {
+                "code": "lo",
+                "text": "ນັບ"
+            },
+            {
+                "code": "ch",
+                "text": "Unit"
+            }
+        ]
+    },
+    {
+        "code": "wallet",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Money Wallet"
+            },
+            {
+                "code": "th",
+                "text": "วอลเล็ต"
+            },
+            {
+                "code": "lo",
+                "text": "ວໍວ"
+            },
+            {
+                "code": "ch",
+                "text": "Money Wallet"
+            }
+        ]
+    },
+    {
+        "code": "warning",
+        "langs": [
+            {
+                "code": "en",
+                "text": "Warning"
+            },
+            {
+                "code": "th",
+                "text": "แจ้งเตือน"
+            },
+            {
+                "code": "lo",
+                "text": "ບອກເລົ່າ"
+            },
+            {
+                "code": "ch",
+                "text": "Warning"
+            }
+        ]
+    }
+]
