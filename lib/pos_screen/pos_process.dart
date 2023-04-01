@@ -8,49 +8,13 @@ class PosProcess {
   final PosProcessStruct processResult = PosProcessStruct(
       details: [], select_promotion_temp_list: [], promotion_list: []);
 
-  void sumGroupCount(PosProcessStruct result) {
+  void sumCategoryCount(PosProcessStruct result) {
     for (var product in global.productListByCategory) {
       product.product_count = 0;
       for (var transDetail in result.details) {
         if (product.barcode == transDetail.barcode &&
             transDetail.is_void == false) {
           product.product_count += transDetail.qty;
-        }
-      }
-    }
-    // Group
-    for (var group in global.productCategoryList) {
-      group.product_count = 0;
-    }
-    for (var transDetail in result.details) {
-      for (var group in global.productCategoryList) {
-        if (transDetail.category_guid == group.guid_fixed &&
-            transDetail.is_void == false) {
-          group.product_count = group.product_count + transDetail.qty;
-        }
-      }
-    }
-    // Group Child List
-    for (var group in global.productCategoryChildList) {
-      group.product_count = 0;
-    }
-    for (var transDetail in result.details) {
-      for (var group in global.productCategoryChildList) {
-        if (transDetail.category_guid == group.guid_fixed &&
-            transDetail.is_void == false) {
-          group.product_count = group.product_count + transDetail.qty;
-        }
-      }
-    }
-    // Group Selected
-    for (var group in global.productCategoryCodeSelected) {
-      group.product_count = 0;
-    }
-    for (var transDetail in result.details) {
-      for (var group in global.productCategoryCodeSelected) {
-        if (transDetail.category_guid == group.guid_fixed &&
-            transDetail.is_void == false) {
-          group.product_count = group.product_count + transDetail.qty;
         }
       }
     }
@@ -206,16 +170,12 @@ class PosProcess {
                   .selectByBarcodeFirst(logData.barcode) ??
               ProductBarcodeObjectBoxStruct(
                 barcode: "",
-                group_count: 0,
                 names: [],
                 name_all: "",
                 prices: [],
                 unit_code: "",
                 unit_names: [],
                 new_line: 0,
-                group_code: "",
-                parent_group_guid: "",
-                category_index: 0,
                 color_select: "",
                 image_or_color: true,
                 color_select_hex: "",
@@ -250,6 +210,7 @@ class PosProcess {
             detail.item_code = logData.code;
             detail.item_name = logData.name;
             detail.price = logData.price;
+            detail.price_original = logData.price;
             detail.qty = logData.qty;
             detail.total_amount =
                 double.parse((logData.price * logData.qty).toStringAsFixed(2));
@@ -257,7 +218,6 @@ class PosProcess {
             detail.unit_name = logData.unit_name;
             detail.guid = logData.guid_auto_fixed;
             detail.image_url = productBarcode.images_url;
-            detail.category_guid = productBarcode.group_code;
             processResult.details.add(detail);
             processResult.active_line_number = processResult.details.length - 1;
           } else {

@@ -10,27 +10,16 @@ class ProductCategoryObjectBoxStruct {
   @Unique()
   String guid_fixed;
 
+  String parent_guid_fixed;
+
   /// ชื่อกลุ่มสินค้า (ภาษา 1)
   List<String> names;
 
   /// url รูปภาพกลุ่มสินค้า
   String image_url;
 
-  /// รหัสกลุ่มสินค้าหลัก (กรณีมีการกำหนดกลุ่มสินค้าหลัก)
-  @Index(type: IndexType.value)
-  String parent_category_guid;
-
-  /// จำนวนสินค้าในกลุ่ม (Query Sum)
-  double product_count;
-
-  /// จำนวนกลุ่มลูก (Query Sum)
-  int category_count;
-
-  /// ลำดับการแสดงผล
-  int xorder;
-
   /// True=Image,False=Color
-  bool useimageorcolor;
+  bool use_image_or_color;
 
   /// สีที่เลือก
   String colorselect;
@@ -41,15 +30,18 @@ class ProductCategoryObjectBoxStruct {
   // Json รายการสินค้าย่อย
   String codelist;
 
+  int xorder;
+
+  int category_count;
+
   ProductCategoryObjectBoxStruct(
       {required this.guid_fixed,
+      required this.parent_guid_fixed,
       required this.names,
       required this.image_url,
-      required this.parent_category_guid,
-      required this.product_count,
       required this.category_count,
+      required this.use_image_or_color,
       required this.xorder,
-      required this.useimageorcolor,
       required this.colorselect,
       required this.colorselecthex,
       required this.codelist});

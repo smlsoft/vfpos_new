@@ -5,7 +5,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class NumpadButton extends StatelessWidget {
+class NumPadButton extends StatelessWidget {
   final String? text;
   final IconData? icon;
   final bool haveBorder;
@@ -13,7 +13,7 @@ class NumpadButton extends StatelessWidget {
   final Color? color;
   final Color? textAndIconColor;
 
-  const NumpadButton(
+  const NumPadButton(
       {Key? key,
       this.text,
       this.icon,
@@ -44,25 +44,17 @@ class NumpadButton extends StatelessWidget {
                     : textAndIconColor)));
 
     return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(color: Colors.grey, width: 0),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        elevation: 2,
-        color: (color == null) ? Colors.white70 : color,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: (color == null) ? Colors.blue : color,
-              minimumSize: Size.zero,
-              padding: const EdgeInsets.only(left: 4, right: 4)),
-          onPressed: () {
-            global.playSound(sound: global.SoundEnum.buttonTing);
-            callBack.call();
-          },
-          child: FittedBox(fit: BoxFit.scaleDown, child: label),
-        ),
+      padding: const EdgeInsets.all(2.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            backgroundColor: (color == null) ? Colors.blue : color,
+            minimumSize: Size.zero,
+            padding: const EdgeInsets.only(left: 4, right: 4)),
+        onPressed: () {
+          global.playSound(sound: global.SoundEnum.buttonTing);
+          callBack.call();
+        },
+        child: FittedBox(fit: BoxFit.scaleDown, child: label),
       ),
     );
   }
@@ -102,7 +94,12 @@ class CommandButton extends StatelessWidget {
         color: (labelColor == null)
             ? Theme.of(context).scaffoldBackgroundColor
             : labelColor);
-    Widget _label = Text(label, style: buttonStyle);
+    Widget labelAndStyle = Text(
+      label,
+      style: buttonStyle,
+      textAlign: TextAlign.center,
+      overflow: TextOverflow.ellipsis,
+    );
 
     return Container(
         width: width,
@@ -120,7 +117,7 @@ class CommandButton extends StatelessWidget {
                 onPressed();
               },
               child: (imgAssetPath.isEmpty)
-                  ? FittedBox(fit: BoxFit.fill, child: _label)
+                  ? Center(child: labelAndStyle)
                   : (label.isEmpty)
                       ? FittedBox(
                           fit: BoxFit.fill, child: Image.asset(imgAssetPath))
@@ -131,7 +128,8 @@ class CommandButton extends StatelessWidget {
                                 child: (imgAssetPath.isNotEmpty)
                                     ? Image.asset(imgAssetPath)
                                     : Container()),
-                            FittedBox(fit: BoxFit.fitWidth, child: _label)
+                            FittedBox(
+                                fit: BoxFit.fitWidth, child: labelAndStyle)
                           ],
                         )),
         ));

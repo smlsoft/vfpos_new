@@ -2,36 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'button.dart';
 
-class PinNumpad extends StatefulWidget {
+class PinNumberPad extends StatefulWidget {
   final Function? onChange;
   final String header;
   final int pinLength;
 
-  const PinNumpad(
+  const PinNumberPad(
       {Key? key, required this.onChange, this.header = "", this.pinLength = 4})
       : super(key: key);
 
   @override
-  _PinNumpadState createState() => _PinNumpadState();
+  _PinNumberPadState createState() => _PinNumberPadState();
 }
 
-class _PinNumpadState extends State<PinNumpad> {
+class _PinNumberPadState extends State<PinNumberPad> {
   String number = '';
 
   setValue(String val) {
     if (number.length < widget.pinLength) {
-      setState(() {
-        number += val;
-      });
+      number += val;
+      setState(() {});
       widget.onChange!(number);
     }
   }
 
   backspace(String text) {
     if (text.isNotEmpty) {
-      setState(() {
-        number = text.split('').sublist(0, text.length - 1).join('');
-      });
+      number = text.split('').sublist(0, text.length - 1).join('');
+      setState(() {});
     }
   }
 
@@ -77,19 +75,19 @@ class _PinNumpadState extends State<PinNumpad> {
                         children: <Widget>[
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '1',
                                 callBack: () => setValue('1'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '2',
                                 callBack: () => setValue('2'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '3',
                                 callBack: () => setValue('3'),
                               )),
@@ -101,19 +99,19 @@ class _PinNumpadState extends State<PinNumpad> {
                         children: <Widget>[
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '4',
                                 callBack: () => setValue('4'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '5',
                                 callBack: () => setValue('5'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '6',
                                 callBack: () => setValue('6'),
                               )),
@@ -125,19 +123,19 @@ class _PinNumpadState extends State<PinNumpad> {
                         children: <Widget>[
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '7',
                                 callBack: () => setValue('7'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '8',
                                 callBack: () => setValue('8'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 text: '9',
                                 callBack: () => setValue('9'),
                               )),
@@ -148,16 +146,15 @@ class _PinNumpadState extends State<PinNumpad> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Expanded(flex: 1, child: Container()),
                           Expanded(
-                              flex: 1,
-                              child: NumpadButton(
+                              flex: 2,
+                              child: NumPadButton(
                                 text: '0',
                                 callBack: () => setValue('0'),
                               )),
                           Expanded(
                               flex: 1,
-                              child: NumpadButton(
+                              child: NumPadButton(
                                 icon: Icons.backspace,
                                 callBack: () => backspace(number),
                               )),

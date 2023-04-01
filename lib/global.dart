@@ -1,3 +1,9 @@
+import 'dart:math';
+
+import 'package:dedepos/api/network/server.dart';
+import 'package:ffi/ffi.dart';
+import 'package:win32/win32.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:dedepos/api/network/sync_model.dart';
@@ -5,8 +11,8 @@ import 'package:localstore/localstore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:ffi';
-import 'dart:io' as io;
 import 'dart:io';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:dedepos/app_auth.dart';
 import 'package:dedepos/db/bill_detail_extra_helper.dart';
@@ -48,7 +54,6 @@ import 'dart:typed_data';
 import 'package:charset_converter/charset_converter.dart';
 import 'model/json/language_model.dart';
 import 'model/json/struct.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:dedepos/api/network/server.dart' as network;
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:objectbox/objectbox.dart';
@@ -84,7 +89,6 @@ int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.00");
 final qtyShortFormat = NumberFormat("##,##0");
 String objectBoxDatabaseName = "smlposmobile.db";
-String startGroupCode = '27dcEdktOoaSBYFmnN6G6ett4Jb001';
 String deviceId = "";
 String deviceName = "POS01";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
@@ -95,6 +99,7 @@ String providerName = "DATA";
 String databaseName = "DEMO"; // "DATA1 or DEMO";
 bool isTablet = false; // False=จอเล็ก,True=จอใหญ่
 bool isIphoneX = false;
+bool isWindowsDesktop = false;
 int posHoldNumber = 0;
 bool speechToTextVisible = false;
 bool loginSuccess = false;
@@ -137,7 +142,6 @@ List<ProductCategoryObjectBoxStruct> productCategoryList = [];
 List<ProductBarcodeObjectBoxStruct> productListByCategory = [];
 List<ProductCategoryObjectBoxStruct> productCategoryChildList = [];
 List<PrinterStruct> printerList = [];
-AudioPlayer audio = AudioPlayer();
 String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
 String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
@@ -174,10 +178,11 @@ PrinterCashierTypeEnum printerCashierType = PrinterCashierTypeEnum.thermal;
 PrinterCashierConnectEnum printerCashierConnect = PrinterCashierConnectEnum.ip;
 String printerCashierIpAddress = "";
 int printerCashierIpPort = 9100;
+bool customerDisplayDesktopMultiScreen = true;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterCashierConnectEnum { ip, bluetooth, usb, serial }
+enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sumi1 }
 
 enum PosVersionEnum { pos, restaurant, vfpos }
 
@@ -217,33 +222,70 @@ Future<Uint8List> thaiEncode(String word) async {
   return await CharsetConverter.encode('TIS620', word);
 }
 
-void playSound({SoundEnum sound = SoundEnum.beep, String word = ""}) {
+void playSoundForWindows(String waveFileName) {
+  waveFileName = 'assets/audios/$waveFileName';
+  final file = File(waveFileName).existsSync();
+
+  if (!file) {
+    print('WAV file missing.');
+  } else {
+    final pszLogonSound = waveFileName.toNativeUtf16();
+    final result = PlaySound(pszLogonSound, NULL, SND_FILENAME | SND_SYNC);
+
+    if (result != TRUE) {
+      print('Sound playback failed.');
+    }
+    free(pszLogonSound);
+  }
+}
+
+void playSound({SoundEnum sound = SoundEnum.beep, String word = ""}) async {
+  final audioPlayer = AudioPlayer();
   try {
     if (speechToTextVisible && word.isNotEmpty) {
-      TextToSpeech tts = TextToSpeech();
-      tts.setRate(1);
-      tts.speak(word);
+      if (Platform.isAndroid || Platform.isIOS) {
+        TextToSpeech tts = TextToSpeech();
+        tts.setRate(1);
+        tts.speak(word);
+      }
     } else {
       switch (sound) {
         case SoundEnum.beep:
-          audio
-              .setAsset('assets/audios/scan_success.wav')
-              .then((value) => audio.play());
+          if (Platform.isAndroid || Platform.isIOS) {
+            FlutterBeep.beep();
+          } else {
+            if (Platform.isWindows) {
+              playSoundForWindows('scan_success.wav');
+            }
+          }
           break;
         case SoundEnum.fail:
-          audio
-              .setAsset('assets/audios/scan_fail.wav')
-              .then((value) => audio.play());
+          if (Platform.isAndroid || Platform.isIOS) {
+            FlutterBeep.beep();
+          } else {
+            if (Platform.isWindows) {
+              playSoundForWindows('scan_fail.wav');
+            }
+          } /*audio8851959003374
+            
+              .setAsset('assets/audios/scan_fail.wav')95509747
+
+              .then((value) => audio.play());*/
           break;
         case SoundEnum.buttonTing:
-          audio
-              .setAsset('assets/audios/button_ting.wav')
-              .then((value) => audio.play());
-
+          if (Platform.isAndroid || Platform.isIOS) {
+            FlutterBeep.beep();
+          } else {
+            if (Platform.isWindows) {
+              playSoundForWindows('button_ting.wav');
+            }
+          }
           break;
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    print(e);
+  }
 }
 
 String imageUrl(String guid) {
@@ -337,7 +379,7 @@ Future<String> billRunning() async {
 
 Future<bool> hasNetwork() async {
   try {
-    final result = await io.InternetAddress.lookup('example.com');
+    final result = await InternetAddress.lookup('example.com');
     return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
   } on SocketException catch (_) {
     return false;
@@ -470,7 +512,45 @@ Future<String> getDeviceId() async {
 }
 
 Future<void> systemProcess() async {
+  List<SyncDeviceModel> syncDeviceList = [];
+  for (int index = 0; index < customerDisplayDeviceList.length; index++) {
+    var url = "http://${customerDisplayDeviceList[index].ip}:5041";
+    ServerDeviceModel info =
+        ServerDeviceModel(device: deviceName, ip: "", connected: true);
+    var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
+    sendToServer(
+        ip: url,
+        jsonData: jsonEncode(jsonData.toJson()),
+        callBack: (value) {
+          if (value.isNotEmpty) {
+            try {
+              var json = jsonDecode(value);
+              print(value);
+              ServerDeviceModel getInfo =
+                  ServerDeviceModel.fromJson(jsonDecode(value));
+              customerDisplayDeviceList[index].connected = getInfo.connected;
+            } catch (e) {
+              print(e);
+            }
+          }
+        });
+  }
   dev.log("Process");
+}
+
+Future<void> sendProcessToCustomerDisplay() async {
+  for (int index = 0; index < customerDisplayDeviceList.length; index++) {
+    if (customerDisplayDeviceList[index].connected) {
+      var url = "http://${customerDisplayDeviceList[index].ip}:5041";
+      var jsonData = HttpPost(
+          command: "process", data: jsonEncode(posProcessResult.toJson()));
+      dev.log("sendProcessToCustomerDisplay : " + url);
+      sendToServer(
+          ip: url,
+          jsonData: jsonEncode(jsonData.toJson()),
+          callBack: (value) {});
+    }
+  }
 }
 
 double calcDiscountFormula(
@@ -543,16 +623,13 @@ Color colorFromHex(String hexColor) {
 }
 
 void loadConfig() {
-  appLocalStrongData = LocalStrongDataModel(
-    printerCashierConnectType: 0,
-    printerCashierType: 0,
-    printerCashierIpAddress: "",
-    printerCashierIpPort: 9100,
-  );
+  appLocalStrongData = LocalStrongDataModel();
   try {
     appLocalStore.collection("dedepos").doc("device").get().then((value) {
-      appLocalStrongData =
-          LocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
+      try {
+        appLocalStrongData =
+            LocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
+      } catch (_) {}
       {
         // ประเภทเครื่องพิมพ์ Cashier
         switch (appLocalStrongData.printerCashierType) {
@@ -572,7 +649,7 @@ void loadConfig() {
       }
       {
         // การเชื่อมต่อเครื่องพิมพ์ Cashier
-        switch (appLocalStrongData.printerCashierConnectType) {
+        switch (appLocalStrongData.connectType) {
           case 0:
             printerCashierConnect = PrinterCashierConnectEnum.ip;
             break;
@@ -585,8 +662,8 @@ void loadConfig() {
         }
       }
       {
-        printerCashierIpAddress = appLocalStrongData.printerCashierIpAddress;
-        printerCashierIpPort = appLocalStrongData.printerCashierIpPort;
+        printerCashierIpAddress = appLocalStrongData.ipAddress;
+        printerCashierIpPort = appLocalStrongData.ipPort;
       }
     });
   } catch (e) {
@@ -600,6 +677,7 @@ Future<void> loading() async {
     Device getDevice = Device.get();
     isTablet = getDevice.isTablet;
     isIphoneX = getDevice.isIphoneX;
+    isWindowsDesktop = getDevice.isWindowsDesktop;
     loadConfig();
     if (isServer) {
       //global.printerList = await global.printerHelper.select();
@@ -683,10 +761,10 @@ Future<void> loading() async {
 
   //Widget _defaultHome = new PrinterConfigScreen();
 
-  bool result = await appAuth.login();
+  /*bool result = await appAuth.login();
   if (result) {
     //_defaultHome = new MenuScreen();
-  }
+  }*/
 
   DartPingIOS.register();
 
@@ -701,7 +779,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      //await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -766,31 +844,27 @@ Future<void> loading() async {
   dev.log("Init Finish");
 }
 
-Future<String> sendToServer(String ip, String jsonData) async {
-  bool success = false;
+Future<void> sendToServer(
+    {required String ip,
+    required String jsonData,
+    required Function callBack}) async {
   String result = "";
-  int count = 0;
-  while (success == false) {
-    try {
-      if (count++ > 1000) {
-        return "fail";
-      }
-      var request = http.Request("POST", Uri.parse(ip));
-      request.headers["Content-Type"] = "application/json";
-      request.headers["Cache-Control"] = "no-cache";
-      request.headers["Accept"] = "text/event-stream";
-      request.body = jsonData;
-      // wait for the response
-      http.StreamedResponse response = await httpClient.send(request);
-      response.stream.listen((data) {
+  try {
+    var request = http.Request("POST", Uri.parse(ip));
+    request.headers["Content-Type"] = "application/json";
+    request.headers["Cache-Control"] = "no-cache";
+    request.headers["Accept"] = "text/event-stream";
+    request.body = jsonData;
+    // wait for the response
+    httpClient.send(request).then((value) {
+      value.stream.listen((data) {
         result = utf8.decode(data);
+        callBack(result);
       }, onError: (e, s) {});
-      success = true;
-    } catch (e) {
-      print("sendToServer : " + e.toString());
-    }
+    });
+  } catch (e) {
+    print("sendToServer : " + e.toString());
   }
-  return result;
 }
 
 void openCashDrawer() async {
@@ -808,4 +882,23 @@ void openCashDrawer() async {
   } catch (e) {
     print(e);
   }
+}
+
+String getImageForTest() {
+  List<String> images = [
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/cokecan_1024x1024@2x.png?v=1586878773',
+    '',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/c3ef1fb0352b565a9b710dc50b9790c8_1024x1024@2x.jpg?v=1588397618',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/green_cross_500ml_1024x1024@2x.jpg?v=1590209308',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1MGpbJWKQ_Mha_cHowinO9xm7gNpK6Jnk_1024x1024@2x.jpg?v=1586007533',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/40456_1024x1024@2x.jpg?v=1587914211',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/15464fbbc5eb8baa71425d9c2ed97ea7_1024x1024@2x.jpg?v=1588397501',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/251_FIT_N__RIGHT_FOUR_SEASONS_330ML_1024x1024@2x.jpg?v=1586836584',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/nestle_ice_cream_oreo_cone_1_1024x1024@2x.jpg?v=1587117184',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1ts9iXyMxStMrVq_md9dNcYw3PtHxwqtq_1024x1024@2x.png?v=1585991136',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/faa22afb6b279e9a57ac6756d7100c5a_medium_96b3c449-e5c9-4b18-909f-16089453972a_360x.png?v=1587173843'
+        'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/VITAMILKCHOCOSHAKE300ML-500x500_1024x1024@2x.jpg?v=1586880107',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/unnamed_1024x1024@2x.jpg?v=1587129692'
+  ];
+  return images[Random().nextInt(images.length)];
 }

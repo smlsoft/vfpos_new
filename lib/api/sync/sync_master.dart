@@ -119,17 +119,20 @@ Future syncProductCategory(data) async {
     removeMany.add(newData.guidfixed);
 
     ProductCategoryObjectBoxStruct newProduct = ProductCategoryObjectBoxStruct(
-        guid_fixed: newData.guidfixed,
-        names: [],
-        image_url: newData.imageuri,
-        parent_category_guid: newData.parentguid,
-        product_count: 0,
-        category_count: 0,
-        useimageorcolor: newData.useimageorcolor,
-        colorselect: newData.colorselect,
-        colorselecthex: newData.colorselecthex,
-        codelist: jsonEncode(newData.codelist),
-        xorder: newData.xsorts![0].xorder);
+      guid_fixed: newData.guidfixed,
+      parent_guid_fixed: newData.parentguid,
+      names: [],
+      image_url: newData.imageuri,
+      use_image_or_color: newData.useimageorcolor,
+      colorselect: newData.colorselect,
+      colorselecthex: newData.colorselecthex,
+      codelist: jsonEncode(newData.codelist),
+      xorder: newData.xsorts![0].xorder,
+      category_count: newData.childcount,
+    );
+    // ทดสอบ รูป
+    newProduct.image_url = global.getImageForTest();
+
     print("Sync Product Category : " +
         newData.guidfixed +
         " " +
@@ -138,42 +141,29 @@ Future syncProductCategory(data) async {
         newData.parentguid);
     newProduct.names.add(newData.names![0].name);
     manyForInsert.add(newProduct);
-    global.syncRefreshProductCategory = true;
-    // Update Memory
-    for (int index = 0;
-        index < global.productCategoryCodeSelected.length;
-        index++) {
-      if (global.productCategoryCodeSelected[index].guid_fixed ==
-          newData.guidfixed) {
-        global.productCategoryCodeSelected[index].names
-            .add(newData.names![0].name);
-        global.productCategoryCodeSelected[index].image_url = newData.imageuri;
-        global.productCategoryCodeSelected[index].xorder =
-            newData.xsorts![0].xorder;
-        global.productCategoryCodeSelected[index].parent_category_guid =
-            newData.parentguid;
-        break;
-      }
-    }
   }
   if (removeMany.isNotEmpty) {
+    global.syncRefreshProductCategory = true;
     ProductCategoryHelper().deleteByGuidFixedMany(removeMany);
   }
   if (manyForInsert.isNotEmpty) {
+    global.syncRefreshProductCategory = true;
     ProductCategoryHelper().insertMany(manyForInsert);
   }
-  // Update Count Group
-  final box = global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-  List<ProductCategoryObjectBoxStruct> selectCategory = box.getAll();
-  for (var category in selectCategory) {
-    final count = box
-        .query(ProductCategoryObjectBoxStruct_.parent_category_guid
-            .equals(category.guid_fixed))
-        .build()
-        .count();
-    if (count > 0) {
-      category.category_count = count;
-      box.put(category);
+  if (global.syncRefreshProductCategory) {
+    // Update Count Group
+    final box = global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+    List<ProductCategoryObjectBoxStruct> selectCategory = box.getAll();
+    for (var category in selectCategory) {
+      final count = box
+          .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
+              .equals(category.guid_fixed))
+          .build()
+          .count();
+      if (count > 0) {
+        category.category_count = count;
+        box.put(category);
+      }
     }
   }
 }
@@ -261,10 +251,6 @@ void syncProductBarcode(
       name_all: nameAll,
       product_count: 0,
       barcode: newData.barcode,
-      group_code: newData.groupcode ?? "",
-      group_count: 0,
-      category_index: 0,
-      parent_group_guid: "",
       item_guid: "",
       descriptions: [],
       item_code: newData.itemcode,
@@ -279,6 +265,9 @@ void syncProductBarcode(
       color_select: newData.colorselect,
       color_select_hex: newData.colorselecthex,
     );
+    newBarcode.images_url = global.getImageForTest();
+    newBarcode.image_or_color = true;
+
     manyForInsert.add(newBarcode);
     global.syncRefreshProductBarcode = true;
     // Update ข้อมูลใน Memory
@@ -307,19 +296,19 @@ void syncProductBarcode(
     ProductBarcodeHelper().insertMany(manyForInsert);
   }
   // Update Count Group
-  final box = global.objectBoxStore.box<ProductBarcodeObjectBoxStruct>();
+  /*final box = global.objectBoxStore.box<ProductBarcodeObjectBoxStruct>();
   List<ProductBarcodeObjectBoxStruct> selectGroup = box.getAll();
-  for (var _group in selectGroup) {
-    final _count = box
+  for (var group in selectGroup) {
+    final count = box
         .query(ProductBarcodeObjectBoxStruct_.parent_group_guid
-            .equals(_group.item_code))
+            .equals(group.item_code))
         .build()
         .count();
-    if (_count > 0) {
-      _group.group_count = _count;
-      box.put(_group);
+    if (count > 0) {
+      group.group_count = count;
+      box.put(group);
     }
-  }
+  }*/
 }
 
 Future syncPrinter(data) async {
@@ -509,7 +498,7 @@ Future syncMasterData() async {
   }
   {
     // Sync พนักงาน
-    String lastUpdateTime =
+    /*String lastUpdateTime =
         global.appStorage.read(global.syncEmployeeTimeName) ?? dateBegin;
     lastUpdateTime = dateBegin;
     if (PrinterHelper().count() == 0) {
@@ -529,7 +518,7 @@ Future syncMasterData() async {
           });
         }
       });
-    }
+    }*/
   }
   global.syncDataSuccess = true;
   global.syncDataProcess = false;

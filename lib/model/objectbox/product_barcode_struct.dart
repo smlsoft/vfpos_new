@@ -20,12 +20,6 @@ class ProductBarcodeObjectBoxStruct {
   /// ชื่อสินค้าทั้งหมด (เอาไว้ค้นหา)
   String name_all;
 
-  /// รหัสกลุ่มสินค้า
-  String group_code;
-
-  /// ลำดับในกลุ่มสินค้า
-  int category_index;
-
   /// GUID อ้างอิง
   String guid_fixed;
 
@@ -71,16 +65,10 @@ class ProductBarcodeObjectBoxStruct {
   /// สีที่เลือก (Hex)
   String color_select_hex;
 
-  String parent_group_guid;
-
-  int group_count;
-
   ProductBarcodeObjectBoxStruct(
       {required this.barcode,
       required this.names,
       required this.name_all,
-      required this.group_code,
-      required this.category_index,
       required this.guid_fixed,
       required this.item_guid,
       required this.descriptions,
@@ -92,8 +80,6 @@ class ProductBarcodeObjectBoxStruct {
       required this.unit_code,
       required this.options_json,
       required this.images_url,
-      required this.parent_group_guid,
-      required this.group_count,
       required this.image_or_color,
       required this.color_select,
       required this.color_select_hex,

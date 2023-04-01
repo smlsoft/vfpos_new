@@ -631,7 +631,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               children: <Widget>[
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '7',
                                                       callBack: () => {
                                                         textInputChanged("7")
@@ -639,7 +639,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '8',
                                                       callBack: () => {
                                                         textInputChanged("8")
@@ -647,7 +647,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '9',
                                                       callBack: () => {
                                                         textInputChanged("9")
@@ -655,7 +655,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: 'x',
                                                       callBack: () => {},
                                                     )),
@@ -669,7 +669,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               children: <Widget>[
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '4',
                                                       callBack: () => {
                                                         textInputChanged("4")
@@ -677,7 +677,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '5',
                                                       callBack: () => {
                                                         textInputChanged("5")
@@ -685,7 +685,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '6',
                                                       callBack: () => {
                                                         textInputChanged("6")
@@ -693,7 +693,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '+',
                                                       callBack: () => {},
                                                     )),
@@ -707,7 +707,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               children: <Widget>[
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '1',
                                                       callBack: () => {
                                                         textInputChanged("1")
@@ -715,7 +715,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '2',
                                                       callBack: () => {
                                                         textInputChanged("2")
@@ -723,7 +723,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '3',
                                                       callBack: () => {
                                                         textInputChanged("3")
@@ -731,7 +731,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: 'C',
                                                       callBack: () =>
                                                           {clearText()},
@@ -746,7 +746,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               children: <Widget>[
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '0',
                                                       callBack: () => {
                                                         textInputChanged("0")
@@ -754,7 +754,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       text: '.',
                                                       callBack: () => {
                                                         textInputChanged(".")
@@ -762,14 +762,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       icon: Icons.backspace,
                                                       callBack: () =>
                                                           {backSpace()},
                                                     )),
                                                 Expanded(
                                                     flex: 2,
-                                                    child: NumpadButton(
+                                                    child: NumPadButton(
                                                       icon: Icons.expand,
                                                       callBack: () => {},
                                                     )),

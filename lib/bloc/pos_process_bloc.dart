@@ -34,9 +34,9 @@ class PosProcessBloc extends Bloc<PosProcessEvent, PosProcessState> {
 
   void _process(PosProcessEvent event, Emitter<PosProcessState> emit) async {
     emit(PosProcessLoading());
-    PosProcessStruct _result = await PosProcess().process();
-    PosProcess().sumGroupCount(_result);
-    emit(PosProcessSuccess(result: _result));
+    PosProcessStruct result = await PosProcess().process();
+    PosProcess().sumCategoryCount(result);
+    emit(PosProcessSuccess(result: result));
   }
 }
 

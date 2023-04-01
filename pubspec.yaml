@@ -64,7 +64,7 @@ dependencies:
   fullscreen: any
   web_socket_channel: any
   permission_handler: any
-  flutter_usb_printer: any
+  flutter_usb_printer: ^0.1.0+1
   objectbox: any
   json_annotation: any
   json_serializable: any
@@ -78,6 +78,9 @@ dependencies:
   qr_code_scanner: ^1.0.1
   localstore: ^1.3.5
   charset_converter: ^2.1.1
+  flutter_beep: ^1.0.0
+  sunmi_printer_plus: ^2.1.01
+  audioplayers: ^3.0.1
   
 dev_dependencies:
   flutter_driver:
@@ -87,6 +90,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   build_runner: any
+  msix: ^3.7.0
 
 flutter_icons:
   android: "launcher_icon"
@@ -98,7 +102,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
-    - assets/icons/
     - assets/audios/
     - assets/images/
     - assets/images/qrpay/

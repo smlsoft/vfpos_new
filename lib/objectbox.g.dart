@@ -602,7 +602,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(23, 1553987918665551717),
+      lastPropertyId: const IdUid(24, 7592183109660791959),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -675,11 +675,6 @@ final _entities = <ModelEntity>[
             id: const IdUid(14, 5772749487478272189),
             name: 'price',
             type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 8483056954515323331),
-            name: 'guid_group',
-            type: 9,
             flags: 0),
         ModelProperty(
             id: const IdUid(16, 5229819847199260872),
@@ -797,11 +792,6 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(6, 5721639400649062388),
-            name: 'category_index',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(7, 8100041463221519691),
             name: 'guid_fixed',
             type: 9,
@@ -867,24 +857,9 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(22, 6511194312439548720),
-            name: 'parent_group_guid',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 6556829884253670378),
-            name: 'group_count',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(24, 8246333664740325981),
             name: 'image_or_color',
             type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(25, 5881502430415090972),
-            name: 'group_code',
-            type: 9,
             flags: 0),
         ModelProperty(
             id: const IdUid(27, 2602671413310264723),
@@ -897,7 +872,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(12, 3870970304180097832),
       name: 'ProductCategoryObjectBoxStruct',
-      lastPropertyId: const IdUid(15, 2847270273296031837),
+      lastPropertyId: const IdUid(19, 314613545527023253),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -922,21 +897,6 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(7, 1973364722765814974),
-            name: 'product_count',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 2403838603731837931),
-            name: 'xorder',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 7770745563320712682),
-            name: 'useimageorcolor',
-            type: 1,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(11, 5655321350001673979),
             name: 'colorselect',
             type: 9,
@@ -947,20 +907,29 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(13, 4701702388568208232),
-            name: 'parent_category_guid',
-            type: 9,
-            flags: 8,
-            indexId: const IdUid(11, 5444144693635609139)),
-        ModelProperty(
-            id: const IdUid(14, 6627277916891706326),
-            name: 'category_count',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(15, 2847270273296031837),
             name: 'codelist',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 657605556722911522),
+            name: 'parent_guid_fixed',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 7860457842035766061),
+            name: 'use_image_or_color',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 8605883164466481353),
+            name: 'xorder',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 314613545527023253),
+            name: 'category_count',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1042,7 +1011,11 @@ ModelDefinition getObjectBoxModel() {
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
-      retiredIndexUids: const [9219344176730085609, 2276328705805420932],
+      retiredIndexUids: const [
+        9219344176730085609,
+        2276328705805420932,
+        5444144693635609139
+      ],
       retiredPropertyUids: const [
         5697435774194423126,
         3065536162123372494,
@@ -1051,7 +1024,18 @@ ModelDefinition getObjectBoxModel() {
         1282192585569651427,
         6780051601682911384,
         3446702913728850256,
-        8412111174913227945
+        8412111174913227945,
+        8483056954515323331,
+        7592183109660791959,
+        5721639400649062388,
+        6511194312439548720,
+        6556829884253670378,
+        5881502430415090972,
+        1973364722765814974,
+        2403838603731837931,
+        4701702388568208232,
+        6627277916891706326,
+        7770745563320712682
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1564,13 +1548,12 @@ ModelDefinition getObjectBoxModel() {
           final remarkOffset = fbb.writeString(object.remark);
           final discountTextOffset = fbb.writeString(object.discountText);
           final codeOffset = fbb.writeString(object.code);
-          final guid_groupOffset = fbb.writeString(object.guid_group);
           final nameOffset = fbb.writeString(object.name);
           final default_codeOffset = fbb.writeString(object.default_code);
           final unit_codeOffset = fbb.writeString(object.unit_code);
           final unit_nameOffset = fbb.writeString(object.unit_name);
           final barcodeOffset = fbb.writeString(object.barcode);
-          fbb.startTable(24);
+          fbb.startTable(25);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
@@ -1585,7 +1568,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(11, discountTextOffset);
           fbb.addOffset(12, codeOffset);
           fbb.addFloat64(13, object.price);
-          fbb.addOffset(14, guid_groupOffset);
           fbb.addOffset(15, nameOffset);
           fbb.addFloat64(16, object.qty);
           fbb.addFloat64(17, object.qty_fixed);
@@ -1631,8 +1613,7 @@ ModelDefinition getObjectBoxModel() {
               discountText: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               extra_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
-              unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
-              guid_group: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''))
+              unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''))
             ..guid_auto_fixed = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, '');
 
           return object;
@@ -1710,9 +1691,6 @@ ModelDefinition getObjectBoxModel() {
           final color_selectOffset = fbb.writeString(object.color_select);
           final color_select_hexOffset =
               fbb.writeString(object.color_select_hex);
-          final parent_group_guidOffset =
-              fbb.writeString(object.parent_group_guid);
-          final group_codeOffset = fbb.writeString(object.group_code);
           final pricesOffset = fbb.writeList(
               object.prices.map(fbb.writeString).toList(growable: false));
           fbb.startTable(28);
@@ -1720,7 +1698,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(1, barcodeOffset);
           fbb.addOffset(2, namesOffset);
           fbb.addOffset(3, name_allOffset);
-          fbb.addInt64(5, object.category_index);
           fbb.addOffset(6, guid_fixedOffset);
           fbb.addOffset(7, item_guidOffset);
           fbb.addOffset(8, descriptionsOffset);
@@ -1734,10 +1711,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(17, images_urlOffset);
           fbb.addOffset(19, color_selectOffset);
           fbb.addOffset(20, color_select_hexOffset);
-          fbb.addOffset(21, parent_group_guidOffset);
-          fbb.addInt64(22, object.group_count);
           fbb.addBool(23, object.image_or_color);
-          fbb.addOffset(24, group_codeOffset);
           fbb.addOffset(26, pricesOffset);
           fbb.finish(fbb.endTable());
           return object.id;
@@ -1749,19 +1723,18 @@ ModelDefinition getObjectBoxModel() {
           final object = ProductBarcodeObjectBoxStruct(
               barcode: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
-              names: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false)
-                  .vTableGet(buffer, rootOffset, 8, []),
+              names:
+                  const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false)
+                      .vTableGet(buffer, rootOffset, 8, []),
               name_all: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
-              group_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 52, ''),
-              category_index:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
               guid_fixed: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 16, ''),
               item_guid: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 18, ''),
-              descriptions: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 20, []),
+              descriptions:
+                  const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false)
+                      .vTableGet(buffer, rootOffset, 20, []),
               item_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               item_unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
               unit_names: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 28, []),
@@ -1770,8 +1743,6 @@ ModelDefinition getObjectBoxModel() {
               unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               options_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
               images_url: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
-              parent_group_guid: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
-              group_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 48, 0),
               image_or_color: const fb.BoolReader().vTableGet(buffer, rootOffset, 50, false),
               color_select: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, ''),
               color_select_hex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
@@ -1796,22 +1767,21 @@ ModelDefinition getObjectBoxModel() {
           final image_urlOffset = fbb.writeString(object.image_url);
           final colorselectOffset = fbb.writeString(object.colorselect);
           final colorselecthexOffset = fbb.writeString(object.colorselecthex);
-          final parent_category_guidOffset =
-              fbb.writeString(object.parent_category_guid);
           final codelistOffset = fbb.writeString(object.codelist);
-          fbb.startTable(16);
+          final parent_guid_fixedOffset =
+              fbb.writeString(object.parent_guid_fixed);
+          fbb.startTable(20);
           fbb.addInt64(0, object.id);
           fbb.addOffset(2, guid_fixedOffset);
           fbb.addOffset(3, namesOffset);
           fbb.addOffset(4, image_urlOffset);
-          fbb.addFloat64(6, object.product_count);
-          fbb.addInt64(8, object.xorder);
-          fbb.addBool(9, object.useimageorcolor);
           fbb.addOffset(10, colorselectOffset);
           fbb.addOffset(11, colorselecthexOffset);
-          fbb.addOffset(12, parent_category_guidOffset);
-          fbb.addInt64(13, object.category_count);
           fbb.addOffset(14, codelistOffset);
+          fbb.addOffset(15, parent_guid_fixedOffset);
+          fbb.addBool(16, object.use_image_or_color);
+          fbb.addInt64(17, object.xorder);
+          fbb.addInt64(18, object.category_count);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1822,20 +1792,19 @@ ModelDefinition getObjectBoxModel() {
           final object = ProductCategoryObjectBoxStruct(
               guid_fixed: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
+              parent_guid_fixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 34, ''),
               names: const fb.ListReader<String>(
                       fb.StringReader(asciiOptimization: true),
                       lazy: false)
                   .vTableGet(buffer, rootOffset, 10, []),
               image_url: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 12, ''),
-              parent_category_guid: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 28, ''),
-              product_count:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
               category_count:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 30, 0),
-              xorder: const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              useimageorcolor: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 40, 0),
+              use_image_or_color: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 36, false),
+              xorder: const fb.Int64Reader().vTableGet(buffer, rootOffset, 38, 0),
               colorselect: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
               colorselecthex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               codelist: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''))
@@ -2380,41 +2349,37 @@ class PosLogObjectBoxStruct_ {
   static final price =
       QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[13]);
 
-  /// see [PosLogObjectBoxStruct.guid_group]
-  static final guid_group =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[14]);
-
   /// see [PosLogObjectBoxStruct.name]
   static final name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[15]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[14]);
 
   /// see [PosLogObjectBoxStruct.qty]
   static final qty =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[16]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[15]);
 
   /// see [PosLogObjectBoxStruct.qty_fixed]
   static final qty_fixed =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[17]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[16]);
 
   /// see [PosLogObjectBoxStruct.default_code]
   static final default_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[18]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[17]);
 
   /// see [PosLogObjectBoxStruct.selected]
   static final selected =
-      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[8].properties[19]);
+      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[8].properties[18]);
 
   /// see [PosLogObjectBoxStruct.unit_code]
   static final unit_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[20]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[19]);
 
   /// see [PosLogObjectBoxStruct.unit_name]
   static final unit_name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[21]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[20]);
 
   /// see [PosLogObjectBoxStruct.barcode]
   static final barcode =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[22]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[21]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2466,93 +2431,74 @@ class ProductBarcodeObjectBoxStruct_ {
   static final name_all = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
       _entities[10].properties[3]);
 
-  /// see [ProductBarcodeObjectBoxStruct.category_index]
-  static final category_index =
-      QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[4]);
-
   /// see [ProductBarcodeObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[5]);
+      _entities[10].properties[4]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_guid]
   static final item_guid = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[6]);
+      _entities[10].properties[5]);
 
   /// see [ProductBarcodeObjectBoxStruct.descriptions]
   static final descriptions =
       QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[7]);
+          _entities[10].properties[6]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_code]
   static final item_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[8]);
+      _entities[10].properties[7]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_unit_code]
   static final item_unit_code =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[9]);
+          _entities[10].properties[8]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_code]
   static final unit_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[10]);
+      _entities[10].properties[9]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_names]
   static final unit_names =
       QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[11]);
+          _entities[10].properties[10]);
 
   /// see [ProductBarcodeObjectBoxStruct.new_line]
   static final new_line = QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[12]);
+      _entities[10].properties[11]);
 
   /// see [ProductBarcodeObjectBoxStruct.product_count]
   static final product_count =
       QueryDoubleProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[13]);
+          _entities[10].properties[12]);
 
   /// see [ProductBarcodeObjectBoxStruct.options_json]
   static final options_json =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[14]);
+          _entities[10].properties[13]);
 
   /// see [ProductBarcodeObjectBoxStruct.images_url]
   static final images_url = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[15]);
+      _entities[10].properties[14]);
 
   /// see [ProductBarcodeObjectBoxStruct.color_select]
   static final color_select =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[16]);
+          _entities[10].properties[15]);
 
   /// see [ProductBarcodeObjectBoxStruct.color_select_hex]
   static final color_select_hex =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[17]);
-
-  /// see [ProductBarcodeObjectBoxStruct.parent_group_guid]
-  static final parent_group_guid =
-      QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[18]);
-
-  /// see [ProductBarcodeObjectBoxStruct.group_count]
-  static final group_count =
-      QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[19]);
+          _entities[10].properties[16]);
 
   /// see [ProductBarcodeObjectBoxStruct.image_or_color]
   static final image_or_color =
       QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[20]);
-
-  /// see [ProductBarcodeObjectBoxStruct.group_code]
-  static final group_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[10].properties[21]);
+          _entities[10].properties[17]);
 
   /// see [ProductBarcodeObjectBoxStruct.prices]
   static final prices =
       QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[10].properties[22]);
+          _entities[10].properties[18]);
 }
 
 /// [ProductCategoryObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2574,43 +2520,38 @@ class ProductCategoryObjectBoxStruct_ {
   static final image_url = QueryStringProperty<ProductCategoryObjectBoxStruct>(
       _entities[11].properties[3]);
 
-  /// see [ProductCategoryObjectBoxStruct.product_count]
-  static final product_count =
-      QueryDoubleProperty<ProductCategoryObjectBoxStruct>(
-          _entities[11].properties[4]);
-
-  /// see [ProductCategoryObjectBoxStruct.xorder]
-  static final xorder = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-      _entities[11].properties[5]);
-
-  /// see [ProductCategoryObjectBoxStruct.useimageorcolor]
-  static final useimageorcolor =
-      QueryBooleanProperty<ProductCategoryObjectBoxStruct>(
-          _entities[11].properties[6]);
-
   /// see [ProductCategoryObjectBoxStruct.colorselect]
   static final colorselect =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[11].properties[7]);
+          _entities[11].properties[4]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselecthex]
   static final colorselecthex =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
+          _entities[11].properties[5]);
+
+  /// see [ProductCategoryObjectBoxStruct.codelist]
+  static final codelist = QueryStringProperty<ProductCategoryObjectBoxStruct>(
+      _entities[11].properties[6]);
+
+  /// see [ProductCategoryObjectBoxStruct.parent_guid_fixed]
+  static final parent_guid_fixed =
+      QueryStringProperty<ProductCategoryObjectBoxStruct>(
+          _entities[11].properties[7]);
+
+  /// see [ProductCategoryObjectBoxStruct.use_image_or_color]
+  static final use_image_or_color =
+      QueryBooleanProperty<ProductCategoryObjectBoxStruct>(
           _entities[11].properties[8]);
 
-  /// see [ProductCategoryObjectBoxStruct.parent_category_guid]
-  static final parent_category_guid =
-      QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[11].properties[9]);
+  /// see [ProductCategoryObjectBoxStruct.xorder]
+  static final xorder = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
+      _entities[11].properties[9]);
 
   /// see [ProductCategoryObjectBoxStruct.category_count]
   static final category_count =
       QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
           _entities[11].properties[10]);
-
-  /// see [ProductCategoryObjectBoxStruct.codelist]
-  static final codelist = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[11].properties[11]);
 }
 
 /// [WalletStruct] entity fields to define ObjectBox queries.

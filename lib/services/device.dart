@@ -12,11 +12,18 @@ class Device {
   static double screenWidth = width / devicePixelRatio;
   static double screenHeight = height / devicePixelRatio;
   static ui.Size screenSize = ui.Size(screenWidth, screenHeight);
-  final bool isTablet, isPhone, isIos, isAndroid, isIphoneX, hasNotch;
+  final bool isTablet,
+      isPhone,
+      isIos,
+      isAndroid,
+      isIphoneX,
+      isWindowsDesktop,
+      hasNotch;
   static Device? _device;
   static Function? onMetricsChange;
 
-  Device(this.isTablet, this.isPhone, this.isIos, this.isAndroid, this.isIphoneX, this.hasNotch);
+  Device(this.isTablet, this.isPhone, this.isIos, this.isAndroid,
+      this.isIphoneX, this.isWindowsDesktop, this.hasNotch);
 
   factory Device.get() {
     if (_device != null) return _device!;
@@ -42,6 +49,7 @@ class Device {
     bool isIos = Platform.isIOS;
     bool isAndroid = Platform.isAndroid;
     bool isIphoneX = false;
+    bool isWindowsDesktop = false;
     bool hasNotch = false;
 
     if (devicePixelRatio < 2 && (width >= 1000 || height >= 1000)) {
@@ -59,7 +67,9 @@ class Device {
     if (isAndroid) {
       final adjustedWidth = _calWidth() / devicePixelRatio;
       final adjustedHeight = _calHeight() / devicePixelRatio;
-      final diagonalSizeInches = (math.sqrt(math.pow(adjustedWidth, 2) + math.pow(adjustedHeight, 2))) / _ppi;
+      final diagonalSizeInches = (math
+              .sqrt(math.pow(adjustedWidth, 2) + math.pow(adjustedHeight, 2))) /
+          _ppi;
       //print("Dialog size inches is $diagonalSizeInches");
       if (diagonalSizeInches >= 7) {
         isTablet = true;
@@ -87,17 +97,26 @@ class Device {
     }
 
     if (_hasTopOrBottomPadding()) hasNotch = true;
-
-    return _device = Device(isTablet, isPhone, isAndroid, isIos, isIphoneX, hasNotch);
+    if (Platform.isWindows) {
+      isWindowsDesktop = true;
+    }
+    return _device = Device(isTablet, isPhone, isAndroid, isIos, isIphoneX,
+        isWindowsDesktop, hasNotch);
   }
 
   static double _calWidth() {
-    if (width > height) return (width + (ui.window.viewPadding.left + ui.window.viewPadding.right) * width / height);
+    if (width > height) {
+      return (width +
+          (ui.window.viewPadding.left + ui.window.viewPadding.right) *
+              width /
+              height);
+    }
     return (width + ui.window.viewPadding.left + ui.window.viewPadding.right);
   }
 
   static double _calHeight() {
-    return (height + (ui.window.viewPadding.top + ui.window.viewPadding.bottom));
+    return (height +
+        (ui.window.viewPadding.top + ui.window.viewPadding.bottom));
   }
 
   static int get _ppi => Platform.isAndroid

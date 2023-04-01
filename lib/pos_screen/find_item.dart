@@ -82,7 +82,9 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                     _findByCodeNameLastResult.clear();
                     context.read<FindItemByCodeNameBarcodeBloc>().add(
                         FindItemByCodeNameBarcodeLoadStart(
-                            words:_textFindByTextController.text,offset: 0, limit:50));
+                            words: _textFindByTextController.text,
+                            offset: 0,
+                            limit: 50));
                   });
                 },
                 decoration: InputDecoration(
@@ -171,7 +173,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                         return AlertDialog(
                                           content: SizedBox(
                                               height: 240,
-                                              child: Numpad(
+                                              child: NumberPad(
                                                   title: Text(_detail
                                                           .item_names[0] +
                                                       ' ' +

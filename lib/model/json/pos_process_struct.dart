@@ -23,6 +23,7 @@ class PosProcessDetailStruct {
   late String unit_name;
   late double qty;
   late double price;
+  late double price_original;
   late String discount_text;
   late double discount;
   late double total_amount;
@@ -30,28 +31,28 @@ class PosProcessDetailStruct {
   late bool is_void;
   late String remark;
   late String image_url;
-  late String category_guid;
   late List<PosProcessDetailExtraStruct> extra;
 
-  PosProcessDetailStruct(
-      {this.guid = '',
-      this.index = 0,
-      this.barcode = '',
-      this.item_code = '',
-      this.item_name = '',
-      this.unit_code = '',
-      this.unit_name = '',
-      this.qty = 0,
-      this.price = 0,
-      this.discount_text = '',
-      this.discount = 0,
-      this.total_amount = 0,
-      this.total_amount_with_extra = 0,
-      this.is_void = false,
-      this.remark = "",
-      this.image_url = "",
-      required this.extra,
-      this.category_guid = ""});
+  PosProcessDetailStruct({
+    this.guid = '',
+    this.index = 0,
+    this.barcode = '',
+    this.item_code = '',
+    this.item_name = '',
+    this.unit_code = '',
+    this.unit_name = '',
+    this.qty = 0,
+    this.price = 0,
+    this.price_original = 0,
+    this.discount_text = '',
+    this.discount = 0,
+    this.total_amount = 0,
+    this.total_amount_with_extra = 0,
+    this.is_void = false,
+    this.remark = "",
+    this.image_url = "",
+    required this.extra,
+  });
 
   factory PosProcessDetailStruct.fromJson(Map<String, dynamic> json) =>
       _$PosProcessDetailStructFromJson(json);

@@ -31,9 +31,9 @@ class FindEmployeeByNameBloc
   void _findEmployeeByWord(FindEmployeeByNameLoadStart event,
       Emitter<FindEmployeeByNameState> emit) async {
     emit(FindEmployeeByNameLoading());
-    List<FindEmployeeStruct> _result =
+    List<FindEmployeeStruct> result =
         await apiFindEmployeeByName.findEmployeeByWord(event.words);
-    emit(FindEmployeeByNameLoadSuccess(result: _result));
+    emit(FindEmployeeByNameLoadSuccess(result: result));
   }
 
   void _findEmployeeByNameLoadFinish(FindEmployeeByNameLoadFinish event,

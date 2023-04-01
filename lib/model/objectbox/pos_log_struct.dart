@@ -46,9 +46,6 @@ class PosLogObjectBoxStruct {
   /// ราคา
   double price;
 
-  /// กลุ่มสินค้า
-  String guid_group;
-
   /// ชื่อสินค้า
   String name;
 
@@ -88,29 +85,29 @@ class PosLogObjectBoxStruct {
       101=Check Box Extra
   */
 
-  PosLogObjectBoxStruct(
-      {this.id = 0,
-      this.guid_ref = "",
-      this.guid_code_ref = "",
-      required this.log_date_time,
-      required this.hold_number,
-      required this.command_code,
-      this.barcode = "",
-      this.is_void = 0,
-      this.success = 0,
-      this.qty = 0,
-      this.qty_fixed = 0,
-      this.price = 0,
-      this.selected = false,
-      this.remark = "",
-      this.name = "",
-      this.code = "",
-      this.default_code = "",
-      this.discountText = "",
-      this.extra_code = "",
-      this.unit_code = "",
-      this.unit_name = "",
-      this.guid_group = ""}) {
+  PosLogObjectBoxStruct({
+    this.id = 0,
+    this.guid_ref = "",
+    this.guid_code_ref = "",
+    required this.log_date_time,
+    required this.hold_number,
+    required this.command_code,
+    this.barcode = "",
+    this.is_void = 0,
+    this.success = 0,
+    this.qty = 0,
+    this.qty_fixed = 0,
+    this.price = 0,
+    this.selected = false,
+    this.remark = "",
+    this.name = "",
+    this.code = "",
+    this.default_code = "",
+    this.discountText = "",
+    this.extra_code = "",
+    this.unit_code = "",
+    this.unit_name = "",
+  }) {
     this.guid_auto_fixed = Uuid().v4();
   }
 }

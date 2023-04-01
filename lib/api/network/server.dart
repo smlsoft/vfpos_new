@@ -88,6 +88,8 @@ Future<void> startServer() async {
                   global.customerDisplayDeviceList.add(customerDisplayDevice);
                 }
                 print("register_customer_display_device : " +
+                    customerDisplayDevice.device +
+                    " : " +
                     global.customerDisplayDeviceList.length.toString());
                 break;
               case "change_customer_by_phone":
@@ -194,22 +196,6 @@ Future<void> startServer() async {
   }
   return "";
 }*/
-
-Future<void> sendProcessToCustomerDisplay() async {
-  for (int index = 0;
-      index < global.customerDisplayDeviceList.length;
-      index++) {
-    var url = "http://${global.customerDisplayDeviceList[index].ip}:5041";
-    var jsonData = HttpPost(
-        command: "process", data: jsonEncode(global.posProcessResult.toJson()));
-    dev.log("sendProcessToCustomerDisplay : " + url);
-    global.sendToServer(url, jsonEncode(jsonData.toJson())).then((value) {
-      if (value == "fail") {
-        global.customerDisplayDeviceList.removeAt(index);
-      }
-    });
-  }
-}
 
 void testPrinterConnect() async {
   /*stderr.writeln('Test Printer Connect Start');

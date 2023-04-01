@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
@@ -13,6 +15,15 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(seconds: 1), () {
+      global.loginSuccess = true;
+      Navigator.of(context).pushReplacementNamed('/loading');
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     //if (global.appLoadSuccess) {}
     late Widget screenWidget;
@@ -22,11 +33,13 @@ class _LoginState extends State<Login> {
           child: Container(
               constraints: const BoxConstraints(
                   minWidth: 300, maxWidth: 500, maxHeight: 500, minHeight: 200),
-              child: PinNumpad(
+              child: PinNumberPad(
                 onChange: (value) {
                   if (value == "0000") {
-                    global.loginSuccess = true;
-                    Navigator.of(context).pushReplacementNamed('/loading');
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      global.loginSuccess = true;
+                      Navigator.of(context).pushReplacementNamed('/loading');
+                    });
                   }
                 },
                 header: "PIN",

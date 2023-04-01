@@ -47,19 +47,15 @@ class ProductBarcodeHelper {
           unit_code: data.unit_code,
           unit_names: data.unit_names,
           new_line: 0,
-          group_code: data.group_code,
-          group_count: 0,
           color_select: "",
           image_or_color: true,
           color_select_hex: "",
-          category_index: 0,
           guid_fixed: data.guid_fixed,
           item_code: data.item_code,
           item_guid: data.item_guid,
           descriptions: data.descriptions,
           item_unit_code: data.item_unit_code,
           options_json: "",
-          parent_group_guid: "",
           images_url: data.images_url,
           product_count: 0);
       /*List<ProductOptionStruct> _jsonOption =  ProductOptionStruct.fromJson(jsonDecode(  _data.options));
@@ -108,21 +104,16 @@ class ProductBarcodeHelper {
         .findFirst();
   }
 
-  List<ProductBarcodeObjectBoxStruct> selectByGroup(String categoryCode) {
-    return (box.query(
-            ProductBarcodeObjectBoxStruct_.group_code.equals(categoryCode))
-          ..order(ProductBarcodeObjectBoxStruct_.category_index))
-        .build()
-        .find();
-  }
-
   List<ProductBarcodeObjectBoxStruct> xselect(
       {String where = "", String order = "", int limit = 0, int offset = 0}) {
     return box.query().build().find();
   }
 
   List<ProductBarcodeObjectBoxStruct> selectByCodeNameBarCode(
-      {required String word , required String order, required int limit , required int offset }) {
+      {required String word,
+      required String order,
+      required int limit,
+      required int offset}) {
     Condition<ProductBarcodeObjectBoxStruct>? conditionCode;
     Condition<ProductBarcodeObjectBoxStruct>? conditionBarcode;
     Condition<ProductBarcodeObjectBoxStruct>? conditionName;

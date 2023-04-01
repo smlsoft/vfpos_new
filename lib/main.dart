@@ -1,9 +1,10 @@
+import 'package:flutter/services.dart';
 import 'package:localstore/localstore.dart';
 import 'dart:io';
 import 'package:dedepos/bloc/find_employee_by_name_bloc.dart';
 import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/bloc/product_group_bloc.dart';
+import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/dashboard_screen.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/loading.dart';
@@ -23,7 +24,6 @@ import 'package:get_storage/get_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await global.loading();
   network.connectivity();
 
@@ -55,7 +55,8 @@ Future<void> main() async {
         BlocProvider(create: (context) => TableBloc()),*/
         BlocProvider(create: (context) => PayScreenBloc()),
         BlocProvider(create: (context) => ServerBloc()),
-        BlocProvider(create: (context) => ProductGroupBloc(groupGuid: '')),
+        BlocProvider(
+            create: (context) => ProductCategoryBloc(categoryGuid: '')),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

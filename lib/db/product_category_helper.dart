@@ -13,6 +13,16 @@ class ProductCategoryHelper {
     box.putMany(values);
   }
 
+  List<ProductCategoryObjectBoxStruct> selectByParentCategoryGuidOrderByXorder(
+      {String parentCategoryGuid = ""}) {
+    print("[" + parentCategoryGuid + "]");
+    return (box.query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
+            .equals(parentCategoryGuid))
+          ..order(ProductCategoryObjectBoxStruct_.xorder))
+        .build()
+        .find();
+  }
+
   ProductCategoryObjectBoxStruct? selectByCategoryGuidFindFirst(String guid) {
     print("[" + guid + "]");
     return box
@@ -21,12 +31,13 @@ class ProductCategoryHelper {
         .findFirst();
   }
 
-  List<ProductCategoryObjectBoxStruct> selectByParentCategoryGuidOrderByXorder(
-      {String parentCategoryGuid = ""}) {
-    print("[" + parentCategoryGuid + "]");
-    return (box.query(ProductCategoryObjectBoxStruct_.parent_category_guid
-            .equals(parentCategoryGuid))
-          ..order(ProductCategoryObjectBoxStruct_.xorder))
+  List<ProductCategoryObjectBoxStruct> selectByCategoryParentGuid(
+      String parentGuid) {
+    print("[" + parentGuid + "]");
+    return box
+        .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
+            .equals(parentGuid))
+        .order(ProductCategoryObjectBoxStruct_.xorder)
         .build()
         .find();
   }
@@ -43,13 +54,14 @@ class ProductCategoryHelper {
     return result;
   }
 
-  void deleteByGuidFixedMany(List<String> guidfixed) {
+  void deleteByGuidFixedMany(List<String> guidFixed) {
     Condition<ProductCategoryObjectBoxStruct>? ids;
-    for (var guid in guidfixed) {
-      if (ids == null)
+    for (var guid in guidFixed) {
+      if (ids == null) {
         ids = ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid);
-      else
-        ids = ids?.or(ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid));
+      } else {
+        ids = ids.or(ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid));
+      }
     }
     if (ids != null) {
       final find = box.query(ids).build().find();

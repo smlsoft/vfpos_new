@@ -18,6 +18,7 @@ PosProcessDetailStruct _$PosProcessDetailStructFromJson(
       unit_name: json['unit_name'] as String? ?? '',
       qty: (json['qty'] as num?)?.toDouble() ?? 0,
       price: (json['price'] as num?)?.toDouble() ?? 0,
+      price_original: (json['price_original'] as num?)?.toDouble() ?? 0,
       discount_text: json['discount_text'] as String? ?? '',
       discount: (json['discount'] as num?)?.toDouble() ?? 0,
       total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0,
@@ -30,7 +31,6 @@ PosProcessDetailStruct _$PosProcessDetailStructFromJson(
           .map((e) =>
               PosProcessDetailExtraStruct.fromJson(e as Map<String, dynamic>))
           .toList(),
-      category_guid: json['category_guid'] as String? ?? "",
     );
 
 Map<String, dynamic> _$PosProcessDetailStructToJson(
@@ -45,6 +45,7 @@ Map<String, dynamic> _$PosProcessDetailStructToJson(
       'unit_name': instance.unit_name,
       'qty': instance.qty,
       'price': instance.price,
+      'price_original': instance.price_original,
       'discount_text': instance.discount_text,
       'discount': instance.discount,
       'total_amount': instance.total_amount,
@@ -52,7 +53,6 @@ Map<String, dynamic> _$PosProcessDetailStructToJson(
       'is_void': instance.is_void,
       'remark': instance.remark,
       'image_url': instance.image_url,
-      'category_guid': instance.category_guid,
       'extra': instance.extra,
     };
 

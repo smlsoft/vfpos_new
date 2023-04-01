@@ -47,7 +47,7 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  Timer? _timer;
+  Timer? timerSwitchToMenu;
 
   void init() async {
     /*await global.appStorage.remove(global.syncPrinterTimeName);
@@ -59,8 +59,8 @@ class _LoadingState extends State<Loading> {
     await global.appStorage.remove(global.syncTableZoneTimeName);
     await global.appStorage.remove(global.syncDeviceTimeName);*/
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (global.loginSuccess) {
+    timerSwitchToMenu = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (global.loginSuccess && global.syncDataSuccess) {
         Navigator.of(context).pushReplacementNamed('/menu');
       }
       setState(() {});
@@ -70,7 +70,7 @@ class _LoadingState extends State<Loading> {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    timerSwitchToMenu?.cancel();
     super.dispose();
   }
 

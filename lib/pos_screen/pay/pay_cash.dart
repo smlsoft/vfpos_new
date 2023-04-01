@@ -41,17 +41,17 @@ class _PayCashWidgetState extends State<PayCashWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '7',
                 callBack: () => {textInputAdd("7")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '8',
                 callBack: () => {textInputAdd("8")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '9',
                 callBack: () => {textInputAdd("9")},
               )),
@@ -63,17 +63,17 @@ class _PayCashWidgetState extends State<PayCashWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '4',
                 callBack: () => {textInputAdd("4")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '5',
                 callBack: () => {textInputAdd("5")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '6',
                 callBack: () => {textInputAdd("6")},
               )),
@@ -85,17 +85,17 @@ class _PayCashWidgetState extends State<PayCashWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '1',
                 callBack: () => {textInputAdd("1")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '2',
                 callBack: () => {textInputAdd("2")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '3',
                 callBack: () => {textInputAdd("3")},
               )),
@@ -107,12 +107,12 @@ class _PayCashWidgetState extends State<PayCashWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '0',
                 callBack: () => {textInputAdd("0")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '.',
                 callBack: () => {
                   if (!global.payScreenData.cash_amount_text.contains('.'))
@@ -130,7 +130,7 @@ class _PayCashWidgetState extends State<PayCashWidget> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 textAndIconColor: Colors.black,
                 icon: Icons.backspace,
                 color: Colors.red.shade200,
@@ -146,7 +146,7 @@ class _PayCashWidgetState extends State<PayCashWidget> {
                 },
               )),
               Expanded(
-                child: NumpadButton(
+                child: NumPadButton(
                   text: 'C',
                   color: Colors.grey.shade400,
                   callBack: () {

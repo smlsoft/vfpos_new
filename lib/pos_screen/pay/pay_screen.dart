@@ -98,7 +98,8 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       var jsonData = HttpPost(
           command: "pay_screen",
           data: jsonEncode(global.posProcessResult.toJson()));
-      global.sendToServer(url, jsonEncode(jsonData.toJson()));
+      global.sendToServer(
+          ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
     }
   }
 
@@ -137,17 +138,17 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '7',
                 callBack: () => {cashTextInputAdd("7")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '8',
                 callBack: () => {cashTextInputAdd("8")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '9',
                 callBack: () => {cashTextInputAdd("9")},
               )),
@@ -165,17 +166,17 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '4',
                 callBack: () => {cashTextInputAdd("4")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '5',
                 callBack: () => {cashTextInputAdd("5")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '6',
                 callBack: () => {cashTextInputAdd("6")},
               )),
@@ -198,17 +199,17 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '1',
                 callBack: () => {cashTextInputAdd("1")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '2',
                 callBack: () => {cashTextInputAdd("2")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '3',
                 callBack: () => {cashTextInputAdd("3")},
               )),
@@ -237,12 +238,12 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '0',
                 callBack: () => {cashTextInputAdd("0")},
               )),
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 text: '.',
                 callBack: () => {cashTextInputAdd(".")},
               )),
@@ -273,7 +274,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
-                  child: NumpadButton(
+                  child: NumPadButton(
                 textAndIconColor: Colors.black,
                 icon: Icons.backspace,
                 color: Colors.red.shade200,
@@ -290,7 +291,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 },
               )),
               Expanded(
-                child: NumpadButton(
+                child: NumPadButton(
                   text: 'C',
                   color: Colors.grey.shade400,
                   callBack: () => {
@@ -838,7 +839,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                                         Colors.white),
                               ),
                               onPressed: () async {
-                                network.sendProcessToCustomerDisplay();
+                                global.sendProcessToCustomerDisplay();
 
                                 Navigator.pop(context);
                               },
@@ -1062,17 +1063,17 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '7',
                     callBack: () => {numberPadTextAdd("7")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '8',
                     callBack: () => {numberPadTextAdd("8")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '9',
                     callBack: () => {numberPadTextAdd("9")},
                   )),
@@ -1084,17 +1085,17 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '4',
                     callBack: () => {numberPadTextAdd("4")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '5',
                     callBack: () => {numberPadTextAdd("5")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '6',
                     callBack: () => {numberPadTextAdd("6")},
                   )),
@@ -1106,17 +1107,17 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '1',
                     callBack: () => {numberPadTextAdd("1")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '2',
                     callBack: () => {numberPadTextAdd("2")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '3',
                     callBack: () => {numberPadTextAdd("3")},
                   )),
@@ -1128,12 +1129,12 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '0',
                     callBack: () => {numberPadTextAdd("0")},
                   )),
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     text: '.',
                     callBack: () => {
                       if (!global.payScreenNumberPadText.contains('.'))
@@ -1151,7 +1152,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(
-                      child: NumpadButton(
+                      child: NumPadButton(
                     textAndIconColor: Colors.black,
                     icon: Icons.backspace,
                     color: Colors.red.shade200,
@@ -1169,7 +1170,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                     },
                   )),
                   Expanded(
-                    child: NumpadButton(
+                    child: NumPadButton(
                       text: 'C',
                       color: Colors.grey.shade400,
                       callBack: () {

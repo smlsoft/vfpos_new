@@ -40,15 +40,32 @@ class SyncMasterStatusModel {
 @JsonSerializable(explicitToJson: true)
 class LocalStrongDataModel {
   int printerCashierType;
-  int printerCashierConnectType;
-  String printerCashierIpAddress;
-  int printerCashierIpPort;
+  int connectType;
+  String ipAddress;
+  int ipPort;
+  String productName;
+  String deviceName;
+  String deviceId;
+  String manufacturer;
+  String vendorId;
+  String productId;
+  // 1 = 58mm, 2 = 80mm
+  int paperSize;
+  bool printBillAuto;
 
   LocalStrongDataModel(
-      {required this.printerCashierType,
-      required this.printerCashierConnectType,
-      required this.printerCashierIpAddress,
-      required this.printerCashierIpPort});
+      {this.printerCashierType = 0,
+      this.connectType = 0,
+      this.ipAddress = "",
+      this.ipPort = 0,
+      this.productName = "",
+      this.deviceName = "",
+      this.deviceId = "",
+      this.manufacturer = "",
+      this.vendorId = "",
+      this.productId = "",
+      this.paperSize = 0,
+      this.printBillAuto = false});
 
   factory LocalStrongDataModel.fromJson(Map<String, dynamic> json) =>
       _$LocalStrongDataModelFromJson(json);
@@ -56,14 +73,41 @@ class LocalStrongDataModel {
 }
 
 class PrinterModel {
-  String name;
+  String productName;
+  String deviceName;
+  String deviceId;
+  String manufacturer;
+  String vendorId;
+  String productId;
   String ipAddress;
   int ipPort;
   global.PrinterCashierConnectEnum connectType;
+  // 1 = 58mm, 2 = 80mm
+  int paperSize;
 
   PrinterModel(
-      {required this.name,
-      required this.ipAddress,
-      required this.ipPort,
-      required this.connectType});
+      {this.productName = "",
+      this.deviceName = "",
+      this.deviceId = "",
+      this.manufacturer = "",
+      this.productId = "",
+      this.vendorId = "",
+      this.ipAddress = "",
+      this.ipPort = 0,
+      this.paperSize = 0,
+      this.connectType = global.PrinterCashierConnectEnum.none});
+}
+
+@JsonSerializable()
+class ServerDeviceModel {
+  late String device;
+  late String ip;
+  late bool connected;
+
+  ServerDeviceModel(
+      {required this.device, required this.ip, required this.connected});
+
+  factory ServerDeviceModel.fromJson(Map<String, dynamic> json) =>
+      _$ServerDeviceModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ServerDeviceModelToJson(this);
 }
