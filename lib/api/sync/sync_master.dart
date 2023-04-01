@@ -525,37 +525,40 @@ Future syncMasterData() async {
 }
 
 Future syncMasterProcess() async {
-  global.isOnline = await global.hasNetwork();
-  if (global.isOnline) {
-    if (global.apiConnected == false) {
-      if (global.loginProcess == false) {
-        global.loginProcess = true;
-        UserRepository userRepository = UserRepository();
-        await userRepository
-            .authenUser(global.apiUserName, global.apiUserPassword)
-            .then((result) async {
-          if (result.success) {
-            global.apiConnected = true;
-            global.appStorage.write("token", result.data["token"]);
-            print("Login Success");
-            ApiResponse selectShop =
-                await userRepository.selectShop(global.apiShopID);
-            if (selectShop.success) {
-              print("Select Shop Success");
-              global.loginSuccess = true;
+  if (global.appMode == global.AppModeEnum.posTerminal) {
+    // Sync เฉพาะเครื่อง POS Terminal
+    global.isOnline = await global.hasNetwork();
+    if (global.isOnline) {
+      if (global.apiConnected == false) {
+        if (global.loginProcess == false) {
+          global.loginProcess = true;
+          UserRepository userRepository = UserRepository();
+          await userRepository
+              .authenUser(global.apiUserName, global.apiUserPassword)
+              .then((result) async {
+            if (result.success) {
+              global.apiConnected = true;
+              global.appStorage.write("token", result.data["token"]);
+              print("Login Success");
+              ApiResponse selectShop =
+                  await userRepository.selectShop(global.apiShopID);
+              if (selectShop.success) {
+                print("Select Shop Success");
+                global.loginSuccess = true;
+              }
             }
-          }
-        }).catchError((e) {
-          print(e);
-        }).whenComplete(() async {
-          global.loginProcess = false;
-        });
+          }).catchError((e) {
+            print(e);
+          }).whenComplete(() async {
+            global.loginProcess = false;
+          });
+        }
       }
-    }
-    if (global.apiConnected == true &&
-        global.loginSuccess == true &&
-        global.syncDataProcess == false) {
-      syncMasterData();
+      if (global.apiConnected == true &&
+          global.loginSuccess == true &&
+          global.syncDataProcess == false) {
+        syncMasterData();
+      }
     }
   }
 }

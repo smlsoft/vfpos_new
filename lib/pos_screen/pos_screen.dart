@@ -3626,7 +3626,7 @@ class _PosScreenState extends State<PosScreen>
                 },
                 child: Scaffold(
                     resizeToAvoidBottomInset: false,
-                    body: (global.appMode == global.AppModeEnum.pos)
+                    body: (global.appMode == global.AppModeEnum.posTerminal)
                         ? appLayoutPos()
                         : appLayoutRestaurant()))));
   }

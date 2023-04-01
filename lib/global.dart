@@ -147,7 +147,7 @@ String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการ�
 bool isServer = false;
 String serverIp = "";
 int serverPort = 4040;
-AppModeEnum appMode = AppModeEnum.pos;
+AppModeEnum appMode = AppModeEnum.posTerminal;
 bool apiConnected = false;
 String apiUserName = "maxkorn";
 String apiUserPassword = "maxkorn";
@@ -187,7 +187,7 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
 
-enum AppModeEnum { pos, restaurant }
+enum AppModeEnum { posTerminal, restaurantTerminal, posClient }
 
 void themeSelect(int mode) {
   switch (mode) {

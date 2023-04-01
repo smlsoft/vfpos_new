@@ -59,14 +59,20 @@ class _LoadingState extends State<Loading> {
     await global.appStorage.remove(global.syncTableZoneTimeName);
     await global.appStorage.remove(global.syncDeviceTimeName);*/
 
-    timerSwitchToMenu =
-        Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (global.loginSuccess && global.syncDataSuccess) {
-        Navigator.of(context).pushReplacementNamed('/menu');
-      }
-      setState(() {});
-    });
-    syncMasterProcess();
+    if (global.appMode == global.AppModeEnum.posClient) {
+      Timer(const Duration(seconds: 1), () {
+        Navigator.of(context).pushReplacementNamed('/client');
+      });
+    } else {
+      timerSwitchToMenu =
+          Timer.periodic(const Duration(seconds: 1), (timer) async {
+        if (global.loginSuccess && global.syncDataSuccess) {
+          Navigator.of(context).pushReplacementNamed('/menu');
+        }
+        setState(() {});
+      });
+      syncMasterProcess();
+    }
   }
 
   @override
