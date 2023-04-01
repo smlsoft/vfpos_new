@@ -8,19 +8,19 @@ import 'package:dedepos/db/master_bank_helper.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/db/product_category_helper.dart';
-import 'package:dedepos/api/sync/model/bank_and_wallet_struct.dart';
-import 'package:dedepos/api/sync/model/employee_struct.dart';
-import 'package:dedepos/api/sync/model/sync_printer.dart';
+import 'package:dedepos/api/sync/model/bank_and_wallet_model.dart';
+import 'package:dedepos/api/sync/model/employee_model.dart';
+import 'package:dedepos/api/sync/model/sync_printer_model.dart';
 import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
-import 'package:dedepos/api/sync/model/sync_inventory.dart';
-import 'package:dedepos/api/sync/model/item_remove.dart';
+import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
+import 'package:dedepos/api/sync/model/item_remove_model.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart' as globalModel;
-import 'package:dedepos/model/objectbox/product_option.dart';
+import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:intl/intl.dart';
 
@@ -30,8 +30,8 @@ Future getMaster() async {
   await apiRepository.getMasterBank().then((result) {
     if (result.success) {
       helper.deleteAll();
-      List<ApiBankAndWalletStruct> dataFromApi = (result.data as List)
-          .map((newData) => ApiBankAndWalletStruct.fromJson(newData))
+      List<ApiBankAndWalletModel> dataFromApi = (result.data as List)
+          .map((newData) => ApiBankAndWalletModel.fromJson(newData))
           .toList();
       List<BankAndWalletObjectBoxStruct> data = [];
       for (var value in dataFromApi) {
@@ -60,8 +60,8 @@ Future getMaster() async {
 
 Future syncEmployee(data) async {
   // Delete
-  List<ItemRemove> removeMany = (data["remove"] as List)
-      .map((removeCate) => ItemRemove.fromJson(removeCate))
+  List<ItemRemoveModel> removeMany = (data["remove"] as List)
+      .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
       .toList();
   for (var data in removeMany) {
     try {
@@ -71,8 +71,8 @@ Future syncEmployee(data) async {
     }
   }
   // Insert
-  List<EmployeeStruct> insert = (data["new"] as List)
-      .map((newCate) => EmployeeStruct.fromJson(newCate))
+  List<EmployeeModel> insert = (data["new"] as List)
+      .map((newCate) => EmployeeModel.fromJson(newCate))
       .toList();
   List<String> manyForDelete = [];
   List<EmployeeObjectBoxStruct> insertManyData = [];
@@ -98,8 +98,8 @@ Future syncProductCategory(data) async {
   List<ProductCategoryObjectBoxStruct> manyForInsert = [];
 
   // Delete
-  List<ItemRemove> removes = (data["remove"] as List)
-      .map((removeCate) => ItemRemove.fromJson(removeCate))
+  List<ItemRemoveModel> removes = (data["remove"] as List)
+      .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
       .toList();
   for (var removeData in removes) {
     try {
@@ -111,8 +111,8 @@ Future syncProductCategory(data) async {
     }
   }
   // Insert
-  List<SyncCategory> newDataList = (data["new"] as List)
-      .map((newCate) => SyncCategory.fromJson(newCate))
+  List<SyncCategoryModel> newDataList = (data["new"] as List)
+      .map((newCate) => SyncCategoryModel.fromJson(newCate))
       .toList();
   for (var newData in newDataList) {
     global.syncTimeIntervalSecond = 1;
@@ -168,8 +168,8 @@ Future syncProductCategory(data) async {
   }
 }
 
-void syncProductBarcode(
-    List<ItemRemove> removeList, List<SyncProductBarcodeModel> newDataList) {
+void syncProductBarcode(List<ItemRemoveModel> removeList,
+    List<SyncProductBarcodeModel> newDataList) {
   List<String> manyForDelete = [];
   List<ProductBarcodeObjectBoxStruct> manyForInsert = [];
 
@@ -212,7 +212,7 @@ void syncProductBarcode(
         for (int index = 0; index < option.names.length; index++) {
           packOptionNames.add(option.names[index].name);
         }
-        ProductOptionStruct newOption = ProductOptionStruct(
+        ProductOptionModel newOption = ProductOptionModel(
           guid_fixed: option.guid,
           choice_type: option.choicetype,
           max_select: option.maxselect,
@@ -224,7 +224,7 @@ void syncProductBarcode(
           for (int index = 0; index < choice.names.length; index++) {
             packChoiceNames.add(choice.names[index].name);
           }
-          ProductChoiceStruct newChoice = ProductChoiceStruct(
+          ProductChoiceModel newChoice = ProductChoiceModel(
             guid_fixed: choice.guid,
             guid_code: option.guid,
             names: packChoiceNames,
@@ -316,8 +316,8 @@ Future syncPrinter(data) async {
   List<PrinterObjectBoxStruct> manyForInsert = [];
 
   // Delete
-  List<ItemRemove> removes = (data["remove"] as List)
-      .map((removeCate) => ItemRemove.fromJson(removeCate))
+  List<ItemRemoveModel> removes = (data["remove"] as List)
+      .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
       .toList();
   for (var removeData in removes) {
     try {
@@ -442,8 +442,8 @@ Future syncMasterData() async {
             .then((value) {
           if (value.success) {
             var dataList = value.data["productbarcode"];
-            List<ItemRemove> removeList = (dataList["remove"] as List)
-                .map((removeCate) => ItemRemove.fromJson(removeCate))
+            List<ItemRemoveModel> removeList = (dataList["remove"] as List)
+                .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
                 .toList();
             List<SyncProductBarcodeModel> newDataList =
                 (dataList["new"] as List)

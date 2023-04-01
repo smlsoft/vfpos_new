@@ -1,3 +1,6 @@
+import 'package:dedepos/model/json/pos_process_model.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:dedepos/global.dart' as global;
 
@@ -72,7 +75,7 @@ class LocalStrongDataModel {
   Map<String, dynamic> toJson() => _$LocalStrongDataModelToJson(this);
 }
 
-class PrinterModel {
+class PrinterDeviceModel {
   String productName;
   String deviceName;
   String deviceId;
@@ -85,7 +88,7 @@ class PrinterModel {
   // 1 = 58mm, 2 = 80mm
   int paperSize;
 
-  PrinterModel(
+  PrinterDeviceModel(
       {this.productName = "",
       this.deviceName = "",
       this.deviceId = "",
@@ -110,4 +113,27 @@ class ServerDeviceModel {
   factory ServerDeviceModel.fromJson(Map<String, dynamic> json) =>
       _$ServerDeviceModelFromJson(json);
   Map<String, dynamic> toJson() => _$ServerDeviceModelToJson(this);
+}
+
+class PosHoldProcessModel {
+  int countLog = 0;
+  String saleCode = "";
+  PosPayModel payScreenData = PosPayModel();
+  PosProcessModel posProcess = PosProcessModel();
+}
+
+class ThemeStruct {
+  late Color background;
+  late Color productLevelBackground;
+  late Color productBottomBackground;
+  late Color productLevelRootBackground;
+  late Color productLevelRootBottomBackground;
+  late Color transBackground;
+  late Color transSelectedBackground;
+  late Color transPayBottomBackground;
+  late Color transPayBottomDisableBackground;
+
+  // Colors new layout
+  late Color secondary;
+  late Color orange1;
 }

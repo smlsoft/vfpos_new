@@ -1,13 +1,13 @@
 import 'dart:async';
-import '../api/sync/model/promotion_struct.dart';
+import '../api/sync/model/promotion_model.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PromotionHelper {
-  int insert(PromotionStruct value) {
+  int insert(PromotionModel value) {
     return 0;
   }
 
-  List<PromotionStruct> select(
+  List<PromotionModel> select(
       {String where = "", int limit = 0, int offset = 0}) {
     return [];
   }
@@ -16,7 +16,7 @@ class PromotionHelper {
     return false;
   }
 
-  bool update(PromotionStruct value)  {
+  bool update(PromotionModel value) {
     return false;
   }
 }

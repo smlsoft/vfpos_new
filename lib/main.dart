@@ -1,3 +1,4 @@
+import 'package:dedepos/global_model.dart';
 import 'package:flutter/services.dart';
 import 'package:localstore/localstore.dart';
 import 'dart:io';

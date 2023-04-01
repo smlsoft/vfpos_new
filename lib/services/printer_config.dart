@@ -11,8 +11,8 @@ import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
-import 'package:dedepos/model/json/print_queue_struct.dart';
-import 'package:dedepos/model/json/receive_money_struct.dart';
+import 'package:dedepos/model/json/print_queue_model.dart';
+import 'package:dedepos/model/json/receive_money_model.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
 import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
   TextEditingController ipAddressController = TextEditingController();
   TextEditingController portController = TextEditingController();
   int printerConnectType = global.appLocalStrongData.connectType;
-  List<PrinterModel> printerList = [];
+  List<PrinterDeviceModel> printerList = [];
   late Timer screenTimer;
   bool printBillAuto = true;
   int printerPaperSize = 2;
@@ -75,7 +75,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       printer.connect(ip, port: 9100).then((value) {
         if (value == PosPrintResult.success) {
           if (!printerList.contains(ip)) {
-            printerList.add(PrinterModel(
+            printerList.add(PrinterDeviceModel(
               productName: "IP Printer",
               ipAddress: ip,
               ipPort: 9100,
@@ -91,7 +91,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
   void getDeviceList() async {
     printerConnectType = 0;
     printerList.clear();
-    printerList.add(PrinterModel(
+    printerList.add(PrinterDeviceModel(
       deviceName: "SUNMI Printer",
       connectType: global.PrinterCashierConnectEnum.sumi1,
     ));
@@ -101,7 +101,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
 
     print(" length: ${results.length}");
     for (var printer in results) {
-      printerList.add(PrinterModel(
+      printerList.add(PrinterDeviceModel(
         productName: printer["productName"],
         deviceName: printer["deviceName"],
         deviceId: printer["deviceId"],

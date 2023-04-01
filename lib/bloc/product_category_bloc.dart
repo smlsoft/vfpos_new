@@ -36,7 +36,8 @@ class ProductCategoryBloc
     emit(ProductCategoryLoading());
     global.productCategoryList =
         ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
-    PosProcess().sumCategoryCount(global.posProcessResult);
+    PosProcess().sumCategoryCount(
+        global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
     emit(ProductCategoryLoadSuccess());
   }
 

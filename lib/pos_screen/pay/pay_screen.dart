@@ -21,9 +21,9 @@ import 'package:dedepos/widgets/button.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:dedepos/model/pos_pay_struct.dart';
-import 'package:dedepos/model/json/struct.dart';
-import 'package:dedepos/model/find/find_item_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
+import 'package:dedepos/model/json/pos_model.dart';
+import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
@@ -35,7 +35,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:flutter_svg/svg.dart';
 import 'pay_credit_card.dart';
 import 'pay_transfer.dart';
@@ -47,7 +47,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import '../pos_util.dart' as posUtil;
 
 class PayScreen extends StatefulWidget {
-  final PosProcessStruct posProcess;
+  final PosProcessModel posProcess;
 
   const PayScreen({Key? key, required this.posProcess}) : super(key: key);
 
@@ -93,11 +93,12 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       dev.log(
           "sendPayScreenCommandToCustomerDisplay : ${global.customerDisplayDeviceList[index].ip}");
       var url = "http://${global.customerDisplayDeviceList[index].ip}:5041";
-      global.posProcessResult.qr_code = PromptPay.generateQRData("0899223131",
-          amount: global.posProcessResult.total_amount.toDouble());
+      global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.qr_code = PromptPay.generateQRData(
+          "0899223131",
+          amount: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount.toDouble());
       var jsonData = HttpPost(
           command: "pay_screen",
-          data: jsonEncode(global.posProcessResult.toJson()));
+          data: jsonEncode(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.toJson()));
       global.sendToServer(
           ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
     }

@@ -1,4 +1,4 @@
-import 'package:dedepos/model/find/find_employee_struct.dart';
+import 'package:dedepos/model/find/find_employee_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/api/rest_api.dart';
 
@@ -9,7 +9,7 @@ class FindEmployeeByNameLoadStart extends FindEmployeeByNameEvent {
 }
 
 class FindEmployeeByNameLoadSuccess extends FindEmployeeByNameState {
-  List<FindEmployeeStruct> result;
+  List<FindEmployeeModel> result;
 
   FindEmployeeByNameLoadSuccess({required this.result});
 }
@@ -31,7 +31,7 @@ class FindEmployeeByNameBloc
   void _findEmployeeByWord(FindEmployeeByNameLoadStart event,
       Emitter<FindEmployeeByNameState> emit) async {
     emit(FindEmployeeByNameLoading());
-    List<FindEmployeeStruct> result =
+    List<FindEmployeeModel> result =
         await apiFindEmployeeByName.findEmployeeByWord(event.words);
     emit(FindEmployeeByNameLoadSuccess(result: result));
   }

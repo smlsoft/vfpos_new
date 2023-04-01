@@ -1,5 +1,5 @@
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +7,10 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'pay_widget.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 
 class PayDiscountWidget extends StatefulWidget {
-  final PosProcessStruct posProcess;
+  final PosProcessModel posProcess;
   final BuildContext blocContext;
 
   const PayDiscountWidget(

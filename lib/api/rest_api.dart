@@ -2,19 +2,19 @@ import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/db/member_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
-import 'package:dedepos/model/find/find_employee_struct.dart';
-import 'package:dedepos/model/find/find_member_struct.dart';
+import 'package:dedepos/model/find/find_employee_model.dart';
+import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/model/find/find_item_struct.dart';
+import 'package:dedepos/model/find/find_item_model.dart';
 import 'dart:async';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 class RestApiFindItemByCodeNameBarcode {
-  Future<List<FindItemStruct>> findItemByCodeNameBarcode(
+  Future<List<FindItemModel>> findItemByCodeNameBarcode(
       String word, int offset, int limit) async {
     //String _fieldName = "barcode,code,name_1";
-    List<FindItemStruct> result = [];
+    List<FindItemModel> result = [];
     if (word.trim().isNotEmpty) {
       ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
       List<ProductBarcodeObjectBoxStruct> select =
@@ -28,7 +28,7 @@ class RestApiFindItemByCodeNameBarcode {
             priceIndex++) {
           packPrices.add(double.tryParse(source.prices[priceIndex]) ?? 0.0);
         }
-        result.add(FindItemStruct(
+        result.add(FindItemModel(
             barcode: source.barcode,
             item_code: "", // _source.code,
             item_names: source.names,
@@ -45,11 +45,11 @@ class RestApiFindItemByCodeNameBarcode {
 }
 
 class RestApiFindMemberByTelName {
-  Future<List<FindMemberStruct>> findMemberByTelName(
+  Future<List<FindMemberModel>> findMemberByTelName(
       String word, int offset, int limit) async {
     String _fieldName = "telephone,name";
     List<String> _fieldNameList = _fieldName.split(",");
-    List<FindMemberStruct> _result = [];
+    List<FindMemberModel> _result = [];
     if (word.trim().isNotEmpty) {
       MemberHelper _memberHelper = MemberHelper();
 
@@ -80,7 +80,7 @@ class RestApiFindMemberByTelName {
       for (int _index = 0; _index < _select.length; _index++) {
         MemberObjectBoxStruct _source = _select[_index];
         _result.add(
-          FindMemberStruct(
+          FindMemberModel(
             address: _source.address,
             branchcode: _source.branchcode,
             branchtype: _source.branchtype,
@@ -100,15 +100,15 @@ class RestApiFindMemberByTelName {
 }
 
 class RestApiFindEmployeeByWord {
-  Future<List<FindEmployeeStruct>> findEmployeeByWord(String word) async {
-    List<FindEmployeeStruct> _result = [];
+  Future<List<FindEmployeeModel>> findEmployeeByWord(String word) async {
+    List<FindEmployeeModel> _result = [];
     EmployeeHelper _employeeHelper = EmployeeHelper();
     List<EmployeeObjectBoxStruct> _select =
         await _employeeHelper.select(word: word);
     for (int _index = 0; _index < _select.length; _index++) {
       EmployeeObjectBoxStruct _source = _select[_index];
       _result.add(
-        FindEmployeeStruct(
+        FindEmployeeModel(
             name: _source.name,
             code: _source.code,
             roles: "" /* _source.roles.toString()*/,

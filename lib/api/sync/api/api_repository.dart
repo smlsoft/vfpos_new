@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dedepos/api/sync/model/sync_inventory.dart';
+import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/global_model.dart' as globalModel;
 

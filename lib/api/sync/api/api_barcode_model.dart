@@ -1,7 +1,7 @@
-import 'package:dedepos/model/json/struct.dart';
+import 'package:dedepos/model/json/pos_model.dart';
 
 class ApiBarcodeResultModel {
-  List<BarcodeStruct>? barcodes;
+  List<BarcodeModel>? barcodes;
 
   ApiBarcodeResultModel({barcodes});
 

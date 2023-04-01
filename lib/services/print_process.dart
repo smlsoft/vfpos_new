@@ -10,7 +10,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:collection/collection.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 
 enum PrintColumnAlign { left, right, center }
 

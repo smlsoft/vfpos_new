@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/api/sync/model/promotion_struct.dart';
+import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:uuid/uuid.dart';
@@ -10,7 +10,7 @@ import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'pos_process.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global.dart' as global;
 
 Future<String> saveBill(
@@ -28,7 +28,8 @@ Future<String> saveBill(
       customer_telephone: "",
       sale_code: global.saleActiveCode,
       sale_name: global.saleActiveName,
-      total_amount: global.posProcessResult.total_amount,
+      total_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.total_amount,
       cashier_code: global.userLoginCode,
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
@@ -44,7 +45,8 @@ Future<String> saveBill(
   // รายละเอียด
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
-  for (var value in global.posProcessResult.details) {
+  for (var value in global
+      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.details) {
     details.add(BillDetailObjectBoxStruct(
         doc_number: docNumber,
         line_number: lineNumber,

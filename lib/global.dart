@@ -21,14 +21,14 @@ import 'package:dedepos/db/bill_pay_helper.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/db/member_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/bank_and_wallet_model.dart';
+import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/model/json/payment.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
-import 'package:dedepos/model/json/print_queue_struct.dart';
+import 'package:dedepos/model/json/payment_model.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
+import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/api/sync/sync_master.dart' as sync;
-import 'package:dedepos/model/json/printer_struct.dart';
+import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -39,7 +39,7 @@ import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'dart:async';
 import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
@@ -53,7 +53,7 @@ import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:charset_converter/charset_converter.dart';
 import 'model/json/language_model.dart';
-import 'model/json/struct.dart';
+import 'model/json/pos_model.dart';
 import 'package:dedepos/api/network/server.dart' as network;
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:objectbox/objectbox.dart';
@@ -70,8 +70,9 @@ AuthService appAuth = AuthService();
 bool initSuccess = false;
 late List<LanguageSystemCodeModel> languageSystemCode;
 late String pathApplicationDocumentsDirectory;
-PosProcessStruct posProcessResult = PosProcessStruct(
-    details: [], select_promotion_temp_list: [], promotion_list: []);
+List<PosHoldProcessModel> posHoldProcessResult = [];
+int posHoldMax = 10;
+int posHoldActiveNumber = 0;
 ProductCategoryHelper productCategoryHelper = ProductCategoryHelper();
 ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 MemberHelper memberHelper = MemberHelper();
@@ -100,7 +101,6 @@ String databaseName = "DEMO"; // "DATA1 or DEMO";
 bool isTablet = false; // False=จอเล็ก,True=จอใหญ่
 bool isIphoneX = false;
 bool isWindowsDesktop = false;
-int posHoldNumber = 0;
 bool speechToTextVisible = false;
 bool loginSuccess = false;
 GetStorage appStorage = GetStorage('AppStorage');
@@ -109,12 +109,11 @@ late LocalStrongDataModel appLocalStrongData;
 bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
-PayStruct payScreenData = PayStruct();
+PosPayModel payScreenData = PosPayModel();
 bool lugenPaymentProvider = true;
-List<PaymentProviderStruct> lugenPaymentProviderList = [];
-List<PaymentProviderStruct> qrPaymentProviderList = [];
-List<PaymentProviderStruct> bankProviderList = [];
-List<PosHoldStruct> posHoldList = [];
+List<PaymentProviderModel> lugenPaymentProviderList = [];
+List<PaymentProviderModel> qrPaymentProviderList = [];
+List<PaymentProviderModel> bankProviderList = [];
 bool payScreenNumberPadIsActive = false;
 double payScreenNumberPadLeft = 100;
 double payScreenNumberPadTop = 100;
@@ -141,7 +140,7 @@ List<ProductCategoryObjectBoxStruct> productCategoryCodeSelected = [];
 List<ProductCategoryObjectBoxStruct> productCategoryList = [];
 List<ProductBarcodeObjectBoxStruct> productListByCategory = [];
 List<ProductCategoryObjectBoxStruct> productCategoryChildList = [];
-List<PrinterStruct> printerList = [];
+List<PrinterModel> printerList = [];
 String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
 String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
@@ -170,7 +169,7 @@ String syncDeviceTimeName = "lastSyncDevice";
 // String apiShopCode = "290P2Puyksvx04jlsavRTZhTyvg";
 bool isOnline = false;
 MemberObjectBoxStruct? userData;
-Payment? paymentData;
+PaymentModel? paymentData;
 late Store objectBoxStore;
 String dateFormatSync = "yyyy-MM-ddTHH:mm:ss";
 PosVersionEnum posVersion = PosVersionEnum.vfpos;
@@ -543,7 +542,9 @@ Future<void> sendProcessToCustomerDisplay() async {
     if (customerDisplayDeviceList[index].connected) {
       var url = "http://${customerDisplayDeviceList[index].ip}:5041";
       var jsonData = HttpPost(
-          command: "process", data: jsonEncode(posProcessResult.toJson()));
+          command: "process",
+          data: jsonEncode(
+              posHoldProcessResult[posHoldActiveNumber].posProcess.toJson()));
       dev.log("sendProcessToCustomerDisplay : " + url);
       sendToServer(
           ip: url,
@@ -683,7 +684,7 @@ Future<void> loading() async {
       //global.printerList = await global.printerHelper.select();
     }
     // Payment
-    qrPaymentProviderList.add(PaymentProviderStruct(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
       paymentcode: "promptpay",
       bookbankcode: "001",
@@ -698,7 +699,7 @@ Future<void> loading() async {
       wallettype: 101,
     ));
     // Lugen
-    lugenPaymentProviderList.add(PaymentProviderStruct(
+    lugenPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       paymentcode: "promptpay",
       bookbankcode: "002",
@@ -712,7 +713,7 @@ Future<void> loading() async {
       feeRate: 0.0,
       wallettype: 201,
     ));
-    lugenPaymentProviderList.add(PaymentProviderStruct(
+    lugenPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       paymentcode: "truemoney",
       bookbankcode: "002",
@@ -726,7 +727,7 @@ Future<void> loading() async {
       feeRate: 0.0,
       wallettype: 202,
     ));
-    lugenPaymentProviderList.add(PaymentProviderStruct(
+    lugenPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       bookbankcode: "002",
       paymentcode: "linepay",
@@ -740,7 +741,7 @@ Future<void> loading() async {
       feeRate: 0.0,
       wallettype: 203,
     ));
-    lugenPaymentProviderList.add(PaymentProviderStruct(
+    lugenPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       bookbankcode: "002",
       paymentcode: "alipay",
@@ -801,7 +802,6 @@ Future<void> loading() async {
   }
   //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
   //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
-  dev.log("Start");
   {
     /// Sync Master (ข้อมูลหลัก)
     int syncMasterSecondCount = 0;
@@ -820,16 +820,13 @@ Future<void> loading() async {
       }
     });
   }
-  dev.log("Init 1");
   Timer.periodic(const Duration(seconds: 1), (timer) async {
     if (loginSuccess) systemProcess();
   });
-  dev.log("Init 2");
-
-  for (int index = 0; index < 50; index++) {
-    posHoldList.add(PosHoldStruct());
+  // สร้าง Process Result ตามจำนวน Hold บิล
+  for (int index = 0; index < posHoldMax; index++) {
+    posHoldProcessResult.add(PosHoldProcessModel());
   }
-  dev.log("Init 3");
   pathApplicationDocumentsDirectory =
       (await getApplicationDocumentsDirectory()).path;
 
@@ -841,7 +838,6 @@ Future<void> loading() async {
     return a.code.compareTo(b.code);
   });
   initSuccess = true;
-  dev.log("Init Finish");
 }
 
 Future<void> sendToServer(

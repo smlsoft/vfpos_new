@@ -41,7 +41,8 @@ double sumCoupon() {
 }
 
 double diffAmount() {
-  double _totalAmount = global.posProcessResult.total_amount;
+  double _totalAmount = global
+      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount;
   double _sumCash = global.payScreenData.cash_amount;
   double _sumDiscount = global.payScreenData.discount_amount;
   double _sumCreditCard = sumCreditCard();

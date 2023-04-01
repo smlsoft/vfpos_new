@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,13 +10,13 @@ import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 
 class PayCheque extends StatefulWidget {
-  final PosProcessStruct posProcess;
+  final PosProcessModel posProcess;
   final BuildContext blocContext;
   const PayCheque({required this.posProcess, required this.blocContext});
 
@@ -48,7 +48,7 @@ class _PayChequeState extends State<PayCheque> {
 
   bool saveData() {
     if (_chequeNumber.trim().isNotEmpty && _chequeAmount > 0) {
-      global.payScreenData.cheque.add(PayChequeStruct(
+      global.payScreenData.cheque.add(PayChequeModel(
           due_date: DateTime.now(),
           bank_code: _bankCode,
           bank_name: _bankName,

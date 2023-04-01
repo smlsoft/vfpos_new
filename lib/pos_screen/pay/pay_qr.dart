@@ -1,9 +1,9 @@
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/bank_and_wallet_model.dart';
+import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
-import 'package:dedepos/model/json/payment.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/payment_model.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pay/pay_qr_screen.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:dedepos/services/menu_button.dart';
@@ -16,10 +16,10 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'pay_widget.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 
 class PayQrWidget extends StatefulWidget {
-  final PosProcessStruct posProcess;
+  final PosProcessModel posProcess;
   final BuildContext blocContext;
 
   const PayQrWidget({required this.posProcess, required this.blocContext});
@@ -45,7 +45,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
   bool saveData(String providerCode, String providerName) {
     global.payScreenNumberPadIsActive = false;
     if (_amount > 0) {
-      global.payScreenData.qr.add(PayQrStruct(
+      global.payScreenData.qr.add(PayQrModel(
           provider_code: providerCode,
           provider_name: providerName,
           description: _descriptionController.text,
@@ -274,7 +274,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
     double iconHeight = 100;
     double iconWidth = 100;
 
-    List<PaymentProviderStruct> providerList = [];
+    List<PaymentProviderModel> providerList = [];
     providerList.addAll(global.qrPaymentProviderList);
     providerList.addAll(global.lugenPaymentProviderList);
     return Container(
@@ -390,8 +390,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                               ),
                               child: Center(
                                   child: Text(
-                                "${global.language(
-                                        "รับชำระด้วย QR Code เต็มจำนวน")} : ${global.moneyFormat.format(diffAmount())} ${global.language("money_symbol")}",
+                                "${global.language("รับชำระด้วย QR Code เต็มจำนวน")} : ${global.moneyFormat.format(diffAmount())} ${global.language("money_symbol")}",
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,

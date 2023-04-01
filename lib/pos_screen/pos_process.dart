@@ -1,14 +1,14 @@
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
-import 'package:dedepos/api/sync/model/promotion_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
+import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 class PosProcess {
-  final PosProcessStruct processResult = PosProcessStruct(
+  final PosProcessModel processResult = PosProcessModel(
       details: [], select_promotion_temp_list: [], promotion_list: []);
 
-  void sumCategoryCount(PosProcessStruct result) {
+  void sumCategoryCount(PosProcessModel result) {
     for (var product in global.productListByCategory) {
       product.product_count = 0;
       for (var transDetail in result.details) {
@@ -70,12 +70,12 @@ class PosProcess {
     }
   }
 
-  Future<PosProcessStruct> process() async {
+  Future<PosProcessModel> process() async {
     print("****** Process : " + DateTime.now().toString());
     double totalAmount = 0;
     // ค้นหา Barcode
     var valueLog = global.posLogHelper.selectByHoldNumberIsVoidSuccess(
-        holdNumber: global.posHoldNumber, isVoid: 0, success: 0);
+        holdNumber: global.posHoldActiveNumber, isVoid: 0, success: 0);
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {
@@ -113,7 +113,7 @@ class PosProcess {
     for (int index = 0; index < valueLog.length; index++) {
       // ประมวลผล จำนวน,ราคา
       PosLogObjectBoxStruct logData = valueLog[index];
-      PosProcessDetailStruct detail = PosProcessDetailStruct(extra: []);
+      PosProcessDetailModel detail = PosProcessDetailModel(extra: []);
       //print('Command : ' + _index.toString() + " " + _logData.commandCode.toString() + " " + _logData.command.toString());
       /* 
         -- command
@@ -136,7 +136,7 @@ class PosProcess {
             int findIndex = findByGuid(logData.guid_ref);
             if (findIndex != -1) {
               // เพิ่มบรรทัด (Extra)
-              PosProcessDetailExtraStruct extra = PosProcessDetailExtraStruct();
+              PosProcessDetailExtraModel extra = PosProcessDetailExtraModel();
               extra.index = processResult.details[findIndex].extra.length + 1;
               extra.guid_auto_fixed = logData.code;
               extra.guid_code_or_ref = logData.guid_code_ref;
@@ -342,7 +342,7 @@ class PosProcess {
     // ประมวล Promotion
     {
       // อ้างอิงสินค้า รวมยอดจำนวนไว้เพื่อคำนวณ
-      List<PromotionProcessByProduct> sumByProduct = [];
+      List<PromotionProcessByModel> sumByProduct = [];
       for (var _detail in processResult.details) {
         if (_detail.is_void == false) {
           bool _found = false;
@@ -365,7 +365,7 @@ class PosProcess {
             for (var _extra in _detail.extra) {
               _extraAmount -= _extra.total_amount;
             }
-            sumByProduct.add(PromotionProcessByProduct(
+            sumByProduct.add(PromotionProcessByModel(
                 barcode: _detail.barcode,
                 sum_qty: _detail.qty,
                 amount: _sumAmount,
@@ -391,7 +391,7 @@ class PosProcess {
                 totalAmount: _totalAmount,
                 discountText: _promotion.discount_text);
             processResult.total_discount_from_promotion += _calcDiscount;
-            processResult.promotion_list.add(PosProcessPromotionStruct(
+            processResult.promotion_list.add(PosProcessPromotionModel(
                 promotion_name:
                     _promotion.name_1 + " " + _promotion.promotion_name_1,
                 discount_word: _promotion.discount_text,

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:decimal/intl.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/model/bank_and_wallet_model.dart';
+import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:lugentpayment/lugentpay.dart';
@@ -11,10 +11,10 @@ import 'package:lugentpayment/qrpaymentresponse.dart';
 import 'package:promptpay/promptpay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:countdown_progress_indicator/countdown_progress_indicator.dart';
-import 'package:dedepos/model/payment_mode.dart';
+import 'package:dedepos/model/system/payment_mode.dart';
 
 class PayQrScreen extends StatefulWidget {
-  final PaymentProviderStruct provider;
+  final PaymentProviderModel provider;
   final double amount;
   final BuildContext context;
 

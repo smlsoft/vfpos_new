@@ -1,6 +1,5 @@
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
-import 'package:dedepos/model/objectbox/member_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class MasterBankHelper {

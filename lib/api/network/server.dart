@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/db/printer_helper.dart';
-import 'package:dedepos/model/json/printer_struct.dart';
+import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:http/http.dart' as http;
@@ -38,7 +38,7 @@ Future<void> startServer() async {
   List<PrinterObjectBoxStruct> printers = (PrinterHelper()).selectAll();
   global.printerList.clear();
   for (var printer in printers) {
-    PrinterStruct newPrinter = PrinterStruct(
+    PrinterModel newPrinter = PrinterModel(
         guidfixed: printer.guid_fixed,
         printer_ip_address: printer.print_ip_address,
         printer_port: printer.printer_port,

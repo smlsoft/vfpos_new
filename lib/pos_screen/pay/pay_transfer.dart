@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
 
 class PayTransfer extends StatefulWidget {
-  final PosProcessStruct posProcess;
+  final PosProcessModel posProcess;
   final BuildContext blocContext;
   const PayTransfer({required this.posProcess, required this.blocContext});
 
@@ -38,7 +38,7 @@ class _PayTransferState extends State<PayTransfer> {
 
   bool saveData() {
     if (bankCode.trim().isNotEmpty && amount > 0) {
-      global.payScreenData.transfer.add(PayTransferStruct(
+      global.payScreenData.transfer.add(PayTransferModel(
           bank_code: bankCode,
           bank_name: bankName,
           account_number: "123123131312312",

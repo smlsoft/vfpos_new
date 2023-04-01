@@ -8,13 +8,13 @@ import 'package:dedepos/api/client.dart';
 import 'package:dedepos/api/sync/api/api_repository.dart';
 import 'package:dedepos/db/product_category_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
-import 'package:dedepos/api/sync/model/employee_struct.dart';
+import 'package:dedepos/api/sync/model/employee_model.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
-import 'package:dedepos/api/sync/model/sync_inventory.dart';
-import 'package:dedepos/api/sync/model/item_remove.dart';
+import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
+import 'package:dedepos/api/sync/model/item_remove_model.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/model/json/pagination.dart';
-import 'package:dedepos/api/sync/model/zone_struct.dart';
+import 'package:dedepos/model/json/pagination_model.dart';
+import 'package:dedepos/api/sync/model/zone_model.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/api/sync/sync_master.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +29,9 @@ import 'package:sqflite/sqflite.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global.dart' as global;
 import 'services/device.dart';
-import 'package:dedepos/model/json/printer_struct.dart';
+import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
-import 'package:dedepos/api/sync/model/promotion_struct.dart';
+import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:dedepos/api/user_repository.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -59,7 +59,8 @@ class _LoadingState extends State<Loading> {
     await global.appStorage.remove(global.syncTableZoneTimeName);
     await global.appStorage.remove(global.syncDeviceTimeName);*/
 
-    timerSwitchToMenu = Timer.periodic(const Duration(seconds: 1), (timer) async {
+    timerSwitchToMenu =
+        Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (global.loginSuccess && global.syncDataSuccess) {
         Navigator.of(context).pushReplacementNamed('/menu');
       }

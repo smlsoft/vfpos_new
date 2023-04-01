@@ -12,11 +12,11 @@ class _HoldBillState extends State<HoldBill> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    for (int _index = 0; _index < global.posHoldList.length; _index++) {
-      global.posHoldList[_index].countLog =
-          global.posLogHelper.holdCount(_index);
+    for (int index = 0; index < global.posHoldProcessResult.length; index++) {
+      global.posHoldProcessResult[index].countLog =
+          global.posLogHelper.holdCount(index);
     }
-    global.posHoldList[global.posHoldNumber].payScreenData =
+    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
         global.payScreenData;
   }
 
@@ -27,7 +27,7 @@ class _HoldBillState extends State<HoldBill> with TickerProviderStateMixin {
             childAspectRatio: 3 / 2,
             crossAxisSpacing: 20,
             mainAxisSpacing: 20),
-        itemCount: global.posHoldList.length,
+        itemCount: global.posHoldProcessResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return holdButton(index);
         });
@@ -35,12 +35,12 @@ class _HoldBillState extends State<HoldBill> with TickerProviderStateMixin {
 
   Widget holdButton(int number) {
     return Container(
-      margin: EdgeInsets.all(2.5),
+      margin: const EdgeInsets.all(2.5),
       height: 45,
       child: SizedBox(
           child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: (global.posHoldNumber == number)
+            backgroundColor: (global.posHoldActiveNumber == number)
                 ? global.posTheme.secondary
                 : Colors.green),
         onPressed: () async {
@@ -49,9 +49,9 @@ class _HoldBillState extends State<HoldBill> with TickerProviderStateMixin {
         child: Column(
           children: [
             Text(
-                (global.posHoldList[number].countLog == 0)
+                (global.posHoldProcessResult[number].countLog == 0)
                     ? "blank"
-                    : global.posHoldList[number].countLog.toString() +
+                    : global.posHoldProcessResult[number].countLog.toString() +
                         " " +
                         'รายการ',
                 style: const TextStyle(

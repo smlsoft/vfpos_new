@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'dart:ffi';
-import 'package:dedepos/model/objectbox/product_option.dart';
+import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 
@@ -85,10 +85,10 @@ class ProductBarcodeObjectBoxStruct {
       required this.color_select_hex,
       required this.product_count});
 
-  List<ProductOptionStruct> options() {
+  List<ProductOptionModel> options() {
     try {
       return jsonDecode(options_json)
-          .map<ProductOptionStruct>((e) => ProductOptionStruct.fromJson(e))
+          .map<ProductOptionModel>((e) => ProductOptionModel.fromJson(e))
           .toList();
     } catch (e) {
       print(e);

@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
-import 'package:dedepos/model/json/print_queue_struct.dart';
-import 'package:dedepos/model/json/receive_money_struct.dart';
+import 'package:dedepos/model/json/print_queue_model.dart';
+import 'package:dedepos/model/json/receive_money_model.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
 import 'package:dedepos/select_language_screen.dart';
 import 'package:dedepos/services/printer_config.dart';

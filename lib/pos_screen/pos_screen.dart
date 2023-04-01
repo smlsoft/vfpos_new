@@ -1,7 +1,7 @@
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
-import 'package:dedepos/model/objectbox/product_option.dart';
+import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,15 +16,15 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:dedepos/api/app_const.dart';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/model/credit_card_payment.dart';
-import 'package:dedepos/model/find/find_member_struct.dart';
-import 'package:dedepos/api/sync/model/sync_inventory.dart';
+import 'package:dedepos/api/sync/model/credit_card_payment_model.dart';
+import 'package:dedepos/model/find/find_member_model.dart';
+import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/model/json/payment.dart';
-import 'package:dedepos/api/sync/model/payment_api.dart';
-import 'package:dedepos/model/json/sale_invoice.dart';
-import 'package:dedepos/model/sale_invoice_item.dart';
-import 'package:dedepos/model/json/transfer_payment.dart';
+import 'package:dedepos/model/json/payment_model.dart';
+import 'package:dedepos/api/sync/model/payment_api_model.dart';
+import 'package:dedepos/model/json/sale_invoice_model.dart';
+import 'package:dedepos/model/json/sale_invoice_item_model.dart';
+import 'package:dedepos/model/json/transfer_payment_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/services/find_employee.dart';
 import 'package:dedepos/services/find_member.dart';
@@ -38,8 +38,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:dedepos/db/product_category_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/model/json/receive_money_struct.dart';
-import 'package:dedepos/api/sync/model/promotion_struct.dart';
+import 'package:dedepos/model/json/receive_money_model.dart';
+import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
@@ -55,8 +55,8 @@ import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'pos_process.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/api/network/server.dart' as network;
@@ -65,8 +65,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:dedepos/model/find/find_item_struct.dart';
-import 'package:dedepos/model/json/print_queue_struct.dart';
+import 'package:dedepos/model/find/find_item_model.dart';
+import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 import 'pos_util.dart' as posUtil;
 
@@ -98,7 +98,7 @@ class _PosScreenState extends State<PosScreen>
   final FindMember findMemberScreen = const FindMember();
   bool displayDetailByBarcode = false;
   final debounce = global.Debounce(500);
-  final List<FindItemStruct> findByCodeNameLastResult = [];
+  final List<FindItemModel> findByCodeNameLastResult = [];
   final TextEditingController textFindByTextController =
       TextEditingController();
   FocusNode? textFindByTextFocus;
@@ -141,7 +141,7 @@ class _PosScreenState extends State<PosScreen>
       item_unit_code: "",
       options_json: "",
       product_count: 0);
-  List<ProductOptionStruct> productOptions = [];
+  List<ProductOptionModel> productOptions = [];
 
   Future<void> checkSync() async {
     if (global.syncRefreshProductCategory) {
@@ -175,7 +175,7 @@ class _PosScreenState extends State<PosScreen>
     global.customerActiveCode = "";
     // เรียกรายการประกอบการขายจาก Hold
     global.payScreenData =
-        global.posHoldList[global.posHoldNumber].payScreenData;
+        global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
     //
     global.productCategoryCodeSelected.clear();
     global.themeSelect(2);
@@ -232,14 +232,19 @@ class _PosScreenState extends State<PosScreen>
       tabletTabController.dispose();
     }
     // เก็บรายละเอียด Hold
-    global.posHoldList[global.posHoldNumber].payScreenData =
+    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
         global.payScreenData;
     // Send Clear Display
-    global.posProcessResult.customer_code = "";
-    global.posProcessResult.customer_name = "";
-    global.posProcessResult.total_amount = 0;
-    global.posProcessResult.total_piece = 0;
-    global.posProcessResult.details.clear();
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+        .customer_code = "";
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+        .customer_name = "";
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+        .total_amount = 0;
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+        .total_piece = 0;
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details
+        .clear();
     global.sendProcessToCustomerDisplay();
   }
 
@@ -265,7 +270,8 @@ class _PosScreenState extends State<PosScreen>
       if (selectCodeList != null) {
         ProductCategoryObjectBoxStruct category = selectCodeList;
         for (var item in jsonDecode(category.codelist)) {
-          SyncCategoryCodeList codeList = SyncCategoryCodeList.fromJson(item);
+          SyncCategoryCodeListModel codeList =
+              SyncCategoryCodeListModel.fromJson(item);
           var selectProductByBarcode =
               ProductBarcodeHelper().selectByBarcodeFirst(codeList.barcode);
           if (selectProductByBarcode != null) {
@@ -364,7 +370,7 @@ class _PosScreenState extends State<PosScreen>
                 guid_code_ref: guidCodeRef,
                 guid_ref: guidRef,
                 log_date_time: DateTime.now(),
-                hold_number: global.posHoldNumber,
+                hold_number: global.posHoldActiveNumber,
                 command_code: commandCode,
                 extra_code: extraCode,
                 code: code,
@@ -391,7 +397,7 @@ class _PosScreenState extends State<PosScreen>
             unitNameStr = productSelect.unit_names[0];
             logHelper.insert(PosLogObjectBoxStruct(
                 log_date_time: DateTime.now(),
-                hold_number: global.posHoldNumber,
+                hold_number: global.posHoldActiveNumber,
                 command_code: commandCode,
                 barcode: barcode,
                 name: productNameStr,
@@ -420,7 +426,7 @@ class _PosScreenState extends State<PosScreen>
           logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldNumber,
+            hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
           ));
           global.playSound(
@@ -441,7 +447,7 @@ class _PosScreenState extends State<PosScreen>
           logHelper.insert(PosLogObjectBoxStruct(
               guid_ref: activeGuid,
               log_date_time: DateTime.now(),
-              hold_number: global.posHoldNumber,
+              hold_number: global.posHoldActiveNumber,
               command_code: commandCode,
               qty: qtyForCalc));
           global.playSound(
@@ -459,7 +465,7 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldNumber,
+            hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             qty: qtyForCalc));
         break;
@@ -468,7 +474,7 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldNumber,
+            hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             price: priceForCalc));
         break;
@@ -477,7 +483,7 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldNumber,
+            hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             discountText: discount));
         break;
@@ -486,7 +492,7 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldNumber,
+            hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             remark: remark));
         break;
@@ -494,7 +500,7 @@ class _PosScreenState extends State<PosScreen>
         // 9=ลบรายการ
         logHelper.insert(PosLogObjectBoxStruct(
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldNumber,
+            hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             guid_ref: activeGuid));
         global.playSound(
@@ -790,7 +796,7 @@ class _PosScreenState extends State<PosScreen>
       PosLogHelper().deleteByGuidCodeRefHoldNumberCommandCode(
           guidCode: productOptions[groupIndex].choices[detailIndex].guid_fixed,
           commandCode: 101,
-          holdNumber: global.posHoldNumber);
+          holdNumber: global.posHoldActiveNumber);
       global.playSound(sound: global.SoundEnum.beep);
     } else {
       /// ถ้าไม่ได้เลือก เพิ่มข้อมูลเพื่อให้ระบบประมวลผล
@@ -805,7 +811,7 @@ class _PosScreenState extends State<PosScreen>
       }
       if (count < productOptions[groupIndex].max_select) {
         productOptions[groupIndex].choices[detailIndex].selected = value;
-        ProductChoiceStruct detail =
+        ProductChoiceModel detail =
             productOptions[groupIndex].choices[detailIndex];
         // เพิ่ม Log รายการที่เลือก
         logInsert(
@@ -863,7 +869,8 @@ class _PosScreenState extends State<PosScreen>
           commandCode: 6, guid: activeGuid, discount: '', closeExtra: false);
     }
     processEvent();
-    global.posProcessResult.active_line_number = -1;
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+        .active_line_number = -1;
   }
 
   void checkOnline() async {
@@ -1012,23 +1019,49 @@ class _PosScreenState extends State<PosScreen>
                       //selectProductExtraList.clear();
                       displayDetailByBarcode = false;
                       for (int index = 0;
-                          index < global.posProcessResult.details.length &&
+                          index <
+                                  global
+                                      .posHoldProcessResult[
+                                          global.posHoldActiveNumber]
+                                      .posProcess
+                                      .details
+                                      .length &&
                               displayDetailByBarcode == false;
                           index++) {
                         if (product.barcode ==
-                            global.posProcessResult.details[index].barcode) {
+                            global
+                                .posHoldProcessResult[
+                                    global.posHoldActiveNumber]
+                                .posProcess
+                                .details[index]
+                                .barcode) {
                           displayDetailByBarcode = true;
-                          global.posProcessResult.active_line_number = index;
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .posProcess
+                              .active_line_number = index;
                           activeLineNumber = index;
-                          activeGuid =
-                              global.posProcessResult.details[index].guid;
+                          activeGuid = global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .posProcess
+                              .details[index]
+                              .guid;
                         }
                       }
                       refresh();
                       autoScrollController.scrollToIndex(
-                          (global.posProcessResult.active_line_number < 0)
+                          (global
+                                      .posHoldProcessResult[
+                                          global.posHoldActiveNumber]
+                                      .posProcess
+                                      .active_line_number <
+                                  0)
                               ? 0
-                              : global.posProcessResult.active_line_number,
+                              : global
+                                  .posHoldProcessResult[
+                                      global.posHoldActiveNumber]
+                                  .posProcess
+                                  .active_line_number,
                           preferPosition: AutoScrollPosition.begin);
                     },
                     child: Padding(
@@ -1084,8 +1117,10 @@ class _PosScreenState extends State<PosScreen>
 
   Widget selectProductLevelExtraListCheckWidget(int groupIndex) {
     if (activeLineNumber != -1) {
-      PosProcessDetailStruct data =
-          global.posProcessResult.details[activeLineNumber];
+      PosProcessDetailModel data = global
+          .posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess
+          .details[activeLineNumber];
       for (var checkBoxIndex = 0;
           checkBoxIndex < productOptions[groupIndex].choices.length;
           checkBoxIndex++) {
@@ -1182,7 +1217,9 @@ class _PosScreenState extends State<PosScreen>
                 width: 200,
                 child: Column(
                   children: [
-                    if (global.posProcessResult.active_line_number != -1)
+                    if (global.posHoldProcessResult[global.posHoldActiveNumber]
+                            .posProcess.active_line_number !=
+                        -1)
                       Row(
                         children: [
                           if (product.images_url.isNotEmpty && global.isOnline)
@@ -1425,15 +1462,21 @@ class _PosScreenState extends State<PosScreen>
             child: selectProductLevelListScreenWidget(constraints),
           ),
           if (displayDetailByBarcode &&
-              global.posProcessResult.active_line_number > -1)
+              global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+                      .active_line_number >
+                  -1)
             SizedBox(
               height: 250,
               width: double.infinity,
               child: transScreen(
                   mode: 1,
                   barcode: global
-                      .posProcessResult
-                      .details[global.posProcessResult.active_line_number]
+                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess
+                      .details[global
+                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posProcess
+                          .active_line_number]
                       .barcode),
             ),
           selectProductLevelSelectWidget()
@@ -1590,7 +1633,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget detailRow(
-      {required PosProcessDetailStruct detail, required TextStyle textStyle}) {
+      {required PosProcessDetailModel detail, required TextStyle textStyle}) {
     double extraAmount = 0.0;
     TextStyle extraTextStyle = TextStyle(
         fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
@@ -1680,7 +1723,7 @@ class _PosScreenState extends State<PosScreen>
 
   Widget detailData(
       {required int index,
-      required PosProcessDetailStruct detail,
+      required PosProcessDetailModel detail,
       required bool active,
       required TextStyle textStyle}) {
     Widget widget = Container(
@@ -1697,11 +1740,21 @@ class _PosScreenState extends State<PosScreen>
             : InkWell(
                 onTap: () async {
                   activeLineNumber = index;
-                  activeGuid = global.posProcessResult.details[index].guid;
-                  global.posProcessResult.select_promotion_temp_list.clear();
-                  print(global.posProcessResult.details[index].barcode);
-                  product = ProductBarcodeHelper().selectByBarcodeFirst(
-                          global.posProcessResult.details[index].barcode) ??
+                  activeGuid = global
+                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess
+                      .details[index]
+                      .guid;
+                  global.posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess.select_promotion_temp_list
+                      .clear();
+                  print(global.posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess.details[index].barcode);
+                  product = ProductBarcodeHelper().selectByBarcodeFirst(global
+                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posProcess
+                          .details[index]
+                          .barcode) ??
                       ProductBarcodeObjectBoxStruct(
                           barcode: "",
                           color_select: "",
@@ -1730,7 +1783,7 @@ class _PosScreenState extends State<PosScreen>
 
   Widget detailButton(
       {required int index,
-      required PosProcessDetailStruct detail,
+      required PosProcessDetailModel detail,
       required bool active,
       required TextStyle textStyle}) {
     TextEditingController textFieldRemarkController =
@@ -1962,7 +2015,7 @@ class _PosScreenState extends State<PosScreen>
         )));
   }
 
-  Widget detail(PosProcessDetailStruct detail, int index) {
+  Widget detail(PosProcessDetailModel detail, int index) {
     bool active = (activeLineNumber == -1)
         ? false
         : ((activeLineNumber == index) ? true : false);
@@ -2234,7 +2287,9 @@ class _PosScreenState extends State<PosScreen>
             PageTransition(
               type: PageTransitionType.rightToLeft,
               child: PayScreen(
-                posProcess: global.posProcessResult,
+                posProcess: global
+                    .posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess,
               ),
             ),
           );
@@ -2260,8 +2315,10 @@ class _PosScreenState extends State<PosScreen>
                   width: 10,
                 ),
                 Text(
-                    global.moneyFormat
-                        .format(global.posProcessResult.total_amount),
+                    global.moneyFormat.format(global
+                        .posHoldProcessResult[global.posHoldActiveNumber]
+                        .posProcess
+                        .total_amount),
                     style: const TextStyle(
                         fontSize: 24.0, fontWeight: FontWeight.bold)),
                 const SizedBox(
@@ -2450,13 +2507,17 @@ class _PosScreenState extends State<PosScreen>
     return SingleChildScrollView(
         child: Column(children: [
       Text(
-          "${global.language("total_amount")} ${global.moneyFormat.format(global.posProcessResult.total_amount)} ${global.language("money_symbol")}",
+          "${global.language("total_amount")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount)} ${global.language("money_symbol")}",
           style: textStyleTotal),
       Text(
-          "${global.language("total_qty")} ${global.moneyFormat.format(global.posProcessResult.total_piece)} ${global.language("piece")}",
+          "${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_piece)} ${global.language("piece")}",
           style: textStyleTotal),
-      if (global.posProcessResult.promotion_list.isNotEmpty)
-        for (var detail in global.posProcessResult.promotion_list)
+      if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+          .promotion_list.isNotEmpty)
+        for (var detail in global
+            .posHoldProcessResult[global.posHoldActiveNumber]
+            .posProcess
+            .promotion_list)
           Row(
             children: [
               Expanded(
@@ -2479,7 +2540,8 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget transScreen({required int mode, String barcode = ""}) {
-    return (global.posProcessResult.details.isEmpty)
+    return (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+            .details.isEmpty)
         ? const Center(
             child: Icon(Icons.barcode_reader, color: Colors.grey, size: 200))
         : MediaQuery.removePadding(
@@ -2495,7 +2557,13 @@ class _PosScreenState extends State<PosScreen>
                         controller: autoScrollController,
                         children: <Widget>[
                             for (int index = 0;
-                                index < global.posProcessResult.details.length;
+                                index <
+                                    global
+                                        .posHoldProcessResult[
+                                            global.posHoldActiveNumber]
+                                        .posProcess
+                                        .details
+                                        .length;
                                 index++)
                               AutoScrollTag(
                                 key: ValueKey(index),
@@ -2504,7 +2572,11 @@ class _PosScreenState extends State<PosScreen>
                                 highlightColor: Colors.black.withOpacity(0.1),
                                 child: Container(
                                   child: detail(
-                                      global.posProcessResult.details[index],
+                                      global
+                                          .posHoldProcessResult[
+                                              global.posHoldActiveNumber]
+                                          .posProcess
+                                          .details[index],
                                       index),
                                 ),
                               )
@@ -2513,15 +2585,29 @@ class _PosScreenState extends State<PosScreen>
                         scrollDirection: Axis.vertical,
                         children: <Widget>[
                             for (int index = 0;
-                                index < global.posProcessResult.details.length;
+                                index <
+                                    global
+                                        .posHoldProcessResult[
+                                            global.posHoldActiveNumber]
+                                        .posProcess
+                                        .details
+                                        .length;
                                 index++)
                               Container(
                                 child: (barcode !=
-                                        global.posProcessResult.details[index]
+                                        global
+                                            .posHoldProcessResult[
+                                                global.posHoldActiveNumber]
+                                            .posProcess
+                                            .details[index]
                                             .barcode)
                                     ? Container()
                                     : detail(
-                                        global.posProcessResult.details[index],
+                                        global
+                                            .posHoldProcessResult[
+                                                global.posHoldActiveNumber]
+                                            .posProcess
+                                            .details[index],
                                         index),
                               )
                           ])));
@@ -2916,13 +3002,13 @@ class _PosScreenState extends State<PosScreen>
 
     if (result != null) {
       setState(() {
-        global.posHoldNumber = result;
+        global.posHoldActiveNumber = result;
         processEvent();
         global.playSound(sound: global.SoundEnum.beep);
         activeGuid = "";
         activeLineNumber = -1;
-        global.payScreenData =
-            global.posHoldList[global.posHoldNumber].payScreenData;
+        global.payScreenData = global
+            .posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
       });
     }
   }
@@ -2934,7 +3020,10 @@ class _PosScreenState extends State<PosScreen>
         ),
         padding: const EdgeInsets.only(top: 4, bottom: 4),
         child: Column(children: [
-          for (var _detail in global.posProcessResult.promotion_list)
+          for (var _detail in global
+              .posHoldProcessResult[global.posHoldActiveNumber]
+              .posProcess
+              .promotion_list)
             Row(
               children: [
                 Expanded(
@@ -3480,12 +3569,20 @@ class _PosScreenState extends State<PosScreen>
             listener: (context, state) {
               if (state is PosProcessSuccess) {
                 print('PosProcessSuccess');
-                global.posProcessResult = state.result;
-                if (global.posProcessResult.details.isNotEmpty) {
-                  activeLineNumber = global.posProcessResult.active_line_number;
+                global.posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess = state.result;
+                if (global.posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess.details.isNotEmpty) {
+                  activeLineNumber = global
+                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess
+                      .active_line_number;
                   if (activeLineNumber != -1) {
-                    activeGuid =
-                        global.posProcessResult.details[activeLineNumber].guid;
+                    activeGuid = global
+                        .posHoldProcessResult[global.posHoldActiveNumber]
+                        .posProcess
+                        .details[activeLineNumber]
+                        .guid;
                   }
                 } else {
                   activeLineNumber = -1;
@@ -3493,9 +3590,14 @@ class _PosScreenState extends State<PosScreen>
                 }
                 Future.delayed(const Duration(milliseconds: 100), () {
                   autoScrollController.scrollToIndex(
-                      (global.posProcessResult.active_line_number < 0)
+                      (global.posHoldProcessResult[global.posHoldActiveNumber]
+                                  .posProcess.active_line_number <
+                              0)
                           ? 0
-                          : global.posProcessResult.active_line_number,
+                          : global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .posProcess
+                              .active_line_number,
                       preferPosition: AutoScrollPosition.begin);
                 });
                 context.read<PosProcessBloc>().add(PosProcessFinish());

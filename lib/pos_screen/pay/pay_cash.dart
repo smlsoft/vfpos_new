@@ -6,7 +6,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'pay_widget.dart';
 import 'package:pattern_formatter/pattern_formatter.dart';
-import 'package:dedepos/model/pos_pay_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 
 class PayCashWidget extends StatefulWidget {
   final BuildContext blocContext;

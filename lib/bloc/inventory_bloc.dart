@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/api/sync/api/api_repository.dart';
-import 'package:dedepos/api/sync/model/sync_inventory.dart';
+import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final ApiRepository _inventoryRepository;

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/model/find/find_item_struct.dart';
+import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:dedepos/api/rest_api.dart';
 
 class FindItemByCodeNameBarcodeLoadStart
@@ -14,7 +14,7 @@ class FindItemByCodeNameBarcodeLoadStart
 
 class FindItemByCodeNameBarcodeLoadSuccess
     extends FindItemByCodeNameBarcodeState {
-  List<FindItemStruct> result;
+  List<FindItemModel> result;
   FindItemByCodeNameBarcodeLoadSuccess({required this.result});
 }
 
@@ -35,7 +35,7 @@ class FindItemByCodeNameBarcodeBloc extends Bloc<FindItemByCodeNameBarcodeEvent,
   void findItemByCodeNameBarcode(FindItemByCodeNameBarcodeLoadStart event,
       Emitter<FindItemByCodeNameBarcodeState> emit) async {
     emit(FindItemByCodeNameBarcodeLoading());
-    List<FindItemStruct> result = await apiFindItemByCodeNameBarcode
+    List<FindItemModel> result = await apiFindItemByCodeNameBarcode
         .findItemByCodeNameBarcode(event.words, event.offset, event.limit);
     emit(FindItemByCodeNameBarcodeLoadSuccess(result: result));
   }

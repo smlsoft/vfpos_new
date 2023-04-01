@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
-import 'package:dedepos/model/json/pos_process_struct.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/global.dart' as global;
 
 abstract class PosProcessEvent {}
@@ -34,13 +34,13 @@ class PosProcessBloc extends Bloc<PosProcessEvent, PosProcessState> {
 
   void _process(PosProcessEvent event, Emitter<PosProcessState> emit) async {
     emit(PosProcessLoading());
-    PosProcessStruct result = await PosProcess().process();
+    PosProcessModel result = await PosProcess().process();
     PosProcess().sumCategoryCount(result);
     emit(PosProcessSuccess(result: result));
   }
 }
 
 class PosProcessSuccess extends PosProcessState {
-  PosProcessStruct result;
+  PosProcessModel result;
   PosProcessSuccess({required this.result});
 }
