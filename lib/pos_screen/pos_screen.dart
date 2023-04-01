@@ -161,6 +161,7 @@ class _PosScreenState extends State<PosScreen>
   @override
   void initState() {
     super.initState();
+    global.isTablet = true;
     context
         .read<ProductCategoryBloc>()
         .add(ProductCategoryLoadStart(parentCategoryGuid: ''));
