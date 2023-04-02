@@ -1,5 +1,5 @@
+import 'package:uuid/uuid.dart';
 import 'dart:math';
-
 import 'package:dedepos/api/network/server.dart';
 import 'package:ffi/ffi.dart';
 import 'package:win32/win32.dart';
@@ -93,6 +93,7 @@ String objectBoxDatabaseName = "smlposmobile.db";
 String deviceId = "";
 String deviceName = "POS01";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
+List<SyncDeviceModel> posClientDeviceList = [];
 //"http://192.168.1.4:8084";
 String webServiceUrl = "http://smltest1.ddnsfree.com:8084";
 String webServiceVersion = "/SMLJavaWebService/webresources/rest/";
@@ -178,6 +179,9 @@ PrinterCashierConnectEnum printerCashierConnect = PrinterCashierConnectEnum.ip;
 String printerCashierIpAddress = "";
 int printerCashierIpPort = 9100;
 bool customerDisplayDesktopMultiScreen = true;
+bool posScreenRefresh = false;
+String posTerminalIpAddress = "";
+int posTerminalServerPort = 4040;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -924,4 +928,76 @@ String getImageForTest() {
     'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/unnamed_1024x1024@2x.jpg?v=1587129692'
   ];
   return images[Random().nextInt(images.length)];
+}
+
+Future<String> getIpAddress() async {
+  // Get a list of the network interfaces available on the device
+  List<NetworkInterface> interfaces = await NetworkInterface.list();
+
+  // Iterate through the list of interfaces and return the first non-loopback IPv4 address
+  for (NetworkInterface interface in interfaces) {
+    if (interface.name == 'lo') continue; // Skip the loopback interface
+    for (InternetAddress address in interface.addresses) {
+      if (address.type == InternetAddressType.IPv4) {
+        return address.address;
+      }
+    }
+  }
+
+  // If no non-loopback IPv4 address was found, return null
+  return "";
+}
+
+Future scanServerByName(String name) async {
+  List<ServerDeviceModel> ipList = [];
+  String ipAddress = await getIpAddress();
+  String subNet = ipAddress.substring(0, ipAddress.lastIndexOf("."));
+  for (int i = 1; i < 255; i++) {
+    String ip = "$subNet.$i";
+    ipList.add(ServerDeviceModel(device: "", ip: ip, connected: false));
+  }
+  int countTread = 0;
+  bool loopScan = true;
+  while (loopScan) {
+    await Future.delayed(const Duration(seconds: 1));
+    for (int index = 0; index < ipList.length; index++) {
+      if (!ipList[index].connected) {
+        if (countTread < 10) {
+          countTread++;
+          String url =
+              "http://${ipList[index].ip}:${posTerminalServerPort}/scan?uuid=${const Uuid().v4()}";
+          try {
+            http
+                .post(Uri.parse(url))
+                .timeout(const Duration(seconds: 1))
+                .then((result) {
+              countTread--;
+              if (result.statusCode == 200) {
+                if (result.body.isNotEmpty) {
+                  print("Connected to ${ipList[index].ip}");
+                  ServerDeviceModel server =
+                      ServerDeviceModel.fromJson(jsonDecode(result.body));
+                  if (server.device == name) {
+                    ipList[index].connected = true;
+                    loopScan = false;
+                    posTerminalIpAddress = ipList[index].ip;
+                  }
+                }
+              }
+            }).onError((error, stackTrace) {
+              countTread--;
+            }).catchError((error) {
+              countTread--;
+            }).whenComplete(() {
+              countTread--;
+            });
+          } catch (_) {
+            countTread--;
+          }
+        } else {
+          await Future.delayed(const Duration(seconds: 1));
+        }
+      }
+    }
+  }
 }

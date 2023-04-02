@@ -201,6 +201,11 @@ class _PosScreenState extends State<PosScreen>
     }
     dev.log("initState PosScreen 3");
     deviceTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (global.posScreenRefresh) {
+        global.posScreenRefresh = false;
+        BlocProvider.of<PosProcessBloc>(global.globalContext)
+            .add(ProcessEvent());
+      }
       network.testPrinterConnect();
     });
     posScreenTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {

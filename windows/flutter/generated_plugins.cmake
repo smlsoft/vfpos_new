@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
   charset_converter
   connectivity_plus
+  network_info_plus
   objectbox_flutter_libs
   permission_handler_windows
 )

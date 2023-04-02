@@ -249,6 +249,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  charcode:
+    dependency: transitive
+    description:
+      name: charcode
+      sha256: fb98c0f6d12c920a02ee2d998da788bca066ca5f148492b7085ee23372b12306
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   charset_converter:
     dependency: "direct main"
     description:
@@ -389,18 +397,18 @@ packages:
     dependency: transitive
     description:
       name: dart_ping
-      sha256: "91ee37e5bf5316caca5bd6f7b6016e73cd861b6a4b99565a2fd89b1d65003e1a"
+      sha256: "623cce963c66643cb26661187651a1c69ec09ac3a8bae3a17717aed0e17c0054"
       url: "https://pub.dev"
     source: hosted
-    version: "8.0.1"
+    version: "7.0.2"
   dart_ping_ios:
     dependency: "direct main"
     description:
       name: dart_ping_ios
-      sha256: ade22dedb8bbe37b6ba69bbfb0cbb36b6a20f55f6a63abcb4583373f9ea8eebd
+      sha256: a79e25f2227add97c90ea64dfe86421d2c6e3c4ba3dc826b648dbf99a4bd476f
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "2.0.1"
   dart_style:
     dependency: transitive
     description:
@@ -965,6 +973,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.7.0"
+  multicast_dns:
+    dependency: transitive
+    description:
+      name: multicast_dns
+      sha256: "80e54aba906a7cc68fdc6a201e76b135af27155e2f8e958181d85e2b73786591"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.2+3"
   nested:
     dependency: transitive
     description:
@@ -973,6 +989,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  network_info_plus:
+    dependency: "direct main"
+    description:
+      name: network_info_plus
+      sha256: "5e31db917c9dbaaca295685d68d78810a543bd32feb6f1cb7d0c4e5dea924517"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+  network_info_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: network_info_plus_platform_interface
+      sha256: "881f5029c5edaf19c616c201d3d8b366c5b1384afd5c1da5a49e4345de82fb8b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.3"
+  network_tools:
+    dependency: "direct main"
+    description:
+      name: network_tools
+      sha256: c4d52c61fed76ce133f1421291f4e8dbca38d758ee87dd3e0821a17d7c671cd5
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0+3"
   nm:
     dependency: transitive
     description:
@@ -1197,6 +1237,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.4"
+  process_run:
+    dependency: transitive
+    description:
+      name: process_run
+      sha256: "1142d7f4f0c3f36393a1319406efcf481def2b6d862b2bf600c8ae8fa74d5bd8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.5+2"
   promptpay:
     dependency: "direct main"
     description:
@@ -1585,6 +1633,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
+  universal_io:
+    dependency: transitive
+    description:
+      name: universal_io
+      sha256: "06866290206d196064fd61df4c7aea1ffe9a4e7c4ccaa8fcded42dd41948005d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   uuid:
     dependency: transitive
     description:

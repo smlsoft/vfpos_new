@@ -69,9 +69,27 @@ Future<void> startServer() async {
             switch (httpPost.command) {
               case "get_device_name":
                 // Return ชื่อเครื่อง server , ip server
-                var result =
-                    jsonDecode('{"device": "${global.deviceName}"}') as Map;
-                response.write(jsonEncode(result));
+                response.write(jsonEncode(
+                    jsonDecode('{"device": "${global.deviceName}"}') as Map));
+                break;
+              case "register_client_device":
+                // ลงทะเบียนเครื่องช่วยขาย
+                SyncDeviceModel posClientDevice =
+                    SyncDeviceModel.fromJson(jsonDecode(httpPost.data));
+                bool found = false;
+                for (var device in global.posClientDeviceList) {
+                  if (device.device == posClientDevice.device) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  global.posClientDeviceList.add(posClientDevice);
+                  print("register_client_device : " +
+                      posClientDevice.device +
+                      " : " +
+                      global.posClientDeviceList.length.toString());
+                }
                 break;
               case "register_customer_display_device":
                 // ลงทะเบียนเครื่องแสดงผลลูกค้า
@@ -86,11 +104,11 @@ Future<void> startServer() async {
                 }
                 if (!found) {
                   global.customerDisplayDeviceList.add(customerDisplayDevice);
+                  print("register_customer_display_device : " +
+                      customerDisplayDevice.device +
+                      " : " +
+                      global.customerDisplayDeviceList.length.toString());
                 }
-                /*print("register_customer_display_device : " +
-                    customerDisplayDevice.device +
-                    " : " +
-                    global.customerDisplayDeviceList.length.toString());*/
                 break;
               case "change_customer_by_phone":
                 // รับข้อมูลหมายเลขโทรศัพท์ แล้วมาค้นหาชื่อ และประมวลผล
@@ -109,8 +127,7 @@ Future<void> startServer() async {
                   global.customerName = customerName;
                   global.customerPhone = customerPhone;
                   // ประมวลผลหน้าจอขายใหม่
-                  BlocProvider.of<PosProcessBloc>(global.globalContext)
-                      .add(ProcessEvent());
+                  global.posScreenRefresh = true;
                 } catch (e) {
                   print(e);
                 }
