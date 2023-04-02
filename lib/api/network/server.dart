@@ -57,13 +57,13 @@ Future<void> startServer() async {
         var response = request.response;
 
         if (request.method == 'POST' && request.uri.path == '/scan') {
-          bool isTermial = (global.appMode == global.AppModeEnum.posTerminal);
+          bool isTerminal = (global.appMode == global.AppModeEnum.posTerminal);
           bool isClient = (global.appMode == global.AppModeEnum.posClient);
           SyncDeviceModel resultData = SyncDeviceModel(
               device: global.deviceName,
               ip: global.serverIp,
               connected: true,
-              isTerminal: isTermial,
+              isTerminal: isTerminal,
               isClient: isClient);
           response.write(jsonEncode(resultData.toJson()));
         } else if (request.method == 'POST' &&

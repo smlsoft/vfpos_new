@@ -518,8 +518,12 @@ Future<void> systemProcess() async {
   List<SyncDeviceModel> syncDeviceList = [];
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "http://${customerDisplayDeviceList[index].ip}:5041";
-    ServerDeviceModel info =
-        ServerDeviceModel(device: deviceName, ip: "", connected: true);
+    SyncDeviceModel info = SyncDeviceModel(
+        device: deviceName,
+        ip: "",
+        connected: true,
+        isClient: false,
+        isTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
     sendToServer(
         ip: url,
@@ -527,8 +531,8 @@ Future<void> systemProcess() async {
         callBack: (value) {
           if (value.isNotEmpty) {
             try {
-              ServerDeviceModel getInfo =
-                  ServerDeviceModel.fromJson(jsonDecode(value));
+              SyncDeviceModel getInfo =
+                  SyncDeviceModel.fromJson(jsonDecode(value));
               customerDisplayDeviceList[index].connected = getInfo.connected;
             } catch (e) {
               print(e);
@@ -949,12 +953,17 @@ Future<String> getIpAddress() async {
 }
 
 Future scanServerByName(String name) async {
-  List<ServerDeviceModel> ipList = [];
+  List<SyncDeviceModel> ipList = [];
   String ipAddress = await getIpAddress();
   String subNet = ipAddress.substring(0, ipAddress.lastIndexOf("."));
   for (int i = 1; i < 255; i++) {
     String ip = "$subNet.$i";
-    ipList.add(ServerDeviceModel(device: "", ip: ip, connected: false));
+    ipList.add(SyncDeviceModel(
+        device: "",
+        ip: ip,
+        connected: false,
+        isClient: false,
+        isTerminal: false));
   }
   int countTread = 0;
   bool loopScan = true;
@@ -975,9 +984,9 @@ Future scanServerByName(String name) async {
               if (result.statusCode == 200) {
                 if (result.body.isNotEmpty) {
                   print("Connected to ${ipList[index].ip}");
-                  ServerDeviceModel server =
-                      ServerDeviceModel.fromJson(jsonDecode(result.body));
-                  if (server.device == name) {
+                  SyncDeviceModel server =
+                      SyncDeviceModel.fromJson(jsonDecode(result.body));
+                  if (server.device == name && server.isTerminal) {
                     ipList[index].connected = true;
                     loopScan = false;
                     posTerminalIpAddress = ipList[index].ip;

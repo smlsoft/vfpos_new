@@ -68,17 +68,3 @@ Map<String, dynamic> _$LocalStrongDataModelToJson(
       'paperSize': instance.paperSize,
       'printBillAuto': instance.printBillAuto,
     };
-
-ServerDeviceModel _$ServerDeviceModelFromJson(Map<String, dynamic> json) =>
-    ServerDeviceModel(
-      device: json['device'] as String,
-      ip: json['ip'] as String,
-      connected: json['connected'] as bool,
-    );
-
-Map<String, dynamic> _$ServerDeviceModelToJson(ServerDeviceModel instance) =>
-    <String, dynamic>{
-      'device': instance.device,
-      'ip': instance.ip,
-      'connected': instance.connected,
-    };

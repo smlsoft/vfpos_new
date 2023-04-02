@@ -101,20 +101,6 @@ class PrinterDeviceModel {
       this.connectType = global.PrinterCashierConnectEnum.none});
 }
 
-@JsonSerializable()
-class ServerDeviceModel {
-  late String device;
-  late String ip;
-  late bool connected;
-
-  ServerDeviceModel(
-      {required this.device, required this.ip, required this.connected});
-
-  factory ServerDeviceModel.fromJson(Map<String, dynamic> json) =>
-      _$ServerDeviceModelFromJson(json);
-  Map<String, dynamic> toJson() => _$ServerDeviceModelToJson(this);
-}
-
 class PosHoldProcessModel {
   int countLog = 0;
   String saleCode = "";
