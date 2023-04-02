@@ -28,7 +28,7 @@ import 'package:dedepos/model/json/transfer_payment_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/services/find_employee.dart';
 import 'package:dedepos/services/find_member.dart';
-import 'package:dedepos/services/hold_bill.dart';
+import 'package:dedepos/pos_screen/pos_hold_bill.dart';
 import 'package:dedepos/widgets/button_bill.dart';
 import 'package:dedepos/widgets/roundmenu.dart';
 import 'package:flutter/services.dart';
@@ -2996,7 +2996,7 @@ class _PosScreenState extends State<PosScreen>
       context,
       PageTransition(
         type: PageTransitionType.rightToLeft,
-        child: const HoldBill(),
+        child: const PosHoldBill(),
       ),
     );
 

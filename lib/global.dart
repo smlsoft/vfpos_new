@@ -523,8 +523,6 @@ Future<void> systemProcess() async {
         callBack: (value) {
           if (value.isNotEmpty) {
             try {
-              var json = jsonDecode(value);
-              print(value);
               ServerDeviceModel getInfo =
                   ServerDeviceModel.fromJson(jsonDecode(value));
               customerDisplayDeviceList[index].connected = getInfo.connected;
@@ -541,15 +539,19 @@ Future<void> sendProcessToCustomerDisplay() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     if (customerDisplayDeviceList[index].connected) {
       var url = "http://${customerDisplayDeviceList[index].ip}:5041";
-      var jsonData = HttpPost(
-          command: "process",
-          data: jsonEncode(
-              posHoldProcessResult[posHoldActiveNumber].posProcess.toJson()));
-      dev.log("sendProcessToCustomerDisplay : " + url);
-      sendToServer(
-          ip: url,
-          jsonData: jsonEncode(jsonData.toJson()),
-          callBack: (value) {});
+      try {
+        var jsonData = HttpPost(
+            command: "process",
+            data: jsonEncode(
+                posHoldProcessResult[posHoldActiveNumber].posProcess.toJson()));
+        dev.log("sendProcessToCustomerDisplay : " + url);
+        sendToServer(
+            ip: url,
+            jsonData: jsonEncode(jsonData.toJson()),
+            callBack: (value) {});
+      } catch (e) {
+        print(e.toString() + " : " + url);
+      }
     }
   }
 }
@@ -601,17 +603,41 @@ String findLogoImageFromCreditCardProvider(String code) {
 
 String language(String code) {
   String result = "";
-  for (int i = 0; i < languageSystemCode.length; i++) {
-    if (languageSystemCode[i].code == code) {
-      for (int j = 0; j < languageSystemCode[i].langs.length; j++) {
-        if (languageSystemCode[i].langs[j].code == userLanguage) {
-          result = languageSystemCode[i].langs[j].text;
+  int left = 0;
+  int right = languageSystemCode.length - 1;
+
+  while (left <= right) {
+    int middle = (left + right) ~/ 2;
+    int comparison = languageSystemCode[middle].code.compareTo(code);
+
+    if (comparison == 0) {
+      int langLeft = 0;
+      int langRight = languageSystemCode[middle].langs.length - 1;
+
+      while (langLeft <= langRight) {
+        int langMiddle = (langLeft + langRight) ~/ 2;
+        int langComparison = languageSystemCode[middle]
+            .langs[langMiddle]
+            .code
+            .compareTo(userLanguage);
+
+        if (langComparison == 0) {
+          result = languageSystemCode[middle].langs[langMiddle].text;
           break;
+        } else if (langComparison < 0) {
+          langLeft = langMiddle + 1;
+        } else {
+          langRight = langMiddle - 1;
         }
       }
       break;
+    } else if (comparison < 0) {
+      left = middle + 1;
+    } else {
+      right = middle - 1;
     }
   }
+
   if (result.trim().isEmpty) {
     dev.log(code);
   }
@@ -780,7 +806,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -837,6 +863,7 @@ Future<void> loading() async {
   languageSystemCode.sort((a, b) {
     return a.code.compareTo(b.code);
   });
+
   initSuccess = true;
 }
 
