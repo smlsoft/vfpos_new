@@ -1,6 +1,6 @@
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/pos_screen/pos_client.dart';
+import 'package:dedepos/pos_client.dart';
 import 'package:dedepos/select_mode_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:localstore/localstore.dart';

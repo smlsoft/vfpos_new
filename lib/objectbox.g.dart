@@ -602,7 +602,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(24, 7592183109660791959),
+      lastPropertyId: const IdUid(27, 1974533521624653283),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -632,11 +632,6 @@ final _entities = <ModelEntity>[
             type: 10,
             flags: 0),
         ModelProperty(
-            id: const IdUid(6, 3423933695813107025),
-            name: 'hold_number',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(7, 1224085958776314107),
             name: 'command_code',
             type: 6,
@@ -659,11 +654,6 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(11, 6872044419450107594),
             name: 'remark',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 1388231681468617274),
-            name: 'discountText',
             type: 9,
             flags: 0),
         ModelProperty(
@@ -715,7 +705,18 @@ final _entities = <ModelEntity>[
             id: const IdUid(23, 1553987918665551717),
             name: 'barcode',
             type: 9,
-            flags: 0)
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(26, 1876311039508496663),
+            name: 'discount_text',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(27, 1974533521624653283),
+            name: 'ticket_number',
+            type: 6,
+            flags: 8,
+            indexId: const IdUid(14, 8122487945397319143))
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -1007,14 +1008,15 @@ ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
       lastEntityId: const IdUid(13, 2941303872910854793),
-      lastIndexId: const IdUid(12, 3301175078738520112),
+      lastIndexId: const IdUid(14, 8122487945397319143),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [
         9219344176730085609,
         2276328705805420932,
-        5444144693635609139
+        5444144693635609139,
+        660270763994584363
       ],
       retiredPropertyUids: const [
         5697435774194423126,
@@ -1035,7 +1037,10 @@ ModelDefinition getObjectBoxModel() {
         2403838603731837931,
         4701702388568208232,
         6627277916891706326,
-        7770745563320712682
+        7770745563320712682,
+        3423933695813107025,
+        1388231681468617274,
+        7726160006148714000
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1546,26 +1551,24 @@ ModelDefinition getObjectBoxModel() {
           final guid_code_refOffset = fbb.writeString(object.guid_code_ref);
           final extra_codeOffset = fbb.writeString(object.extra_code);
           final remarkOffset = fbb.writeString(object.remark);
-          final discountTextOffset = fbb.writeString(object.discountText);
           final codeOffset = fbb.writeString(object.code);
           final nameOffset = fbb.writeString(object.name);
           final default_codeOffset = fbb.writeString(object.default_code);
           final unit_codeOffset = fbb.writeString(object.unit_code);
           final unit_nameOffset = fbb.writeString(object.unit_name);
           final barcodeOffset = fbb.writeString(object.barcode);
-          fbb.startTable(25);
+          final discount_textOffset = fbb.writeString(object.discount_text);
+          fbb.startTable(28);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
           fbb.addOffset(3, guid_code_refOffset);
           fbb.addInt64(4, object.log_date_time.millisecondsSinceEpoch);
-          fbb.addInt64(5, object.hold_number);
           fbb.addInt64(6, object.command_code);
           fbb.addInt64(7, object.is_void);
           fbb.addInt64(8, object.success);
           fbb.addOffset(9, extra_codeOffset);
           fbb.addOffset(10, remarkOffset);
-          fbb.addOffset(11, discountTextOffset);
           fbb.addOffset(12, codeOffset);
           fbb.addFloat64(13, object.price);
           fbb.addOffset(15, nameOffset);
@@ -1576,6 +1579,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(20, unit_codeOffset);
           fbb.addOffset(21, unit_nameOffset);
           fbb.addOffset(22, barcodeOffset);
+          fbb.addOffset(25, discount_textOffset);
+          fbb.addInt64(26, object.ticket_number);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1591,8 +1596,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 10, ''),
               log_date_time: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
-              hold_number:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
+              ticket_number:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 56, 0),
               command_code:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
               barcode: const fb.StringReader(asciiOptimization: true)
@@ -1610,7 +1615,7 @@ ModelDefinition getObjectBoxModel() {
               name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
               code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, ''),
               default_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 40, ''),
-              discountText: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
+              discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
               extra_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
               unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''))
@@ -2313,73 +2318,73 @@ class PosLogObjectBoxStruct_ {
   static final log_date_time =
       QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[4]);
 
-  /// see [PosLogObjectBoxStruct.hold_number]
-  static final hold_number =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[5]);
-
   /// see [PosLogObjectBoxStruct.command_code]
   static final command_code =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[6]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[5]);
 
   /// see [PosLogObjectBoxStruct.is_void]
   static final is_void =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[7]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[6]);
 
   /// see [PosLogObjectBoxStruct.success]
   static final success =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[8]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[7]);
 
   /// see [PosLogObjectBoxStruct.extra_code]
   static final extra_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[9]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[8]);
 
   /// see [PosLogObjectBoxStruct.remark]
   static final remark =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[10]);
-
-  /// see [PosLogObjectBoxStruct.discountText]
-  static final discountText =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[11]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[9]);
 
   /// see [PosLogObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[12]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[10]);
 
   /// see [PosLogObjectBoxStruct.price]
   static final price =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[13]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[11]);
 
   /// see [PosLogObjectBoxStruct.name]
   static final name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[14]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[12]);
 
   /// see [PosLogObjectBoxStruct.qty]
   static final qty =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[15]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[13]);
 
   /// see [PosLogObjectBoxStruct.qty_fixed]
   static final qty_fixed =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[16]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[8].properties[14]);
 
   /// see [PosLogObjectBoxStruct.default_code]
   static final default_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[17]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[15]);
 
   /// see [PosLogObjectBoxStruct.selected]
   static final selected =
-      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[8].properties[18]);
+      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[8].properties[16]);
 
   /// see [PosLogObjectBoxStruct.unit_code]
   static final unit_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[19]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[17]);
 
   /// see [PosLogObjectBoxStruct.unit_name]
   static final unit_name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[20]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[18]);
 
   /// see [PosLogObjectBoxStruct.barcode]
   static final barcode =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[21]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[19]);
+
+  /// see [PosLogObjectBoxStruct.discount_text]
+  static final discount_text =
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[20]);
+
+  /// see [PosLogObjectBoxStruct.ticket_number]
+  static final ticket_number =
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[21]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.

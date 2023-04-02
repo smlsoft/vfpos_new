@@ -198,7 +198,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: Colors.blue[100],
           appBar: AppBar(
               centerTitle: true,
-              title: Text(global.language('dashboard')),
+              title: Text(
+                  "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_client")}"),
               actions: [
                 IconButton(
                   icon: Container(

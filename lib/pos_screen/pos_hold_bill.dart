@@ -19,11 +19,12 @@ class _PosHoldBillState extends State<PosHoldBill>
   @override
   void initState() {
     super.initState();
-    for (int index = 0; index < global.posHoldProcessResult.length; index++) {
-      global.posHoldProcessResult[index].countLog =
-          global.posLogHelper.holdCount(index);
+    for (int index = 0; index < global.posTicketProcessResult.length; index++) {
+      global.posTicketProcessResult[index].logCount = global.posLogHelper
+          .ticketCount(global.posTicketProcessResult[index].ticketNumber);
     }
-    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
+    int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
+    global.posTicketProcessResult[ticketNumber].payScreenData =
         global.payScreenData;
   }
 
@@ -34,13 +35,14 @@ class _PosHoldBillState extends State<PosHoldBill>
             childAspectRatio: 3 / 2,
             crossAxisSpacing: 20,
             mainAxisSpacing: 20),
-        itemCount: global.posHoldProcessResult.length,
+        itemCount: global.posTicketProcessResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return holdButton(index);
         });
   }
 
   Widget holdButton(int number) {
+    int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
     return Container(
       margin: const EdgeInsets.all(5),
       width: double.infinity,
@@ -50,7 +52,7 @@ class _PosHoldBillState extends State<PosHoldBill>
           child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(0),
-                  backgroundColor: (global.posHoldActiveNumber == number)
+                  backgroundColor: (ticketNumber == number)
                       ? global.posTheme.secondary
                       : Colors.green),
               onPressed: () async {
@@ -62,9 +64,10 @@ class _PosHoldBillState extends State<PosHoldBill>
                     child: Column(
                       children: [
                         Text(
-                            (global.posHoldProcessResult[number].countLog == 0)
+                            (global.posTicketProcessResult[number].logCount ==
+                                    0)
                                 ? global.language("blank")
-                                : "${global.language('qty')} ${global.posHoldProcessResult[number].countLog} ${global.language('qty')}",
+                                : "${global.language('qty')} ${global.posTicketProcessResult[number].logCount} ${global.language('qty')}",
                             style: const TextStyle(
                                 color: Colors.white,
                                 shadows: [

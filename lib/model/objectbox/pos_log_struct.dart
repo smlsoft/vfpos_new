@@ -1,3 +1,4 @@
+import 'package:dedepos/global.dart' as global;
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';
 
@@ -20,7 +21,8 @@ class PosLogObjectBoxStruct {
   DateTime log_date_time;
 
   /// ลำดับการพักบิล
-  int hold_number;
+  @Index()
+  int ticket_number;
 
   /// คำสั่ง (หมายเหตุด้านล่าง)
   int command_code;
@@ -38,7 +40,7 @@ class PosLogObjectBoxStruct {
   String remark;
 
   /// ส่วนลด Text เช่น ลด 10%+5 บาท+6%=(10%,5,6%)
-  String discountText;
+  String discount_text;
 
   /// รหัสสินค้า
   String code;
@@ -90,7 +92,7 @@ class PosLogObjectBoxStruct {
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,
-    required this.hold_number,
+    required this.ticket_number,
     required this.command_code,
     this.barcode = "",
     this.is_void = 0,
@@ -103,11 +105,12 @@ class PosLogObjectBoxStruct {
     this.name = "",
     this.code = "",
     this.default_code = "",
-    this.discountText = "",
+    this.discount_text = "",
     this.extra_code = "",
     this.unit_code = "",
     this.unit_name = "",
   }) {
     this.guid_auto_fixed = Uuid().v4();
+    this.ticket_number = global.posTicketActiveNumber;
   }
 }

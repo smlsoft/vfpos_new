@@ -20,6 +20,7 @@ Future<String> saveBill(
   String docNumber = await global.billRunning();
 
   // Header
+  int findTicketNumber = global.findTicketNumber(global.posTicketActiveNumber);
   global.billHelper.insert(BillObjectBoxStruct(
       date_time: DateTime.now(),
       doc_number: docNumber,
@@ -28,8 +29,8 @@ Future<String> saveBill(
       customer_telephone: "",
       sale_code: global.saleActiveCode,
       sale_name: global.saleActiveName,
-      total_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_amount,
+      total_amount: global
+          .posTicketProcessResult[findTicketNumber].posProcess.total_amount,
       cashier_code: global.userLoginCode,
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
@@ -45,8 +46,8 @@ Future<String> saveBill(
   // รายละเอียด
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
-  for (var value in global
-      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.details) {
+  for (var value
+      in global.posTicketProcessResult[findTicketNumber].posProcess.details) {
     details.add(BillDetailObjectBoxStruct(
         doc_number: docNumber,
         line_number: lineNumber,
@@ -144,7 +145,7 @@ Future<String> saveBill(
   global.billPayHelper.insertMany(pays);
   // Running เลขที่ใบเสร็จ
   global.configHelper.update(ConfigObjectBoxStruct(
-      device_code: global.deviceId, last_doc_number: docNumber));
+      device_code: global.deviceName, last_doc_number: docNumber));
   return docNumber;
 }
 

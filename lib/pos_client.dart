@@ -15,7 +15,6 @@ class PosClient extends StatefulWidget {
 }
 
 class _PosClientState extends State<PosClient> {
-  bool connectTerminalSuccess = false;
   late Timer findTerminalTimer;
   String posTerminalCode = 'POS01,0';
   TextEditingController posTerminalCodeController = TextEditingController();
@@ -28,7 +27,7 @@ class _PosClientState extends State<PosClient> {
       if (global.posTerminalIpAddress.isNotEmpty) {
         findTerminalTimer.cancel();
         setState(() {
-          connectTerminalSuccess = true;
+          Navigator.of(context).pushReplacementNamed('/menu');
         });
       }
     });
@@ -44,34 +43,32 @@ class _PosClientState extends State<PosClient> {
 
   @override
   Widget build(BuildContext context) {
-    Widget screen = Container();
-    if (connectTerminalSuccess == false) {
-      screen = Container(
-          child: Column(children: [
-        TextField(
-          controller: posTerminalCodeController,
-        ),
-        ElevatedButton(
-            onPressed: () {
-              global.scanServerByName(posTerminalCodeController.text);
-              setState(() {
-                scanStart = true;
-              });
-            },
-            child: Text("Connect Terminal")),
-        if (scanStart)
-          LoadingAnimationWidget.staggeredDotsWave(
-            color: Colors.blue,
-            size: 200,
-          ),
-      ]));
-    } else {
-      screen = Text('Connect Terminal Success');
-    }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
-        child: Scaffold(resizeToAvoidBottomInset: false, body: screen),
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: Container(
+                child: Column(children: [
+              TextField(
+                controller: posTerminalCodeController,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    List<String> split =
+                        posTerminalCodeController.text.split(',');
+                    global.scanServerByName(split[0]);
+                    setState(() {
+                      scanStart = true;
+                    });
+                  },
+                  child: Text("Connect Terminal")),
+              if (scanStart)
+                LoadingAnimationWidget.staggeredDotsWave(
+                  color: Colors.blue,
+                  size: 200,
+                ),
+            ]))),
       ),
     );
   }

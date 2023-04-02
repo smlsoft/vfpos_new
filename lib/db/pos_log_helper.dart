@@ -10,19 +10,20 @@ class PosLogHelper {
     return box.put(value);
   }
 
-  int holdCount(int holdNumber) {
+  int ticketCount(int ticketNumber) {
     return box
-        .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+        .query(PosLogObjectBoxStruct_.ticket_number.equals(ticketNumber))
         .build()
         .find()
         .length;
   }
 
-  List<PosLogObjectBoxStruct> selectByHoldNumberIsVoidSuccess(
-      {int holdNumber = 0, int isVoid = 0, int success = 0}) {
-    return (box.query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
-            PosLogObjectBoxStruct_.is_void.equals(isVoid) &
-            PosLogObjectBoxStruct_.success.equals(success))
+  List<PosLogObjectBoxStruct> selectByTicketNumberIsVoidSuccess(
+      {required int ticketNumber, int isVoid = 0, int success = 0}) {
+    return (box.query(
+            PosLogObjectBoxStruct_.ticket_number.equals(ticketNumber) &
+                PosLogObjectBoxStruct_.is_void.equals(isVoid) &
+                PosLogObjectBoxStruct_.success.equals(success))
           ..order(PosLogObjectBoxStruct_.log_date_time))
         .build()
         .find();
@@ -36,26 +37,26 @@ class PosLogHelper {
         .find();
   }
 
-  List<PosLogObjectBoxStruct> selectByGuidRefHoldNumberCommandCode(
+  List<PosLogObjectBoxStruct> selectByGuidRefTicketNumberCommandCode(
       {required String guidRef,
       required int commandCode,
-      required int holdNumber}) {
+      required int ticketNumber}) {
     return box
         .query(PosLogObjectBoxStruct_.guid_ref.equals(guidRef) &
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.ticket_number.equals(ticketNumber) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .find();
   }
 
-  bool deleteByGuidRefHoldNumberCommandCode(
+  bool deleteByGuidRefTicketNumberCommandCode(
       {required String guidRef,
       required int commandCode,
-      required int holdNumber}) {
+      required int ticketNumber}) {
     bool result = false;
     final find = box
         .query(PosLogObjectBoxStruct_.guid_ref.equals(guidRef) &
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.ticket_number.equals(ticketNumber) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .findFirst();
@@ -65,14 +66,14 @@ class PosLogHelper {
     return result;
   }
 
-  bool deleteByGuidCodeRefHoldNumberCommandCode(
+  bool deleteByGuidCodeRefTicketNumberCommandCode(
       {required String guidCode,
       required int commandCode,
-      required int holdNumber}) {
+      required int ticketNumber}) {
     bool result = false;
     final find = box
         .query(PosLogObjectBoxStruct_.guid_code_ref.equals(guidCode) &
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.ticket_number.equals(ticketNumber) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .findFirst();

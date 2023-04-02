@@ -70,9 +70,8 @@ AuthService appAuth = AuthService();
 bool initSuccess = false;
 late List<LanguageSystemCodeModel> languageSystemCode;
 late String pathApplicationDocumentsDirectory;
-List<PosHoldProcessModel> posHoldProcessResult = [];
-int posHoldMax = 10;
-int posHoldActiveNumber = 0;
+List<PosTicketProcessModel> posTicketProcessResult = [];
+int posTicketActiveNumber = 0;
 ProductCategoryHelper productCategoryHelper = ProductCategoryHelper();
 ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 MemberHelper memberHelper = MemberHelper();
@@ -90,7 +89,6 @@ int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.00");
 final qtyShortFormat = NumberFormat("##,##0");
 String objectBoxDatabaseName = "smlposmobile.db";
-String deviceId = "";
 String deviceName = "POS01";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
 List<SyncDeviceModel> posClientDeviceList = [];
@@ -546,19 +544,22 @@ Future<void> systemProcess() async {
 Future<void> sendProcessToCustomerDisplay() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     if (customerDisplayDeviceList[index].connected) {
-      var url = "http://${customerDisplayDeviceList[index].ip}:5041";
-      try {
-        var jsonData = HttpPost(
-            command: "process",
-            data: jsonEncode(
-                posHoldProcessResult[posHoldActiveNumber].posProcess.toJson()));
-        dev.log("sendProcessToCustomerDisplay : " + url);
-        sendToServer(
-            ip: url,
-            jsonData: jsonEncode(jsonData.toJson()),
-            callBack: (value) {});
-      } catch (e) {
-        print(e.toString() + " : " + url);
+      int ticketNumber = findTicketNumber(posTicketActiveNumber);
+      if (ticketNumber != -1) {
+        var url = "http://${customerDisplayDeviceList[index].ip}:5041";
+        try {
+          var jsonData = HttpPost(
+              command: "process",
+              data: jsonEncode(
+                  posTicketProcessResult[ticketNumber].posProcess.toJson()));
+          dev.log("sendProcessToCustomerDisplay : " + url);
+          sendToServer(
+              ip: url,
+              jsonData: jsonEncode(jsonData.toJson()),
+              callBack: (value) {});
+        } catch (e) {
+          print(e.toString() + " : " + url);
+        }
       }
     }
   }
@@ -790,7 +791,6 @@ Future<void> loading() async {
       wallettype: 204,
     ));
   }
-  deviceId = "A1";
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
@@ -814,7 +814,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      // await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -858,9 +858,10 @@ Future<void> loading() async {
     if (loginSuccess) systemProcess();
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
-  for (int index = 0; index < posHoldMax; index++) {
-    posHoldProcessResult.add(PosHoldProcessModel());
+  for (int loop = 0; loop < 20; loop++) {
+    posTicketProcessResult.add(PosTicketProcessModel(ticketNumber: loop));
   }
+
   pathApplicationDocumentsDirectory =
       (await getApplicationDocumentsDirectory()).path;
 
@@ -1009,4 +1010,8 @@ Future scanServerByName(String name) async {
       }
     }
   }
+}
+
+int findTicketNumber(int number) {
+  return number;
 }

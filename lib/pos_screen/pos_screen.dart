@@ -174,8 +174,12 @@ class _PosScreenState extends State<PosScreen>
     global.customerActiveName = "";
     global.customerActiveCode = "";
     // เรียกรายการประกอบการขายจาก Hold
-    global.payScreenData =
-        global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
+    if (findTicketNumber != -1) {
+      global.payScreenData =
+          global.posTicketProcessResult[findTicketNumber].payScreenData;
+    }
     //
     global.productCategoryCodeSelected.clear();
     global.themeSelect(2);
@@ -236,21 +240,25 @@ class _PosScreenState extends State<PosScreen>
     if (global.isTablet) {
       tabletTabController.dispose();
     }
-    // เก็บรายละเอียด Hold
-    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
-        global.payScreenData;
-    // Send Clear Display
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .customer_code = "";
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .customer_name = "";
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .total_amount = 0;
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .total_piece = 0;
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details
-        .clear();
-    global.sendProcessToCustomerDisplay();
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
+    if (findTicketNumber != -1) {
+      // เก็บรายละเอียด Hold
+      global.posTicketProcessResult[findTicketNumber].payScreenData =
+          global.payScreenData;
+      // Send Clear Display
+      global.posTicketProcessResult[findTicketNumber].posProcess.customer_code =
+          "";
+      global.posTicketProcessResult[findTicketNumber].posProcess.customer_name =
+          "";
+      global.posTicketProcessResult[findTicketNumber].posProcess.total_amount =
+          0;
+      global.posTicketProcessResult[findTicketNumber].posProcess.total_piece =
+          0;
+      global.posTicketProcessResult[findTicketNumber].posProcess.details
+          .clear();
+      global.sendProcessToCustomerDisplay();
+    }
   }
 
   void loadCategory() {
@@ -375,7 +383,7 @@ class _PosScreenState extends State<PosScreen>
                 guid_code_ref: guidCodeRef,
                 guid_ref: guidRef,
                 log_date_time: DateTime.now(),
-                hold_number: global.posHoldActiveNumber,
+                ticket_number: global.posTicketActiveNumber,
                 command_code: commandCode,
                 extra_code: extraCode,
                 code: code,
@@ -402,7 +410,7 @@ class _PosScreenState extends State<PosScreen>
             unitNameStr = productSelect.unit_names[0];
             logHelper.insert(PosLogObjectBoxStruct(
                 log_date_time: DateTime.now(),
-                hold_number: global.posHoldActiveNumber,
+                ticket_number: global.posTicketActiveNumber,
                 command_code: commandCode,
                 barcode: barcode,
                 name: productNameStr,
@@ -431,7 +439,7 @@ class _PosScreenState extends State<PosScreen>
           logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
+            ticket_number: global.posTicketActiveNumber,
             command_code: commandCode,
           ));
           global.playSound(
@@ -452,7 +460,7 @@ class _PosScreenState extends State<PosScreen>
           logHelper.insert(PosLogObjectBoxStruct(
               guid_ref: activeGuid,
               log_date_time: DateTime.now(),
-              hold_number: global.posHoldActiveNumber,
+              ticket_number: global.posTicketActiveNumber,
               command_code: commandCode,
               qty: qtyForCalc));
           global.playSound(
@@ -470,7 +478,7 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
+            ticket_number: global.posTicketActiveNumber,
             command_code: commandCode,
             qty: qtyForCalc));
         break;
@@ -479,7 +487,7 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
+            ticket_number: global.posTicketActiveNumber,
             command_code: commandCode,
             price: priceForCalc));
         break;
@@ -488,16 +496,16 @@ class _PosScreenState extends State<PosScreen>
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
+            ticket_number: global.posTicketActiveNumber,
             command_code: commandCode,
-            discountText: discount));
+            discount_text: discount));
         break;
       case 8:
         // 8=แก้หมายเหตุ
         logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
+            ticket_number: global.posTicketActiveNumber,
             command_code: commandCode,
             remark: remark));
         break;
@@ -505,7 +513,7 @@ class _PosScreenState extends State<PosScreen>
         // 9=ลบรายการ
         logHelper.insert(PosLogObjectBoxStruct(
             log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
+            ticket_number: global.posTicketActiveNumber,
             command_code: commandCode,
             guid_ref: activeGuid));
         global.playSound(
@@ -798,10 +806,10 @@ class _PosScreenState extends State<PosScreen>
       int groupIndex, int detailIndex, bool value) async {
     if (value == true) {
       // ถ้าเลือกแล้ว ให้ทำการลบข้อมูลที่มีอยู่แล้วออก (ลบของเก่า)
-      PosLogHelper().deleteByGuidCodeRefHoldNumberCommandCode(
+      PosLogHelper().deleteByGuidCodeRefTicketNumberCommandCode(
           guidCode: productOptions[groupIndex].choices[detailIndex].guid_fixed,
           commandCode: 101,
-          holdNumber: global.posHoldActiveNumber);
+          ticketNumber: global.posTicketActiveNumber);
       global.playSound(sound: global.SoundEnum.beep);
     } else {
       /// ถ้าไม่ได้เลือก เพิ่มข้อมูลเพื่อให้ระบบประมวลผล
@@ -874,8 +882,12 @@ class _PosScreenState extends State<PosScreen>
           commandCode: 6, guid: activeGuid, discount: '', closeExtra: false);
     }
     processEvent();
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .active_line_number = -1;
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
+    if (findTicketNumber != -1) {
+      global.posTicketProcessResult[findTicketNumber].posProcess
+          .active_line_number = -1;
+    }
   }
 
   void checkOnline() async {
@@ -1023,51 +1035,45 @@ class _PosScreenState extends State<PosScreen>
                     onTap: () {
                       //selectProductExtraList.clear();
                       displayDetailByBarcode = false;
-                      for (int index = 0;
-                          index <
-                                  global
-                                      .posHoldProcessResult[
-                                          global.posHoldActiveNumber]
-                                      .posProcess
-                                      .details
-                                      .length &&
-                              displayDetailByBarcode == false;
-                          index++) {
-                        if (product.barcode ==
-                            global
-                                .posHoldProcessResult[
-                                    global.posHoldActiveNumber]
+                      int findTicketNumber =
+                          global.findTicketNumber(global.posTicketActiveNumber);
+                      if (findTicketNumber != -1) {
+                        for (int index = 0;
+                            index <
+                                    global
+                                        .posTicketProcessResult[
+                                            findTicketNumber]
+                                        .posProcess
+                                        .details
+                                        .length &&
+                                displayDetailByBarcode == false;
+                            index++) {
+                          if (product.barcode ==
+                              global.posTicketProcessResult[findTicketNumber]
+                                  .posProcess.details[index].barcode) {
+                            displayDetailByBarcode = true;
+                            global.posTicketProcessResult[findTicketNumber]
+                                .posProcess.active_line_number = index;
+                            activeLineNumber = index;
+                            activeGuid = global
+                                .posTicketProcessResult[findTicketNumber]
                                 .posProcess
                                 .details[index]
-                                .barcode) {
-                          displayDetailByBarcode = true;
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .active_line_number = index;
-                          activeLineNumber = index;
-                          activeGuid = global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .details[index]
-                              .guid;
+                                .guid;
+                          }
                         }
+                        refresh();
+                        autoScrollController.scrollToIndex(
+                            (global.posTicketProcessResult[findTicketNumber]
+                                        .posProcess.active_line_number <
+                                    0)
+                                ? 0
+                                : global
+                                    .posTicketProcessResult[findTicketNumber]
+                                    .posProcess
+                                    .active_line_number,
+                            preferPosition: AutoScrollPosition.begin);
                       }
-                      refresh();
-                      autoScrollController.scrollToIndex(
-                          (global
-                                      .posHoldProcessResult[
-                                          global.posHoldActiveNumber]
-                                      .posProcess
-                                      .active_line_number <
-                                  0)
-                              ? 0
-                              : global
-                                  .posHoldProcessResult[
-                                      global.posHoldActiveNumber]
-                                  .posProcess
-                                  .active_line_number,
-                          preferPosition: AutoScrollPosition.begin);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
@@ -1122,24 +1128,28 @@ class _PosScreenState extends State<PosScreen>
 
   Widget selectProductLevelExtraListCheckWidget(int groupIndex) {
     if (activeLineNumber != -1) {
-      PosProcessDetailModel data = global
-          .posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess
-          .details[activeLineNumber];
-      for (var checkBoxIndex = 0;
-          checkBoxIndex < productOptions[groupIndex].choices.length;
-          checkBoxIndex++) {
-        productOptions[groupIndex].choices[checkBoxIndex].selected = false;
-      }
-      for (var detailIndex0 = 0;
-          detailIndex0 < data.extra.length;
-          detailIndex0++) {
+      int findTicketNumber =
+          global.findTicketNumber(global.posTicketActiveNumber);
+      if (findTicketNumber != -1) {
+        PosProcessDetailModel data = global
+            .posTicketProcessResult[findTicketNumber]
+            .posProcess
+            .details[activeLineNumber];
         for (var checkBoxIndex = 0;
             checkBoxIndex < productOptions[groupIndex].choices.length;
             checkBoxIndex++) {
-          if (data.extra[detailIndex0].guid_code_or_ref ==
-              productOptions[groupIndex].choices[checkBoxIndex].guid_fixed) {
-            productOptions[groupIndex].choices[checkBoxIndex].selected = true;
+          productOptions[groupIndex].choices[checkBoxIndex].selected = false;
+        }
+        for (var detailIndex0 = 0;
+            detailIndex0 < data.extra.length;
+            detailIndex0++) {
+          for (var checkBoxIndex = 0;
+              checkBoxIndex < productOptions[groupIndex].choices.length;
+              checkBoxIndex++) {
+            if (data.extra[detailIndex0].guid_code_or_ref ==
+                productOptions[groupIndex].choices[checkBoxIndex].guid_fixed) {
+              productOptions[groupIndex].choices[checkBoxIndex].selected = true;
+            }
           }
         }
       }
@@ -1210,6 +1220,8 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget selectProductLevelExtraWidget() {
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
     return (productOptions.isEmpty)
         ? Container()
         : SingleChildScrollView(
@@ -1222,7 +1234,7 @@ class _PosScreenState extends State<PosScreen>
                 width: 200,
                 child: Column(
                   children: [
-                    if (global.posHoldProcessResult[global.posHoldActiveNumber]
+                    if (global.posTicketProcessResult[findTicketNumber]
                             .posProcess.active_line_number !=
                         -1)
                       Row(
@@ -1457,6 +1469,8 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget selectProductLevelWidget(BoxConstraints constraints) {
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
     return Padding(
       padding: const EdgeInsets.only(top: 0, bottom: 0, right: 0, left: 0),
       child: Container(
@@ -1467,7 +1481,7 @@ class _PosScreenState extends State<PosScreen>
             child: selectProductLevelListScreenWidget(constraints),
           ),
           if (displayDetailByBarcode &&
-              global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+              global.posTicketProcessResult[findTicketNumber].posProcess
                       .active_line_number >
                   -1)
             SizedBox(
@@ -1476,12 +1490,10 @@ class _PosScreenState extends State<PosScreen>
               child: transScreen(
                   mode: 1,
                   barcode: global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posTicketProcessResult[findTicketNumber]
                       .posProcess
-                      .details[global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
-                          .posProcess
-                          .active_line_number]
+                      .details[global.posTicketProcessResult[findTicketNumber]
+                          .posProcess.active_line_number]
                       .barcode),
             ),
           selectProductLevelSelectWidget()
@@ -1736,6 +1748,8 @@ class _PosScreenState extends State<PosScreen>
       width: MediaQuery.of(context).size.width,
       child: detailRow(detail: detail, textStyle: textStyle),
     );
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
     return Material(
         color: Colors.white.withOpacity(0),
         child: (detail.is_void)
@@ -1745,18 +1759,15 @@ class _PosScreenState extends State<PosScreen>
             : InkWell(
                 onTap: () async {
                   activeLineNumber = index;
-                  activeGuid = global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess
-                      .details[index]
-                      .guid;
-                  global.posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess.select_promotion_temp_list
+                  activeGuid = global.posTicketProcessResult[findTicketNumber]
+                      .posProcess.details[index].guid;
+                  global.posTicketProcessResult[findTicketNumber].posProcess
+                      .select_promotion_temp_list
                       .clear();
-                  print(global.posHoldProcessResult[global.posHoldActiveNumber]
+                  print(global.posTicketProcessResult[findTicketNumber]
                       .posProcess.details[index].barcode);
                   product = ProductBarcodeHelper().selectByBarcodeFirst(global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posTicketProcessResult[findTicketNumber]
                           .posProcess
                           .details[index]
                           .barcode) ??
@@ -2279,65 +2290,90 @@ class _PosScreenState extends State<PosScreen>
 
   Widget totalAndPayScreen() {
     // แสดงยอดรวมทั้งสิ้น
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(Colors.green),
-          foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-        ),
-        onPressed: () async {
-          dynamic result = await Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeft,
-              child: PayScreen(
-                posProcess: global
-                    .posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess,
-              ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        (1 == 1)
+            ? Container(
+                margin: const EdgeInsets.only(right: 5),
+                padding: const EdgeInsets.only(
+                    left: 10, right: 10, top: 0, bottom: 0),
+                decoration: BoxDecoration(
+                  color: Colors.orange,
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 4,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Center(
+                    child: Text(global.posTicketActiveNumber.toString())))
+            : Container(),
+        Expanded(
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.green),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             ),
-          );
-          if (result != null) {
-            if (result == true) {
-              setState(() {
-                restartClearData();
-              });
-            }
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(5),
-          child: FittedBox(
-            fit: BoxFit.fill,
-            child: Row(
-              children: [
-                Text(global.language("total"),
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                    )),
-                const SizedBox(
-                  width: 10,
+            onPressed: () async {
+              dynamic result = await Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  child: PayScreen(
+                    posProcess: global
+                        .posTicketProcessResult[findTicketNumber].posProcess,
+                  ),
                 ),
-                Text(
-                    global.moneyFormat.format(global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess
-                        .total_amount),
-                    style: const TextStyle(
-                        fontSize: 24.0, fontWeight: FontWeight.bold)),
-                const SizedBox(
-                  width: 10,
+              );
+              if (result != null) {
+                if (result == true) {
+                  setState(() {
+                    restartClearData();
+                  });
+                }
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: FittedBox(
+                fit: BoxFit.fill,
+                child: Row(
+                  children: [
+                    Text(global.language("total"),
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                        )),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                        global.moneyFormat.format(global
+                            .posTicketProcessResult[findTicketNumber]
+                            .posProcess
+                            .total_amount),
+                        style: const TextStyle(
+                            fontSize: 24.0, fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(global.language("money_symbol"),
+                        style: const TextStyle(
+                          fontSize: 20.0,
+                        ))
+                  ],
                 ),
-                Text(global.language("money_symbol"),
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                    ))
-              ],
+              ),
             ),
           ),
         ),
-      ),
+      ]),
     );
   }
 
@@ -2508,21 +2544,20 @@ class _PosScreenState extends State<PosScreen>
   Widget transScreenSummery() {
     TextStyle textStyleTotal =
         const TextStyle(color: Colors.black, fontSize: 16);
-
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
     return SingleChildScrollView(
         child: Column(children: [
       Text(
-          "${global.language("total_amount")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount)} ${global.language("money_symbol")}",
+          "${global.language("total_amount")} ${global.moneyFormat.format(global.posTicketProcessResult[findTicketNumber].posProcess.total_amount)} ${global.language("money_symbol")}",
           style: textStyleTotal),
       Text(
-          "${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_piece)} ${global.language("piece")}",
+          "${global.language("total_qty")} ${global.moneyFormat.format(global.posTicketProcessResult[findTicketNumber].posProcess.total_piece)} ${global.language("piece")}",
           style: textStyleTotal),
-      if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+      if (global.posTicketProcessResult[findTicketNumber].posProcess
           .promotion_list.isNotEmpty)
         for (var detail in global
-            .posHoldProcessResult[global.posHoldActiveNumber]
-            .posProcess
-            .promotion_list)
+            .posTicketProcessResult[findTicketNumber].posProcess.promotion_list)
           Row(
             children: [
               Expanded(
@@ -2545,8 +2580,11 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget transScreen({required int mode, String barcode = ""}) {
-    return (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-            .details.isEmpty)
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
+
+    return (global.posTicketProcessResult[findTicketNumber].posProcess.details
+            .isEmpty)
         ? const Center(
             child: Icon(Icons.barcode_reader, color: Colors.grey, size: 200))
         : MediaQuery.removePadding(
@@ -2564,8 +2602,8 @@ class _PosScreenState extends State<PosScreen>
                             for (int index = 0;
                                 index <
                                     global
-                                        .posHoldProcessResult[
-                                            global.posHoldActiveNumber]
+                                        .posTicketProcessResult[
+                                            findTicketNumber]
                                         .posProcess
                                         .details
                                         .length;
@@ -2578,44 +2616,39 @@ class _PosScreenState extends State<PosScreen>
                                 child: Container(
                                   child: detail(
                                       global
-                                          .posHoldProcessResult[
-                                              global.posHoldActiveNumber]
+                                          .posTicketProcessResult[
+                                              findTicketNumber]
                                           .posProcess
                                           .details[index],
                                       index),
                                 ),
                               )
                           ])
-                    : ListView(
-                        scrollDirection: Axis.vertical,
-                        children: <Widget>[
-                            for (int index = 0;
-                                index <
+                    : ListView(scrollDirection: Axis.vertical, children: <
+                        Widget>[
+                        for (int index = 0;
+                            index <
+                                global.posTicketProcessResult[findTicketNumber]
+                                    .posProcess.details.length;
+                            index++)
+                          Container(
+                            child: (barcode !=
                                     global
-                                        .posHoldProcessResult[
-                                            global.posHoldActiveNumber]
+                                        .posTicketProcessResult[
+                                            findTicketNumber]
                                         .posProcess
-                                        .details
-                                        .length;
-                                index++)
-                              Container(
-                                child: (barcode !=
-                                        global
-                                            .posHoldProcessResult[
-                                                global.posHoldActiveNumber]
-                                            .posProcess
-                                            .details[index]
-                                            .barcode)
-                                    ? Container()
-                                    : detail(
-                                        global
-                                            .posHoldProcessResult[
-                                                global.posHoldActiveNumber]
-                                            .posProcess
-                                            .details[index],
-                                        index),
-                              )
-                          ])));
+                                        .details[index]
+                                        .barcode)
+                                ? Container()
+                                : detail(
+                                    global
+                                        .posTicketProcessResult[
+                                            findTicketNumber]
+                                        .posProcess
+                                        .details[index],
+                                    index),
+                          )
+                      ])));
   }
 
   void receiveMoneyDialog() {
@@ -3006,43 +3039,46 @@ class _PosScreenState extends State<PosScreen>
     );
 
     if (result != null) {
+      int findTicketNumber =
+          global.findTicketNumber(global.posTicketActiveNumber);
       setState(() {
-        global.posHoldActiveNumber = result;
+        global.posTicketActiveNumber = result;
         processEvent();
         global.playSound(sound: global.SoundEnum.beep);
         activeGuid = "";
         activeLineNumber = -1;
-        global.payScreenData = global
-            .posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
+        global.payScreenData =
+            global.posTicketProcessResult[findTicketNumber].payScreenData;
       });
     }
   }
 
   Widget promotionWidget() {
+    int findTicketNumber =
+        global.findTicketNumber(global.posTicketActiveNumber);
+
     return Container(
         decoration: BoxDecoration(
           color: global.posTheme.transBackground,
         ),
         padding: const EdgeInsets.only(top: 4, bottom: 4),
         child: Column(children: [
-          for (var _detail in global
-              .posHoldProcessResult[global.posHoldActiveNumber]
-              .posProcess
-              .promotion_list)
+          for (var detail in global.posTicketProcessResult[findTicketNumber]
+              .posProcess.promotion_list)
             Row(
               children: [
                 Expanded(
                     flex: 12,
                     child: Align(
                         alignment: Alignment.topLeft,
-                        child: Text(_detail.promotion_name,
+                        child: Text(detail.promotion_name,
                             style: const TextStyle(
                                 fontSize: 12, color: Colors.black)))),
                 Expanded(
                     flex: 3,
                     child: Align(
                         alignment: Alignment.topRight,
-                        child: Text(global.moneyFormat.format(_detail.discount),
+                        child: Text(global.moneyFormat.format(detail.discount),
                             style: const TextStyle(
                                 fontSize: 12, color: Colors.red)))),
               ],
@@ -3573,21 +3609,20 @@ class _PosScreenState extends State<PosScreen>
           BlocListener<PosProcessBloc, PosProcessState>(
             listener: (context, state) {
               if (state is PosProcessSuccess) {
+                int findTicketNumber =
+                    global.findTicketNumber(global.posTicketActiveNumber);
                 print('PosProcessSuccess');
-                global.posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess = state.result;
-                if (global.posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess.details.isNotEmpty) {
+                global.posTicketProcessResult[findTicketNumber].posProcess =
+                    state.result;
+                if (global.posTicketProcessResult[findTicketNumber].posProcess
+                    .details.isNotEmpty) {
                   activeLineNumber = global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posTicketProcessResult[findTicketNumber]
                       .posProcess
                       .active_line_number;
                   if (activeLineNumber != -1) {
-                    activeGuid = global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess
-                        .details[activeLineNumber]
-                        .guid;
+                    activeGuid = global.posTicketProcessResult[findTicketNumber]
+                        .posProcess.details[activeLineNumber].guid;
                   }
                 } else {
                   activeLineNumber = -1;
@@ -3595,14 +3630,12 @@ class _PosScreenState extends State<PosScreen>
                 }
                 Future.delayed(const Duration(milliseconds: 100), () {
                   autoScrollController.scrollToIndex(
-                      (global.posHoldProcessResult[global.posHoldActiveNumber]
+                      (global.posTicketProcessResult[findTicketNumber]
                                   .posProcess.active_line_number <
                               0)
                           ? 0
-                          : global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .active_line_number,
+                          : global.posTicketProcessResult[findTicketNumber]
+                              .posProcess.active_line_number,
                       preferPosition: AutoScrollPosition.begin);
                 });
                 context.read<PosProcessBloc>().add(PosProcessFinish());

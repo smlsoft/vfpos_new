@@ -58,7 +58,7 @@ class _PosConnectClientState extends State<PosConnectClient> {
               width: 150,
               height: 150,
               child: QrImage(
-                  data: "${global.deviceId},0", version: QrVersions.auto)),
+                  data: "${global.deviceName},0", version: QrVersions.auto)),
           const SizedBox(
             height: 25,
           ),

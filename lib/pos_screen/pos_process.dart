@@ -74,8 +74,8 @@ class PosProcess {
     print("****** Process : " + DateTime.now().toString());
     double totalAmount = 0;
     // ค้นหา Barcode
-    var valueLog = global.posLogHelper.selectByHoldNumberIsVoidSuccess(
-        holdNumber: global.posHoldActiveNumber, isVoid: 0, success: 0);
+    var valueLog = global.posLogHelper.selectByTicketNumberIsVoidSuccess(
+        ticketNumber: global.posTicketActiveNumber, isVoid: 0, success: 0);
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {
@@ -299,7 +299,8 @@ class PosProcess {
         // 6=แก้ส่วนลด
         int findIndex = findByGuid(logData.guid_ref);
         if (findIndex != -1) {
-          processResult.details[findIndex].discount_text = logData.discountText;
+          processResult.details[findIndex].discount_text =
+              logData.discount_text;
           double extraTotalAmount = 0;
           for (int extraIndex = 0;
               extraIndex < processResult.details[findIndex].extra.length;
@@ -313,14 +314,15 @@ class PosProcess {
 
           double discount = processResult.details[findIndex].discount =
               global.calcDiscountFormula(
-                  totalAmount: totalAmount, discountText: logData.discountText);
+                  totalAmount: totalAmount,
+                  discountText: logData.discount_text);
           print(extraTotalAmount.toString() +
               ":" +
               totalAmount.toString() +
               ":" +
               discount.toString() +
               ":" +
-              logData.discountText);
+              logData.discount_text);
           processResult.details[findIndex].discount = discount;
           processCalc(findIndex);
         }

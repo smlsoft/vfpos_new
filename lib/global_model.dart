@@ -101,11 +101,14 @@ class PrinterDeviceModel {
       this.connectType = global.PrinterCashierConnectEnum.none});
 }
 
-class PosHoldProcessModel {
-  int countLog = 0;
+class PosTicketProcessModel {
+  int ticketNumber;
+  int logCount = 0;
   String saleCode = "";
   PosPayModel payScreenData = PosPayModel();
   PosProcessModel posProcess = PosProcessModel();
+
+  PosTicketProcessModel({required this.ticketNumber});
 }
 
 class ThemeStruct {
