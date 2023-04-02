@@ -21,8 +21,7 @@ class _PosHoldBillState extends State<PosHoldBill>
       global.posTicketProcessResult[index].logCount = global.posLogHelper
           .ticketCount(global.posTicketProcessResult[index].ticketNumber);
     }
-    int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
-    global.posTicketProcessResult[ticketNumber].payScreenData =
+    global.posTicketProcessResult[global.posTicketActiveNumber].payScreenData =
         global.payScreenData;
   }
 
@@ -40,13 +39,19 @@ class _PosHoldBillState extends State<PosHoldBill>
   }
 
   Widget holdButton(int number) {
-    int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
+    late Color backgroundColor;
+
+    if (global.posTicketProcessResult[number].logCount != 0) {
+      backgroundColor = Colors.cyan;
+    } else {
+      backgroundColor = Colors.green;
+    }
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: (ticketNumber == number)
+          backgroundColor: (global.posTicketActiveNumber == number)
               ? global.posTheme.secondary
-              : Colors.green),
+              : backgroundColor),
       onPressed: () async {
         Navigator.pop(context, number);
       },

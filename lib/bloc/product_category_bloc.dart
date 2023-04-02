@@ -36,12 +36,8 @@ class ProductCategoryBloc
     emit(ProductCategoryLoading());
     global.productCategoryList =
         ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
-    int findTicketNumber =
-        global.findTicketNumber(global.posTicketActiveNumber);
-    if (findTicketNumber != -1) {
-      PosProcess().sumCategoryCount(
-          global.posTicketProcessResult[findTicketNumber].posProcess);
-    }
+    PosProcess().sumCategoryCount(
+        global.posTicketProcessResult[global.posTicketActiveNumber].posProcess);
     emit(ProductCategoryLoadSuccess());
   }
 

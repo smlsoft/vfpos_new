@@ -41,11 +41,10 @@ double sumCoupon() {
 }
 
 double diffAmount() {
-  int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
-
-  double totalAmount = (ticketNumber == -1)
-      ? 0.0
-      : global.posTicketProcessResult[ticketNumber].posProcess.total_amount;
+  double totalAmount = global
+      .posTicketProcessResult[global.posTicketActiveNumber]
+      .posProcess
+      .total_amount;
   double sumCash = global.payScreenData.cash_amount;
   double sumDiscount = global.payScreenData.discount_amount;
   double sumTotalPayAmount = sumCash +

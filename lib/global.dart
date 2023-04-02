@@ -544,22 +544,20 @@ Future<void> systemProcess() async {
 Future<void> sendProcessToCustomerDisplay() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     if (customerDisplayDeviceList[index].connected) {
-      int ticketNumber = findTicketNumber(posTicketActiveNumber);
-      if (ticketNumber != -1) {
-        var url = "http://${customerDisplayDeviceList[index].ip}:5041";
-        try {
-          var jsonData = HttpPost(
-              command: "process",
-              data: jsonEncode(
-                  posTicketProcessResult[ticketNumber].posProcess.toJson()));
-          dev.log("sendProcessToCustomerDisplay : " + url);
-          sendToServer(
-              ip: url,
-              jsonData: jsonEncode(jsonData.toJson()),
-              callBack: (value) {});
-        } catch (e) {
-          print(e.toString() + " : " + url);
-        }
+      var url = "http://${customerDisplayDeviceList[index].ip}:5041";
+      try {
+        var jsonData = HttpPost(
+            command: "process",
+            data: jsonEncode(posTicketProcessResult[posTicketActiveNumber]
+                .posProcess
+                .toJson()));
+        dev.log("sendProcessToCustomerDisplay : " + url);
+        sendToServer(
+            ip: url,
+            jsonData: jsonEncode(jsonData.toJson()),
+            callBack: (value) {});
+      } catch (e) {
+        print(e.toString() + " : " + url);
       }
     }
   }
@@ -814,7 +812,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      // await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -1010,8 +1008,4 @@ Future scanServerByName(String name) async {
       }
     }
   }
-}
-
-int findTicketNumber(int number) {
-  return number;
 }

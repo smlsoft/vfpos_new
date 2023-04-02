@@ -93,21 +93,21 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       dev.log(
           "sendPayScreenCommandToCustomerDisplay : ${global.customerDisplayDeviceList[index].ip}");
       var url = "http://${global.customerDisplayDeviceList[index].ip}:5041";
-      int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
-      if (ticketNumber != -1) {
-        global.posTicketProcessResult[ticketNumber].posProcess.qr_code =
-            PromptPay.generateQRData("0899223131",
-                amount: global.posTicketProcessResult[ticketNumber].posProcess
-                    .total_amount
-                    .toDouble());
-        var jsonData = HttpPost(
-            command: "pay_screen",
-            data: jsonEncode(global
-                .posTicketProcessResult[ticketNumber].posProcess
-                .toJson()));
-        global.sendToServer(
-            ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
-      }
+      global.posTicketProcessResult[global.posTicketActiveNumber].posProcess
+              .qr_code =
+          PromptPay.generateQRData("0899223131",
+              amount: global
+                  .posTicketProcessResult[global.posTicketActiveNumber]
+                  .posProcess
+                  .total_amount
+                  .toDouble());
+      var jsonData = HttpPost(
+          command: "pay_screen",
+          data: jsonEncode(global
+              .posTicketProcessResult[global.posTicketActiveNumber].posProcess
+              .toJson()));
+      global.sendToServer(
+          ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
     }
   }
 
