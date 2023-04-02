@@ -1,6 +1,7 @@
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_client.dart';
+import 'package:dedepos/select_mode_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:localstore/localstore.dart';
 import 'dart:io';
@@ -31,8 +32,6 @@ Future<void> main() async {
   network.connectivity();
 
   global.isServer = true;
-  global.appMode = global.AppModeEnum.posClient;
-  //global.appMode = global.AppModeEnum.posTerminal;
 
   global.ipAddress = await network.ipAddress();
 
@@ -74,6 +73,7 @@ Future<void> main() async {
           '/loading': (BuildContext context) => const Loading(),
           '/login': (BuildContext context) => const Login(),
           '/client': (BuildContext context) => const PosClient(),
+          '/select_mode': (BuildContext context) => const SelectModeScreen(),
         },
       ),
     ),
