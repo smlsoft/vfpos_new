@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:dedepos/pos_screen/pos_connect_client.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -33,8 +31,8 @@ class _PosHoldBillState extends State<PosHoldBill>
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
             childAspectRatio: 3 / 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10),
         itemCount: global.posTicketProcessResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return holdButton(index);
@@ -43,58 +41,36 @@ class _PosHoldBillState extends State<PosHoldBill>
 
   Widget holdButton(int number) {
     int ticketNumber = global.findTicketNumber(global.posTicketActiveNumber);
-    return Container(
-      margin: const EdgeInsets.all(5),
-      width: double.infinity,
-      height: 45,
-      child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(0),
-                  backgroundColor: (ticketNumber == number)
-                      ? global.posTheme.secondary
-                      : Colors.green),
-              onPressed: () async {
-                Navigator.pop(context, number);
-              },
-              child: Stack(children: [
-                SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        Text(
-                            (global.posTicketProcessResult[number].logCount ==
-                                    0)
-                                ? global.language("blank")
-                                : "${global.language('qty')} ${global.posTicketProcessResult[number].logCount} ${global.language('qty')}",
-                            style: const TextStyle(
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 10.0,
-                                    color: Colors.grey,
-                                    offset: Offset(1.0, 1.0),
-                                  ),
-                                ],
-                                fontSize: 16)),
-                      ],
-                    )),
-                Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: IconButton(
-                        onPressed: () async {
-                          var result = await Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeft,
-                              child: const PosConnectClient(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.insert_link))),
-              ]))),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(0),
+          backgroundColor: (ticketNumber == number)
+              ? global.posTheme.secondary
+              : Colors.green),
+      onPressed: () async {
+        Navigator.pop(context, number);
+      },
+      child: Column(
+        children: [
+          Container(
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+              ),
+              padding: const EdgeInsets.all(10),
+              width: double.infinity,
+              child: Center(child: Text(number.toString()))),
+          Expanded(
+              child: Center(
+            child: Text(
+                (global.posTicketProcessResult[number].logCount == 0)
+                    ? global.language("blank")
+                    : "${global.language('qty')} ${global.posTicketProcessResult[number].logCount}",
+                style: const TextStyle(color: Colors.white, fontSize: 16)),
+          ))
+        ],
+      ),
     );
   }
 
@@ -105,7 +81,10 @@ class _PosHoldBillState extends State<PosHoldBill>
         title: Text(global.language("pos_hold_bill")),
         backgroundColor: global.posTheme.background,
       ),
-      body: holdBillContent(),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: holdBillContent(),
+      ),
     );
   }
 }

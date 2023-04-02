@@ -30,11 +30,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await global.loading();
   network.connectivity();
-
   global.isServer = true;
-
   global.ipAddress = await network.ipAddress();
-
   // (await global.getDeviceId() == 'ABABA0AA-F156-4FF2-8AB0-DD25B7348819');
   dev.log(
       "***************** ${(global.isServer) ? "Server" : "Client"} *****************");
@@ -65,8 +62,8 @@ Future<void> main() async {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          fontFamily: 'Prompt',
-        ),
+            // fontFamily: 'Prompt',
+            ),
         home: const Welcome(),
         routes: <String, WidgetBuilder>{
           '/menu': (BuildContext context) => const DashboardScreen(),
