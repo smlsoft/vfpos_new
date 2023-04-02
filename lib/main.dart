@@ -31,8 +31,8 @@ Future<void> main() async {
   network.connectivity();
 
   global.isServer = true;
-  //global.appMode = global.AppModeEnum.posClient;
-  global.appMode = global.AppModeEnum.posTerminal;
+  global.appMode = global.AppModeEnum.posClient;
+  //global.appMode = global.AppModeEnum.posTerminal;
 
   global.ipAddress = await network.ipAddress();
 

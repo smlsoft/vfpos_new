@@ -25,6 +25,8 @@ SyncDeviceModel _$SyncDeviceModelFromJson(Map<String, dynamic> json) =>
       device: json['device'] as String,
       ip: json['ip'] as String,
       connected: json['connected'] as bool,
+      isTerminal: json['isTerminal'] as bool,
+      isClient: json['isClient'] as bool,
     );
 
 Map<String, dynamic> _$SyncDeviceModelToJson(SyncDeviceModel instance) =>
@@ -32,4 +34,6 @@ Map<String, dynamic> _$SyncDeviceModelToJson(SyncDeviceModel instance) =>
       'device': instance.device,
       'ip': instance.ip,
       'connected': instance.connected,
+      'isTerminal': instance.isTerminal,
+      'isClient': instance.isClient,
     };
