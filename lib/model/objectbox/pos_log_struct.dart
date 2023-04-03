@@ -1,7 +1,11 @@
 import 'package:dedepos/global.dart' as global;
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'pos_log_struct.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 @Entity()
 class PosLogObjectBoxStruct {
   int id;
@@ -113,4 +117,8 @@ class PosLogObjectBoxStruct {
     this.guid_auto_fixed = Uuid().v4();
     this.hold_number = global.posHoldActiveNumber;
   }
+
+  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
+      _$PosLogObjectBoxStructFromJson(json);
+  Map<String, dynamic> toJson() => _$PosLogObjectBoxStructToJson(this);
 }

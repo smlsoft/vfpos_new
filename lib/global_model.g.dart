@@ -86,6 +86,7 @@ HttpParameterModel _$HttpParameterModelFromJson(Map<String, dynamic> json) =>
       parentGuid: json['parentGuid'] as String? ?? "",
       guid: json['guid'] as String? ?? "",
       barcode: json['barcode'] as String? ?? "",
+      jsonData: json['jsonData'] as String? ?? "",
     );
 
 Map<String, dynamic> _$HttpParameterModelToJson(HttpParameterModel instance) =>
@@ -93,4 +94,5 @@ Map<String, dynamic> _$HttpParameterModelToJson(HttpParameterModel instance) =>
       'parentGuid': instance.parentGuid,
       'guid': instance.guid,
       'barcode': instance.barcode,
+      'jsonData': instance.jsonData,
     };

@@ -3,6 +3,7 @@ import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -53,14 +54,20 @@ Future<void> startServer() async {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
-          if (httpGetData.code == "selectByBarcodeFirst") {
+          if (httpGetData.code == "PosLogHelper.insert") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+            PosLogObjectBoxStruct jsonData = PosLogObjectBoxStruct.fromJson(
+                jsonDecode(jsonCategory.jsonData));
+            final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
+            response.write(box.put(jsonData));
+          } else if (httpGetData.code == "selectByBarcodeFirst") {
             HttpParameterModel jsonCategory =
                 HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
             ProductBarcodeObjectBoxStruct? result = await ProductBarcodeHelper()
                 .selectByBarcodeFirst(jsonCategory.barcode);
             response.write(jsonEncode(result?.toJson()));
-          }
-          if (httpGetData.code == "selectByBarcodeList") {
+          } else if (httpGetData.code == "selectByBarcodeList") {
             HttpParameterModel jsonCategory =
                 HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
             List<String> barcodeList = jsonCategory.barcode.split(",");

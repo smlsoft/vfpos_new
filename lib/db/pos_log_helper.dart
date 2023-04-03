@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/objectbox.g.dart';
@@ -6,8 +8,19 @@ import 'package:dedepos/objectbox.g.dart';
 class PosLogHelper {
   final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
 
-  int insert(PosLogObjectBoxStruct value) {
-    return box.put(value);
+  Future<int> insert(PosLogObjectBoxStruct value) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(jsonData: jsonEncode(value.toJson()));
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "PosLogHelper.insert",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return int.parse(result);
+    } else {
+      return box.put(value);
+    }
   }
 
   int holdCount(int holdNumber) {
