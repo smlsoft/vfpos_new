@@ -42,9 +42,7 @@ double sumCoupon() {
 
 double diffAmount() {
   double totalAmount = global
-      .posTicketProcessResult[global.posTicketActiveNumber]
-      .posProcess
-      .total_amount;
+      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount;
   double sumCash = global.payScreenData.cash_amount;
   double sumDiscount = global.payScreenData.discount_amount;
   double sumTotalPayAmount = sumCash +

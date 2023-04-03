@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 

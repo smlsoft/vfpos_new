@@ -101,14 +101,14 @@ class PrinterDeviceModel {
       this.connectType = global.PrinterCashierConnectEnum.none});
 }
 
-class PosTicketProcessModel {
-  int ticketNumber;
+class PosHoldProcessModel {
+  int holdNumber;
   int logCount = 0;
   String saleCode = "";
   PosPayModel payScreenData = PosPayModel();
   PosProcessModel posProcess = PosProcessModel();
 
-  PosTicketProcessModel({required this.ticketNumber});
+  PosHoldProcessModel({required this.holdNumber});
 }
 
 class ThemeStruct {
@@ -140,12 +140,14 @@ class HttpGetDataModel {
 }
 
 @JsonSerializable(explicitToJson: true)
-class HttpCategoryModel {
+class HttpParameterModel {
   String parentGuid;
+  String guid;
+  String barcode;
 
-  HttpCategoryModel({required this.parentGuid});
+  HttpParameterModel({this.parentGuid = "", this.guid = "", this.barcode = ""});
 
-  factory HttpCategoryModel.fromJson(Map<String, dynamic> json) =>
-      _$HttpCategoryModelFromJson(json);
-  Map<String, dynamic> toJson() => _$HttpCategoryModelToJson(this);
+  factory HttpParameterModel.fromJson(Map<String, dynamic> json) =>
+      _$HttpParameterModelFromJson(json);
+  Map<String, dynamic> toJson() => _$HttpParameterModelToJson(this);
 }

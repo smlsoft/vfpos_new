@@ -28,8 +28,8 @@ Future<String> saveBill(
       customer_telephone: "",
       sale_code: global.saleActiveCode,
       sale_name: global.saleActiveName,
-      total_amount: global
-          .posTicketProcessResult[global.posTicketActiveNumber].posProcess.total_amount,
+      total_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.total_amount,
       cashier_code: global.userLoginCode,
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
@@ -45,8 +45,8 @@ Future<String> saveBill(
   // รายละเอียด
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
-  for (var value
-      in global.posTicketProcessResult[global.posTicketActiveNumber].posProcess.details) {
+  for (var value in global
+      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.details) {
     details.add(BillDetailObjectBoxStruct(
         doc_number: docNumber,
         line_number: lineNumber,

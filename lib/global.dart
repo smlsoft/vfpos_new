@@ -70,8 +70,8 @@ AuthService appAuth = AuthService();
 bool initSuccess = false;
 late List<LanguageSystemCodeModel> languageSystemCode;
 late String pathApplicationDocumentsDirectory;
-List<PosTicketProcessModel> posTicketProcessResult = [];
-int posTicketActiveNumber = 0;
+List<PosHoldProcessModel> posHoldProcessResult = [];
+int posHoldActiveNumber = 0;
 ProductCategoryHelper productCategoryHelper = ProductCategoryHelper();
 ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 MemberHelper memberHelper = MemberHelper();
@@ -145,7 +145,7 @@ String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำห
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
 String httpServerIp = "";
 int httpServerPort = 4040;
-AppModeEnum appMode = AppModeEnum.posTerminal;
+AppModeEnum appMode = AppModeEnum.posCashierTerminal;
 bool apiConnected = false;
 String apiUserName = "maxkorn";
 String apiUserPassword = "maxkorn";
@@ -188,7 +188,7 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
 
-enum AppModeEnum { posTerminal, restaurantTerminal, posClient }
+enum AppModeEnum { posCashierTerminal, restaurantTerminal, posClient }
 
 void themeSelect(int mode) {
   switch (mode) {
@@ -520,7 +520,7 @@ Future<void> systemProcess() async {
         ip: "",
         connected: true,
         isClient: false,
-        isTerminal: false);
+        isCashierTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
     postToServer(
         ip: url,
@@ -547,9 +547,8 @@ Future<void> sendProcessToCustomerDisplay() async {
       try {
         var jsonData = HttpPost(
             command: "process",
-            data: jsonEncode(posTicketProcessResult[posTicketActiveNumber]
-                .posProcess
-                .toJson()));
+            data: jsonEncode(
+                posHoldProcessResult[posHoldActiveNumber].posProcess.toJson()));
         dev.log("sendProcessToCustomerDisplay : " + url);
         postToServer(
             ip: url,
@@ -853,7 +852,7 @@ Future<void> loading() async {
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
   for (int loop = 0; loop < 20; loop++) {
-    posTicketProcessResult.add(PosTicketProcessModel(ticketNumber: loop));
+    posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
   }
 
   pathApplicationDocumentsDirectory =
@@ -975,7 +974,7 @@ Future scanServerByName(String name) async {
         ip: ip,
         connected: false,
         isClient: false,
-        isTerminal: false));
+        isCashierTerminal: false));
   }
   int countTread = 0;
   bool loopScan = true;
@@ -998,7 +997,7 @@ Future scanServerByName(String name) async {
                   print("Connected to ${ipList[index].ip}");
                   SyncDeviceModel server =
                       SyncDeviceModel.fromJson(jsonDecode(result.body));
-                  if (server.device == name && server.isTerminal) {
+                  if (server.device == name && server.isCashierTerminal) {
                     ipList[index].connected = true;
                     loopScan = false;
                     posTerminalIpAddress = ipList[index].ip;

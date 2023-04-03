@@ -26,8 +26,8 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                       children: [
                         ElevatedButton(
                             onPressed: () {
-                              global.appMode = global.AppModeEnum.posTerminal;
-                              global.loginSuccess = true;
+                              global.appMode =
+                                  global.AppModeEnum.posCashierTerminal;
                               Navigator.of(context)
                                   .pushReplacementNamed('/login');
                             },

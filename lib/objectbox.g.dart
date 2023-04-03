@@ -602,7 +602,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(27, 1974533521624653283),
+      lastPropertyId: const IdUid(28, 6877901496144380651),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -712,11 +712,11 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(27, 1974533521624653283),
-            name: 'ticket_number',
+            id: const IdUid(28, 6877901496144380651),
+            name: 'hold_number',
             type: 6,
             flags: 8,
-            indexId: const IdUid(14, 8122487945397319143))
+            indexId: const IdUid(15, 8091174755438905349))
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -1008,7 +1008,7 @@ ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
       lastEntityId: const IdUid(13, 2941303872910854793),
-      lastIndexId: const IdUid(14, 8122487945397319143),
+      lastIndexId: const IdUid(15, 8091174755438905349),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
@@ -1016,7 +1016,8 @@ ModelDefinition getObjectBoxModel() {
         9219344176730085609,
         2276328705805420932,
         5444144693635609139,
-        660270763994584363
+        660270763994584363,
+        8122487945397319143
       ],
       retiredPropertyUids: const [
         5697435774194423126,
@@ -1040,7 +1041,8 @@ ModelDefinition getObjectBoxModel() {
         7770745563320712682,
         3423933695813107025,
         1388231681468617274,
-        7726160006148714000
+        7726160006148714000,
+        1974533521624653283
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1558,7 +1560,7 @@ ModelDefinition getObjectBoxModel() {
           final unit_nameOffset = fbb.writeString(object.unit_name);
           final barcodeOffset = fbb.writeString(object.barcode);
           final discount_textOffset = fbb.writeString(object.discount_text);
-          fbb.startTable(28);
+          fbb.startTable(29);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
@@ -1580,7 +1582,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(21, unit_nameOffset);
           fbb.addOffset(22, barcodeOffset);
           fbb.addOffset(25, discount_textOffset);
-          fbb.addInt64(26, object.ticket_number);
+          fbb.addInt64(27, object.hold_number);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1596,8 +1598,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 10, ''),
               log_date_time: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
-              ticket_number:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 56, 0),
+              hold_number:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0),
               command_code:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
               barcode: const fb.StringReader(asciiOptimization: true)
@@ -2382,8 +2384,8 @@ class PosLogObjectBoxStruct_ {
   static final discount_text =
       QueryStringProperty<PosLogObjectBoxStruct>(_entities[8].properties[20]);
 
-  /// see [PosLogObjectBoxStruct.ticket_number]
-  static final ticket_number =
+  /// see [PosLogObjectBoxStruct.hold_number]
+  static final hold_number =
       QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[8].properties[21]);
 }
 

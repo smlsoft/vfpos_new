@@ -74,8 +74,8 @@ class PosProcess {
     print("****** Process : " + DateTime.now().toString());
     double totalAmount = 0;
     // ค้นหา Barcode
-    var valueLog = global.posLogHelper.selectByTicketNumberIsVoidSuccess(
-        ticketNumber: global.posTicketActiveNumber, isVoid: 0, success: 0);
+    var valueLog = global.posLogHelper.selectByHoldNumberIsVoidSuccess(
+        holdNumber: global.posHoldActiveNumber, isVoid: 0, success: 0);
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {

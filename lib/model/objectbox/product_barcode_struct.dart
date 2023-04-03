@@ -5,7 +5,11 @@ import 'dart:ffi';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'product_barcode_struct.g.dart';
+
+@JsonSerializable()
 @Entity()
 class ProductBarcodeObjectBoxStruct {
   int id = 0;
@@ -95,4 +99,8 @@ class ProductBarcodeObjectBoxStruct {
       return [];
     }
   }
+
+  factory ProductBarcodeObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
+      _$ProductBarcodeObjectBoxStructFromJson(json);
+  Map<String, dynamic> toJson() => _$ProductBarcodeObjectBoxStructToJson(this);
 }

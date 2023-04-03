@@ -81,12 +81,16 @@ Map<String, dynamic> _$HttpGetDataModelToJson(HttpGetDataModel instance) =>
       'json': instance.json,
     };
 
-HttpCategoryModel _$HttpCategoryModelFromJson(Map<String, dynamic> json) =>
-    HttpCategoryModel(
-      parentGuid: json['parentCode'] as String,
+HttpParameterModel _$HttpParameterModelFromJson(Map<String, dynamic> json) =>
+    HttpParameterModel(
+      parentGuid: json['parentGuid'] as String? ?? "",
+      guid: json['guid'] as String? ?? "",
+      barcode: json['barcode'] as String? ?? "",
     );
 
-Map<String, dynamic> _$HttpCategoryModelToJson(HttpCategoryModel instance) =>
+Map<String, dynamic> _$HttpParameterModelToJson(HttpParameterModel instance) =>
     <String, dynamic>{
-      'parentCode': instance.parentGuid,
+      'parentGuid': instance.parentGuid,
+      'guid': instance.guid,
+      'barcode': instance.barcode,
     };

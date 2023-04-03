@@ -17,11 +17,11 @@ class _PosHoldBillState extends State<PosHoldBill>
   @override
   void initState() {
     super.initState();
-    for (int index = 0; index < global.posTicketProcessResult.length; index++) {
-      global.posTicketProcessResult[index].logCount = global.posLogHelper
-          .ticketCount(global.posTicketProcessResult[index].ticketNumber);
+    for (int index = 0; index < global.posHoldProcessResult.length; index++) {
+      global.posHoldProcessResult[index].logCount = global.posLogHelper
+          .holdCount(global.posHoldProcessResult[index].holdNumber);
     }
-    global.posTicketProcessResult[global.posTicketActiveNumber].payScreenData =
+    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
         global.payScreenData;
   }
 
@@ -32,7 +32,7 @@ class _PosHoldBillState extends State<PosHoldBill>
             childAspectRatio: 3 / 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
-        itemCount: global.posTicketProcessResult.length,
+        itemCount: global.posHoldProcessResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return holdButton(index);
         });
@@ -41,7 +41,7 @@ class _PosHoldBillState extends State<PosHoldBill>
   Widget holdButton(int number) {
     late Color backgroundColor;
 
-    if (global.posTicketProcessResult[number].logCount != 0) {
+    if (global.posHoldProcessResult[number].logCount != 0) {
       backgroundColor = Colors.cyan;
     } else {
       backgroundColor = Colors.green;
@@ -49,7 +49,7 @@ class _PosHoldBillState extends State<PosHoldBill>
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: (global.posTicketActiveNumber == number)
+          backgroundColor: (global.posHoldActiveNumber == number)
               ? global.posTheme.secondary
               : backgroundColor),
       onPressed: () async {
@@ -69,9 +69,9 @@ class _PosHoldBillState extends State<PosHoldBill>
           Expanded(
               child: Center(
             child: Text(
-                (global.posTicketProcessResult[number].logCount == 0)
+                (global.posHoldProcessResult[number].logCount == 0)
                     ? global.language("blank")
-                    : "${global.language('qty')} ${global.posTicketProcessResult[number].logCount}",
+                    : "${global.language('qty')} ${global.posHoldProcessResult[number].logCount}",
                 style: const TextStyle(color: Colors.white, fontSize: 16)),
           ))
         ],

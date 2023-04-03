@@ -22,14 +22,14 @@ class SyncDeviceModel {
   String device;
   String ip;
   bool connected;
-  bool isTerminal;
+  bool isCashierTerminal;
   bool isClient;
 
   SyncDeviceModel(
       {required this.device,
       required this.ip,
       required this.connected,
-      required this.isTerminal,
+      required this.isCashierTerminal,
       required this.isClient});
 
   factory SyncDeviceModel.fromJson(Map<String, dynamic> json) =>

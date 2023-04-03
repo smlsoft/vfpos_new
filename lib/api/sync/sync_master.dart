@@ -525,7 +525,7 @@ Future syncMasterData() async {
 }
 
 Future syncMasterProcess() async {
-  if (global.appMode == global.AppModeEnum.posTerminal) {
+  if (global.appMode == global.AppModeEnum.posCashierTerminal) {
     // Sync เฉพาะเครื่อง POS Terminal
     global.isOnline = await global.hasNetwork();
     if (global.isOnline) {

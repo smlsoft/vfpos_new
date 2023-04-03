@@ -16,32 +16,55 @@ class ProductCategoryHelper {
     box.putMany(values);
   }
 
-  List<ProductCategoryObjectBoxStruct> selectByParentCategoryGuidOrderByXorder(
-      {String parentCategoryGuid = ""}) {
-    print("[" + parentCategoryGuid + "]");
-    return (box.query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
-            .equals(parentCategoryGuid))
-          ..order(ProductCategoryObjectBoxStruct_.xorder))
-        .build()
-        .find();
+  Future<List<ProductCategoryObjectBoxStruct>>
+      selectByParentCategoryGuidOrderByXorder({String parentGuid = ""}) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(parentGuid: parentGuid);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "selectByParentCategoryGuidOrderByXorder",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return (jsonDecode(result) as List)
+          .map((e) => ProductCategoryObjectBoxStruct.fromJson(e))
+          .toList();
+    } else {
+      return (box.query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
+              .equals(parentGuid))
+            ..order(ProductCategoryObjectBoxStruct_.xorder))
+          .build()
+          .find();
+    }
   }
 
-  ProductCategoryObjectBoxStruct? selectByCategoryGuidFindFirst(String guid) {
+  Future<ProductCategoryObjectBoxStruct?> selectByCategoryGuidFindFirst(
+      String guid) async {
     print("[" + guid + "]");
-    return box
-        .query(ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
-        .build()
-        .findFirst();
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter = HttpParameterModel(guid: guid);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "selectByCategoryGuidFindFirst",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return ProductCategoryObjectBoxStruct.fromJson(jsonDecode(result));
+    } else {
+      return box
+          .query(ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
+          .build()
+          .findFirst();
+    }
   }
 
   Future<List<ProductCategoryObjectBoxStruct>> selectByCategoryParentGuid(
       String parentGuid) async {
-    print("[" + parentGuid + "]");
     if (global.appMode == global.AppModeEnum.posClient) {
-      HttpCategoryModel jsonCategory =
-          HttpCategoryModel(parentGuid: parentGuid);
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(parentGuid: parentGuid);
       HttpGetDataModel json = HttpGetDataModel(
-          code: "load_category", json: jsonEncode(jsonCategory.toJson()));
+          code: "selectByCategoryParentGuid",
+          json: jsonEncode(jsonParameter.toJson()));
       String result =
           await global.getFromServer(json: jsonEncode(json.toJson()));
       return (jsonDecode(result) as List)

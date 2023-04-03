@@ -22,7 +22,7 @@ class PosLogObjectBoxStruct {
 
   /// ลำดับการพักบิล
   @Index()
-  int ticket_number;
+  int hold_number;
 
   /// คำสั่ง (หมายเหตุด้านล่าง)
   int command_code;
@@ -92,7 +92,7 @@ class PosLogObjectBoxStruct {
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,
-    required this.ticket_number,
+    required this.hold_number,
     required this.command_code,
     this.barcode = "",
     this.is_void = 0,
@@ -111,6 +111,6 @@ class PosLogObjectBoxStruct {
     this.unit_name = "",
   }) {
     this.guid_auto_fixed = Uuid().v4();
-    this.ticket_number = global.posTicketActiveNumber;
+    this.hold_number = global.posHoldActiveNumber;
   }
 }

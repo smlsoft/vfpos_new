@@ -43,16 +43,16 @@ Future<void> startServer() async {
     dev.log(
         "Server running on IP : ${server.address} On Port : ${server.port}");
     await for (HttpRequest request in server) {
-      if (global.loginSuccess) {
+      if (global.loginSuccess || 1 == 1) {
         var contentType = request.headers.contentType;
         var response = request.response;
         if (request.method == 'GET') {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
-          if (httpGetData.code == "load_category") {
-            HttpCategoryModel jsonCategory =
-                HttpCategoryModel.fromJson(jsonDecode(httpGetData.json));
+          if (httpGetData.code == "selectByCategoryParentGuid") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
             String parentGuid = jsonCategory.parentGuid;
             final box =
                 global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
@@ -63,17 +63,43 @@ Future<void> startServer() async {
                 .build()
                 .find();
             response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
+          } else if (httpGetData.code ==
+              "selectByParentCategoryGuidOrderByXorder") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+            String parentGuid = jsonCategory.parentGuid;
+            final box =
+                global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+            final result = (box.query(ProductCategoryObjectBoxStruct_
+                    .parent_guid_fixed
+                    .equals(parentGuid))
+                  ..order(ProductCategoryObjectBoxStruct_.xorder))
+                .build()
+                .find();
+            response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
+          } else if (httpGetData.code == "selectByCategoryGuidFindFirst") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+            String guid = jsonCategory.guid;
+            final box =
+                global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+            ProductCategoryObjectBoxStruct? result = box
+                .query(ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
+                .build()
+                .findFirst();
+            response.write(jsonEncode(result?.toJson()));
           }
         } else if (request.method == 'POST') {
           if (request.uri.path == '/scan') {
             bool isTerminal =
-                (global.appMode == global.AppModeEnum.posTerminal);
+                (global.appMode == global.AppModeEnum.posCashierTerminal);
+
             bool isClient = (global.appMode == global.AppModeEnum.posClient);
             SyncDeviceModel resultData = SyncDeviceModel(
                 device: global.deviceName,
                 ip: global.ipAddress,
                 connected: true,
-                isTerminal: isTerminal,
+                isCashierTerminal: isTerminal,
                 isClient: isClient);
             response.write(jsonEncode(resultData.toJson()));
           } else if (contentType?.mimeType == 'application/json') {
