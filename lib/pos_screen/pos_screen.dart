@@ -272,15 +272,23 @@ class _PosScreenState extends State<PosScreen>
           .selectByCategoryGuidFindFirst(categoryGuid);
       global.productListByCategory = [];
       if (selectCodeList != null) {
+        List<String> barcodeList = [];
         ProductCategoryObjectBoxStruct category = selectCodeList;
+        for (var item in jsonDecode(category.codelist)) {
+          SyncCategoryCodeListModel code =
+              SyncCategoryCodeListModel.fromJson(item);
+          barcodeList.add(code.barcode);
+        }
+        var selectProductByBarcodeList =
+            await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
         for (var item in jsonDecode(category.codelist)) {
           SyncCategoryCodeListModel codeList =
               SyncCategoryCodeListModel.fromJson(item);
-          var selectProductByBarcode =
-              ProductBarcodeHelper().selectByBarcodeFirst(codeList.barcode);
-          if (selectProductByBarcode != null) {
-            ProductBarcodeObjectBoxStruct product = selectProductByBarcode;
-            global.productListByCategory.add(product);
+          for (var product in selectProductByBarcodeList) {
+            if (product.barcode == codeList.barcode) {
+              global.productListByCategory.add(product);
+              break;
+            }
           }
         }
       }

@@ -99,6 +99,37 @@ class ProductBarcodeHelper {
     return results;
   }
 
+  Future<List<ProductBarcodeObjectBoxStruct>> selectByBarcodeList(
+    List<String> barcodeList,
+  ) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(barcode: barcodeList.join(","));
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "selectByBarcodeList",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return (jsonDecode(result) as List)
+          .map((e) => ProductBarcodeObjectBoxStruct.fromJson(e))
+          .toList();
+    } else {
+      Condition<ProductBarcodeObjectBoxStruct>? ids;
+      for (var barcode in barcodeList) {
+        if (ids == null) {
+          ids = ProductBarcodeObjectBoxStruct_.barcode.equals(barcode);
+        } else {
+          ids = ids.or(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode));
+        }
+      }
+      if (ids != null) {
+        return box.query(ids).build().find();
+      } else {
+        return [];
+      }
+    }
+  }
+
   ProductBarcodeObjectBoxStruct? selectByBarcodeFirst(String barcode) {
     return box
         .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))

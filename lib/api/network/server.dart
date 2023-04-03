@@ -3,6 +3,7 @@ import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/db/printer_helper.dart';
+import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/global.dart' as global;
@@ -51,7 +53,14 @@ Future<void> startServer() async {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
-          if (httpGetData.code == "selectByCategoryParentGuid") {
+          if (httpGetData.code == "selectByBarcodeList") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+            List<String> barcodeList = jsonCategory.barcode.split(",");
+            List<ProductBarcodeObjectBoxStruct> result =
+                await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
+            response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
+          } else if (httpGetData.code == "selectByCategoryParentGuid") {
             HttpParameterModel jsonCategory =
                 HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
             String parentGuid = jsonCategory.parentGuid;
