@@ -54,14 +54,7 @@ Future<void> startServer() async {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
-          if (httpGetData.code == "PosLogHelper.insert") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            PosLogObjectBoxStruct jsonData = PosLogObjectBoxStruct.fromJson(
-                jsonDecode(jsonCategory.jsonData));
-            final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
-            response.write(box.put(jsonData));
-          } else if (httpGetData.code == "selectByBarcodeFirst") {
+          if (httpGetData.code == "selectByBarcodeFirst") {
             HttpParameterModel jsonCategory =
                 HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
             ProductBarcodeObjectBoxStruct? result = await ProductBarcodeHelper()
@@ -132,6 +125,16 @@ Future<void> startServer() async {
               var jsonDecodeStr = jsonDecode(data);
               var httpPost = HttpPost.fromJson(jsonDecodeStr);
               switch (httpPost.command) {
+                case "PosLogHelper.insert":
+                  HttpParameterModel jsonCategory =
+                      HttpParameterModel.fromJson(jsonDecode(httpPost.data));
+                  PosLogObjectBoxStruct jsonData =
+                      PosLogObjectBoxStruct.fromJson(
+                          jsonDecode(jsonCategory.jsonData));
+                  final box =
+                      global.objectBoxStore.box<PosLogObjectBoxStruct>();
+                  response.write(box.put(jsonData));
+                  break;
                 case "get_device_name":
                   // Return ชื่อเครื่อง server , ip server
                   response.write(jsonEncode(

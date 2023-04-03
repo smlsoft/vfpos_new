@@ -909,6 +909,26 @@ Future<void> postToServer(
   }
 }
 
+Future<String> postToServerAndWait(
+    {required String ip, required String jsonData}) async {
+  String result = "";
+  try {
+    var request = http.Request("POST", Uri.parse(ip));
+    request.headers["Content-Type"] = "application/json";
+    request.headers["Cache-Control"] = "no-cache";
+    request.headers["Accept"] = "text/event-stream";
+    request.body = jsonData;
+    // wait for the response
+    var value = await httpClient.send(request);
+    if (value.statusCode == 200) {
+      result = utf8.decode(await value.stream.toBytes());
+    }
+  } catch (e) {
+    print("sendToServer : " + e.toString());
+  }
+  return result;
+}
+
 void openCashDrawer() async {
   PaperSize paper = PaperSize.mm80;
   CapabilityProfile profile = await CapabilityProfile.load();

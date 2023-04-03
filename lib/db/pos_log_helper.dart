@@ -15,8 +15,9 @@ class PosLogHelper {
       HttpGetDataModel json = HttpGetDataModel(
           code: "PosLogHelper.insert",
           json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
+      String result = await global.postToServerAndWait(
+          ip: "${global.targetDeviceIpAddress}:${global.targetDeviceIpPort}",
+          jsonData: jsonEncode(json.toJson()));
       return int.parse(result);
     } else {
       return box.put(value);
