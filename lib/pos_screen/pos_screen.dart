@@ -399,7 +399,7 @@ class _PosScreenState extends State<PosScreen>
           // 1=เพิ่มสินค้า
           // Get Item Name
           ProductBarcodeObjectBoxStruct? productSelect =
-              ProductBarcodeHelper().selectByBarcodeFirst(barcode);
+            await ProductBarcodeHelper().selectByBarcodeFirst(barcode);
           String productNameStr = '';
           String unitCodeStr = "";
           String unitNameStr = "";
@@ -749,10 +749,10 @@ class _PosScreenState extends State<PosScreen>
     } catch (e) {}*/
   }
 
-  void processEvent({String barcode = ""}) {
+  Future<void> processEvent({String barcode = ""}) async {
     print("processEvent()");
     if (barcode.isNotEmpty) {
-      product = ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
+      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
           ProductBarcodeObjectBoxStruct(
               barcode: "",
               names: [],
@@ -1764,7 +1764,7 @@ class _PosScreenState extends State<PosScreen>
                       .clear();
                   print(global.posHoldProcessResult[global.posHoldActiveNumber]
                       .posProcess.details[index].barcode);
-                  product = ProductBarcodeHelper().selectByBarcodeFirst(global
+                  product =await ProductBarcodeHelper().selectByBarcodeFirst(global
                           .posHoldProcessResult[global.posHoldActiveNumber]
                           .posProcess
                           .details[index]

@@ -53,6 +53,13 @@ Future<void> startServer() async {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
+          if (httpGetData.code == "selectByBarcodeFirst") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+            ProductBarcodeObjectBoxStruct? result = await ProductBarcodeHelper()
+                .selectByBarcodeFirst(jsonCategory.barcode);
+            response.write(jsonEncode(result?.toJson()));
+          }
           if (httpGetData.code == "selectByBarcodeList") {
             HttpParameterModel jsonCategory =
                 HttpParameterModel.fromJson(jsonDecode(httpGetData.json));

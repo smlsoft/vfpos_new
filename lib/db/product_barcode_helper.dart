@@ -130,11 +130,22 @@ class ProductBarcodeHelper {
     }
   }
 
-  ProductBarcodeObjectBoxStruct? selectByBarcodeFirst(String barcode) {
-    return box
-        .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))
-        .build()
-        .findFirst();
+  Future<ProductBarcodeObjectBoxStruct?> selectByBarcodeFirst(
+      String barcode) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcode);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "selectByBarcodeFirst",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return ProductBarcodeObjectBoxStruct.fromJson(jsonDecode(result));
+    } else {
+      return box
+          .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))
+          .build()
+          .findFirst();
+    }
   }
 
   List<ProductBarcodeObjectBoxStruct> xselect(

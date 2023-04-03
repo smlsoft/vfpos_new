@@ -165,7 +165,7 @@ class PosProcess {
           int findIndex = 0;
           // 1=เพิ่มสินค้า
           // กรณี เป็น New Line ให้เพิ่มบรรทัดใหม่
-          ProductBarcodeObjectBoxStruct productBarcode = global
+          ProductBarcodeObjectBoxStruct productBarcode = await global
                   .productBarcodeHelper
                   .selectByBarcodeFirst(logData.barcode) ??
               ProductBarcodeObjectBoxStruct(
