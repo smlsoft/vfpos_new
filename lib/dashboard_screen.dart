@@ -810,6 +810,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void processEvent() async {
     print("processEvent()");
-    context.read<PosProcessBloc>().add(ProcessEvent());
+    context
+        .read<PosProcessBloc>()
+        .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
   }
 }

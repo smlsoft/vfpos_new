@@ -1,25 +1,31 @@
-import 'dart:developer';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
-import 'package:dedepos/global.dart' as global;
 
-abstract class PosProcessEvent {}
+abstract class PosProcessEvent {
+  final int holdNumber;
+  PosProcessEvent({required this.holdNumber});
+}
 
 abstract class PosProcessState {}
 
 class PosProcessStateInitialized extends PosProcessState {}
 
-class PosProcessInitialized extends PosProcessEvent {}
+class PosProcessInitialized extends PosProcessEvent {
+  PosProcessInitialized({required super.holdNumber});
+}
 
 class PosProcessLoading extends PosProcessState {}
 
 class PosProcessClear extends PosProcessState {}
 
-class ProcessEvent extends PosProcessEvent {}
+class ProcessEvent extends PosProcessEvent {
+  ProcessEvent({required super.holdNumber});
+}
 
-class PosProcessFinish extends PosProcessEvent {}
+class PosProcessFinish extends PosProcessEvent {
+  PosProcessFinish({required super.holdNumber});
+}
 
 class PosProcessBloc extends Bloc<PosProcessEvent, PosProcessState> {
   PosProcessBloc() : super(PosProcessStateInitialized()) {
@@ -34,7 +40,7 @@ class PosProcessBloc extends Bloc<PosProcessEvent, PosProcessState> {
 
   void _process(PosProcessEvent event, Emitter<PosProcessState> emit) async {
     emit(PosProcessLoading());
-    PosProcessModel result = await PosProcess().process();
+    PosProcessModel result = await PosProcess().process(event.holdNumber);
     PosProcess().sumCategoryCount(result);
     emit(PosProcessSuccess(result: result));
   }

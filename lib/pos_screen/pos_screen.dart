@@ -204,7 +204,7 @@ class _PosScreenState extends State<PosScreen>
       if (global.posScreenRefresh) {
         global.posScreenRefresh = false;
         BlocProvider.of<PosProcessBloc>(global.globalContext)
-            .add(ProcessEvent());
+            .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
       }
       network.testPrinterConnect();
     });
@@ -774,7 +774,9 @@ class _PosScreenState extends State<PosScreen>
               product_count: 0);
       productOptions = product.options();
     }
-    context.read<PosProcessBloc>().add(ProcessEvent());
+    context
+        .read<PosProcessBloc>()
+        .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
     setState(() {});
   }
 
@@ -3635,7 +3637,8 @@ class _PosScreenState extends State<PosScreen>
                               .active_line_number,
                       preferPosition: AutoScrollPosition.begin);
                 });
-                context.read<PosProcessBloc>().add(PosProcessFinish());
+                context.read<PosProcessBloc>().add(
+                    PosProcessFinish(holdNumber: global.posHoldActiveNumber));
                 global.sendProcessToCustomerDisplay();
               }
             },
