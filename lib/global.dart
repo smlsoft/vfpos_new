@@ -143,8 +143,6 @@ List<PrinterModel> printerList = [];
 String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
 String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
-String httpServerIp = "";
-int httpServerPort = 4040;
 AppModeEnum appMode = AppModeEnum.posCashierTerminal;
 bool apiConnected = false;
 String apiUserName = "maxkorn";
@@ -177,8 +175,9 @@ String printerCashierIpAddress = "";
 int printerCashierIpPort = 9100;
 bool customerDisplayDesktopMultiScreen = true;
 bool posScreenRefresh = false;
-String posTerminalIpAddress = "";
-int posTerminalServerPort = 4040;
+String targetDeviceIpAddress = "";
+int targetDeviceIpPort = 4040;
+bool targetDeviceConnected = false;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -471,7 +470,7 @@ void showAlertDialog(
 }*/
 
 Future<void> printQueueStartServer() async {
-  var url = "http://$httpServerIp:$httpServerPort";
+  var url = "http://$targetDeviceIpAddress:$targetDeviceIpPort";
   var uri = Uri.parse(url);
   try {
     http.Response response = await http
@@ -807,7 +806,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      // await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -872,7 +871,8 @@ Future<void> loading() async {
 Future<String> getFromServer({required String json}) async {
   final base64String = base64Encode(utf8.encode(json));
   // String url = "$httpServerIp:$httpServerPort?data=$base64String";
-  String url = "$httpServerIp:$httpServerPort";
+
+  String url = "$targetDeviceIpAddress:$targetDeviceIpPort";
   final response = await httpClient
       .get(Uri.http(url, '/', {'json': base64String}), headers: {
     "Content-Type": "application/json",
@@ -985,7 +985,7 @@ Future scanServerByName(String name) async {
         if (countTread < 10) {
           countTread++;
           String url =
-              "http://${ipList[index].ip}:${posTerminalServerPort}/scan?uuid=${const Uuid().v4()}";
+              "http://${ipList[index].ip}:${targetDeviceIpPort}/scan?uuid=${const Uuid().v4()}";
           try {
             http
                 .post(Uri.parse(url))
@@ -1000,7 +1000,8 @@ Future scanServerByName(String name) async {
                   if (server.device == name && server.isCashierTerminal) {
                     ipList[index].connected = true;
                     loopScan = false;
-                    posTerminalIpAddress = ipList[index].ip;
+                    targetDeviceIpAddress = ipList[index].ip;
+                    targetDeviceConnected = true;
                   }
                 }
               }

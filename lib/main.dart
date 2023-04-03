@@ -36,10 +36,9 @@ Future<void> main() async {
   await global.loading();
   network.connectivity();
   global.ipAddress = await network.ipAddress();
+  global.targetDeviceIpAddress = global.ipAddress;
   // (await global.getDeviceId() == 'ABABA0AA-F156-4FF2-8AB0-DD25B7348819');
   server.startServer();
-  // Test
-  global.httpServerIp = global.ipAddress;
 
   runApp(
     MultiBlocProvider(

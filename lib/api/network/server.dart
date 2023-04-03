@@ -39,7 +39,8 @@ class HttpPost {
 
 Future<void> startServer() async {
   if (global.ipAddress.isNotEmpty) {
-    var server = await HttpServer.bind(global.ipAddress, global.httpServerPort);
+    var server =
+        await HttpServer.bind(global.ipAddress, global.targetDeviceIpPort);
     dev.log(
         "Server running on IP : ${server.address} On Port : ${server.port}");
     await for (HttpRequest request in server) {
