@@ -106,7 +106,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
           data: jsonEncode(global
               .posTicketProcessResult[global.posTicketActiveNumber].posProcess
               .toJson()));
-      global.sendToServer(
+      global.postToServer(
           ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
     }
   }
@@ -990,12 +990,12 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
   void numberPadTextAdd(String word) {
     setState(() {
       switch (global.payScreenNumberPadWidget) {
-        case payScreenNumberPadWidgetEnum.number:
+        case PayScreenNumberPadWidgetEnum.number:
           global.payScreenNumberPadText = global.payScreenNumberPadText + word;
           global.payScreenNumberPadAmount =
               global.calcTextToNumber(global.payScreenNumberPadText);
           break;
-        case payScreenNumberPadWidgetEnum.text:
+        case PayScreenNumberPadWidgetEnum.text:
           global.payScreenNumberPadText = global.payScreenNumberPadText + word;
           break;
       }
@@ -1007,10 +1007,10 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
     double fontSize = 24;
     late String result;
     switch (global.payScreenNumberPadWidget) {
-      case payScreenNumberPadWidgetEnum.number:
+      case PayScreenNumberPadWidgetEnum.number:
         result = global.moneyFormat.format(global.payScreenNumberPadAmount);
         break;
-      case payScreenNumberPadWidgetEnum.text:
+      case PayScreenNumberPadWidgetEnum.text:
         result = global.payScreenNumberPadText;
         break;
     }

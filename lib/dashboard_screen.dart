@@ -1,8 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
+import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/model/json/receive_money_model.dart';
+import 'package:dedepos/model/objectbox/printer_struct.dart';
+import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
 import 'package:dedepos/select_language_screen.dart';
 import 'package:dedepos/services/printer_config.dart';
@@ -72,6 +75,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    List<PrinterObjectBoxStruct> printers = (PrinterHelper()).selectAll();
+    global.printerList.clear();
+    for (var printer in printers) {
+      PrinterModel newPrinter = PrinterModel(
+          guidfixed: printer.guid_fixed,
+          printer_ip_address: printer.print_ip_address,
+          printer_port: printer.printer_port,
+          code: printer.code,
+          name: printer.name1,
+          printer_type: printer.type);
+      global.printerList.add(newPrinter);
+    }
+
     try {
       global.userLanguage = GetStorage().read("language");
     } catch (_) {

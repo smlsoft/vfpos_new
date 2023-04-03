@@ -1,6 +1,10 @@
 import 'package:dedepos/model/json/language_model.dart';
 import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'product_category_struct.g.dart';
+
+@JsonSerializable()
 @Entity()
 class ProductCategoryObjectBoxStruct {
   @Id()
@@ -45,4 +49,8 @@ class ProductCategoryObjectBoxStruct {
       required this.colorselect,
       required this.colorselecthex,
       required this.codelist});
+
+  factory ProductCategoryObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
+      _$ProductCategoryObjectBoxStructFromJson(json);
+  Map<String, dynamic> toJson() => _$ProductCategoryObjectBoxStructToJson(this);
 }

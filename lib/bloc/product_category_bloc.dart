@@ -35,7 +35,7 @@ class ProductCategoryBloc
       Emitter<ProductCategoryState> emit) async {
     emit(ProductCategoryLoading());
     global.productCategoryList =
-        ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
+        await ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
     PosProcess().sumCategoryCount(
         global.posTicketProcessResult[global.posTicketActiveNumber].posProcess);
     emit(ProductCategoryLoadSuccess());

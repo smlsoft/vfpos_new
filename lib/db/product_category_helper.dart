@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
@@ -31,15 +34,27 @@ class ProductCategoryHelper {
         .findFirst();
   }
 
-  List<ProductCategoryObjectBoxStruct> selectByCategoryParentGuid(
-      String parentGuid) {
+  Future<List<ProductCategoryObjectBoxStruct>> selectByCategoryParentGuid(
+      String parentGuid) async {
     print("[" + parentGuid + "]");
-    return box
-        .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
-            .equals(parentGuid))
-        .order(ProductCategoryObjectBoxStruct_.xorder)
-        .build()
-        .find();
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpCategoryModel jsonCategory =
+          HttpCategoryModel(parentGuid: parentGuid);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "load_category", json: jsonEncode(jsonCategory.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return (jsonDecode(result) as List)
+          .map((e) => ProductCategoryObjectBoxStruct.fromJson(e))
+          .toList();
+    } else {
+      return box
+          .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
+              .equals(parentGuid))
+          .order(ProductCategoryObjectBoxStruct_.xorder)
+          .build()
+          .find();
+    }
   }
 
   bool deleteByGuidFixed(String guidfixed) {

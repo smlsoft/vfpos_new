@@ -6,7 +6,7 @@ import 'package:dedepos/global.dart' as global;
 
 part 'global_model.g.dart';
 
-enum payScreenNumberPadWidgetEnum {
+enum PayScreenNumberPadWidgetEnum {
   text,
   number,
 }
@@ -125,4 +125,27 @@ class ThemeStruct {
   // Colors new layout
   late Color secondary;
   late Color orange1;
+}
+
+@JsonSerializable(explicitToJson: true)
+class HttpGetDataModel {
+  String code;
+  String json;
+
+  HttpGetDataModel({required this.code, required this.json});
+
+  factory HttpGetDataModel.fromJson(Map<String, dynamic> json) =>
+      _$HttpGetDataModelFromJson(json);
+  Map<String, dynamic> toJson() => _$HttpGetDataModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class HttpCategoryModel {
+  String parentGuid;
+
+  HttpCategoryModel({required this.parentGuid});
+
+  factory HttpCategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$HttpCategoryModelFromJson(json);
+  Map<String, dynamic> toJson() => _$HttpCategoryModelToJson(this);
 }

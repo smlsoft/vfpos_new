@@ -118,8 +118,8 @@ double payScreenNumberPadLeft = 100;
 double payScreenNumberPadTop = 100;
 String payScreenNumberPadText = "";
 double payScreenNumberPadAmount = 0;
-payScreenNumberPadWidgetEnum payScreenNumberPadWidget =
-    payScreenNumberPadWidgetEnum.number;
+PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
+    PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
 late String saleActiveCode;
 late String saleActiveName;
@@ -143,9 +143,8 @@ List<PrinterModel> printerList = [];
 String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
 String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
-bool isServer = false;
-String serverIp = "";
-int serverPort = 4040;
+String httpServerIp = "";
+int httpServerPort = 4040;
 AppModeEnum appMode = AppModeEnum.posTerminal;
 bool apiConnected = false;
 String apiUserName = "maxkorn";
@@ -472,7 +471,7 @@ void showAlertDialog(
 }*/
 
 Future<void> printQueueStartServer() async {
-  var url = "http://$serverIp:$serverPort";
+  var url = "http://$httpServerIp:$httpServerPort";
   var uri = Uri.parse(url);
   try {
     http.Response response = await http
@@ -523,7 +522,7 @@ Future<void> systemProcess() async {
         isClient: false,
         isTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
-    sendToServer(
+    postToServer(
         ip: url,
         jsonData: jsonEncode(jsonData.toJson()),
         callBack: (value) {
@@ -552,7 +551,7 @@ Future<void> sendProcessToCustomerDisplay() async {
                 .posProcess
                 .toJson()));
         dev.log("sendProcessToCustomerDisplay : " + url);
-        sendToServer(
+        postToServer(
             ip: url,
             jsonData: jsonEncode(jsonData.toJson()),
             callBack: (value) {});
@@ -713,9 +712,6 @@ Future<void> loading() async {
     isIphoneX = getDevice.isIphoneX;
     isWindowsDesktop = getDevice.isWindowsDesktop;
     loadConfig();
-    if (isServer) {
-      //global.printerList = await global.printerHelper.select();
-    }
     // Payment
     qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
@@ -812,7 +808,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -874,7 +870,24 @@ Future<void> loading() async {
   initSuccess = true;
 }
 
-Future<void> sendToServer(
+Future<String> getFromServer({required String json}) async {
+  final base64String = base64Encode(utf8.encode(json));
+  // String url = "$httpServerIp:$httpServerPort?data=$base64String";
+  String url = "$httpServerIp:$httpServerPort";
+  final response = await httpClient
+      .get(Uri.http(url, '/', {'json': base64String}), headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
+    "Accept": "text/event-stream"
+  });
+  if (response.statusCode == 200) {
+    return response.body;
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+Future<void> postToServer(
     {required String ip,
     required String jsonData,
     required Function callBack}) async {

@@ -158,7 +158,7 @@ class _PayTransferState extends State<PayTransfer> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.number;
+                                    PayScreenNumberPadWidgetEnum.number;
                                 global.payScreenNumberPadAmount = amount;
                                 final RenderBox renderBox = amountNumberKey
                                     .currentContext

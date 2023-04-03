@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:dedepos/api/client.dart';
+import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/objectbox/printer_struct.dart';
+import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/pos_client.dart';
 import 'package:dedepos/select_mode_screen.dart';
 import 'package:flutter/services.dart';
@@ -30,14 +35,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await global.loading();
   network.connectivity();
-  global.isServer = true;
   global.ipAddress = await network.ipAddress();
   // (await global.getDeviceId() == 'ABABA0AA-F156-4FF2-8AB0-DD25B7348819');
-  dev.log(
-      "***************** ${(global.isServer) ? "Server" : "Client"} *****************");
-  if (global.isServer) {
-    server.startServer();
-  }
+  server.startServer();
+  // Test
+  global.httpServerIp = global.ipAddress;
+
   runApp(
     MultiBlocProvider(
       providers: [

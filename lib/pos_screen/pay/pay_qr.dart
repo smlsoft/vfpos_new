@@ -97,7 +97,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                                 !global.payScreenNumberPadIsActive;
                             FocusScope.of(context).unfocus();
                             global.payScreenNumberPadWidget =
-                                payScreenNumberPadWidgetEnum.number;
+                                PayScreenNumberPadWidgetEnum.number;
                             final RenderBox _renderBox =
                                 _widgetKey.currentContext?.findRenderObject()
                                     as RenderBox;

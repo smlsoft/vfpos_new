@@ -85,7 +85,7 @@ class _PayCouponState extends State<PayCoupon> {
                             } else {
                               global.payScreenNumberPadIsActive = true;
                               global.payScreenNumberPadWidget =
-                                  payScreenNumberPadWidgetEnum.text;
+                                  PayScreenNumberPadWidgetEnum.text;
                               global.payScreenNumberPadText = _couponNumber;
                               final RenderBox _renderBox = _couponNumberKey
                                   .currentContext
@@ -138,7 +138,7 @@ class _PayCouponState extends State<PayCoupon> {
                             } else {
                               global.payScreenNumberPadIsActive = true;
                               global.payScreenNumberPadWidget =
-                                  payScreenNumberPadWidgetEnum.number;
+                                  PayScreenNumberPadWidgetEnum.number;
                               global.payScreenNumberPadAmount = _couponAmount;
                               final RenderBox _renderBox = _amountNumberKey
                                   .currentContext

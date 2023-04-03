@@ -169,7 +169,7 @@ class _PayChequeState extends State<PayCheque> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.text;
+                                    PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = _chequeNumber;
                                 final RenderBox _renderBox = _chequeNumberKey
                                     .currentContext
@@ -223,7 +223,7 @@ class _PayChequeState extends State<PayCheque> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.text;
+                                    PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = _branchNumber;
                                 final RenderBox _renderBox = _branchNumberKey
                                     .currentContext
@@ -327,7 +327,7 @@ class _PayChequeState extends State<PayCheque> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.number;
+                                    PayScreenNumberPadWidgetEnum.number;
                                 global.payScreenNumberPadAmount = _chequeAmount;
                                 final RenderBox _renderBox = _amountNumberKey
                                     .currentContext

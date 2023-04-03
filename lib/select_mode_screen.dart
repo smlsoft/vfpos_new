@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dedepos/global_model.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 
@@ -24,11 +27,12 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                         ElevatedButton(
                             onPressed: () {
                               global.appMode = global.AppModeEnum.posTerminal;
+                              global.loginSuccess = true;
                               Navigator.of(context)
                                   .pushReplacementNamed('/login');
                             },
                             child: Text(global.language('pos_terminal'))),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         ElevatedButton(

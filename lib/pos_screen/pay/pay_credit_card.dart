@@ -164,7 +164,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.text;
+                                    PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = cardNumber;
                                 final RenderBox _renderBox = cardNumberKey
                                     .currentContext
@@ -223,7 +223,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.text;
+                                    PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = approveNumber;
                                 final RenderBox _renderBox = approveNumberKey
                                     .currentContext
@@ -278,7 +278,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
-                                    payScreenNumberPadWidgetEnum.number;
+                                    PayScreenNumberPadWidgetEnum.number;
                                 global.payScreenNumberPadAmount = cardAmount;
                                 final RenderBox _renderBox = amountNumberKey
                                     .currentContext

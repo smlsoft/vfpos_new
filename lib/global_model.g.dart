@@ -68,3 +68,25 @@ Map<String, dynamic> _$LocalStrongDataModelToJson(
       'paperSize': instance.paperSize,
       'printBillAuto': instance.printBillAuto,
     };
+
+HttpGetDataModel _$HttpGetDataModelFromJson(Map<String, dynamic> json) =>
+    HttpGetDataModel(
+      code: json['code'] as String,
+      json: json['json'] as String,
+    );
+
+Map<String, dynamic> _$HttpGetDataModelToJson(HttpGetDataModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'json': instance.json,
+    };
+
+HttpCategoryModel _$HttpCategoryModelFromJson(Map<String, dynamic> json) =>
+    HttpCategoryModel(
+      parentGuid: json['parentCode'] as String,
+    );
+
+Map<String, dynamic> _$HttpCategoryModelToJson(HttpCategoryModel instance) =>
+    <String, dynamic>{
+      'parentCode': instance.parentGuid,
+    };
