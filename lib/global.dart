@@ -478,7 +478,7 @@ Future<void> printQueueStartServer() async {
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
-            body: jsonEncode(network.HttpPost(command: 'print_queue')))
+            body: jsonEncode(HttpPost(command: 'print_queue')))
         .timeout(const Duration(seconds: 2));
     if (response.statusCode == 200) {
       dev.log('Success');
@@ -513,7 +513,7 @@ Future<String> getDeviceId() async {
 Future<void> systemProcess() async {
   List<SyncDeviceModel> syncDeviceList = [];
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
-    var url = "http://${customerDisplayDeviceList[index].ip}:5041";
+    var url = "${customerDisplayDeviceList[index].ip}:5041";
     SyncDeviceModel info = SyncDeviceModel(
         device: deviceName,
         ip: "",
@@ -542,7 +542,7 @@ Future<void> systemProcess() async {
 Future<void> sendProcessToCustomerDisplay() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     if (customerDisplayDeviceList[index].connected) {
-      var url = "http://${customerDisplayDeviceList[index].ip}:5041";
+      var url = "${customerDisplayDeviceList[index].ip}:5041";
       try {
         var jsonData = HttpPost(
             command: "process",
@@ -892,7 +892,7 @@ Future<void> postToServer(
     required Function callBack}) async {
   String result = "";
   try {
-    var request = http.Request("POST", Uri.parse(ip));
+    var request = http.Request("POST", Uri.parse("http://$ip"));
     request.headers["Content-Type"] = "application/json";
     request.headers["Cache-Control"] = "no-cache";
     request.headers["Accept"] = "text/event-stream";
@@ -913,7 +913,7 @@ Future<String> postToServerAndWait(
     {required String ip, required String jsonData}) async {
   String result = "";
   try {
-    var request = http.Request("POST", Uri.parse(ip));
+    var request = http.Request("POST", Uri.parse("http://$ip"));
     request.headers["Content-Type"] = "application/json";
     request.headers["Cache-Control"] = "no-cache";
     request.headers["Accept"] = "text/event-stream";

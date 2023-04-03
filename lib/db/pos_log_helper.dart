@@ -10,15 +10,12 @@ class PosLogHelper {
 
   Future<int> insert(PosLogObjectBoxStruct value) async {
     if (global.appMode == global.AppModeEnum.posClient) {
-      HttpParameterModel jsonParameter =
-          HttpParameterModel(jsonData: jsonEncode(value.toJson()));
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "PosLogHelper.insert",
-          json: jsonEncode(jsonParameter.toJson()));
+      HttpPost json = HttpPost(
+          command: "PosLogHelper.insert", data: jsonEncode(value.toJson()));
       String result = await global.postToServerAndWait(
           ip: "${global.targetDeviceIpAddress}:${global.targetDeviceIpPort}",
           jsonData: jsonEncode(json.toJson()));
-      return int.parse(result);
+      return int.tryParse(result) ?? 0;
     } else {
       return box.put(value);
     }

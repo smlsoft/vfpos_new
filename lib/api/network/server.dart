@@ -21,25 +21,6 @@ import 'package:dedepos/global.dart' as global;
 import 'package:http/http.dart' as http;
 import 'package:dedepos/util/network.dart' as network;
 
-class HttpPost {
-  late String command;
-  late String data;
-
-  HttpPost({required this.command, this.data = ""});
-
-  Map toJson() => {
-        'command': command,
-        'data': data,
-      };
-
-  factory HttpPost.fromJson(Map<String, dynamic> json) {
-    return HttpPost(
-      command: json['command'],
-      data: json['data'],
-    );
-  }
-}
-
 Future<void> startServer() async {
   if (global.ipAddress.isNotEmpty) {
     var server =
@@ -126,11 +107,8 @@ Future<void> startServer() async {
               var httpPost = HttpPost.fromJson(jsonDecodeStr);
               switch (httpPost.command) {
                 case "PosLogHelper.insert":
-                  HttpParameterModel jsonCategory =
-                      HttpParameterModel.fromJson(jsonDecode(httpPost.data));
                   PosLogObjectBoxStruct jsonData =
-                      PosLogObjectBoxStruct.fromJson(
-                          jsonDecode(jsonCategory.jsonData));
+                      PosLogObjectBoxStruct.fromJson(jsonDecode(httpPost.data));
                   final box =
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   response.write(box.put(jsonData));

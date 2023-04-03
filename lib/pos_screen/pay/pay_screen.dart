@@ -92,7 +92,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
         index++) {
       dev.log(
           "sendPayScreenCommandToCustomerDisplay : ${global.customerDisplayDeviceList[index].ip}");
-      var url = "http://${global.customerDisplayDeviceList[index].ip}:5041";
+      var url = "${global.customerDisplayDeviceList[index].ip}:5041";
       global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
               .qr_code =
           PromptPay.generateQRData("0899223131",

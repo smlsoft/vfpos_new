@@ -156,3 +156,22 @@ class HttpParameterModel {
       _$HttpParameterModelFromJson(json);
   Map<String, dynamic> toJson() => _$HttpParameterModelToJson(this);
 }
+
+class HttpPost {
+  late String command;
+  late String data;
+
+  HttpPost({required this.command, this.data = ""});
+
+  Map toJson() => {
+        'command': command,
+        'data': data,
+      };
+
+  factory HttpPost.fromJson(Map<String, dynamic> json) {
+    return HttpPost(
+      command: json['command'],
+      data: json['data'],
+    );
+  }
+}
