@@ -101,6 +101,7 @@ class PrinterDeviceModel {
       this.connectType = global.PrinterCashierConnectEnum.none});
 }
 
+@JsonSerializable(explicitToJson: true)
 class PosHoldProcessModel {
   int holdNumber;
   int logCount = 0;
@@ -109,6 +110,10 @@ class PosHoldProcessModel {
   PosProcessModel posProcess = PosProcessModel();
 
   PosHoldProcessModel({required this.holdNumber});
+
+  factory PosHoldProcessModel.fromJson(Map<String, dynamic> json) =>
+      _$PosHoldProcessModelFromJson(json);
+  Map<String, dynamic> toJson() => _$PosHoldProcessModelToJson(this);
 }
 
 class ThemeStruct {

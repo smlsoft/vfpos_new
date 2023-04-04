@@ -3,6 +3,7 @@ import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
@@ -106,6 +107,11 @@ Future<void> startServer() async {
               var jsonDecodeStr = jsonDecode(data);
               var httpPost = HttpPost.fromJson(jsonDecodeStr);
               switch (httpPost.command) {
+                case "process_result":
+                  global.posHoldProcessResult[0] =
+                      PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
+                  global.posScreenRefresh = true;
+                  break;
                 case "PosLogHelper.insert":
                   PosLogObjectBoxStruct jsonData =
                       PosLogObjectBoxStruct.fromJson(jsonDecode(httpPost.data));

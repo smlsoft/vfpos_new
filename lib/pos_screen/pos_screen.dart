@@ -3587,6 +3587,10 @@ class _PosScreenState extends State<PosScreen>
     );
   }
 
+  void productCategoryLoadFinish() {
+    context.read<ProductCategoryBloc>().add(ProductCategoryLoadFinish());
+  }
+
   @override
   Widget build(BuildContext context) {
     global.globalContext = context;
@@ -3600,9 +3604,7 @@ class _PosScreenState extends State<PosScreen>
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
                 processEvent();
-                context
-                    .read<ProductCategoryBloc>()
-                    .add(ProductCategoryLoadFinish());
+                productCategoryLoadFinish();
               }
             },
           ),
@@ -3645,6 +3647,7 @@ class _PosScreenState extends State<PosScreen>
                 context.read<PosProcessBloc>().add(
                     PosProcessFinish(holdNumber: global.posHoldActiveNumber));
                 global.sendProcessToCustomerDisplay();
+                global.sendProcessToClient();
               }
             },
           )

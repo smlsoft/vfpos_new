@@ -560,6 +560,27 @@ Future<void> sendProcessToCustomerDisplay() async {
   }
 }
 
+Future<void> sendProcessToClient() async {
+  for (int index = 0; index < posClientDeviceList.length; index++) {
+    if (posClientDeviceList[index].connected) {
+      var url = "${posClientDeviceList[index].ip}:$targetDeviceIpPort";
+      try {
+        var jsonData = HttpPost(
+            command: "process_result",
+            data: jsonEncode(
+                posHoldProcessResult[posHoldActiveNumber].toJson()));
+        dev.log("sendProcessToClient : " + url);
+        postToServer(
+            ip: url,
+            jsonData: jsonEncode(jsonData.toJson()),
+            callBack: (value) {});
+      } catch (e) {
+        print(e.toString() + " : " + url);
+      }
+    }
+  }
+}
+
 double calcDiscountFormula(
     {required double totalAmount, required String discountText}) {
   double sumDiscount = 0.0;

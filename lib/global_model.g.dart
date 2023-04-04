@@ -69,6 +69,27 @@ Map<String, dynamic> _$LocalStrongDataModelToJson(
       'printBillAuto': instance.printBillAuto,
     };
 
+PosHoldProcessModel _$PosHoldProcessModelFromJson(Map<String, dynamic> json) =>
+    PosHoldProcessModel(
+      holdNumber: json['holdNumber'] as int,
+    )
+      ..logCount = json['logCount'] as int
+      ..saleCode = json['saleCode'] as String
+      ..payScreenData =
+          PosPayModel.fromJson(json['payScreenData'] as Map<String, dynamic>)
+      ..posProcess =
+          PosProcessModel.fromJson(json['posProcess'] as Map<String, dynamic>);
+
+Map<String, dynamic> _$PosHoldProcessModelToJson(
+        PosHoldProcessModel instance) =>
+    <String, dynamic>{
+      'holdNumber': instance.holdNumber,
+      'logCount': instance.logCount,
+      'saleCode': instance.saleCode,
+      'payScreenData': instance.payScreenData.toJson(),
+      'posProcess': instance.posProcess.toJson(),
+    };
+
 HttpGetDataModel _$HttpGetDataModelFromJson(Map<String, dynamic> json) =>
     HttpGetDataModel(
       code: json['code'] as String,
