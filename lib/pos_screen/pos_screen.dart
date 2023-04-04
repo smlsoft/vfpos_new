@@ -239,14 +239,17 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Future<void> getProcessFromTerminal() async {
-    HttpParameterModel jsonParameter =
-        HttpParameterModel(holdNumber: global.posHoldActiveNumber);
-    HttpGetDataModel json = HttpGetDataModel(
-        code: "get_process", json: jsonEncode(jsonParameter.toJson()));
-    String result = await global.getFromServer(json: jsonEncode(json.toJson()));
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess =
-        PosProcessModel.fromJson(jsonDecode(result));
-    setState(() {});
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(holdNumber: global.posHoldActiveNumber);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "get_process", json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      global.posHoldProcessResult[global.posHoldActiveNumber] =
+          PosHoldProcessModel.fromJson(jsonDecode(result));
+      setState(() {});
+    }
   }
 
   @override

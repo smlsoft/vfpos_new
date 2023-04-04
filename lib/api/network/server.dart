@@ -47,6 +47,9 @@ Future<void> startServer() async {
                   await PosProcess().process(holdNumber);
               PosProcess().sumCategoryCount(global
                   .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+              String xxx = jsonEncode(global
+                  .posHoldProcessResult[global.posHoldActiveNumber]
+                  .toJson());
               response.write(jsonEncode(global
                   .posHoldProcessResult[global.posHoldActiveNumber]
                   .toJson()));
