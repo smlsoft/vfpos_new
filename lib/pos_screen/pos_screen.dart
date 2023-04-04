@@ -3103,17 +3103,17 @@ class _PosScreenState extends State<PosScreen>
       global.playSound(sound: global.SoundEnum.beep);
       activeGuid = "";
       activeLineNumber = -1;
-      global.payScreenData =
-          global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
       if (global.appMode == global.AppModeEnum.posCashierTerminal) {
         posCompileProcess().then((_) {
           PosProcess().sumCategoryCount(global
               .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
-          setState(() {});
         });
       } else {
-        PosLogHelper().refresh(global.posHoldActiveNumber);
+        getProcessFromTerminal();
       }
+      global.payScreenData =
+          global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
+      setState(() {});
     }
   }
 

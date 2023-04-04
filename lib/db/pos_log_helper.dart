@@ -8,16 +8,6 @@ import 'package:dedepos/objectbox.g.dart';
 class PosLogHelper {
   final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
 
-  void refresh(int holdNumber) {
-    if (global.appMode == global.AppModeEnum.posClient) {
-      HttpPost json = HttpPost(
-          command: "PosLogHelper.refresh", data: holdNumber.toString());
-      global.postToServerAndWait(
-          ip: "${global.targetDeviceIpAddress}:${global.targetDeviceIpPort}",
-          jsonData: jsonEncode(json.toJson()));
-    }
-  }
-
   Future<int> insert(PosLogObjectBoxStruct value) async {
     if (global.appMode == global.AppModeEnum.posClient) {
       HttpPost json = HttpPost(
