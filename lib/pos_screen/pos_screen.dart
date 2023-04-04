@@ -812,8 +812,10 @@ class _PosScreenState extends State<PosScreen>
                     .posProcess.active_line_number,
             preferPosition: AutoScrollPosition.begin);
       });
-      global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
-          false;
+      if (global.posClientDeviceList.isNotEmpty) {
+        global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
+            false;
+      }
     });
   }
 

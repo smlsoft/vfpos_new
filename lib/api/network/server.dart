@@ -7,6 +7,7 @@ import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
+import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
@@ -120,6 +121,7 @@ Future<void> startServer() async {
                   response.write(box.put(jsonData));
                   global.posClientDeviceList[jsonData.hold_number]
                       .processSuccess = false;
+                  posCompileProcess();
                   global.posScreenRefresh = true;
                   break;
                 case "get_device_name":
