@@ -112,7 +112,7 @@ Future<void> startServer() async {
                   PosHoldProcessModel result =
                       PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
                   global.posHoldProcessResult[result.holdNumber] = result;
-                  global.posScreenRefresh = true;
+                  global.functionPosScreenRefresh();
                   break;
                 case "PosLogHelper.insert":
                   PosLogObjectBoxStruct jsonData =
@@ -122,8 +122,10 @@ Future<void> startServer() async {
                   response.write(box.put(jsonData));
                   global.posClientDeviceList[jsonData.hold_number]
                       .processSuccess = false;
-                  posCompileProcess();
-                  global.posScreenRefresh = true;
+                  posCompileProcess().then((_) {
+                    global.functionPosScreenRefresh();
+                  });
+
                   break;
                 case "get_device_name":
                   // Return ชื่อเครื่อง server , ip server
@@ -194,7 +196,7 @@ Future<void> startServer() async {
                     global.customerName = customerName;
                     global.customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
-                    global.posScreenRefresh = true;
+                    global.functionPosScreenRefresh();
                   } catch (e) {
                     print(e);
                   }

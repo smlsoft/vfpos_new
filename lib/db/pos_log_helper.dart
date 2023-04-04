@@ -93,6 +93,14 @@ class PosLogHelper {
     return result;
   }
 
+  int deleteByHoldNumber({required int holdNumber}) {
+    final ids = box
+        .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+        .build()
+        .findIds();
+    return box.removeMany(ids);
+  }
+
   bool delete({required String where}) {
     return false;
   }

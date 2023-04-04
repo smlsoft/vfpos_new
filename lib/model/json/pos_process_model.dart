@@ -115,7 +115,6 @@ class PosProcessModel {
   late double total_piece;
   late double total_amount;
   late double total_discount_from_promotion;
-  late int active_line_number;
   late String qr_code;
   late List<PosProcessDetailModel> details;
   late List<PromotionTempModel> select_promotion_temp_list;
@@ -125,7 +124,6 @@ class PosProcessModel {
       {this.total_piece = 0.0,
       this.total_amount = 0.0,
       this.total_discount_from_promotion = 0,
-      this.active_line_number = -1,
       this.customer_code = "",
       this.customer_name = "",
       this.customer_phone = "",

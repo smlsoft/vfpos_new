@@ -157,7 +157,6 @@ class PosProcess {
                   (calc * processResult.details[findIndex].qty)
                       .toStringAsFixed(2));
               processResult.details[findIndex].extra.add(extra);
-              processResult.active_line_number = findIndex;
             }
           }
           break;
@@ -219,13 +218,11 @@ class PosProcess {
             detail.guid = logData.guid_auto_fixed;
             detail.image_url = productBarcode.images_url;
             processResult.details.add(detail);
-            processResult.active_line_number = processResult.details.length - 1;
           } else {
             // เพิ่มจำนวน
             processResult.details[findIndex].qty =
                 (processResult.details[findIndex].qty + logData.qty);
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
         case 2:
@@ -241,7 +238,6 @@ class PosProcess {
                   (processResult.details[findIndex].extra[index].qty + 1.0);
             }
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
         case 3:
@@ -251,7 +247,6 @@ class PosProcess {
             processResult.details[findIndex].qty =
                 (processResult.details[findIndex].qty - 1.0);
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
         case 4:
@@ -260,7 +255,6 @@ class PosProcess {
           if (findIndex != -1) {
             processResult.details[findIndex].qty = logData.qty;
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
         case 5:
@@ -269,7 +263,6 @@ class PosProcess {
           if (findIndex != -1) {
             processResult.details[findIndex].price = logData.price;
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
         case 8:
@@ -278,7 +271,6 @@ class PosProcess {
           if (findIndex != -1) {
             processResult.details[findIndex].remark = logData.remark;
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
         case 9:
@@ -287,7 +279,6 @@ class PosProcess {
           if (findIndex != -1) {
             processResult.details[findIndex].is_void = true;
             processCalc(findIndex);
-            processResult.active_line_number = findIndex;
           }
           break;
       }
@@ -331,7 +322,7 @@ class PosProcess {
 
     // ดึง Promotion
     {
-      if (processResult.active_line_number != -1) {
+      /*if (processResult.active_line_number != -1) {
         var value = global.promotionTempHelper.select(
             where:
                 "barcode_promotion = '${processResult.details[processResult.active_line_number].barcode}'");
@@ -339,7 +330,7 @@ class PosProcess {
         processResult.select_promotion_temp_list = value;
       } else {
         processResult.select_promotion_temp_list.clear();
-      }
+      }*/
     }
     // ประมวล Promotion
     {

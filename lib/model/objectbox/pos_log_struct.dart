@@ -115,7 +115,6 @@ class PosLogObjectBoxStruct {
     this.unit_name = "",
   }) {
     this.guid_auto_fixed = Uuid().v4();
-    this.hold_number = global.posHoldActiveNumber;
   }
 
   factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

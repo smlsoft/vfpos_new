@@ -175,10 +175,10 @@ PrinterCashierConnectEnum printerCashierConnect = PrinterCashierConnectEnum.ip;
 String printerCashierIpAddress = "";
 int printerCashierIpPort = 9100;
 bool customerDisplayDesktopMultiScreen = true;
-bool posScreenRefresh = false;
 String targetDeviceIpAddress = "";
 int targetDeviceIpPort = 4040;
 bool targetDeviceConnected = false;
+Function functionPosScreenRefresh = () {};
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -856,7 +856,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
