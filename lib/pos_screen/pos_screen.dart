@@ -2338,7 +2338,7 @@ class _PosScreenState extends State<PosScreen>
     return SizedBox(
       width: double.infinity,
       child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        (1 == 1)
+        (global.posHoldActiveNumber != 0)
             ? Container(
                 margin: const EdgeInsets.only(right: 5),
                 padding: const EdgeInsets.only(
