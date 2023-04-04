@@ -203,8 +203,7 @@ class _PosScreenState extends State<PosScreen>
     deviceTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (global.posScreenRefresh) {
         global.posScreenRefresh = false;
-        BlocProvider.of<PosProcessBloc>(global.globalContext)
-            .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
+        processEventRefresh();
       }
       network.testPrinterConnect();
     });
@@ -399,7 +398,7 @@ class _PosScreenState extends State<PosScreen>
           // 1=เพิ่มสินค้า
           // Get Item Name
           ProductBarcodeObjectBoxStruct? productSelect =
-            await ProductBarcodeHelper().selectByBarcodeFirst(barcode);
+              await ProductBarcodeHelper().selectByBarcodeFirst(barcode);
           String productNameStr = '';
           String unitCodeStr = "";
           String unitNameStr = "";
@@ -774,6 +773,10 @@ class _PosScreenState extends State<PosScreen>
               product_count: 0);
       productOptions = product.options();
     }
+    processEventRefresh();
+  }
+
+  void processEventRefresh() {
     context
         .read<PosProcessBloc>()
         .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
@@ -1764,11 +1767,12 @@ class _PosScreenState extends State<PosScreen>
                       .clear();
                   print(global.posHoldProcessResult[global.posHoldActiveNumber]
                       .posProcess.details[index].barcode);
-                  product =await ProductBarcodeHelper().selectByBarcodeFirst(global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
-                          .posProcess
-                          .details[index]
-                          .barcode) ??
+                  product = await ProductBarcodeHelper().selectByBarcodeFirst(
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .posProcess
+                              .details[index]
+                              .barcode) ??
                       ProductBarcodeObjectBoxStruct(
                           barcode: "",
                           color_select: "",
@@ -3625,6 +3629,7 @@ class _PosScreenState extends State<PosScreen>
                   activeLineNumber = -1;
                   activeGuid = "";
                 }
+                setState(() {});
                 Future.delayed(const Duration(milliseconds: 100), () {
                   autoScrollController.scrollToIndex(
                       (global.posHoldProcessResult[global.posHoldActiveNumber]
