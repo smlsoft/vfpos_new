@@ -7,6 +7,7 @@ import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
+import 'package:dedepos/pos_screen/pos_process.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -112,7 +113,11 @@ Future<void> startServer() async {
                   PosHoldProcessModel result =
                       PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
                   global.posHoldProcessResult[result.holdNumber] = result;
-                  global.functionPosScreenRefresh(result.holdNumber);
+                  PosProcess().sumCategoryCount(global
+                      .posHoldProcessResult[result.holdNumber].posProcess);
+                  if (global.functionPosScreenRefresh != null) {
+                    global.functionPosScreenRefresh!(result.holdNumber);
+                  }
                   break;
                 case "PosLogHelper.insert":
                   PosLogObjectBoxStruct jsonData =
@@ -123,7 +128,11 @@ Future<void> startServer() async {
                   global.posClientDeviceList[jsonData.hold_number]
                       .processSuccess = false;
                   posCompileProcess().then((_) {
-                    global.functionPosScreenRefresh(jsonData.hold_number);
+                    PosProcess().sumCategoryCount(global
+                        .posHoldProcessResult[jsonData.hold_number].posProcess);
+                    if (global.functionPosScreenRefresh != null) {
+                      global.functionPosScreenRefresh!(jsonData.hold_number);
+                    }
                   });
 
                   break;
@@ -196,7 +205,13 @@ Future<void> startServer() async {
                     global.customerName = customerName;
                     global.customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
-                    global.functionPosScreenRefresh(global.posHoldActiveNumber);
+                    PosProcess().sumCategoryCount(global
+                        .posHoldProcessResult[global.posHoldActiveNumber]
+                        .posProcess);
+                    if (global.functionPosScreenRefresh != null) {
+                      global
+                          .functionPosScreenRefresh!(global.posHoldActiveNumber);
+                    }
                   } catch (e) {
                     print(e);
                   }

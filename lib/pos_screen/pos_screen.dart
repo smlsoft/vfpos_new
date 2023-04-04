@@ -238,7 +238,7 @@ class _PosScreenState extends State<PosScreen>
   @override
   void dispose() {
     super.dispose();
-    global.functionPosScreenRefresh = () {};
+    global.functionPosScreenRefresh = null;
     deviceTimer.cancel();
     posScreenTimer.cancel();
     messageTimer.cancel();
@@ -1062,8 +1062,10 @@ class _PosScreenState extends State<PosScreen>
             barcode: product.barcode,
             closeExtra: false,
             qty: "1.0");
-        processEvent(
-            barcode: product.barcode, holdNumber: global.posHoldActiveNumber);
+        if (global.appMode == global.AppModeEnum.posCashierTerminal) {
+          processEvent(
+              barcode: product.barcode, holdNumber: global.posHoldActiveNumber);
+        }
       },
       child: Stack(
         children: [

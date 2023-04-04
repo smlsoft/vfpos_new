@@ -178,7 +178,7 @@ bool customerDisplayDesktopMultiScreen = true;
 String targetDeviceIpAddress = "";
 int targetDeviceIpPort = 4040;
 bool targetDeviceConnected = false;
-Function functionPosScreenRefresh = () {};
+Function? functionPosScreenRefresh;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
