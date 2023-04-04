@@ -1,4 +1,5 @@
 import 'package:dedepos/bloc/product_category_bloc.dart';
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
@@ -234,9 +235,18 @@ class _PosScreenState extends State<PosScreen>
     processEvent(holdNumber: global.posHoldActiveNumber);
     checkSync();
     global.functionPosScreenRefresh = refresh;
-    posCompileProcess().then((_) {
-      PosLogHelper().refresh(global.posHoldActiveNumber);
-    });
+    getProcessFromTerminal();
+  }
+
+  Future<void> getProcessFromTerminal() async {
+    HttpParameterModel jsonParameter =
+        HttpParameterModel(holdNumber: global.posHoldActiveNumber);
+    HttpGetDataModel json = HttpGetDataModel(
+        code: "get_process", json: jsonEncode(jsonParameter.toJson()));
+    String result = await global.getFromServer(json: jsonEncode(json.toJson()));
+    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess =
+        PosProcessModel.fromJson(jsonDecode(result));
+    setState(() {});
   }
 
   @override

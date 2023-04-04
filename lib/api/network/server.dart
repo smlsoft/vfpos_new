@@ -38,63 +38,127 @@ Future<void> startServer() async {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
-          if (httpGetData.code == "PosLogHelper.holdCount") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            int result =
-                await PosLogHelper().holdCount(jsonCategory.holdNumber);
-            response.write(result.toString());
-          } else if (httpGetData.code == "selectByBarcodeFirst") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            ProductBarcodeObjectBoxStruct? result = await ProductBarcodeHelper()
-                .selectByBarcodeFirst(jsonCategory.barcode);
-            response.write(jsonEncode(result?.toJson()));
-          } else if (httpGetData.code == "selectByBarcodeList") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            List<String> barcodeList = jsonCategory.barcode.split(",");
-            List<ProductBarcodeObjectBoxStruct> result =
-                await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
-            response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
-          } else if (httpGetData.code == "selectByCategoryParentGuid") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            String parentGuid = jsonCategory.parentGuid;
-            final box =
-                global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-            final result = box
-                .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
-                    .equals(parentGuid))
-                .order(ProductCategoryObjectBoxStruct_.xorder)
-                .build()
-                .find();
-            response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
-          } else if (httpGetData.code ==
-              "selectByParentCategoryGuidOrderByXorder") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            String parentGuid = jsonCategory.parentGuid;
-            final box =
-                global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-            final result = (box.query(ProductCategoryObjectBoxStruct_
-                    .parent_guid_fixed
-                    .equals(parentGuid))
-                  ..order(ProductCategoryObjectBoxStruct_.xorder))
-                .build()
-                .find();
-            response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
-          } else if (httpGetData.code == "selectByCategoryGuidFindFirst") {
-            HttpParameterModel jsonCategory =
-                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-            String guid = jsonCategory.guid;
-            final box =
-                global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-            ProductCategoryObjectBoxStruct? result = box
-                .query(ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
-                .build()
-                .findFirst();
-            response.write(jsonEncode(result?.toJson()));
+          switch (httpGetData.code) {
+            case "get_process":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              int holdNumber = jsonCategory.holdNumber;
+              global.posHoldProcessResult[holdNumber].posProcess =
+                  await PosProcess().process(holdNumber);
+              PosProcess().sumCategoryCount(global
+                  .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+              response.write(jsonEncode(global
+                  .posHoldProcessResult[global.posHoldActiveNumber]
+                  .toJson()));
+              break;
+            case "PosLogHelper.holdCount":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              int result =
+                  await PosLogHelper().holdCount(jsonCategory.holdNumber);
+              response.write(result.toString());
+              break;
+            case "selectByBarcodeFirst":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              ProductBarcodeObjectBoxStruct? result =
+                  await ProductBarcodeHelper()
+                      .selectByBarcodeFirst(jsonCategory.barcode);
+              response.write(jsonEncode(result?.toJson()));
+              break;
+            case "selectByBarcodeList":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              List<String> barcodeList = jsonCategory.barcode.split(",");
+              List<ProductBarcodeObjectBoxStruct> result =
+                  await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
+              response
+                  .write(jsonEncode(result.map((e) => e.toJson()).toList()));
+              break;
+            case "selectByCategoryParentGuid":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              String parentGuid = jsonCategory.parentGuid;
+              final box =
+                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+              final result = box
+                  .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
+                      .equals(parentGuid))
+                  .order(ProductCategoryObjectBoxStruct_.xorder)
+                  .build()
+                  .find();
+              response
+                  .write(jsonEncode(result.map((e) => e.toJson()).toList()));
+              break;
+            case "selectByParentCategoryGuidOrderByXorder":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              String parentGuid = jsonCategory.parentGuid;
+              final box =
+                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+              final result = (box.query(ProductCategoryObjectBoxStruct_
+                      .parent_guid_fixed
+                      .equals(parentGuid))
+                    ..order(ProductCategoryObjectBoxStruct_.xorder))
+                  .build()
+                  .find();
+              response
+                  .write(jsonEncode(result.map((e) => e.toJson()).toList()));
+              break;
+            case "selectByParentCategoryGuidOrderByXorder":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              String parentGuid = jsonCategory.parentGuid;
+              final box =
+                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+              final result = (box.query(ProductCategoryObjectBoxStruct_
+                      .parent_guid_fixed
+                      .equals(parentGuid))
+                    ..order(ProductCategoryObjectBoxStruct_.xorder))
+                  .build()
+                  .find();
+              response
+                  .write(jsonEncode(result.map((e) => e.toJson()).toList()));
+              break;
+            case "selectByCategoryGuidFindFirst":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              String guid = jsonCategory.guid;
+              final box =
+                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+              ProductCategoryObjectBoxStruct? result = box
+                  .query(
+                      ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
+                  .build()
+                  .findFirst();
+              response.write(jsonEncode(result?.toJson()));
+              break;
+            case "selectByCategoryGuidFindFirst":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              String guid = jsonCategory.guid;
+              final box =
+                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+              ProductCategoryObjectBoxStruct? result = box
+                  .query(
+                      ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
+                  .build()
+                  .findFirst();
+              response.write(jsonEncode(result?.toJson()));
+              break;
+            case "selectByCategoryGuidFindFirst":
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              String guid = jsonCategory.guid;
+              final box =
+                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+              ProductCategoryObjectBoxStruct? result = box
+                  .query(
+                      ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
+                  .build()
+                  .findFirst();
+              response.write(jsonEncode(result?.toJson()));
+              break;
           }
         } else if (request.method == 'POST') {
           if (request.uri.path == '/scan') {
@@ -125,25 +189,6 @@ Future<void> startServer() async {
                   if (global.functionPosScreenRefresh != null) {
                     global.functionPosScreenRefresh!(result.holdNumber);
                   }
-                  break;
-                case "PosLogHelper.refresh":
-                  int holdNumber = int.parse(httpPost.data);
-                  for (int index = 0;
-                      index < global.posClientDeviceList.length;
-                      index++) {
-                    if (global.posClientDeviceList[index].holdNumberActive ==
-                        holdNumber) {
-                      global.posClientDeviceList[index].processSuccess = false;
-                    }
-                  }
-                  posCompileProcess().then((_) {
-                    PosProcess().sumCategoryCount(
-                        global.posHoldProcessResult[holdNumber].posProcess);
-                    if (global.functionPosScreenRefresh != null) {
-                      global.functionPosScreenRefresh!(holdNumber);
-                    }
-                    global.sendProcessToClient();
-                  });
                   break;
                 case "PosLogHelper.insert":
                   PosLogObjectBoxStruct jsonData =
