@@ -4,7 +4,6 @@ import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
-import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fullscreen/fullscreen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -786,37 +785,33 @@ class _PosScreenState extends State<PosScreen>
 
   void processEventRefresh(int holdNumber) {
     print("processEventRefresh() : " + holdNumber.toString());
-    posCompileProcess().then((_) {
-      if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-          .details.isNotEmpty) {
-        activeLineNumber = global
-            .posHoldProcessResult[global.posHoldActiveNumber]
-            .posProcess
-            .active_line_number;
-        if (activeLineNumber != -1) {
-          activeGuid = global.posHoldProcessResult[global.posHoldActiveNumber]
-              .posProcess.details[activeLineNumber].guid;
-        }
-      } else {
-        activeLineNumber = -1;
-        activeGuid = "";
+    if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+        .details.isNotEmpty) {
+      activeLineNumber = global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.active_line_number;
+      if (activeLineNumber != -1) {
+        activeGuid = global.posHoldProcessResult[global.posHoldActiveNumber]
+            .posProcess.details[activeLineNumber].guid;
       }
-      setState(() {});
-      Future.delayed(const Duration(milliseconds: 50), () {
-        autoScrollController.scrollToIndex(
-            (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-                        .active_line_number <
-                    0)
-                ? 0
-                : global.posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess.active_line_number,
-            preferPosition: AutoScrollPosition.begin);
-      });
-      if (global.posClientDeviceList.isNotEmpty) {
-        global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
-            false;
-      }
+    } else {
+      activeLineNumber = -1;
+      activeGuid = "";
+    }
+    setState(() {});
+    Future.delayed(const Duration(milliseconds: 50), () {
+      autoScrollController.scrollToIndex(
+          (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+                      .active_line_number <
+                  0)
+              ? 0
+              : global.posHoldProcessResult[global.posHoldActiveNumber]
+                  .posProcess.active_line_number,
+          preferPosition: AutoScrollPosition.begin);
     });
+    if (global.posClientDeviceList.isNotEmpty) {
+      global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
+          false;
+    }
   }
 
   void numPadChangeQty(String qty, String unitName) async {

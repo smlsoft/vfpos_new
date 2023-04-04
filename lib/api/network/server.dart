@@ -109,8 +109,9 @@ Future<void> startServer() async {
               var httpPost = HttpPost.fromJson(jsonDecodeStr);
               switch (httpPost.command) {
                 case "process_result":
-                  global.posHoldProcessResult[0] =
+                  PosHoldProcessModel result =
                       PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
+                  global.posHoldProcessResult[result.holdNumber] = result;
                   global.posScreenRefresh = true;
                   break;
                 case "PosLogHelper.insert":
