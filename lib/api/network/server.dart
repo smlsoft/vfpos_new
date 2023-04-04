@@ -142,6 +142,7 @@ Future<void> startServer() async {
                     if (global.functionPosScreenRefresh != null) {
                       global.functionPosScreenRefresh!(holdNumber);
                     }
+                    global.sendProcessToClient();
                   });
                   break;
                 case "PosLogHelper.insert":
