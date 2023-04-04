@@ -28,7 +28,8 @@ SyncDeviceModel _$SyncDeviceModelFromJson(Map<String, dynamic> json) =>
       isCashierTerminal: json['isCashierTerminal'] as bool,
       isClient: json['isClient'] as bool,
       holdNumberActive: json['holdNumberActive'] as int,
-    )..processSuccess = json['processSuccess'] as bool;
+      processSuccess: json['processSuccess'] as bool? ?? true,
+    );
 
 Map<String, dynamic> _$SyncDeviceModelToJson(SyncDeviceModel instance) =>
     <String, dynamic>{

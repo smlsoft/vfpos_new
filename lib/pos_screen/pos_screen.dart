@@ -543,8 +543,12 @@ class _PosScreenState extends State<PosScreen>
         break;
     }
     if (global.posClientDeviceList.isNotEmpty) {
-      global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
-          false;
+      for (int index = 0; index < global.posClientDeviceList.length; index++) {
+        if (global.posClientDeviceList[index].holdNumberActive ==
+            global.posHoldActiveNumber) {
+          global.posClientDeviceList[index].processSuccess = false;
+        }
+      }
     }
   }
 
@@ -830,8 +834,12 @@ class _PosScreenState extends State<PosScreen>
           preferPosition: AutoScrollPosition.begin);
     });
     if (global.posClientDeviceList.isNotEmpty) {
-      global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
-          false;
+      for (int index = 0; index < global.posClientDeviceList.length; index++) {
+        if (global.posClientDeviceList[index].holdNumberActive ==
+            global.posHoldActiveNumber) {
+          global.posClientDeviceList[index].processSuccess = false;
+        }
+      }
     }
     setState(() {});
   }

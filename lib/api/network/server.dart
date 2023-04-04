@@ -209,8 +209,8 @@ Future<void> startServer() async {
                         .posHoldProcessResult[global.posHoldActiveNumber]
                         .posProcess);
                     if (global.functionPosScreenRefresh != null) {
-                      global
-                          .functionPosScreenRefresh!(global.posHoldActiveNumber);
+                      global.functionPosScreenRefresh!(
+                          global.posHoldActiveNumber);
                     }
                   } catch (e) {
                     print(e);
