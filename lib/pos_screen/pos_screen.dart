@@ -234,7 +234,9 @@ class _PosScreenState extends State<PosScreen>
     processEvent(holdNumber: global.posHoldActiveNumber);
     checkSync();
     global.functionPosScreenRefresh = refresh;
-    PosLogHelper().refresh(global.posHoldActiveNumber);
+    posCompileProcess().then((_) {
+      PosLogHelper().refresh(global.posHoldActiveNumber);
+    });
   }
 
   @override
@@ -3090,20 +3092,15 @@ class _PosScreenState extends State<PosScreen>
       activeLineNumber = -1;
       global.payScreenData =
           global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
-      posCompileProcess().then((_) {
-        for (int index = 0;
-            index < global.posClientDeviceList.length;
-            index++) {
-          if (global.posClientDeviceList[index].holdNumberActive ==
-              global.posHoldActiveNumber) {
-            global.posClientDeviceList[index].processSuccess = false;
-          }
-        }
-        PosProcess().sumCategoryCount(
-            global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+      if (global.appMode == global.AppModeEnum.posCashierTerminal) {
+        posCompileProcess().then((_) {
+          PosProcess().sumCategoryCount(global
+              .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+          setState(() {});
+        });
+      } else {
         PosLogHelper().refresh(global.posHoldActiveNumber);
-        setState(() {});
-      });
+      }
     }
   }
 

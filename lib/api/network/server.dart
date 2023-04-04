@@ -191,13 +191,13 @@ Future<void> startServer() async {
                         posClientDevice.ip;
                     global.posClientDeviceList[indexFound].holdNumberActive =
                         posClientDevice.holdNumberActive;
-                    // print("register_client_device : " + posClientDevice.ip);
+                    print("register_client_device : " + posClientDevice.ip);
                   } else {
                     global.posClientDeviceList.add(posClientDevice);
-                    /*print("register_client_device : " +
+                    print("register_client_device : " +
                         posClientDevice.device +
                         " : " +
-                        global.posClientDeviceList.length.toString());*/
+                        global.posClientDeviceList.length.toString());
                   }
                   break;
                 case "register_customer_display_device":
