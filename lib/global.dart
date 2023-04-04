@@ -900,7 +900,6 @@ Future<void> loading() async {
     if (loginSuccess) {
       systemProcess();
       registerClientToServer();
-      posCompileProcess();
     }
   });
   // สร้าง Process Result ตามจำนวน Hold บิล

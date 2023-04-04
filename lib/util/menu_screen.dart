@@ -810,6 +810,5 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void processEvent() async {
     print("processEvent()");
-    posCompileProcess();
   }
 }
