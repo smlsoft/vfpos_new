@@ -1,13 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
-import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/model/json/receive_money_model.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
-import 'package:dedepos/select_language_screen.dart';
+import 'package:dedepos/util/pos_compile_process.dart';
+import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/network.dart';
 import 'package:dedepos/widgets/button.dart';
@@ -20,14 +20,14 @@ import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:dedepos/util/network.dart' as network;
 
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+class MenuScreen extends StatefulWidget {
+  const MenuScreen({Key? key}) : super(key: key);
 
   @override
-  _DashboardScreenState createState() => _DashboardScreenState();
+  _MenuScreenState createState() => _MenuScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _MenuScreenState extends State<MenuScreen> {
   List<Widget> menuListProduct = [];
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
@@ -810,8 +810,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void processEvent() async {
     print("processEvent()");
-    context
-        .read<PosProcessBloc>()
-        .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
+    posCompileProcess();
   }
 }

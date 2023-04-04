@@ -1,3 +1,4 @@
+import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
 import 'package:dedepos/api/network/server.dart';
@@ -14,7 +15,7 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
-import 'package:dedepos/app_auth.dart';
+import 'package:dedepos/util/app_auth.dart';
 import 'package:dedepos/db/bill_detail_extra_helper.dart';
 import 'package:dedepos/db/bill_detail_helper.dart';
 import 'package:dedepos/db/bill_pay_helper.dart';
@@ -511,12 +512,12 @@ Future<String> getDeviceId() async {
 }
 
 Future<void> systemProcess() async {
-  List<SyncDeviceModel> syncDeviceList = [];
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
     SyncDeviceModel info = SyncDeviceModel(
         device: deviceName,
         ip: "",
+        holdNumberActive: 0,
         connected: true,
         isClient: false,
         isCashierTerminal: false);
@@ -567,13 +568,12 @@ Future<void> sendProcessToClient() async {
       try {
         var jsonData = HttpPost(
             command: "process_result",
-            data:
-                jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+            data: jsonEncode(posHoldProcessResult[
+                    posClientDeviceList[index].holdNumberActive]
+                .toJson()));
         dev.log("sendProcessToClient : " + url);
         postToServer(
-            ip: url,
-            jsonData: jsonEncode(jsonData.toJson()),
-            callBack: (value) {});
+            ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
         print(e.toString() + " : " + url);
       }
@@ -732,6 +732,7 @@ Future<void> registerClientToServer() async {
       SyncDeviceModel sendData = SyncDeviceModel(
           device: "XXX",
           ip: ipAddress,
+          holdNumberActive: posHoldActiveNumber,
           connected: true,
           isCashierTerminal: false,
           isClient: true);
@@ -899,6 +900,7 @@ Future<void> loading() async {
     if (loginSuccess) {
       systemProcess();
       registerClientToServer();
+      posCompileProcess();
     }
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
@@ -1044,6 +1046,7 @@ Future scanServerByName(String name) async {
     ipList.add(SyncDeviceModel(
         device: "",
         ip: ip,
+        holdNumberActive: 0,
         connected: false,
         isClient: false,
         isCashierTerminal: false));

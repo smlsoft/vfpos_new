@@ -24,13 +24,16 @@ class SyncDeviceModel {
   bool connected;
   bool isCashierTerminal;
   bool isClient;
+  int holdNumberActive;
+  bool processSuccess = true;
 
   SyncDeviceModel(
       {required this.device,
       required this.ip,
       required this.connected,
       required this.isCashierTerminal,
-      required this.isClient});
+      required this.isClient,
+      required this.holdNumberActive});
 
   factory SyncDeviceModel.fromJson(Map<String, dynamic> json) =>
       _$SyncDeviceModelFromJson(json);

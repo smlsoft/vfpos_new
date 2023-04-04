@@ -1,7 +1,6 @@
 import 'dart:math';
 import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
-import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
@@ -99,6 +98,7 @@ Future<void> startServer() async {
                 ip: global.ipAddress,
                 connected: true,
                 isCashierTerminal: isTerminal,
+                holdNumberActive: 0,
                 isClient: isClient);
             response.write(jsonEncode(resultData.toJson()));
           } else if (contentType?.mimeType == 'application/json') {
@@ -118,6 +118,8 @@ Future<void> startServer() async {
                   final box =
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   response.write(box.put(jsonData));
+                  global.posClientDeviceList[jsonData.hold_number]
+                      .processSuccess = false;
                   global.posScreenRefresh = true;
                   break;
                 case "get_device_name":
@@ -142,6 +144,8 @@ Future<void> startServer() async {
                   if (indexFound != -1) {
                     global.posClientDeviceList[indexFound].ip =
                         posClientDevice.ip;
+                    global.posClientDeviceList[indexFound].holdNumberActive =
+                        posClientDevice.holdNumberActive;
                     print("register_client_device : " + posClientDevice.ip);
                   } else {
                     global.posClientDeviceList.add(posClientDevice);

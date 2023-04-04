@@ -4,6 +4,7 @@ import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
+import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fullscreen/fullscreen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -62,7 +63,6 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/api/network/server.dart' as network;
 import 'package:dedepos/services/device.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
@@ -154,7 +154,7 @@ class _PosScreenState extends State<PosScreen>
       dev.log("syncRefreshProductBarcode");
       global.syncRefreshProductBarcode = false;
       await loadProductByCategory(categoryGuidSelected);
-      processEvent();
+      processEvent(holdNumber: global.posHoldActiveNumber);
     }
   }
 
@@ -200,10 +200,11 @@ class _PosScreenState extends State<PosScreen>
       });
     }
     dev.log("initState PosScreen 3");
-    deviceTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+    deviceTimer =
+        Timer.periodic(const Duration(milliseconds: 100), (timer) async {
       if (global.posScreenRefresh) {
         global.posScreenRefresh = false;
-        processEventRefresh();
+        processEventRefresh(global.posHoldActiveNumber);
       }
       network.testPrinterConnect();
     });
@@ -222,7 +223,7 @@ class _PosScreenState extends State<PosScreen>
       }*/
     });
     global.syncRefreshProductCategory = true;
-    processEvent();
+    processEvent(holdNumber: global.posHoldActiveNumber);
     checkSync();
   }
 
@@ -529,6 +530,10 @@ class _PosScreenState extends State<PosScreen>
         dev.log("commandCode=$commandCode");
         break;
     }
+    if (global.posClientDeviceList.isNotEmpty) {
+      global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
+          false;
+    }
   }
 
   Widget findByText() {
@@ -721,7 +726,9 @@ class _PosScreenState extends State<PosScreen>
                                       commandCode: 1,
                                       barcode: detail.barcode,
                                       qty: detail.qty.toString());
-                                  processEvent(barcode: detail.barcode);
+                                  processEvent(
+                                      barcode: detail.barcode,
+                                      holdNumber: global.posHoldActiveNumber);
                                   detail.qty = 1;
                                   //Navigator.pop(context, SelectItemConditionModel(command: 1, qty: _detail.qty, price: _detail.price, data: BarcodeStruct(barcode: _detail.barcode, itemCode: _detail.itemCode, itemName: _detail.itemName, unitCode: _detail.unitCode, unitName: _detail.unitName)));
                                 },
@@ -748,7 +755,8 @@ class _PosScreenState extends State<PosScreen>
     } catch (e) {}*/
   }
 
-  Future<void> processEvent({String barcode = ""}) async {
+  Future<void> processEvent(
+      {String barcode = "", required int holdNumber}) async {
     print("processEvent()");
     if (barcode.isNotEmpty) {
       product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
@@ -773,14 +781,40 @@ class _PosScreenState extends State<PosScreen>
               product_count: 0);
       productOptions = product.options();
     }
-    processEventRefresh();
+    processEventRefresh(holdNumber);
   }
 
-  void processEventRefresh() {
-    context
-        .read<PosProcessBloc>()
-        .add(ProcessEvent(holdNumber: global.posHoldActiveNumber));
-    setState(() {});
+  void processEventRefresh(int holdNumber) {
+    print("processEventRefresh() : " + holdNumber.toString());
+    posCompileProcess().then((_) {
+      if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+          .details.isNotEmpty) {
+        activeLineNumber = global
+            .posHoldProcessResult[global.posHoldActiveNumber]
+            .posProcess
+            .active_line_number;
+        if (activeLineNumber != -1) {
+          activeGuid = global.posHoldProcessResult[global.posHoldActiveNumber]
+              .posProcess.details[activeLineNumber].guid;
+        }
+      } else {
+        activeLineNumber = -1;
+        activeGuid = "";
+      }
+      setState(() {});
+      Future.delayed(const Duration(milliseconds: 50), () {
+        autoScrollController.scrollToIndex(
+            (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+                        .active_line_number <
+                    0)
+                ? 0
+                : global.posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess.active_line_number,
+            preferPosition: AutoScrollPosition.begin);
+      });
+      global.posClientDeviceList[global.posHoldActiveNumber].processSuccess =
+          false;
+    });
   }
 
   void numPadChangeQty(String qty, String unitName) async {
@@ -789,7 +823,7 @@ class _PosScreenState extends State<PosScreen>
           sound: global.SoundEnum.buttonTing,
           word: "qty_update" + "is" + qty.toString() + unitName);
       logInsert(commandCode: 4, guid: activeGuid, qty: qty, closeExtra: false);
-      processEvent();
+      processEvent(holdNumber: global.posHoldActiveNumber);
     }
   }
 
@@ -802,7 +836,7 @@ class _PosScreenState extends State<PosScreen>
               global.language("money_symbol"));
       logInsert(
           commandCode: 5, guid: activeGuid, price: price, closeExtra: false);
-      processEvent();
+      processEvent(holdNumber: global.posHoldActiveNumber);
     }
   }
 
@@ -844,7 +878,7 @@ class _PosScreenState extends State<PosScreen>
             codeDefault: "",
             selected: detail.selected);
         global.playSound(sound: global.SoundEnum.beep, word: detail.names[0]);
-        processEvent();
+        processEvent(holdNumber: global.posHoldActiveNumber);
       } else {
         global.playSound(sound: global.SoundEnum.fail);
       }
@@ -885,7 +919,7 @@ class _PosScreenState extends State<PosScreen>
       logInsert(
           commandCode: 6, guid: activeGuid, discount: '', closeExtra: false);
     }
-    processEvent();
+    processEvent(holdNumber: global.posHoldActiveNumber);
     global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
         .active_line_number = -1;
   }
@@ -904,7 +938,8 @@ class _PosScreenState extends State<PosScreen>
           commandCode: 1,
           barcode: barcodeScanResult,
           qty: (textInput.isEmpty) ? "1.0" : textInput);
-      processEvent(barcode: barcodeScanResult);
+      processEvent(
+          barcode: barcodeScanResult, holdNumber: global.posHoldActiveNumber);
 
       await controller.pauseCamera();
       await Future.delayed(const Duration(seconds: 1));
@@ -1010,7 +1045,8 @@ class _PosScreenState extends State<PosScreen>
             barcode: product.barcode,
             closeExtra: false,
             qty: "1.0");
-        processEvent(barcode: product.barcode);
+        processEvent(
+            barcode: product.barcode, holdNumber: global.posHoldActiveNumber);
       },
       child: Stack(
         children: [
@@ -1168,7 +1204,7 @@ class _PosScreenState extends State<PosScreen>
                       productOptions[groupIndex].choices[detailIndex].selected;
                   await selectProductLevelExtraListCheck(
                       groupIndex, detailIndex, value);
-                  processEvent();
+                  processEvent(holdNumber: global.posHoldActiveNumber);
                 },
                 child: Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -1342,7 +1378,7 @@ class _PosScreenState extends State<PosScreen>
             }
             await loadProductByCategory(categoryGuidSelected);
             productOptions.clear();
-            processEvent();
+            processEvent(holdNumber: global.posHoldActiveNumber);
           },
           child: Stack(
             children: [
@@ -1417,7 +1453,7 @@ class _PosScreenState extends State<PosScreen>
               categoryGuidSelected = "";
               productOptions.clear();
               loadCategory();
-              processEvent();
+              processEvent(holdNumber: global.posHoldActiveNumber);
             },
             child: Text(
               global.language("restart"),
@@ -1818,7 +1854,7 @@ class _PosScreenState extends State<PosScreen>
                 if (detail.qty > 1) {
                   logInsert(
                       commandCode: 3, guid: activeGuid, closeExtra: false);
-                  processEvent();
+                  processEvent(holdNumber: global.posHoldActiveNumber);
                 }
               },
               label: '-1 ${detail.unit_name}',
@@ -1862,7 +1898,7 @@ class _PosScreenState extends State<PosScreen>
             commandButton(
               onPressed: () async {
                 logInsert(commandCode: 2, guid: activeGuid, closeExtra: false);
-                processEvent();
+                processEvent(holdNumber: global.posHoldActiveNumber);
               },
               label: '+1 ${detail.unit_name}',
               // icon: Icons.exposure_plus_1,
@@ -1972,7 +2008,8 @@ class _PosScreenState extends State<PosScreen>
                                     global.playSound(
                                         sound: global.SoundEnum.buttonTing);
                                     Navigator.pop(context);
-                                    processEvent();
+                                    processEvent(
+                                        holdNumber: global.posHoldActiveNumber);
                                   },
                                 ),
                                 ElevatedButton(
@@ -2013,7 +2050,8 @@ class _PosScreenState extends State<PosScreen>
                                         sound: global.SoundEnum.buttonTing);
                                     Navigator.pop(context);
                                     //selectProductExtraList.clear();
-                                    processEvent();
+                                    processEvent(
+                                        holdNumber: global.posHoldActiveNumber);
                                   },
                                 ),
                                 ElevatedButton(
@@ -2384,7 +2422,7 @@ class _PosScreenState extends State<PosScreen>
     activeGuid = "";
     activeLineNumber = -1;
     textInput = "";
-    processEvent();
+    processEvent(holdNumber: global.posHoldActiveNumber);
   }
 
   void restart() {
@@ -2483,7 +2521,7 @@ class _PosScreenState extends State<PosScreen>
               global.playSound(word: global.language('speech_to_text_on'));
             }
           });
-          processEvent();
+          processEvent(holdNumber: global.posHoldActiveNumber);
         },
       ),
       const SizedBox(
@@ -3006,7 +3044,8 @@ class _PosScreenState extends State<PosScreen>
             barcode: value.data.barcode,
             qty: value.qty.toString(),
             price: value.priceOrPersent);
-      processEvent(barcode: value.data.barcode);
+      processEvent(
+          barcode: value.data.barcode, holdNumber: global.posHoldActiveNumber);
     });
     _barcodeScanActive = true;
   }
@@ -3045,7 +3084,7 @@ class _PosScreenState extends State<PosScreen>
     if (result != null) {
       setState(() {
         global.posHoldActiveNumber = result;
-        processEvent();
+        processEvent(holdNumber: global.posHoldActiveNumber);
         global.playSound(sound: global.SoundEnum.beep);
         activeGuid = "";
         activeLineNumber = -1;
@@ -3603,13 +3642,31 @@ class _PosScreenState extends State<PosScreen>
                 dev.log('xxxxxx Category');
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
-                processEvent();
+                processEvent(holdNumber: global.posHoldActiveNumber);
                 productCategoryLoadFinish();
               }
             },
           ),
-          BlocListener<PosProcessBloc, PosProcessState>(
+          /*BlocListener<PosProcessBloc, PosProcessState>(
             listener: (context, state) {
+              if (state is PosProcessFinish) {
+                setState(() {});
+                Future.delayed(const Duration(milliseconds: 50), () {
+                  autoScrollController.scrollToIndex(
+                      (global.posHoldProcessResult[global.posHoldActiveNumber]
+                                  .posProcess.active_line_number <
+                              0)
+                          ? 0
+                          : global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .posProcess
+                              .active_line_number,
+                      preferPosition: AutoScrollPosition.begin);
+                });
+                global.posClientDeviceList[global.posHoldActiveNumber].processSuccess = false;
+                global.sendProcessToCustomerDisplay();
+                global.sendProcessToClient();
+              }
               if (state is PosProcessSuccess) {
                 print('PosProcessSuccess');
                 global.posHoldProcessResult[global.posHoldActiveNumber]
@@ -3631,26 +3688,11 @@ class _PosScreenState extends State<PosScreen>
                   activeLineNumber = -1;
                   activeGuid = "";
                 }
-                setState(() {});
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  autoScrollController.scrollToIndex(
-                      (global.posHoldProcessResult[global.posHoldActiveNumber]
-                                  .posProcess.active_line_number <
-                              0)
-                          ? 0
-                          : global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .active_line_number,
-                      preferPosition: AutoScrollPosition.begin);
-                });
                 context.read<PosProcessBloc>().add(
                     PosProcessFinish(holdNumber: global.posHoldActiveNumber));
-                global.sendProcessToCustomerDisplay();
-                global.sendProcessToClient();
               }
             },
-          )
+          )*/
         ],
         child: VisibilityDetector(
             onVisibilityChanged: (VisibilityInfo info) {

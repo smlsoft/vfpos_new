@@ -5,8 +5,8 @@ import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/system/printer_model.dart';
-import 'package:dedepos/pos_client.dart';
-import 'package:dedepos/select_mode_screen.dart';
+import 'package:dedepos/util/pos_client.dart';
+import 'package:dedepos/util/select_mode_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:localstore/localstore.dart';
 import 'dart:io';
@@ -14,18 +14,17 @@ import 'package:dedepos/bloc/find_employee_by_name_bloc.dart';
 import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
-import 'package:dedepos/dashboard_screen.dart';
+import 'package:dedepos/util/menu_screen.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
-import 'package:dedepos/loading.dart';
-import 'package:dedepos/login.dart';
+import 'package:dedepos/util/loading.dart';
+import 'package:dedepos/util/login.dart';
 import 'package:dedepos/util/network.dart' as network;
-import 'package:dedepos/welcome.dart';
+import 'package:dedepos/util/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
-import 'package:dedepos/bloc/pos_process_bloc.dart';
 import 'package:dedepos/bloc/server_bloc.dart';
 import 'dart:developer' as dev;
 import 'package:dedepos/api/network/server.dart' as server;
@@ -53,7 +52,6 @@ Future<void> main() async {
         BlocProvider(
             create: (context) => FindEmployeeByNameBloc(
                 apiFindEmployeeByName: RestApiFindEmployeeByWord())),
-        BlocProvider(create: (context) => PosProcessBloc()),
         /*BlocProvider(create: (context) => OrderProcessBloc()),
         BlocProvider(create: (context) => TableBloc()),*/
         BlocProvider(create: (context) => PayScreenBloc()),
@@ -68,7 +66,7 @@ Future<void> main() async {
             ),
         home: const Welcome(),
         routes: <String, WidgetBuilder>{
-          '/menu': (BuildContext context) => const DashboardScreen(),
+          '/menu': (BuildContext context) => const MenuScreen(),
           '/loading': (BuildContext context) => const Loading(),
           '/login': (BuildContext context) => const Login(),
           '/client': (BuildContext context) => const PosClient(),
