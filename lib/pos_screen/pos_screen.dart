@@ -544,12 +544,10 @@ class _PosScreenState extends State<PosScreen>
         dev.log("commandCode=$commandCode");
         break;
     }
-    if (global.posClientDeviceList.isNotEmpty) {
-      for (int index = 0; index < global.posClientDeviceList.length; index++) {
-        if (global.posClientDeviceList[index].holdNumberActive ==
-            global.posHoldActiveNumber) {
-          global.posClientDeviceList[index].processSuccess = false;
-        }
+    for (int index = 0; index < global.posClientDeviceList.length; index++) {
+      if (global.posClientDeviceList[index].holdNumberActive ==
+          global.posHoldActiveNumber) {
+        global.posClientDeviceList[index].processSuccess = false;
       }
     }
   }
@@ -3093,6 +3091,14 @@ class _PosScreenState extends State<PosScreen>
       global.payScreenData =
           global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
       posCompileProcess().then((_) {
+        for (int index = 0;
+            index < global.posClientDeviceList.length;
+            index++) {
+          if (global.posClientDeviceList[index].holdNumberActive ==
+              global.posHoldActiveNumber) {
+            global.posClientDeviceList[index].processSuccess = false;
+          }
+        }
         PosProcess().sumCategoryCount(
             global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
         PosLogHelper().refresh(global.posHoldActiveNumber);
