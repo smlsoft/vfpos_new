@@ -2074,7 +2074,6 @@ class _PosScreenState extends State<PosScreen>
           ],
         )));
   }
-  //test
 
   Widget detail(PosProcessDetailModel detail, int index) {
     bool active = (activeLineNumber == -1)
