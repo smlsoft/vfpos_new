@@ -43,16 +43,17 @@ Future<void> startServer() async {
               HttpParameterModel jsonCategory =
                   HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
               int holdNumber = jsonCategory.holdNumber;
+              print("xxxxxxxxxxxxxxxxxxx Get : " +
+                  httpGetData.code +
+                  " : " +
+                  holdNumber.toString());
+              PosProcess posProcess = PosProcess();
               global.posHoldProcessResult[holdNumber].posProcess =
-                  await PosProcess().process(holdNumber);
-              PosProcess().sumCategoryCount(global
-                  .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
-              String xxx = jsonEncode(global
-                  .posHoldProcessResult[global.posHoldActiveNumber]
-                  .toJson());
-              response.write(jsonEncode(global
-                  .posHoldProcessResult[global.posHoldActiveNumber]
-                  .toJson()));
+                  await posProcess.process(holdNumber);
+              String xxx =
+                  jsonEncode(global.posHoldProcessResult[holdNumber].toJson());
+              response.write(
+                  jsonEncode(global.posHoldProcessResult[holdNumber].toJson()));
               break;
             case "PosLogHelper.holdCount":
               HttpParameterModel jsonCategory =

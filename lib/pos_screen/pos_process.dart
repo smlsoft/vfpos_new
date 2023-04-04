@@ -5,7 +5,7 @@ import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 class PosProcess {
-  final PosProcessModel processResult = PosProcessModel(
+  PosProcessModel processResult = PosProcessModel(
       details: [], select_promotion_temp_list: [], promotion_list: []);
 
   void sumCategoryCount(PosProcessModel result) {

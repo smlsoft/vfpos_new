@@ -246,10 +246,11 @@ class _PosScreenState extends State<PosScreen>
           HttpParameterModel(holdNumber: global.posHoldActiveNumber);
       HttpGetDataModel json = HttpGetDataModel(
           code: "get_process", json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
       global.posHoldProcessResult[global.posHoldActiveNumber] =
-          PosHoldProcessModel.fromJson(jsonDecode(result));
+          PosHoldProcessModel.fromJson(jsonDecode(
+              await global.getFromServer(json: jsonEncode(json.toJson()))));
+      PosProcess().sumCategoryCount(
+          global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
       setState(() {});
     }
   }
