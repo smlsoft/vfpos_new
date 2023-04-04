@@ -235,7 +235,9 @@ class _PosScreenState extends State<PosScreen>
     processEvent(holdNumber: global.posHoldActiveNumber);
     checkSync();
     global.functionPosScreenRefresh = refresh;
-    getProcessFromTerminal();
+    Timer(const Duration(seconds: 1), () async {
+      await getProcessFromTerminal();
+    });
   }
 
   Future<void> getProcessFromTerminal() async {
@@ -3109,7 +3111,7 @@ class _PosScreenState extends State<PosScreen>
               .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
         });
       } else {
-        getProcessFromTerminal();
+        await getProcessFromTerminal();
       }
       global.payScreenData =
           global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
