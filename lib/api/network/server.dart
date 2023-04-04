@@ -126,6 +126,24 @@ Future<void> startServer() async {
                     global.functionPosScreenRefresh!(result.holdNumber);
                   }
                   break;
+                case "PosLogHelper.refresh":
+                  int holdNumber = int.parse(httpPost.data);
+                  for (int index = 0;
+                      index < global.posClientDeviceList.length;
+                      index++) {
+                    if (global.posClientDeviceList[index].holdNumberActive ==
+                        holdNumber) {
+                      global.posClientDeviceList[index].processSuccess = false;
+                    }
+                  }
+                  posCompileProcess().then((_) {
+                    PosProcess().sumCategoryCount(
+                        global.posHoldProcessResult[holdNumber].posProcess);
+                    if (global.functionPosScreenRefresh != null) {
+                      global.functionPosScreenRefresh!(holdNumber);
+                    }
+                  });
+                  break;
                 case "PosLogHelper.insert":
                   PosLogObjectBoxStruct jsonData =
                       PosLogObjectBoxStruct.fromJson(jsonDecode(httpPost.data));
@@ -147,7 +165,6 @@ Future<void> startServer() async {
                       global.functionPosScreenRefresh!(jsonData.hold_number);
                     }
                   });
-
                   break;
                 case "get_device_name":
                   // Return ชื่อเครื่อง server , ip server

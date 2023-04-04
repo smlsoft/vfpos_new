@@ -7,6 +7,7 @@ import 'package:dedepos/pos_screen/pos_print.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fullscreen/fullscreen.dart';
+import 'package:get/state_manager.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:split_view/split_view.dart';
 import 'dart:developer' as dev;
@@ -233,6 +234,7 @@ class _PosScreenState extends State<PosScreen>
     processEvent(holdNumber: global.posHoldActiveNumber);
     checkSync();
     global.functionPosScreenRefresh = refresh;
+    PosLogHelper().refresh(global.posHoldActiveNumber);
   }
 
   @override
@@ -3093,7 +3095,7 @@ class _PosScreenState extends State<PosScreen>
             .posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
         PosProcess().sumCategoryCount(
             global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
-        global.sendProcessToClient();
+        PosLogHelper().refresh(global.posHoldActiveNumber);
       });
     }
   }
