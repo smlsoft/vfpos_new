@@ -129,14 +129,21 @@ Future<void> startServer() async {
                   // ลงทะเบียนเครื่องช่วยขาย
                   SyncDeviceModel posClientDevice =
                       SyncDeviceModel.fromJson(jsonDecode(httpPost.data));
-                  bool found = false;
-                  for (var device in global.posClientDeviceList) {
-                    if (device.device == posClientDevice.device) {
-                      found = true;
+                  int indexFound = -1;
+                  for (int index = 0;
+                      index < global.posClientDeviceList.length;
+                      index++) {
+                    if (global.posClientDeviceList[index].device ==
+                        posClientDevice.device) {
+                      indexFound = index;
                       break;
                     }
                   }
-                  if (!found) {
+                  if (indexFound != -1) {
+                    global.posClientDeviceList[indexFound].ip =
+                        posClientDevice.ip;
+                    print("register_client_device : " + posClientDevice.ip);
+                  } else {
                     global.posClientDeviceList.add(posClientDevice);
                     print("register_client_device : " +
                         posClientDevice.device +

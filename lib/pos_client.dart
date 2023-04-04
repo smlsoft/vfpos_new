@@ -26,6 +26,7 @@ class _PosClientState extends State<PosClient> {
     findTerminalTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (global.targetDeviceConnected) {
         findTerminalTimer.cancel();
+        global.loginSuccess = true;
         setState(() {
           Navigator.of(context).pushReplacementNamed('/menu');
         });

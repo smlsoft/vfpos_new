@@ -567,8 +567,8 @@ Future<void> sendProcessToClient() async {
       try {
         var jsonData = HttpPost(
             command: "process_result",
-            data: jsonEncode(
-                posHoldProcessResult[posHoldActiveNumber].toJson()));
+            data:
+                jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
         dev.log("sendProcessToClient : " + url);
         postToServer(
             ip: url,
@@ -723,6 +723,34 @@ void loadConfig() {
   }
 }
 
+Future<void> registerClientToServer() async {
+  if (appMode == AppModeEnum.posClient) {
+    var url =
+        "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
+    var uri = Uri.parse(url);
+    try {
+      SyncDeviceModel sendData = SyncDeviceModel(
+          device: "XXX",
+          ip: ipAddress,
+          connected: true,
+          isCashierTerminal: false,
+          isClient: true);
+      var jsonEncodeStr = jsonEncode(sendData.toJson());
+      await http
+          .post(uri,
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+              body: jsonEncode(<String, String>{
+                'command': 'register_client_device',
+                'data': jsonEncodeStr,
+              }))
+          .timeout(const Duration(seconds: 1))
+          .then((response) {});
+    } catch (_) {}
+  }
+}
+
 Future<void> loading() async {
   {
     dev.log("loadConst");
@@ -868,7 +896,10 @@ Future<void> loading() async {
     });
   }
   Timer.periodic(const Duration(seconds: 1), (timer) async {
-    if (loginSuccess) systemProcess();
+    if (loginSuccess) {
+      systemProcess();
+      registerClientToServer();
+    }
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
   for (int loop = 0; loop < 20; loop++) {
