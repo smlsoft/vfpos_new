@@ -28,7 +28,7 @@ Future<void> startServer() async {
     dev.log(
         "Server running on IP : ${server.address} On Port : ${server.port}");
     await for (HttpRequest request in server) {
-      if (global.loginSuccess || 1 == 1) {
+      if (global.loginSuccess) {
         var contentType = request.headers.contentType;
         var response = request.response;
         if (request.method == 'GET') {
@@ -112,6 +112,7 @@ Future<void> startServer() async {
                   final box =
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   response.write(box.put(jsonData));
+                  global.posScreenRefresh = true;
                   break;
                 case "get_device_name":
                   // Return ชื่อเครื่อง server , ip server
