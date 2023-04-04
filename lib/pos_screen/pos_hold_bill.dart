@@ -18,11 +18,14 @@ class _PosHoldBillState extends State<PosHoldBill>
   void initState() {
     super.initState();
     for (int index = 0; index < global.posHoldProcessResult.length; index++) {
-      global.posHoldProcessResult[index].logCount = global.posLogHelper
-          .holdCount(global.posHoldProcessResult[index].holdNumber);
+      global.posLogHelper
+          .holdCount(global.posHoldProcessResult[index].holdNumber)
+          .then((value) {
+        setState(() {
+          global.posHoldProcessResult[index].logCount = value;
+        });
+      });
     }
-    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
-        global.payScreenData;
   }
 
   Widget holdBillContent() {

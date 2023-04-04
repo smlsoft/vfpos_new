@@ -150,12 +150,14 @@ class HttpParameterModel {
   String guid;
   String barcode;
   String jsonData;
+  int holdNumber;
 
   HttpParameterModel(
       {this.parentGuid = "",
       this.guid = "",
       this.barcode = "",
-      this.jsonData = ""});
+      this.jsonData = "",
+      this.holdNumber = 0});
 
   factory HttpParameterModel.fromJson(Map<String, dynamic> json) =>
       _$HttpParameterModelFromJson(json);

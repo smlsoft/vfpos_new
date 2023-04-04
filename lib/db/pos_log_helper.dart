@@ -21,12 +21,22 @@ class PosLogHelper {
     }
   }
 
-  int holdCount(int holdNumber) {
-    return box
-        .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
-        .build()
-        .find()
-        .length;
+  Future<int> holdCount(int holdNumber) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(holdNumber: holdNumber);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "PosLogHelper.holdCount",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return int.tryParse(result) ?? 0;
+    } else {
+      return box
+          .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+          .build()
+          .count();
+    }
   }
 
   List<PosLogObjectBoxStruct> selectByHoldNumberIsVoidSuccess(
@@ -100,26 +110,4 @@ class PosLogHelper {
         .findIds();
     return box.removeMany(ids);
   }
-
-  bool delete({required String where}) {
-    return false;
-  }
-
-  bool deleteById(int id) {
-    return false;
-  }
-
-  void deleteAll() {
-    box.removeAll();
-  }
-
-  bool update(PosLogObjectBoxStruct value) {
-    return false;
-  }
-
-  void restart() {
-    box.removeAll();
-  }
-
-  void success() {}
 }

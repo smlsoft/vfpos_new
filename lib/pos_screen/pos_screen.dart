@@ -833,12 +833,10 @@ class _PosScreenState extends State<PosScreen>
           (activeLineNumber < 0) ? 0 : activeLineNumber,
           preferPosition: AutoScrollPosition.begin);
     });
-    if (global.posClientDeviceList.isNotEmpty) {
-      for (int index = 0; index < global.posClientDeviceList.length; index++) {
-        if (global.posClientDeviceList[index].holdNumberActive ==
-            global.posHoldActiveNumber) {
-          global.posClientDeviceList[index].processSuccess = false;
-        }
+    for (int index = 0; index < global.posClientDeviceList.length; index++) {
+      if (global.posClientDeviceList[index].holdNumberActive ==
+          global.posHoldActiveNumber) {
+        global.posClientDeviceList[index].processSuccess = false;
       }
     }
     setState(() {});
@@ -2422,7 +2420,6 @@ class _PosScreenState extends State<PosScreen>
   }
 
   void restartClearData() {
-    global.posLogHelper.restart();
     activeGuid = "";
     activeLineNumber = -1;
     textInput = "";

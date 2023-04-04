@@ -1,6 +1,7 @@
 import 'dart:math';
 import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
+import 'package:dedepos/db/pos_log_helper.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
@@ -37,7 +38,13 @@ Future<void> startServer() async {
           String json = request.uri.query.split("json=")[1];
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
-          if (httpGetData.code == "selectByBarcodeFirst") {
+          if (httpGetData.code == "PosLogHelper.holdCount") {
+            HttpParameterModel jsonCategory =
+                HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+            int result =
+                await PosLogHelper().holdCount(jsonCategory.holdNumber);
+            response.write(result.toString());
+          } else if (httpGetData.code == "selectByBarcodeFirst") {
             HttpParameterModel jsonCategory =
                 HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
             ProductBarcodeObjectBoxStruct? result = await ProductBarcodeHelper()
@@ -125,8 +132,14 @@ Future<void> startServer() async {
                   final box =
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   response.write(box.put(jsonData));
-                  global.posClientDeviceList[jsonData.hold_number]
-                      .processSuccess = false;
+                  for (int index = 0;
+                      index < global.posClientDeviceList.length;
+                      index++) {
+                    if (global.posClientDeviceList[index].holdNumberActive ==
+                        jsonData.hold_number) {
+                      global.posClientDeviceList[index].processSuccess = false;
+                    }
+                  }
                   posCompileProcess().then((_) {
                     PosProcess().sumCategoryCount(global
                         .posHoldProcessResult[jsonData.hold_number].posProcess);
