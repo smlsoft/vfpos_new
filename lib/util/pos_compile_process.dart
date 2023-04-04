@@ -3,6 +3,7 @@ import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
 
 Future<void> posCompileProcess() async {
+  print("posCompileProcess()");
   // คำนวณของ Terminal หลัก
   global.posHoldProcessResult[global.posHoldActiveNumber].posProcess =
       await PosProcess().process(global.posHoldActiveNumber);

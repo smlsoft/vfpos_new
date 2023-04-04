@@ -537,7 +537,6 @@ Future<void> systemProcess() async {
           }
         });
   }
-  dev.log("Process");
 }
 
 Future<void> sendProcessToCustomerDisplay() async {
@@ -562,6 +561,7 @@ Future<void> sendProcessToCustomerDisplay() async {
 }
 
 Future<void> sendProcessToClient() async {
+  print("sendProcessToClient");
   for (int index = 0; index < posClientDeviceList.length; index++) {
     if (posClientDeviceList[index].connected) {
       var url = "${posClientDeviceList[index].ip}:$targetDeviceIpPort";
@@ -856,7 +856,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      // await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,

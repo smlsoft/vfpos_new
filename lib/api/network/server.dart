@@ -112,7 +112,7 @@ Future<void> startServer() async {
                   PosHoldProcessModel result =
                       PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
                   global.posHoldProcessResult[result.holdNumber] = result;
-                  global.functionPosScreenRefresh();
+                  global.functionPosScreenRefresh(result.holdNumber);
                   break;
                 case "PosLogHelper.insert":
                   PosLogObjectBoxStruct jsonData =
@@ -123,7 +123,7 @@ Future<void> startServer() async {
                   global.posClientDeviceList[jsonData.hold_number]
                       .processSuccess = false;
                   posCompileProcess().then((_) {
-                    global.functionPosScreenRefresh();
+                    global.functionPosScreenRefresh(jsonData.hold_number);
                   });
 
                   break;
@@ -151,13 +151,13 @@ Future<void> startServer() async {
                         posClientDevice.ip;
                     global.posClientDeviceList[indexFound].holdNumberActive =
                         posClientDevice.holdNumberActive;
-                    print("register_client_device : " + posClientDevice.ip);
+                    // print("register_client_device : " + posClientDevice.ip);
                   } else {
                     global.posClientDeviceList.add(posClientDevice);
-                    print("register_client_device : " +
+                    /*print("register_client_device : " +
                         posClientDevice.device +
                         " : " +
-                        global.posClientDeviceList.length.toString());
+                        global.posClientDeviceList.length.toString());*/
                   }
                   break;
                 case "register_customer_display_device":
@@ -196,7 +196,7 @@ Future<void> startServer() async {
                     global.customerName = customerName;
                     global.customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
-                    global.functionPosScreenRefresh();
+                    global.functionPosScreenRefresh(global.posHoldActiveNumber);
                   } catch (e) {
                     print(e);
                   }

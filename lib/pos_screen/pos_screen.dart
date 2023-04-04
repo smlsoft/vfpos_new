@@ -118,11 +118,20 @@ class _PosScreenState extends State<PosScreen>
   double gridItemSize = 150;
   String findActiveLineByGuid = "";
 
-  void refresh() {
-    dev.log("refresh");
-    posCompileProcess().then((_) {
-      processEventRefresh(global.posHoldActiveNumber);
-    });
+  void refresh(int holdNumber) {
+    if (holdNumber == global.posHoldActiveNumber) {
+      if (global
+          .posHoldProcessResult[holdNumber].posProcess.details.isNotEmpty) {
+        findActiveLineByGuid = global
+            .posHoldProcessResult[holdNumber]
+            .posProcess
+            .details[global.posHoldProcessResult[holdNumber].posProcess.details
+                    .length -
+                1]
+            .guid;
+      }
+      processEventRefresh(holdNumber);
+    }
   }
 
   ProductBarcodeObjectBoxStruct product = ProductBarcodeObjectBoxStruct(
