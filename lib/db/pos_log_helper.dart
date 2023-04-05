@@ -117,11 +117,21 @@ class PosLogHelper {
     return result;
   }
 
-  int deleteByHoldNumber({required int holdNumber}) {
-    final ids = box
-        .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
-        .build()
-        .findIds();
-    return box.removeMany(ids);
+  Future<int> deleteByHoldNumber({required int holdNumber}) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpPost json = HttpPost(
+          command: "PosLogHelper.deleteByHoldNumber",
+          data: holdNumber.toString());
+      String result = await global.postToServerAndWait(
+          ip: "${global.targetDeviceIpAddress}:${global.targetDeviceIpPort}",
+          jsonData: jsonEncode(json.toJson()));
+      return int.tryParse(result) ?? 0;
+    } else {
+      final ids = box
+          .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+          .build()
+          .findIds();
+      return box.removeMany(ids);
+    }
   }
 }

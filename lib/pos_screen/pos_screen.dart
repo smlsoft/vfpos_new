@@ -407,7 +407,7 @@ class _PosScreenState extends State<PosScreen>
           List<PosLogObjectBoxStruct> posLogSelect =
               await PosLogHelper().selectByGuidFixed(activeGuid);
           if (posLogSelect.isNotEmpty) {
-            logHelper.insert(PosLogObjectBoxStruct(
+            await logHelper.insert(PosLogObjectBoxStruct(
                 guid_code_ref: guidCodeRef,
                 guid_ref: guidRef,
                 log_date_time: DateTime.now(),
@@ -467,7 +467,7 @@ class _PosScreenState extends State<PosScreen>
             await PosLogHelper().selectByGuidFixed(activeGuid);
         if (posLogSelect.isNotEmpty) {
           findActiveLineByGuid = activeGuid;
-          logHelper.insert(PosLogObjectBoxStruct(
+          await logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -489,7 +489,7 @@ class _PosScreenState extends State<PosScreen>
             await PosLogHelper().selectByGuidFixed(activeGuid);
         if (posLogSelect.isNotEmpty) {
           findActiveLineByGuid = activeGuid;
-          logHelper.insert(PosLogObjectBoxStruct(
+          await logHelper.insert(PosLogObjectBoxStruct(
               guid_ref: activeGuid,
               log_date_time: DateTime.now(),
               hold_number: global.posHoldActiveNumber,
@@ -507,7 +507,7 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 4:
         // 4=แก้จำนวน
-        logHelper.insert(PosLogObjectBoxStruct(
+        await logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -517,7 +517,7 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 5:
         // 5=แก้ราคา
-        logHelper.insert(PosLogObjectBoxStruct(
+        await logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -527,7 +527,7 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 6:
         // 6=แก้ส่วนลด
-        logHelper.insert(PosLogObjectBoxStruct(
+        await logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -537,7 +537,7 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 8:
         // 8=แก้หมายเหตุ
-        logHelper.insert(PosLogObjectBoxStruct(
+        await logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -547,7 +547,7 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 9:
         // 9=ลบรายการ
-        logHelper.insert(PosLogObjectBoxStruct(
+        await logHelper.insert(PosLogObjectBoxStruct(
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
@@ -560,7 +560,8 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 99:
         // เริ่มใหม่
-        logHelper.deleteByHoldNumber(holdNumber: global.posHoldActiveNumber);
+        await logHelper.deleteByHoldNumber(
+            holdNumber: global.posHoldActiveNumber);
         global.playSound(
             sound: global.SoundEnum.beep, word: global.language("restart"));
         productOptions.clear();

@@ -222,6 +222,20 @@ Future<void> startServer() async {
                     }
                   });
                   break;
+                case "PosLogHelper.deleteByHoldNumber":
+                  int holdNumber = int.parse(httpPost.data);
+                  final box =
+                      global.objectBoxStore.box<PosLogObjectBoxStruct>();
+                  final ids = box
+                      .query(
+                          PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+                      .build()
+                      .findIds();
+                  box.removeMany(ids);
+                  if (global.functionPosScreenRefresh != null) {
+                    global.functionPosScreenRefresh!(holdNumber);
+                  }
+                  break;
                 case "get_device_name":
                   // Return ชื่อเครื่อง server , ip server
                   response.write(jsonEncode(
