@@ -49,12 +49,26 @@ class PosLogHelper {
         .find();
   }
 
-  List<PosLogObjectBoxStruct> selectByGuidFixed(String guidAutoFixed) {
-    return (box
-            .query(PosLogObjectBoxStruct_.guid_auto_fixed.equals(guidAutoFixed))
-          ..order(PosLogObjectBoxStruct_.log_date_time))
-        .build()
-        .find();
+  Future<List<PosLogObjectBoxStruct>> selectByGuidFixed(
+      String guidAutoFixed) async {
+    if (global.appMode == global.AppModeEnum.posClient) {
+      HttpParameterModel jsonParameter =
+          HttpParameterModel(guid: guidAutoFixed);
+      HttpGetDataModel json = HttpGetDataModel(
+          code: "PosLogHelper.selectByGuidFixed",
+          json: jsonEncode(jsonParameter.toJson()));
+      String result =
+          await global.getFromServer(json: jsonEncode(json.toJson()));
+      return (jsonDecode(result) as List)
+          .map((e) => PosLogObjectBoxStruct.fromJson(e))
+          .toList();
+    } else {
+      return (box.query(
+              PosLogObjectBoxStruct_.guid_auto_fixed.equals(guidAutoFixed))
+            ..order(PosLogObjectBoxStruct_.log_date_time))
+          .build()
+          .find();
+    }
   }
 
   List<PosLogObjectBoxStruct> selectByGuidRefHoldNumberCommandCode(

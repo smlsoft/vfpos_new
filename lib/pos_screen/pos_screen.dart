@@ -289,7 +289,6 @@ class _PosScreenState extends State<PosScreen>
             .productCategoryCodeSelected[
                 global.productCategoryCodeSelected.length - 1]
             .guid_fixed;
-    dev.log('loadCategory : $categoryGuid');
   }
 
   Future<void> loadProductByCategory(String categoryGuid) async {
@@ -405,7 +404,7 @@ class _PosScreenState extends State<PosScreen>
           // 101=ส่วนขยาย (Check Box)
           // เพิ่มรายการใหม่ (Extra Check Box)
           List<PosLogObjectBoxStruct> posLogSelect =
-              PosLogHelper().selectByGuidFixed(activeGuid);
+              await PosLogHelper().selectByGuidFixed(activeGuid);
           if (posLogSelect.isNotEmpty) {
             logHelper.insert(PosLogObjectBoxStruct(
                 guid_code_ref: guidCodeRef,
@@ -464,7 +463,7 @@ class _PosScreenState extends State<PosScreen>
       case 2:
         // 2=เพิ่มจำนวน + 1
         List<PosLogObjectBoxStruct> posLogSelect =
-            PosLogHelper().selectByGuidFixed(activeGuid);
+            await PosLogHelper().selectByGuidFixed(activeGuid);
         if (posLogSelect.isNotEmpty) {
           logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
@@ -485,7 +484,7 @@ class _PosScreenState extends State<PosScreen>
       case 3:
         // 3=ลดจำนวน - 1
         List<PosLogObjectBoxStruct> posLogSelect =
-            PosLogHelper().selectByGuidFixed(activeGuid);
+            await PosLogHelper().selectByGuidFixed(activeGuid);
         if (posLogSelect.isNotEmpty) {
           logHelper.insert(PosLogObjectBoxStruct(
               guid_ref: activeGuid,
@@ -1183,17 +1182,20 @@ class _PosScreenState extends State<PosScreen>
     double menuMinWidth = gridItemSize;
     int widgetPerLine =
         int.parse((constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
-    return GridView.count(
-      padding: EdgeInsets.zero,
-      crossAxisCount: widgetPerLine,
-      children: [
-        for (final detail in global.productListByCategory)
-          Container(
-            margin: const EdgeInsets.all(4),
-            child: productLevelWidget(detail),
-          ),
-      ],
-    );
+    return (global.productListByCategory.isEmpty)
+        ? const Center(
+            child: Icon(Icons.select_all, color: Colors.grey, size: 200))
+        : GridView.count(
+            padding: EdgeInsets.zero,
+            crossAxisCount: widgetPerLine,
+            children: [
+              for (final detail in global.productListByCategory)
+                Container(
+                  margin: const EdgeInsets.all(4),
+                  child: productLevelWidget(detail),
+                ),
+            ],
+          );
   }
 
   Widget selectProductLevelExtraListCheckWidget(int groupIndex) {
@@ -1404,7 +1406,10 @@ class _PosScreenState extends State<PosScreen>
             }
             await loadProductByCategory(categoryGuidSelected);
             productOptions.clear();
-            processEvent(holdNumber: global.posHoldActiveNumber);
+            setState(() {
+              PosProcess().sumCategoryCount(global
+                  .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+            });
           },
           child: Stack(
             children: [
@@ -1479,7 +1484,11 @@ class _PosScreenState extends State<PosScreen>
               categoryGuidSelected = "";
               productOptions.clear();
               loadCategory();
-              processEvent(holdNumber: global.posHoldActiveNumber);
+              setState(() {
+                PosProcess().sumCategoryCount(global
+                    .posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess);
+              });
             },
             child: Text(
               global.language("restart"),
@@ -1494,6 +1503,10 @@ class _PosScreenState extends State<PosScreen>
     } else {
       categorySelectedList.add(Container());
     }
+    List<ProductCategoryObjectBoxStruct> categoryList =
+        (global.productCategoryChildList.isEmpty)
+            ? global.productCategoryList
+            : global.productCategoryChildList;
 
     return Container(
         width: double.infinity,
@@ -1521,9 +1534,7 @@ class _PosScreenState extends State<PosScreen>
                     ),
                   ]),
             Wrap(spacing: 10, runSpacing: 10, children: [
-              for (final value in (global.productCategoryChildList.isEmpty)
-                  ? global.productCategoryList
-                  : global.productCategoryChildList)
+              for (final value in categoryList)
                 selectProductLevelCardWidget(value, gridItemSize, true)
             ])
           ],
@@ -3653,6 +3664,8 @@ class _PosScreenState extends State<PosScreen>
   }
 
   void productCategoryLoadFinish() {
+    PosProcess().sumCategoryCount(
+        global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
     context.read<ProductCategoryBloc>().add(ProductCategoryLoadFinish());
   }
 
@@ -3668,6 +3681,9 @@ class _PosScreenState extends State<PosScreen>
                 dev.log('xxxxxx Category');
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
+                PosProcess().sumCategoryCount(global
+                    .posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess);
                 processEvent(holdNumber: global.posHoldActiveNumber);
                 productCategoryLoadFinish();
               }

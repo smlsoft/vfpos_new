@@ -39,19 +39,25 @@ Future<void> startServer() async {
           HttpGetDataModel httpGetData = HttpGetDataModel.fromJson(
               jsonDecode(utf8.decode(base64Decode(json))));
           switch (httpGetData.code) {
+            case "PosLogHelper.selectByGuidFixed":
+              final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
+              HttpParameterModel jsonCategory =
+                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
+              List<PosLogObjectBoxStruct> boxData = (box.query(
+                      PosLogObjectBoxStruct_.guid_auto_fixed
+                          .equals(jsonCategory.guid))
+                    ..order(PosLogObjectBoxStruct_.log_date_time))
+                  .build()
+                  .find();
+              response
+                  .write(jsonEncode(boxData.map((e) => e.toJson()).toList()));
+              break;
             case "get_process":
               HttpParameterModel jsonCategory =
                   HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
               int holdNumber = jsonCategory.holdNumber;
-              print("xxxxxxxxxxxxxxxxxxx Get : " +
-                  httpGetData.code +
-                  " : " +
-                  holdNumber.toString());
-              PosProcess posProcess = PosProcess();
               global.posHoldProcessResult[holdNumber].posProcess =
-                  await posProcess.process(holdNumber);
-              String xxx =
-                  jsonEncode(global.posHoldProcessResult[holdNumber].toJson());
+                  await PosProcess().process(holdNumber);
               response.write(
                   jsonEncode(global.posHoldProcessResult[holdNumber].toJson()));
               break;
