@@ -216,9 +216,11 @@ Future<void> startServer() async {
                   }
                   posCompileProcess(holdNumber: jsonData.hold_number).then((_) {
                     PosProcess().sumCategoryCount(global
-                        .posHoldProcessResult[jsonData.hold_number].posProcess);
+                        .posHoldProcessResult[global.posHoldActiveNumber]
+                        .posProcess);
                     if (global.functionPosScreenRefresh != null) {
-                      global.functionPosScreenRefresh!(jsonData.hold_number);
+                      global.functionPosScreenRefresh!(
+                          global.posHoldActiveNumber);
                     }
                   });
                   break;
@@ -236,7 +238,8 @@ Future<void> startServer() async {
                     PosProcess().sumCategoryCount(
                         global.posHoldProcessResult[holdNumber].posProcess);
                     if (global.functionPosScreenRefresh != null) {
-                      global.functionPosScreenRefresh!(holdNumber);
+                      global.functionPosScreenRefresh!(
+                          global.posHoldActiveNumber);
                     }
                   });
                   break;
