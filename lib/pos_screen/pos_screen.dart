@@ -63,7 +63,6 @@ import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/api/network/server.dart' as network;
-import 'package:dedepos/services/device.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -176,7 +175,6 @@ class _PosScreenState extends State<PosScreen>
   @override
   void initState() {
     super.initState();
-    global.isTablet = true;
     context
         .read<ProductCategoryBloc>()
         .add(ProductCategoryLoadStart(parentCategoryGuid: ''));
@@ -201,7 +199,8 @@ class _PosScreenState extends State<PosScreen>
     //processPromotionTemp();
     loadCategory();
     loadProductByCategory(categoryGuidSelected);
-    if (global.isTablet) {
+    if (global.deviceMode == global.DeviceModeEnum.androidTablet ||
+        global.deviceMode == global.DeviceModeEnum.ipad) {
       tabletTabController = TabController(length: 5, vsync: this);
       tabletTabController.addListener(() {
         if (!tabletTabController.indexIsChanging) {
@@ -263,7 +262,8 @@ class _PosScreenState extends State<PosScreen>
     deviceTimer.cancel();
     posScreenTimer.cancel();
     messageTimer.cancel();
-    if (global.isTablet) {
+    if (global.deviceMode == global.DeviceModeEnum.androidTablet ||
+        global.deviceMode == global.DeviceModeEnum.ipad) {
       tabletTabController.dispose();
     }
     // เก็บรายละเอียด Hold
@@ -3306,7 +3306,8 @@ class _PosScreenState extends State<PosScreen>
               height: 40,
               margin: const EdgeInsets.only(top: 5),
               child: totalAndPayScreen()),
-          if (global.isTablet == true)
+          if (global.deviceMode == global.DeviceModeEnum.androidTablet ||
+              global.deviceMode == global.DeviceModeEnum.ipad)
             Container(
                 padding: const EdgeInsets.only(top: 5, bottom: 5),
                 width: double.infinity,
@@ -3440,7 +3441,9 @@ class _PosScreenState extends State<PosScreen>
                     ),
                   ],
                 )),
-          if (global.isTablet == true && showButtonMenu)
+          if ((global.deviceMode == global.DeviceModeEnum.androidTablet ||
+                  global.deviceMode == global.DeviceModeEnum.ipad) &&
+              showButtonMenu)
             Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: commandWidget()),
@@ -3501,7 +3504,8 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget appLayoutPos() {
-    return (global.isTablet)
+    return (global.deviceMode == global.DeviceModeEnum.androidTablet ||
+            global.deviceMode == global.DeviceModeEnum.ipad)
         ? posLayoutWideScreen()
         : SafeArea(
             child: DefaultTabController(
@@ -3519,6 +3523,7 @@ class _PosScreenState extends State<PosScreen>
                     }
                   });
                   return Scaffold(
+                      resizeToAvoidBottomInset: false,
                       body: Container(
                           decoration: const BoxDecoration(color: Colors.black),
                           child: Container(
@@ -3548,24 +3553,27 @@ class _PosScreenState extends State<PosScreen>
                                           ),
                                         ],
                                       )),
-                                  Expanded(
-                                      child: TabBarView(
-                                    children: [
-                                      transScreen(mode: 0),
-                                      Container(),
-                                      /* selectProductLevelWidget(),*/
-                                      findByText(),
-                                      Container()
-                                      //commandScreen(),
-                                    ],
-                                  )),
+                                  Expanded(child: LayoutBuilder(builder:
+                                      (BuildContext context,
+                                          BoxConstraints constraints) {
+                                    return TabBarView(
+                                      children: [
+                                        transScreen(mode: 0),
+                                        selectProductLevelWidget(constraints),
+                                        findByText(),
+                                        Container()
+                                        //commandScreen(),
+                                      ],
+                                    );
+                                  }))
                                 ],
                               ))));
                 })));
   }
 
   Widget appLayoutRestaurant() {
-    return (global.isTablet)
+    return (global.deviceMode == global.DeviceModeEnum.androidTablet ||
+            global.deviceMode == global.DeviceModeEnum.ipad)
         ? SafeArea(
             child: Scaffold(
             body: Container(
@@ -3775,6 +3783,7 @@ class _PosScreenState extends State<PosScreen>
                 },
                 child: Scaffold(
                     resizeToAvoidBottomInset: false,
+                    backgroundColor: Colors.black,
                     body: (global.appMode ==
                                 global.AppModeEnum.posCashierTerminal ||
                             global.appMode == global.AppModeEnum.posClient)

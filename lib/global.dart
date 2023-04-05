@@ -33,7 +33,6 @@ import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
-import 'package:dedepos/services/device.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -98,9 +97,6 @@ String webServiceUrl = "http://smltest1.ddnsfree.com:8084";
 String webServiceVersion = "/SMLJavaWebService/webresources/rest/";
 String providerName = "DATA";
 String databaseName = "DEMO"; // "DATA1 or DEMO";
-bool isTablet = false; // False=จอเล็ก,True=จอใหญ่
-bool isIphoneX = false;
-bool isWindowsDesktop = false;
 bool speechToTextVisible = false;
 bool loginSuccess = false;
 GetStorage appStorage = GetStorage('AppStorage');
@@ -179,6 +175,7 @@ String targetDeviceIpAddress = "";
 int targetDeviceIpPort = 4040;
 bool targetDeviceConnected = false;
 Function? functionPosScreenRefresh;
+DeviceModeEnum deviceMode = DeviceModeEnum.none;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -189,6 +186,35 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 enum SoundEnum { beep, fail, buttonTing }
 
 enum AppModeEnum { posCashierTerminal, restaurantTerminal, posClient }
+
+enum DeviceModeEnum {
+  none,
+  iphone,
+  ipad,
+  windowsDesktop,
+  macosDesktop,
+  androidPhone,
+  androidTablet,
+}
+
+Future<void> getDeviceModel() async {
+  final deviceInfo = DeviceInfoPlugin();
+  String model = '';
+
+  if (Platform.isAndroid) {
+    final androidInfo = await deviceInfo.androidInfo;
+    model = androidInfo.model;
+  } else if (Platform.isIOS) {
+    final iosInfo = await deviceInfo.iosInfo;
+    model = iosInfo.model!;
+    model = model.toLowerCase();
+    if (model.contains("iphone")) {
+      deviceMode = DeviceModeEnum.iphone;
+    } else if (model.contains("ipad")) {
+      deviceMode = DeviceModeEnum.ipad;
+    }
+  }
+}
 
 void themeSelect(int mode) {
   switch (mode) {
@@ -755,10 +781,6 @@ Future<void> registerClientToServer() async {
 Future<void> loading() async {
   {
     dev.log("loadConst");
-    Device getDevice = Device.get();
-    isTablet = getDevice.isTablet;
-    isIphoneX = getDevice.isIphoneX;
-    isWindowsDesktop = getDevice.isWindowsDesktop;
     loadConfig();
     // Payment
     qrPaymentProviderList.add(PaymentProviderModel(
@@ -856,7 +878,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,

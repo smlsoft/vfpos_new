@@ -332,10 +332,11 @@ class _MenuScreenState extends State<MenuScreen> {
                             physics: const BouncingScrollPhysics(),
                             itemCount: menuListProduct.length,
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              crossAxisSpacing: 15.0,
-                              mainAxisSpacing: 15.0,
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount:
+                                  MediaQuery.of(context).size.width ~/ 200,
+                              crossAxisSpacing: 5.0,
+                              mainAxisSpacing: 5.0,
                             ),
                             itemBuilder: (BuildContext context, int index) {
                               return menuListProduct[index];

@@ -28,7 +28,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global.dart' as global;
-import '../services/device.dart';
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/api/sync/model/promotion_model.dart';

@@ -21,7 +21,7 @@ dependencies:
   cupertino_icons: any
   dart_ping_ios: any
   decorated_icon: any
-  device_info_plus: any
+  device_info_plus: ^8.1.0
   dio: any
   equatable: any
   esc_pos_printer: any
