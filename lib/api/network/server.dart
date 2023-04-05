@@ -232,9 +232,13 @@ Future<void> startServer() async {
                       .build()
                       .findIds();
                   box.removeMany(ids);
-                  if (global.functionPosScreenRefresh != null) {
-                    global.functionPosScreenRefresh!(holdNumber);
-                  }
+                  posCompileProcess().then((_) {
+                    PosProcess().sumCategoryCount(
+                        global.posHoldProcessResult[holdNumber].posProcess);
+                    if (global.functionPosScreenRefresh != null) {
+                      global.functionPosScreenRefresh!(holdNumber);
+                    }
+                  });
                   break;
                 case "get_device_name":
                   // Return ชื่อเครื่อง server , ip server
