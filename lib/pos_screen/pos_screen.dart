@@ -121,7 +121,8 @@ class _PosScreenState extends State<PosScreen>
   String findActiveLineByGuid = "";
 
   void refresh(int holdNumber) {
-    if (holdNumber == global.posHoldActiveNumber) {
+    if (findActiveLineByGuid.isEmpty &&
+        holdNumber == global.posHoldActiveNumber) {
       if (global
           .posHoldProcessResult[holdNumber].posProcess.details.isNotEmpty) {
         findActiveLineByGuid = global
@@ -132,8 +133,8 @@ class _PosScreenState extends State<PosScreen>
                 1]
             .guid;
       }
-      processEventRefresh(holdNumber);
     }
+    processEventRefresh(holdNumber);
   }
 
   ProductBarcodeObjectBoxStruct product = ProductBarcodeObjectBoxStruct(
@@ -465,6 +466,7 @@ class _PosScreenState extends State<PosScreen>
         List<PosLogObjectBoxStruct> posLogSelect =
             await PosLogHelper().selectByGuidFixed(activeGuid);
         if (posLogSelect.isNotEmpty) {
+          findActiveLineByGuid = activeGuid;
           logHelper.insert(PosLogObjectBoxStruct(
             guid_ref: activeGuid,
             log_date_time: DateTime.now(),
@@ -486,6 +488,7 @@ class _PosScreenState extends State<PosScreen>
         List<PosLogObjectBoxStruct> posLogSelect =
             await PosLogHelper().selectByGuidFixed(activeGuid);
         if (posLogSelect.isNotEmpty) {
+          findActiveLineByGuid = activeGuid;
           logHelper.insert(PosLogObjectBoxStruct(
               guid_ref: activeGuid,
               log_date_time: DateTime.now(),
@@ -510,6 +513,7 @@ class _PosScreenState extends State<PosScreen>
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             qty: qtyForCalc));
+        findActiveLineByGuid = activeGuid;
         break;
       case 5:
         // 5=แก้ราคา
@@ -519,6 +523,7 @@ class _PosScreenState extends State<PosScreen>
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             price: priceForCalc));
+        findActiveLineByGuid = activeGuid;
         break;
       case 6:
         // 6=แก้ส่วนลด
@@ -528,6 +533,7 @@ class _PosScreenState extends State<PosScreen>
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             discount_text: discount));
+        findActiveLineByGuid = activeGuid;
         break;
       case 8:
         // 8=แก้หมายเหตุ
@@ -537,6 +543,7 @@ class _PosScreenState extends State<PosScreen>
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             remark: remark));
+        findActiveLineByGuid = activeGuid;
         break;
       case 9:
         // 9=ลบรายการ
@@ -545,6 +552,7 @@ class _PosScreenState extends State<PosScreen>
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
             guid_ref: activeGuid));
+        findActiveLineByGuid = activeGuid;
         global.playSound(
             sound: global.SoundEnum.beep,
             word: global.language("delete") + global.language("line"));
@@ -556,6 +564,7 @@ class _PosScreenState extends State<PosScreen>
         global.playSound(
             sound: global.SoundEnum.beep, word: global.language("restart"));
         productOptions.clear();
+        findActiveLineByGuid = "";
         break;
       default:
         dev.log("commandCode=$commandCode");
@@ -714,15 +723,16 @@ class _PosScreenState extends State<PosScreen>
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         )),
-                                                    onChange: (qty) => {
-                                                          if (qty.isNotEmpty &&
+                                                    onChange: (qtyStr) => {
+                                                          if (qtyStr
+                                                                  .isNotEmpty &&
                                                               double.parse(
-                                                                      qty) >
+                                                                      qtyStr) >
                                                                   0)
                                                             {
                                                               detail.qty =
                                                                   double.parse(
-                                                                      qty),
+                                                                      qtyStr),
                                                             }
                                                         })),
                                           );
@@ -789,33 +799,36 @@ class _PosScreenState extends State<PosScreen>
 
   Future<void> processEvent(
       {String barcode = "", required int holdNumber}) async {
-    print("processEvent()");
-    if (barcode.isNotEmpty) {
-      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
-          ProductBarcodeObjectBoxStruct(
-              barcode: "",
-              names: [],
-              name_all: "",
-              prices: [],
-              unit_code: "",
-              unit_names: [],
-              new_line: 0,
-              images_url: "",
-              guid_fixed: "",
-              item_code: "",
-              item_guid: "",
-              descriptions: [],
-              item_unit_code: "",
-              color_select: "",
-              image_or_color: true,
-              color_select_hex: "",
-              options_json: "",
-              product_count: 0);
-      productOptions = product.options();
+    if (global.appMode == global.AppModeEnum.posCashierTerminal) {
+      if (barcode.isNotEmpty) {
+        product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
+            ProductBarcodeObjectBoxStruct(
+                barcode: "",
+                names: [],
+                name_all: "",
+                prices: [],
+                unit_code: "",
+                unit_names: [],
+                new_line: 0,
+                images_url: "",
+                guid_fixed: "",
+                item_code: "",
+                item_guid: "",
+                descriptions: [],
+                item_unit_code: "",
+                color_select: "",
+                image_or_color: true,
+                color_select_hex: "",
+                options_json: "",
+                product_count: 0);
+        productOptions = product.options();
+      }
+      posCompileProcess().then((_) {
+        processEventRefresh(global.posHoldActiveNumber);
+      });
+    } else {
+      setState(() {});
     }
-    posCompileProcess().then((_) {
-      processEventRefresh(global.posHoldActiveNumber);
-    });
   }
 
   void processEventRefresh(int holdNumber) {
@@ -863,15 +876,20 @@ class _PosScreenState extends State<PosScreen>
     if (qty.isNotEmpty && double.parse(qty) > 0) {
       global.playSound(
           sound: global.SoundEnum.buttonTing,
-          word: "qty_update" + "is" + qty.toString() + unitName);
+          word: global.language("qty_update") +
+              global.language("is") +
+              qty.toString() +
+              unitName);
       logInsert(commandCode: 4, guid: activeGuid, qty: qty, closeExtra: false);
       processEvent(holdNumber: global.posHoldActiveNumber);
     }
   }
 
-  void numPadChangePrice(double price) async {
+  void numPadChangePrice(String priceStr) async {
+    double price = double.tryParse(priceStr) ?? 0.0;
     if (price > 0) {
       global.playSound(
+          sound: global.SoundEnum.buttonTing,
           word: global.language("price_update") +
               global.language("is") +
               price.toString() +

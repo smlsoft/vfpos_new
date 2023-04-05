@@ -21,18 +21,18 @@ class NumberPad extends StatefulWidget {
 }
 
 class _NumberPadState extends State<NumberPad> {
-  String number = '';
+  String numberStr = '';
 
   setValue(String val) {
     setState(() {
-      number += val;
+      numberStr += val;
     });
   }
 
   backspace(String text) {
     if (text.isNotEmpty) {
       setState(() {
-        number = text.split('').sublist(0, text.length - 1).join('');
+        numberStr = text.split('').sublist(0, text.length - 1).join('');
       });
     }
   }
@@ -60,7 +60,8 @@ class _NumberPadState extends State<NumberPad> {
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.blueAccent)),
-                    child: Text(number, style: const TextStyle(fontSize: 32))),
+                    child:
+                        Text(numberStr, style: const TextStyle(fontSize: 32))),
                 Expanded(
                   child: Column(
                     children: [
@@ -158,7 +159,7 @@ class _NumberPadState extends State<NumberPad> {
                               flex: 1,
                               child: NumPadButton(
                                 icon: Icons.backspace,
-                                callBack: () => backspace(number),
+                                callBack: () => backspace(numberStr),
                               )),
                         ],
                       )),
@@ -181,7 +182,7 @@ class _NumberPadState extends State<NumberPad> {
                                 text: global.language('clear'),
                                 callBack: () {
                                   setState(() {
-                                    number = '';
+                                    numberStr = '';
                                   });
                                 },
                               )),
@@ -193,11 +194,9 @@ class _NumberPadState extends State<NumberPad> {
                                   Navigator.pop(context);
                                   if (widget.unitName != null) {
                                     widget.onChange!(
-                                        double.tryParse(number) ?? 0.0,
-                                        widget.unitName);
+                                        numberStr, widget.unitName);
                                   } else {
-                                    widget.onChange!(
-                                        double.tryParse(number) ?? 0.0);
+                                    widget.onChange!(numberStr);
                                   }
                                 },
                               )),
