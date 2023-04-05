@@ -824,7 +824,7 @@ class _PosScreenState extends State<PosScreen>
                 product_count: 0);
         productOptions = product.options();
       }
-      posCompileProcess().then((_) {
+      posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
         processEventRefresh(global.posHoldActiveNumber);
       });
     } else {
@@ -3137,7 +3137,7 @@ class _PosScreenState extends State<PosScreen>
       activeGuid = "";
       activeLineNumber = -1;
       if (global.appMode == global.AppModeEnum.posCashierTerminal) {
-        posCompileProcess().then((_) {
+        posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
           PosProcess().sumCategoryCount(global
               .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
         });

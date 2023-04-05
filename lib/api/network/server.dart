@@ -214,7 +214,7 @@ Future<void> startServer() async {
                       global.posClientDeviceList[index].processSuccess = false;
                     }
                   }
-                  posCompileProcess().then((_) {
+                  posCompileProcess(holdNumber: jsonData.hold_number).then((_) {
                     PosProcess().sumCategoryCount(global
                         .posHoldProcessResult[jsonData.hold_number].posProcess);
                     if (global.functionPosScreenRefresh != null) {
@@ -232,7 +232,7 @@ Future<void> startServer() async {
                       .build()
                       .findIds();
                   box.removeMany(ids);
-                  posCompileProcess().then((_) {
+                  posCompileProcess(holdNumber: holdNumber).then((_) {
                     PosProcess().sumCategoryCount(
                         global.posHoldProcessResult[holdNumber].posProcess);
                     if (global.functionPosScreenRefresh != null) {
