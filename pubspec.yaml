@@ -83,6 +83,8 @@ dependencies:
   audioplayers: ^3.0.1
   network_info_plus: ^3.0.2
   network_tools: ^3.0.0+3
+  esc_pos_utils: ^1.1.0
+  msix: ^3.7.0
   
 dev_dependencies:
   flutter_driver:
@@ -92,7 +94,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: any
   build_runner: any
-  msix: ^3.7.0
 
 flutter_icons:
   android: "launcher_icon"

@@ -66,14 +66,14 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
 
   void scanNetworkPrinter() async {
     CapabilityProfile profile = await CapabilityProfile.load();
-    NetworkPrinter printer = NetworkPrinter(PaperSize.mm80, profile);
     String appIpAddress = await ipAddress();
     String subNet = appIpAddress.substring(0, appIpAddress.lastIndexOf('.'));
     for (int i = 1; i < 255; i++) {
       String ip = "$subNet.$i";
+      NetworkPrinter printer = NetworkPrinter(PaperSize.mm80, profile);
       printer.connect(ip, port: 9100).then((value) {
         if (value == PosPrintResult.success) {
-          if (!printerList.contains(ip)) {
+          if (printerList.any((element) => element.ipAddress == ip) == false) {
             printerList.add(PrinterDeviceModel(
               productName: "IP Printer",
               ipAddress: ip,
@@ -81,8 +81,8 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
               connectType: global.PrinterCashierConnectEnum.ip,
             ));
           }
-          printer.disconnect();
         }
+        printer.disconnect();
       });
     }
   }

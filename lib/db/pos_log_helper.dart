@@ -6,8 +6,6 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/objectbox.g.dart';
 
 class PosLogHelper {
-  final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
-
   Future<int> insert(PosLogObjectBoxStruct value) async {
     if (global.appMode == global.AppModeEnum.posRemote) {
       HttpPost json = HttpPost(
@@ -17,7 +15,7 @@ class PosLogHelper {
           jsonData: jsonEncode(json.toJson()));
       return int.tryParse(result) ?? 0;
     } else {
-      return box.put(value);
+      return global.objectBoxStore.box<PosLogObjectBoxStruct>().put(value);
     }
   }
 
@@ -32,7 +30,8 @@ class PosLogHelper {
           await global.getFromServer(json: jsonEncode(json.toJson()));
       return int.tryParse(result) ?? 0;
     } else {
-      return box
+      return global.objectBoxStore
+          .box<PosLogObjectBoxStruct>()
           .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
           .build()
           .count();
@@ -41,9 +40,10 @@ class PosLogHelper {
 
   List<PosLogObjectBoxStruct> selectByHoldNumberIsVoidSuccess(
       {required int holdNumber, int isVoid = 0, int success = 0}) {
-    return (box.query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
-            PosLogObjectBoxStruct_.is_void.equals(isVoid) &
-            PosLogObjectBoxStruct_.success.equals(success))
+    return (global.objectBoxStore.box<PosLogObjectBoxStruct>().query(
+            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+                PosLogObjectBoxStruct_.is_void.equals(isVoid) &
+                PosLogObjectBoxStruct_.success.equals(success))
           ..order(PosLogObjectBoxStruct_.log_date_time))
         .build()
         .find();
@@ -63,7 +63,7 @@ class PosLogHelper {
           .map((e) => PosLogObjectBoxStruct.fromJson(e))
           .toList();
     } else {
-      return (box.query(
+      return (global.objectBoxStore.box<PosLogObjectBoxStruct>().query(
               PosLogObjectBoxStruct_.guid_auto_fixed.equals(guidAutoFixed))
             ..order(PosLogObjectBoxStruct_.log_date_time))
           .build()
@@ -75,7 +75,8 @@ class PosLogHelper {
       {required String guidRef,
       required int commandCode,
       required int holdNumber}) {
-    return box
+    return global.objectBoxStore
+        .box<PosLogObjectBoxStruct>()
         .query(PosLogObjectBoxStruct_.guid_ref.equals(guidRef) &
             PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
@@ -88,14 +89,16 @@ class PosLogHelper {
       required int commandCode,
       required int holdNumber}) {
     bool result = false;
-    final find = box
+    final find = global.objectBoxStore
+        .box<PosLogObjectBoxStruct>()
         .query(PosLogObjectBoxStruct_.guid_ref.equals(guidRef) &
             PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .findFirst();
     if (find != null) {
-      result = box.remove(find.id);
+      result =
+          global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(find.id);
     }
     return result;
   }
@@ -105,14 +108,16 @@ class PosLogHelper {
       required int commandCode,
       required int holdNumber}) {
     bool result = false;
-    final find = box
+    final find = global.objectBoxStore
+        .box<PosLogObjectBoxStruct>()
         .query(PosLogObjectBoxStruct_.guid_code_ref.equals(guidCode) &
             PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .findFirst();
     if (find != null) {
-      result = box.remove(find.id);
+      result =
+          global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(find.id);
     }
     return result;
   }
@@ -127,11 +132,12 @@ class PosLogHelper {
           jsonData: jsonEncode(json.toJson()));
       return int.tryParse(result) ?? 0;
     } else {
-      final ids = box
+      final ids = global.objectBoxStore
+          .box<PosLogObjectBoxStruct>()
           .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
           .build()
           .findIds();
-      return box.removeMany(ids);
+      return global.objectBoxStore.box<PosLogObjectBoxStruct>().removeMany(ids);
     }
   }
 }
