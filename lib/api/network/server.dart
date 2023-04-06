@@ -267,7 +267,11 @@ Future<void> startServer() async {
                         posClientDevice.ip;
                     global.posRemoteDeviceList[indexFound].holdNumberActive =
                         posClientDevice.holdNumberActive;
-                    print("register_remote_device : " + posClientDevice.ip);
+                    print("register_remote_device : " +
+                        posClientDevice.ip +
+                        ",hold_number : " +
+                        global.posRemoteDeviceList[indexFound].holdNumberActive
+                            .toString());
                   } else {
                     global.posRemoteDeviceList.add(posClientDevice);
                     print("register_remote_device : " +

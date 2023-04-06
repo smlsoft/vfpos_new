@@ -119,8 +119,7 @@ class _PosScreenState extends State<PosScreen>
   String findActiveLineByGuid = "";
 
   void refresh(int holdNumber) {
-    if (findActiveLineByGuid.isEmpty &&
-        holdNumber == global.posHoldActiveNumber) {
+    if (holdNumber == global.posHoldActiveNumber) {
       if (global
           .posHoldProcessResult[holdNumber].posProcess.details.isNotEmpty) {
         findActiveLineByGuid = global
@@ -263,19 +262,6 @@ class _PosScreenState extends State<PosScreen>
     if (global.isWideScreen()) {
       tabletTabController.dispose();
     }
-    // เก็บรายละเอียด Hold
-    global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
-        global.payScreenData;
-    // Send Clear Display
-    global.posHoldProcessResult[global.posHoldActiveNumber].customerCode  = "";
-    global.posHoldProcessResult[global.posHoldActiveNumber]
-        .customerCode = "";
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .total_amount = 0;
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .total_piece = 0;
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details
-        .clear();
     global.sendProcessToCustomerDisplay();
   }
 
