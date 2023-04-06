@@ -1613,6 +1613,7 @@ class _PosScreenState extends State<PosScreen>
       {required String productName,
       bool fullDetail = false,
       required bool isExtra,
+      int line = 0,
       double qty = 0,
       double price = 0.0,
       double priceOriginal = 0.0,
@@ -1626,6 +1627,13 @@ class _PosScreenState extends State<PosScreen>
       width: 4,
     );
     List<Widget> productDetail = [];
+    if (line != 0) {
+      productDetail.add(
+        Text(line.toString(),
+            style: textStyle.copyWith(color: Colors.blue, fontSize: 12)),
+      );
+      productDetail.add(rowSpace);
+    }
     productDetail.add(Text(productName, style: textStyle));
     if (qty > 1) {
       productDetail.add(rowSpace);
@@ -1698,7 +1706,9 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget detailRow(
-      {required PosProcessDetailModel detail, required TextStyle textStyle}) {
+      {required int index,
+      required PosProcessDetailModel detail,
+      required TextStyle textStyle}) {
     double extraAmount = 0.0;
     TextStyle extraTextStyle = TextStyle(
         fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
@@ -1710,6 +1720,7 @@ class _PosScreenState extends State<PosScreen>
 
     List<Widget> columnList = [];
     columnList.add(detailWidget(
+        line: index + 1,
         fullDetail: true,
         isExtra: false,
         productName: description,
@@ -1794,7 +1805,7 @@ class _PosScreenState extends State<PosScreen>
     Widget widget = Container(
       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 4),
       width: MediaQuery.of(context).size.width,
-      child: detailRow(detail: detail, textStyle: textStyle),
+      child: detailRow(index: index, detail: detail, textStyle: textStyle),
     );
     return Material(
         color: Colors.white.withOpacity(0),
