@@ -119,18 +119,6 @@ class _PosScreenState extends State<PosScreen>
   String findActiveLineByGuid = "";
 
   void refresh(int holdNumber) {
-    if (holdNumber == global.posHoldActiveNumber) {
-      if (global
-          .posHoldProcessResult[holdNumber].posProcess.details.isNotEmpty) {
-        findActiveLineByGuid = global
-            .posHoldProcessResult[holdNumber]
-            .posProcess
-            .details[global.posHoldProcessResult[holdNumber].posProcess.details
-                    .length -
-                1]
-            .guid;
-      }
-    }
     processEventRefresh(holdNumber);
   }
 
