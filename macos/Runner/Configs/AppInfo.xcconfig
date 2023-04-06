@@ -8,7 +8,7 @@
 PRODUCT_NAME = dedepos
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.dedepos.dedepos
+PRODUCT_BUNDLE_IDENTIFIER = com.smlsoft.dedepos
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.dedepos. All rights reserved.

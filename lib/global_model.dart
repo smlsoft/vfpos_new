@@ -106,6 +106,9 @@ class PosHoldProcessModel {
   int holdNumber;
   int logCount = 0;
   String saleCode = "";
+  String customerCode = "";
+  String customerName = "";
+  String customerPhone = "";
   PosPayModel payScreenData = PosPayModel();
   PosProcessModel posProcess = PosProcessModel();
 

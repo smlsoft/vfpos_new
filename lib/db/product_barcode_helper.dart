@@ -102,7 +102,7 @@ class ProductBarcodeHelper {
   Future<List<ProductBarcodeObjectBoxStruct>> selectByBarcodeList(
     List<String> barcodeList,
   ) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(barcode: barcodeList.join(","));
       HttpGetDataModel json = HttpGetDataModel(
@@ -132,7 +132,7 @@ class ProductBarcodeHelper {
 
   Future<ProductBarcodeObjectBoxStruct?> selectByBarcodeFirst(
       String barcode) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcode);
       HttpGetDataModel json = HttpGetDataModel(
           code: "selectByBarcodeFirst",

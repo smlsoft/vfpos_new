@@ -10,18 +10,18 @@ Future<void> posCompileProcess({required int holdNumber}) async {
   PosProcess()
       .sumCategoryCount(global.posHoldProcessResult[holdNumber].posProcess);
   // คำนวณของ Client
-  for (int index = 0; index < global.posClientDeviceList.length; index++) {
-    if (global.posClientDeviceList[index].processSuccess == false) {
-      int getHoldNumber = global.posClientDeviceList[index].holdNumberActive;
+  for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
+    if (global.posRemoteDeviceList[index].processSuccess == false) {
+      int getHoldNumber = global.posRemoteDeviceList[index].holdNumberActive;
       if (holdNumber != getHoldNumber) {
         global.posHoldProcessResult[getHoldNumber].posProcess =
             await PosProcess().process(getHoldNumber);
         PosProcess().sumCategoryCount(
             global.posHoldProcessResult[getHoldNumber].posProcess);
       }
-      global.posClientDeviceList[index].processSuccess = true;
+      global.posRemoteDeviceList[index].processSuccess = true;
     }
   }
   global.sendProcessToCustomerDisplay();
-  global.sendProcessToClient();
+  global.sendProcessToRemote();
 }

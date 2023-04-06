@@ -173,9 +173,9 @@ Future<void> startServer() async {
         } else if (request.method == 'POST') {
           if (request.uri.path == '/scan') {
             bool isTerminal =
-                (global.appMode == global.AppModeEnum.posCashierTerminal);
+                (global.appMode == global.AppModeEnum.posTerminal);
 
-            bool isClient = (global.appMode == global.AppModeEnum.posClient);
+            bool isClient = (global.appMode == global.AppModeEnum.posRemote);
             SyncDeviceModel resultData = SyncDeviceModel(
                 device: global.deviceName,
                 ip: global.ipAddress,
@@ -207,11 +207,11 @@ Future<void> startServer() async {
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   response.write(box.put(jsonData));
                   for (int index = 0;
-                      index < global.posClientDeviceList.length;
+                      index < global.posRemoteDeviceList.length;
                       index++) {
-                    if (global.posClientDeviceList[index].holdNumberActive ==
+                    if (global.posRemoteDeviceList[index].holdNumberActive ==
                         jsonData.hold_number) {
-                      global.posClientDeviceList[index].processSuccess = false;
+                      global.posRemoteDeviceList[index].processSuccess = false;
                     }
                   }
                   posCompileProcess(holdNumber: jsonData.hold_number).then((_) {
@@ -248,32 +248,32 @@ Future<void> startServer() async {
                   response.write(jsonEncode(
                       jsonDecode('{"device": "${global.deviceName}"}') as Map));
                   break;
-                case "register_client_device":
+                case "register_remote_device":
                   // ลงทะเบียนเครื่องช่วยขาย
                   SyncDeviceModel posClientDevice =
                       SyncDeviceModel.fromJson(jsonDecode(httpPost.data));
                   int indexFound = -1;
                   for (int index = 0;
-                      index < global.posClientDeviceList.length;
+                      index < global.posRemoteDeviceList.length;
                       index++) {
-                    if (global.posClientDeviceList[index].device ==
+                    if (global.posRemoteDeviceList[index].device ==
                         posClientDevice.device) {
                       indexFound = index;
                       break;
                     }
                   }
                   if (indexFound != -1) {
-                    global.posClientDeviceList[indexFound].ip =
+                    global.posRemoteDeviceList[indexFound].ip =
                         posClientDevice.ip;
-                    global.posClientDeviceList[indexFound].holdNumberActive =
+                    global.posRemoteDeviceList[indexFound].holdNumberActive =
                         posClientDevice.holdNumberActive;
-                    print("register_client_device : " + posClientDevice.ip);
+                    print("register_remote_device : " + posClientDevice.ip);
                   } else {
-                    global.posClientDeviceList.add(posClientDevice);
-                    print("register_client_device : " +
+                    global.posRemoteDeviceList.add(posClientDevice);
+                    print("register_remote_device : " +
                         posClientDevice.device +
                         " : " +
-                        global.posClientDeviceList.length.toString());
+                        global.posRemoteDeviceList.length.toString());
                   }
                   break;
                 case "register_customer_display_device":
@@ -308,9 +308,12 @@ Future<void> startServer() async {
                       name: customerName);
                   response.write(jsonEncode(result.toJson()));
                   try {
-                    global.customerCode = customerCode;
-                    global.customerName = customerName;
-                    global.customerPhone = customerPhone;
+                    global.posHoldProcessResult[global.posHoldActiveNumber]
+                        .customerCode = customerCode;
+                    global.posHoldProcessResult[global.posHoldActiveNumber]
+                        .customerName = customerName;
+                    global.posHoldProcessResult[global.posHoldActiveNumber]
+                        .customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
                     PosProcess().sumCategoryCount(global
                         .posHoldProcessResult[global.posHoldActiveNumber]

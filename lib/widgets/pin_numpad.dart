@@ -8,7 +8,10 @@ class PinNumberPad extends StatefulWidget {
   final int pinLength;
 
   const PinNumberPad(
-      {Key? key, required this.onChange, this.header = "", this.pinLength = 4})
+      {Key? key,
+      required this.onChange,
+      this.header = "PIN",
+      this.pinLength = 4})
       : super(key: key);
 
   @override
@@ -44,6 +47,7 @@ class _PinNumberPadState extends State<PinNumberPad> {
                   Text(widget.header,
                       style: const TextStyle(
                           fontSize: 32, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
                 Row(children: [
                   for (var i = 0; i < widget.pinLength; i++)
                     Expanded(
@@ -66,6 +70,7 @@ class _PinNumberPadState extends State<PinNumberPad> {
                                   ))
                                 : Container()))
                 ]),
+                const SizedBox(height: 16),
                 Expanded(
                   child: Column(
                     children: [

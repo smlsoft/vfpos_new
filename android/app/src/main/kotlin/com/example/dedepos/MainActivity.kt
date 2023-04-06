@@ -1,4 +1,4 @@
-package com.dedepos.dedepos
+package com.smlsoft.dedepos
 
 import io.flutter.embedding.android.FlutterActivity
 

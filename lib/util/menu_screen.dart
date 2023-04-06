@@ -215,7 +215,7 @@ class _MenuScreenState extends State<MenuScreen> {
           appBar: AppBar(
               centerTitle: true,
               title: Text(
-                  "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posCashierTerminal) ? global.language("pos_terminal") : global.language("pos_client")}"),
+                  "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_client")}"),
               actions: [
                 IconButton(
                   icon: Container(
@@ -334,7 +334,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount:
-                                  MediaQuery.of(context).size.width ~/ 200,
+                                  MediaQuery.of(context).size.width ~/ 150,
                               crossAxisSpacing: 5.0,
                               mainAxisSpacing: 5.0,
                             ),

@@ -18,7 +18,7 @@ class ProductCategoryHelper {
 
   Future<List<ProductCategoryObjectBoxStruct>>
       selectByParentCategoryGuidOrderByXorder({String parentGuid = ""}) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(parentGuid: parentGuid);
       HttpGetDataModel json = HttpGetDataModel(
@@ -41,7 +41,7 @@ class ProductCategoryHelper {
   Future<ProductCategoryObjectBoxStruct?> selectByCategoryGuidFindFirst(
       String guid) async {
     print("[" + guid + "]");
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter = HttpParameterModel(guid: guid);
       HttpGetDataModel json = HttpGetDataModel(
           code: "selectByCategoryGuidFindFirst",
@@ -59,7 +59,7 @@ class ProductCategoryHelper {
 
   Future<List<ProductCategoryObjectBoxStruct>> selectByCategoryParentGuid(
       String parentGuid) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(parentGuid: parentGuid);
       HttpGetDataModel json = HttpGetDataModel(

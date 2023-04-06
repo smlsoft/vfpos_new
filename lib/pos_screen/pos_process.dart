@@ -413,9 +413,6 @@ class PosProcess {
     }
     processResult.total_piece = totalPiece;
     processResult.total_amount = totalAmount;
-    processResult.customer_code = global.customerCode;
-    processResult.customer_name = global.customerName;
-    processResult.customer_phone = global.customerPhone;
 
     print("------ Process : " + DateTime.now().toString());
     return processResult;

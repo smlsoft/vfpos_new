@@ -23,6 +23,7 @@ class _WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
+    global.getDeviceModel(context);
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(

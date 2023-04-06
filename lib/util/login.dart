@@ -31,6 +31,7 @@ class _LoginState extends State<Login> {
     if (global.posVersion == global.PosVersionEnum.vfpos) {
       screenWidget = Center(
           child: Container(
+              padding: const EdgeInsets.all(16),
               constraints: const BoxConstraints(
                   minWidth: 300, maxWidth: 500, maxHeight: 500, minHeight: 200),
               child: PinNumberPad(
@@ -42,7 +43,7 @@ class _LoginState extends State<Login> {
                     });
                   }
                 },
-                header: "PIN",
+                header: "Login Pin Code",
               )));
     } else {
       screenWidget = Center(

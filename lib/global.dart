@@ -61,9 +61,6 @@ import 'package:objectbox/objectbox.dart';
 var httpClient = http.Client();
 late BuildContext globalContext;
 void posProcessRefresh = () {};
-String customerCode = "";
-String customerName = "";
-String customerPhone = "";
 String ipAddress = "";
 List<String> errorMessage = [];
 AuthService appAuth = AuthService();
@@ -91,7 +88,7 @@ final qtyShortFormat = NumberFormat("##,##0");
 String objectBoxDatabaseName = "smlposmobile.db";
 String deviceName = "POS01";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
-List<SyncDeviceModel> posClientDeviceList = [];
+List<SyncDeviceModel> posRemoteDeviceList = [];
 //"http://192.168.1.4:8084";
 String webServiceUrl = "http://smltest1.ddnsfree.com:8084";
 String webServiceVersion = "/SMLJavaWebService/webresources/rest/";
@@ -140,7 +137,7 @@ List<PrinterModel> printerList = [];
 String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
 String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
-AppModeEnum appMode = AppModeEnum.posCashierTerminal;
+AppModeEnum appMode = AppModeEnum.posTerminal;
 bool apiConnected = false;
 String apiUserName = "maxkorn";
 String apiUserPassword = "maxkorn";
@@ -185,7 +182,7 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
 
-enum AppModeEnum { posCashierTerminal, restaurantTerminal, posClient }
+enum AppModeEnum { posTerminal, posRemote }
 
 enum DeviceModeEnum {
   none,
@@ -193,17 +190,24 @@ enum DeviceModeEnum {
   ipad,
   windowsDesktop,
   macosDesktop,
+  linuxDesktop,
   androidPhone,
   androidTablet,
 }
 
-Future<void> getDeviceModel() async {
+Future<void> getDeviceModel(BuildContext context) async {
   final deviceInfo = DeviceInfoPlugin();
   String model = '';
 
   if (Platform.isAndroid) {
     final androidInfo = await deviceInfo.androidInfo;
     model = androidInfo.model;
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+    if (shortestSide > 600) {
+      deviceMode = DeviceModeEnum.androidTablet;
+    } else {
+      deviceMode = DeviceModeEnum.androidPhone;
+    }
   } else if (Platform.isIOS) {
     final iosInfo = await deviceInfo.iosInfo;
     model = iosInfo.model!;
@@ -213,6 +217,12 @@ Future<void> getDeviceModel() async {
     } else if (model.contains("ipad")) {
       deviceMode = DeviceModeEnum.ipad;
     }
+  } else if (Platform.isMacOS) {
+    deviceMode = DeviceModeEnum.macosDesktop;
+  } else if (Platform.isLinux) {
+    deviceMode = DeviceModeEnum.linuxDesktop;
+  } else if (Platform.isWindows) {
+    deviceMode = DeviceModeEnum.windowsDesktop;
   }
 }
 
@@ -572,8 +582,8 @@ Future<void> sendProcessToCustomerDisplay() async {
       try {
         var jsonData = HttpPost(
             command: "process",
-            data: jsonEncode(
-                posHoldProcessResult[posHoldActiveNumber].posProcess.toJson()));
+            data:
+                jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
         dev.log("sendProcessToCustomerDisplay : " + url);
         postToServer(
             ip: url,
@@ -586,18 +596,16 @@ Future<void> sendProcessToCustomerDisplay() async {
   }
 }
 
-Future<void> sendProcessToClient() async {
-  print("sendProcessToClient");
-  for (int index = 0; index < posClientDeviceList.length; index++) {
-    if (posClientDeviceList[index].connected) {
-      var url = "${posClientDeviceList[index].ip}:$targetDeviceIpPort";
+Future<void> sendProcessToRemote() async {
+  for (int index = 0; index < posRemoteDeviceList.length; index++) {
+    if (posRemoteDeviceList[index].connected) {
+      var url = "${posRemoteDeviceList[index].ip}:$targetDeviceIpPort";
       try {
         var jsonData = HttpPost(
             command: "process_result",
             data: jsonEncode(posHoldProcessResult[
-                    posClientDeviceList[index].holdNumberActive]
+                    posRemoteDeviceList[index].holdNumberActive]
                 .toJson()));
-        dev.log("sendProcessToClient : " + url);
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
@@ -749,8 +757,8 @@ void loadConfig() {
   }
 }
 
-Future<void> registerClientToServer() async {
-  if (appMode == AppModeEnum.posClient) {
+Future<void> registerRemoteToTerminal() async {
+  if (appMode == AppModeEnum.posRemote) {
     var url =
         "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
     var uri = Uri.parse(url);
@@ -769,7 +777,7 @@ Future<void> registerClientToServer() async {
                 'Content-Type': 'application/json; charset=UTF-8',
               },
               body: jsonEncode(<String, String>{
-                'command': 'register_client_device',
+                'command': 'register_remote_device',
                 'data': jsonEncodeStr,
               }))
           .timeout(const Duration(seconds: 1))
@@ -898,6 +906,8 @@ Future<void> loading() async {
         maxDBSizeInKB: 1024000,
         queriesCaseSensitiveDefault: false);
   }
+  int xxx = ProductBarcodeHelper().count();
+  print("xxx $xxx");
   //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
   //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
   {
@@ -921,11 +931,11 @@ Future<void> loading() async {
   Timer.periodic(const Duration(seconds: 1), (timer) async {
     if (loginSuccess) {
       systemProcess();
-      registerClientToServer();
+      registerRemoteToTerminal();
     }
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
-  for (int loop = 0; loop < 20; loop++) {
+  for (int loop = 0; loop < 25; loop++) {
     posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
   }
 
@@ -1117,4 +1127,12 @@ Future scanServerByName(String name) async {
       }
     }
   }
+}
+
+bool isWideScreen() {
+  return (deviceMode == DeviceModeEnum.androidTablet ||
+      deviceMode == DeviceModeEnum.ipad ||
+      deviceMode == DeviceModeEnum.macosDesktop ||
+      deviceMode == DeviceModeEnum.linuxDesktop ||
+      deviceMode == DeviceModeEnum.windowsDesktop);
 }

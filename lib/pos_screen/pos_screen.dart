@@ -199,8 +199,7 @@ class _PosScreenState extends State<PosScreen>
     //processPromotionTemp();
     loadCategory();
     loadProductByCategory(categoryGuidSelected);
-    if (global.deviceMode == global.DeviceModeEnum.androidTablet ||
-        global.deviceMode == global.DeviceModeEnum.ipad) {
+    if (global.isWideScreen()) {
       tabletTabController = TabController(length: 5, vsync: this);
       tabletTabController.addListener(() {
         if (!tabletTabController.indexIsChanging) {
@@ -241,7 +240,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Future<void> getProcessFromTerminal() async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(holdNumber: global.posHoldActiveNumber);
       HttpGetDataModel json = HttpGetDataModel(
@@ -262,8 +261,7 @@ class _PosScreenState extends State<PosScreen>
     deviceTimer.cancel();
     posScreenTimer.cancel();
     messageTimer.cancel();
-    if (global.deviceMode == global.DeviceModeEnum.androidTablet ||
-        global.deviceMode == global.DeviceModeEnum.ipad) {
+    if (global.isWideScreen()) {
       tabletTabController.dispose();
     }
     // เก็บรายละเอียด Hold
@@ -571,10 +569,10 @@ class _PosScreenState extends State<PosScreen>
         dev.log("commandCode=$commandCode");
         break;
     }
-    for (int index = 0; index < global.posClientDeviceList.length; index++) {
-      if (global.posClientDeviceList[index].holdNumberActive ==
+    for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
+      if (global.posRemoteDeviceList[index].holdNumberActive ==
           global.posHoldActiveNumber) {
-        global.posClientDeviceList[index].processSuccess = false;
+        global.posRemoteDeviceList[index].processSuccess = false;
       }
     }
   }
@@ -800,36 +798,32 @@ class _PosScreenState extends State<PosScreen>
 
   Future<void> processEvent(
       {String barcode = "", required int holdNumber}) async {
-    if (global.appMode == global.AppModeEnum.posCashierTerminal) {
-      if (barcode.isNotEmpty) {
-        product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
-            ProductBarcodeObjectBoxStruct(
-                barcode: "",
-                names: [],
-                name_all: "",
-                prices: [],
-                unit_code: "",
-                unit_names: [],
-                new_line: 0,
-                images_url: "",
-                guid_fixed: "",
-                item_code: "",
-                item_guid: "",
-                descriptions: [],
-                item_unit_code: "",
-                color_select: "",
-                image_or_color: true,
-                color_select_hex: "",
-                options_json: "",
-                product_count: 0);
-        productOptions = product.options();
-      }
-      posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
-        processEventRefresh(global.posHoldActiveNumber);
-      });
-    } else {
-      setState(() {});
+    if (barcode.isNotEmpty) {
+      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
+          ProductBarcodeObjectBoxStruct(
+              barcode: "",
+              names: [],
+              name_all: "",
+              prices: [],
+              unit_code: "",
+              unit_names: [],
+              new_line: 0,
+              images_url: "",
+              guid_fixed: "",
+              item_code: "",
+              item_guid: "",
+              descriptions: [],
+              item_unit_code: "",
+              color_select: "",
+              image_or_color: true,
+              color_select_hex: "",
+              options_json: "",
+              product_count: 0);
+      productOptions = product.options();
     }
+    posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
+      processEventRefresh(global.posHoldActiveNumber);
+    });
   }
 
   void processEventRefresh(int holdNumber) {
@@ -864,10 +858,10 @@ class _PosScreenState extends State<PosScreen>
           (activeLineNumber < 0) ? 0 : activeLineNumber,
           preferPosition: AutoScrollPosition.begin);
     });
-    for (int index = 0; index < global.posClientDeviceList.length; index++) {
-      if (global.posClientDeviceList[index].holdNumberActive ==
+    for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
+      if (global.posRemoteDeviceList[index].holdNumberActive ==
           global.posHoldActiveNumber) {
-        global.posClientDeviceList[index].processSuccess = false;
+        global.posRemoteDeviceList[index].processSuccess = false;
       }
     }
     setState(() {});
@@ -1104,7 +1098,7 @@ class _PosScreenState extends State<PosScreen>
             barcode: product.barcode,
             closeExtra: false,
             qty: "1.0");
-        if (global.appMode == global.AppModeEnum.posCashierTerminal) {
+        if (global.appMode == global.AppModeEnum.posTerminal) {
           processEvent(
               barcode: product.barcode, holdNumber: global.posHoldActiveNumber);
         }
@@ -1740,8 +1734,8 @@ class _PosScreenState extends State<PosScreen>
     double extraAmount = 0.0;
     TextStyle extraTextStyle = TextStyle(
         fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
-    String description = detail.item_name +
-        ((detail.remark.isNotEmpty) ? " (${detail.remark})" : "");
+    String description =
+        "${detail.item_name}/${detail.unit_name}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
     for (final extra in detail.extra) {
       extraAmount += extra.total_amount;
     }
@@ -1894,7 +1888,7 @@ class _PosScreenState extends State<PosScreen>
         TextEditingController(text: detail.remark);
 
     return Padding(
-        padding: const EdgeInsets.only(left: 4, bottom: 4),
+        padding: const EdgeInsets.only(left: 4, bottom: 4, right: 4),
         child: IntrinsicHeight(
             child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2516,7 +2510,8 @@ class _PosScreenState extends State<PosScreen>
     return Expanded(
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.only(left: 2, right: 2)),
+                padding: const EdgeInsets.only(
+                    left: 2, right: 2, top: 0, bottom: 0)),
             onPressed: () {
               onPressed();
             },
@@ -2524,6 +2519,7 @@ class _PosScreenState extends State<PosScreen>
               label,
               textAlign: TextAlign.center,
               overflow: TextOverflow.clip,
+              style: const TextStyle(fontSize: 12),
             )));
   }
 
@@ -3136,7 +3132,7 @@ class _PosScreenState extends State<PosScreen>
       global.playSound(sound: global.SoundEnum.beep);
       activeGuid = "";
       activeLineNumber = -1;
-      if (global.appMode == global.AppModeEnum.posCashierTerminal) {
+      if (global.appMode == global.AppModeEnum.posTerminal) {
         posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
           PosProcess().sumCategoryCount(global
               .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
@@ -3180,6 +3176,199 @@ class _PosScreenState extends State<PosScreen>
               ],
             )
         ]));
+  }
+
+  Widget posLayoutBottom() {
+    late Widget menu;
+    if (global.isWideScreen()) {
+      menu = Container(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          width: double.infinity,
+          child: Row(
+            children: [
+              if (tabletTabController.index == 1)
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Icon(
+                        Icons.grid_on,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          tabletTabController.index = 0;
+                        });
+                      }),
+                ),
+              if (tabletTabController.index == 0)
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Icon(
+                        Icons.search,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          tabletTabController.index = 1;
+                        });
+                      }),
+                ),
+              if (Platform.isAndroid || Platform.isIOS)
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const FaIcon(FontAwesomeIcons.barcode),
+                      onPressed: () {
+                        setState(() {
+                          scannerStart = !scannerStart;
+                        });
+                      }),
+                ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const FaIcon(FontAwesomeIcons.addressBook),
+                    onPressed: () {}),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor:
+                          (showNumericPad) ? Colors.amber : Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const FaIcon(FontAwesomeIcons.calculator),
+                    onPressed: () {
+                      setState(() {
+                        showNumericPad = !showNumericPad;
+                      });
+                    }),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
+                    child: Icon(
+                      (showButtonMenu)
+                          ? Icons.arrow_downward
+                          : Icons.arrow_upward,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        showButtonMenu = !showButtonMenu;
+                      });
+                    }),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const FaIcon(FontAwesomeIcons.rotate),
+                    onPressed: () {
+                      setState(() {
+                        if (splitViewMode == 1) {
+                          splitViewMode = 2;
+                          splitViewController = SplitViewController(
+                              weights: [0.4, 0.6],
+                              limits: [WeightLimit(min: 0.2, max: 0.8)]);
+                        } else {
+                          splitViewMode = 1;
+                          splitViewController = SplitViewController(
+                              weights: [0.6, 0.4],
+                              limits: [WeightLimit(min: 0.2, max: 0.8)]);
+                        }
+                      });
+                    }),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor:
+                          (showNumericPad) ? Colors.amber : Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const FaIcon(FontAwesomeIcons.searchengin),
+                    onPressed: () {
+                      setState(() {
+                        gridItemSize += 20;
+                        if (gridItemSize > 250) {
+                          gridItemSize = 100;
+                        }
+                      });
+                    }),
+              ),
+            ],
+          ));
+    } else {
+      menu = Row(children: [
+        if (Platform.isAndroid || Platform.isIOS)
+          Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.black,
+                ),
+                child: const FaIcon(FontAwesomeIcons.barcode),
+                onPressed: () {
+                  setState(() {
+                    scannerStart = !scannerStart;
+                  });
+                }),
+          ),
+        Expanded(
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.black,
+              ),
+              child: const FaIcon(FontAwesomeIcons.calculator),
+              onPressed: () {
+                setState(() {});
+              }),
+        ),
+        Expanded(
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.black,
+              ),
+              child: Icon(
+                (showButtonMenu) ? Icons.arrow_downward : Icons.arrow_upward,
+              ),
+              onPressed: () {
+                setState(() {
+                  showButtonMenu = !showButtonMenu;
+                });
+              }),
+        ),
+      ]);
+    }
+
+    return Column(children: [
+      Container(
+          height: 40,
+          margin: const EdgeInsets.only(top: 5),
+          child: totalAndPayScreen()),
+      menu,
+      if (showButtonMenu)
+        Padding(
+            padding: const EdgeInsets.only(bottom: 4), child: commandWidget())
+    ]);
   }
 
   Widget posLayoutWideScreen() {
@@ -3302,151 +3491,7 @@ class _PosScreenState extends State<PosScreen>
           Expanded(
             child: transScreen(mode: 0),
           ),
-          Container(
-              height: 40,
-              margin: const EdgeInsets.only(top: 5),
-              child: totalAndPayScreen()),
-          if (global.deviceMode == global.DeviceModeEnum.androidTablet ||
-              global.deviceMode == global.DeviceModeEnum.ipad)
-            Container(
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    if (tabletTabController.index == 1)
-                      Expanded(
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.black,
-                            ),
-                            child: const Icon(
-                              Icons.grid_on,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                tabletTabController.index = 0;
-                              });
-                            }),
-                      ),
-                    if (tabletTabController.index == 0)
-                      Expanded(
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.black,
-                            ),
-                            child: const Icon(
-                              Icons.search,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                tabletTabController.index = 1;
-                              });
-                            }),
-                      ),
-                    if (Platform.isAndroid || Platform.isIOS)
-                      Expanded(
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.black,
-                            ),
-                            child: const FaIcon(FontAwesomeIcons.barcode),
-                            onPressed: () {
-                              setState(() {
-                                scannerStart = !scannerStart;
-                              });
-                            }),
-                      ),
-                    Expanded(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.black,
-                          ),
-                          child: const FaIcon(FontAwesomeIcons.addressBook),
-                          onPressed: () {}),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                (showNumericPad) ? Colors.amber : Colors.white,
-                            backgroundColor: Colors.black,
-                          ),
-                          child: const FaIcon(FontAwesomeIcons.calculator),
-                          onPressed: () {
-                            setState(() {
-                              showNumericPad = !showNumericPad;
-                            });
-                          }),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.black,
-                          ),
-                          child: Icon(
-                            (showButtonMenu)
-                                ? Icons.arrow_downward
-                                : Icons.arrow_upward,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              showButtonMenu = !showButtonMenu;
-                            });
-                          }),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.black,
-                          ),
-                          child: const FaIcon(FontAwesomeIcons.rotate),
-                          onPressed: () {
-                            setState(() {
-                              if (splitViewMode == 1) {
-                                splitViewMode = 2;
-                                splitViewController = SplitViewController(
-                                    weights: [0.4, 0.6],
-                                    limits: [WeightLimit(min: 0.2, max: 0.8)]);
-                              } else {
-                                splitViewMode = 1;
-                                splitViewController = SplitViewController(
-                                    weights: [0.6, 0.4],
-                                    limits: [WeightLimit(min: 0.2, max: 0.8)]);
-                              }
-                            });
-                          }),
-                    ),
-                    Expanded(
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor:
-                                (showNumericPad) ? Colors.amber : Colors.white,
-                            backgroundColor: Colors.black,
-                          ),
-                          child: const FaIcon(FontAwesomeIcons.searchengin),
-                          onPressed: () {
-                            setState(() {
-                              gridItemSize += 20;
-                              if (gridItemSize > 250) {
-                                gridItemSize = 100;
-                              }
-                            });
-                          }),
-                    ),
-                  ],
-                )),
-          if ((global.deviceMode == global.DeviceModeEnum.androidTablet ||
-                  global.deviceMode == global.DeviceModeEnum.ipad) &&
-              showButtonMenu)
-            Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: commandWidget()),
+          posLayoutBottom(),
         ],
       ),
     );
@@ -3503,77 +3548,81 @@ class _PosScreenState extends State<PosScreen>
     ));
   }
 
+  Widget posLayoutPhoneScreen() {
+    return SafeArea(
+        child: DefaultTabController(
+            length: 4,
+            child: Builder(builder: (BuildContext context) {
+              final TabController tabController =
+                  DefaultTabController.of(context);
+              tabController.addListener(() {
+                if (!tabController.indexIsChanging) {
+                  if (tabController.index == 2) {
+                    SystemChannels.textInput.invokeMethod('TextInput.show');
+                  } else {
+                    SystemChannels.textInput.invokeMethod('TextInput.hide');
+                  }
+                }
+              });
+              return Scaffold(
+                  resizeToAvoidBottomInset: false,
+                  body: Container(
+                      decoration: const BoxDecoration(color: Colors.black),
+                      child: Container(
+                          color: Colors.white,
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              Container(
+                                  color: Colors.blue,
+                                  child: TabBar(
+                                    tabs: [
+                                      Tab(
+                                        icon: const Icon(Icons.list),
+                                        text: global.language('list'),
+                                      ),
+                                      Tab(
+                                        icon: const Icon(Icons.group_work),
+                                        text: global.language('group'),
+                                      ),
+                                      Tab(
+                                        icon: const Icon(Icons.search),
+                                        text: global.language('search'),
+                                      ),
+                                      Tab(
+                                        icon: const Icon(Icons.menu),
+                                        text: global.language('menu'),
+                                      ),
+                                    ],
+                                  )),
+                              Expanded(child: LayoutBuilder(builder:
+                                  (BuildContext context,
+                                      BoxConstraints constraints) {
+                                return Column(children: [
+                                  Expanded(
+                                      child: TabBarView(children: [
+                                    transScreen(mode: 0),
+                                    selectProductLevelWidget(constraints),
+                                    findByText(),
+                                    Container()
+                                    //commandScreen(),
+                                  ])),
+                                  posLayoutBottom(),
+                                ]);
+                              })),
+                            ],
+                          ))));
+            })));
+  }
+
   Widget appLayoutPos() {
-    return (global.deviceMode == global.DeviceModeEnum.androidTablet ||
-            global.deviceMode == global.DeviceModeEnum.ipad)
+    return (global.isWideScreen())
         ? posLayoutWideScreen()
-        : SafeArea(
-            child: DefaultTabController(
-                length: 4,
-                child: Builder(builder: (BuildContext context) {
-                  final TabController tabController =
-                      DefaultTabController.of(context);
-                  tabController.addListener(() {
-                    if (!tabController.indexIsChanging) {
-                      if (tabController.index == 2) {
-                        SystemChannels.textInput.invokeMethod('TextInput.show');
-                      } else {
-                        SystemChannels.textInput.invokeMethod('TextInput.hide');
-                      }
-                    }
-                  });
-                  return Scaffold(
-                      resizeToAvoidBottomInset: false,
-                      body: Container(
-                          decoration: const BoxDecoration(color: Colors.black),
-                          child: Container(
-                              color: Colors.white,
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
-                                children: [
-                                  Container(
-                                      color: Colors.blue,
-                                      child: TabBar(
-                                        tabs: [
-                                          Tab(
-                                            icon: const Icon(Icons.list),
-                                            text: global.language('list'),
-                                          ),
-                                          Tab(
-                                            icon: const Icon(Icons.group_work),
-                                            text: global.language('group'),
-                                          ),
-                                          Tab(
-                                            icon: const Icon(Icons.search),
-                                            text: global.language('search'),
-                                          ),
-                                          Tab(
-                                            icon: const Icon(Icons.menu),
-                                            text: global.language('menu'),
-                                          ),
-                                        ],
-                                      )),
-                                  Expanded(child: LayoutBuilder(builder:
-                                      (BuildContext context,
-                                          BoxConstraints constraints) {
-                                    return TabBarView(
-                                      children: [
-                                        transScreen(mode: 0),
-                                        selectProductLevelWidget(constraints),
-                                        findByText(),
-                                        Container()
-                                        //commandScreen(),
-                                      ],
-                                    );
-                                  }))
-                                ],
-                              ))));
-                })));
+        : posLayoutPhoneScreen();
   }
 
   Widget appLayoutRestaurant() {
-    return (global.deviceMode == global.DeviceModeEnum.androidTablet ||
-            global.deviceMode == global.DeviceModeEnum.ipad)
+    return (global.isWideScreen())
         ? SafeArea(
             child: Scaffold(
             body: Container(
@@ -3779,14 +3828,13 @@ class _PosScreenState extends State<PosScreen>
                       barcode: barcode,
                       qty: (textInput.isEmpty) ? "1.0" : textInput);
                   textInput = "";
-                  // processEvent();
+                  processEvent(holdNumber: global.posHoldActiveNumber);
                 },
                 child: Scaffold(
                     resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.black,
-                    body: (global.appMode ==
-                                global.AppModeEnum.posCashierTerminal ||
-                            global.appMode == global.AppModeEnum.posClient)
+                    body: (global.appMode == global.AppModeEnum.posTerminal ||
+                            global.appMode == global.AppModeEnum.posRemote)
                         ? appLayoutPos()
                         : appLayoutRestaurant()))));
   }

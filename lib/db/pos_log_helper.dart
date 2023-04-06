@@ -9,7 +9,7 @@ class PosLogHelper {
   final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
 
   Future<int> insert(PosLogObjectBoxStruct value) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpPost json = HttpPost(
           command: "PosLogHelper.insert", data: jsonEncode(value.toJson()));
       String result = await global.postToServerAndWait(
@@ -22,7 +22,7 @@ class PosLogHelper {
   }
 
   Future<int> holdCount(int holdNumber) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(holdNumber: holdNumber);
       HttpGetDataModel json = HttpGetDataModel(
@@ -51,7 +51,7 @@ class PosLogHelper {
 
   Future<List<PosLogObjectBoxStruct>> selectByGuidFixed(
       String guidAutoFixed) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(guid: guidAutoFixed);
       HttpGetDataModel json = HttpGetDataModel(
@@ -118,7 +118,7 @@ class PosLogHelper {
   }
 
   Future<int> deleteByHoldNumber({required int holdNumber}) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpPost json = HttpPost(
           command: "PosLogHelper.deleteByHoldNumber",
           data: holdNumber.toString());

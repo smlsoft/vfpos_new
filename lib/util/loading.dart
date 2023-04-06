@@ -58,7 +58,7 @@ class _LoadingState extends State<Loading> {
     await global.appStorage.remove(global.syncTableZoneTimeName);
     await global.appStorage.remove(global.syncDeviceTimeName);*/
 
-    if (global.appMode == global.AppModeEnum.posClient) {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
         Navigator.of(context).pushReplacementNamed('/client');
       });

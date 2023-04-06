@@ -32,7 +32,6 @@ import 'package:get_storage/get_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await global.getDeviceModel();
   await global.loading();
   network.connectivity();
   global.ipAddress = await network.ipAddress();

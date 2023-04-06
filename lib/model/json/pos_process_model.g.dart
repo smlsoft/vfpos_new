@@ -116,9 +116,6 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
       total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
       total_discount_from_promotion:
           (json['total_discount_from_promotion'] as num?)?.toDouble() ?? 0,
-      customer_code: json['customer_code'] as String? ?? "",
-      customer_name: json['customer_name'] as String? ?? "",
-      customer_phone: json['customer_phone'] as String? ?? "",
       qr_code: json['qr_code'] as String? ?? "",
       details: (json['details'] as List<dynamic>?)
               ?.map((e) =>
@@ -136,7 +133,10 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
                   PosProcessPromotionModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-    );
+    )
+      ..customer_code = json['customer_code'] as String
+      ..customer_name = json['customer_name'] as String
+      ..customer_phone = json['customer_phone'] as String;
 
 Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
     <String, dynamic>{

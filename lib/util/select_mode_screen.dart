@@ -26,8 +26,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                       children: [
                         ElevatedButton(
                             onPressed: () {
-                              global.appMode =
-                                  global.AppModeEnum.posCashierTerminal;
+                              global.appMode = global.AppModeEnum.posTerminal;
                               Navigator.of(context)
                                   .pushReplacementNamed('/login');
                             },
@@ -37,7 +36,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                         ),
                         ElevatedButton(
                             onPressed: () {
-                              global.appMode = global.AppModeEnum.posClient;
+                              global.appMode = global.AppModeEnum.posRemote;
                               Navigator.of(context)
                                   .pushReplacementNamed('/client');
                             },
