@@ -267,10 +267,9 @@ class _PosScreenState extends State<PosScreen>
     global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData =
         global.payScreenData;
     // Send Clear Display
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .customer_code = "";
-    global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-        .customer_name = "";
+    global.posHoldProcessResult[global.posHoldActiveNumber].customerCode  = "";
+    global.posHoldProcessResult[global.posHoldActiveNumber]
+        .customerCode = "";
     global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
         .total_amount = 0;
     global.posHoldProcessResult[global.posHoldActiveNumber].posProcess

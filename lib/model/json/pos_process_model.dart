@@ -109,9 +109,6 @@ class PosProcessPromotionModel {
 
 @JsonSerializable()
 class PosProcessModel {
-  late String customer_code;
-  late String customer_name;
-  late String customer_phone;
   late double total_piece;
   late double total_amount;
   late double total_discount_from_promotion;
