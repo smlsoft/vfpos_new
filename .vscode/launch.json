@@ -27,6 +27,12 @@
             "request": "launch",
             "type": "dart",
             "deviceId": "D2s PLUS"
+        },
+        {
+            "name": "dedepos (macos)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "macos"
         }
 
         /*{TG36232441315
