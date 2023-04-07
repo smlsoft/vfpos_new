@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
+import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
+import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -57,6 +59,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
   }
 
   Widget cardDetail() {
+    List<BankObjectBoxStruct> bankDataList = BankHelper().selectAll();
     return Card(
       elevation: 3.0,
       color: Colors.white,
@@ -96,32 +99,25 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                                     height: 50,
                                                     child: Image.asset(global
                                                         .findLogoImageFromCreditCardProvider(
-                                                            global
-                                                                .bankProviderList[
-                                                                    index]
-                                                                .paymentcode))),
+                                                            bankDataList[index]
+                                                                .code))),
                                                 SizedBox(width: 10),
-                                                Text(global
-                                                    .bankProviderList[index]
-                                                    .names[0]
-                                                    .name)
+                                                Text(bankDataList[index]
+                                                    .names[0])
                                               ]),
                                               onPressed: () {
                                                 global.payScreenNumberPadIsActive =
                                                     false;
-                                                bankCode = global
-                                                    .bankProviderList[index]
-                                                    .paymentcode;
-                                                bankName = global
-                                                    .bankProviderList[index]
-                                                    .names[0]
-                                                    .name;
+                                                bankCode =
+                                                    bankDataList[index].code;
+                                                bankName = bankDataList[index]
+                                                    .names[0];
                                                 Navigator.of(context).pop();
                                                 refreshEvent();
                                               },
                                             ));
                                       },
-                                      itemCount: global.bankProviderList.length,
+                                      itemCount: bankDataList.length,
                                     ))));
                         refreshEvent();
                       },

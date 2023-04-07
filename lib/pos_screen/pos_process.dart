@@ -1,4 +1,5 @@
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/api/sync/model/promotion_model.dart';
@@ -7,6 +8,8 @@ import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 class PosProcess {
   PosProcessModel processResult = PosProcessModel(
       details: [], select_promotion_temp_list: [], promotion_list: []);
+
+  PosProcessResultModel result = PosProcessResultModel();
 
   void sumCategoryCount(PosProcessModel result) {
     for (var product in global.productListByCategory) {
@@ -20,14 +23,26 @@ class PosProcess {
     }
   }
 
-  int findByBarCodeAndPrice(String barcode, double price) {
+  int findByBarCodeAndPrice(String barcode, double price,
+      {bool lastLineOnly = false}) {
     int result = -1;
-    for (int index = 0; index < processResult.details.length; index++) {
-      if (barcode == processResult.details[index].barcode &&
-          price == processResult.details[index].price &&
-          processResult.details[index].is_void == false) {
-        result = index;
-        break;
+    if (lastLineOnly) {
+      if (processResult.details.isNotEmpty) {
+        int index = processResult.details.length - 1;
+        if (barcode == processResult.details[index].barcode &&
+            price == processResult.details[index].price &&
+            processResult.details[index].is_void == false) {
+          result = index;
+        }
+      }
+    } else {
+      for (int index = 0; index < processResult.details.length; index++) {
+        if (barcode == processResult.details[index].barcode &&
+            price == processResult.details[index].price &&
+            processResult.details[index].is_void == false) {
+          result = index;
+          break;
+        }
       }
     }
     return result;
@@ -74,8 +89,9 @@ class PosProcess {
     print("****** Process : " + DateTime.now().toString());
     double totalAmount = 0;
     // ค้นหา Barcode
-    List<PosLogObjectBoxStruct> valueLog = global.posLogHelper.selectByHoldNumberIsVoidSuccess(
-        holdNumber: holdNumber, isVoid: 0, success: 0);
+    List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
+        .selectByHoldNumberIsVoidSuccess(
+            holdNumber: holdNumber, isVoid: 0, success: 0);
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {
@@ -113,7 +129,6 @@ class PosProcess {
     for (int index = 0; index < valueLog.length; index++) {
       // ประมวลผล จำนวน,ราคา
       PosLogObjectBoxStruct logData = valueLog[index];
-      PosProcessDetailModel detail = PosProcessDetailModel(extra: []);
       //print('Command : ' + _index.toString() + " " + _logData.commandCode.toString() + " " + _logData.command.toString());
       /* 
         -- command
@@ -129,6 +144,7 @@ class PosProcess {
         99=เริ่มใหม่
         101=Check Box Extra
       */
+      result.lastCommandCode = logData.command_code;
       switch (logData.command_code) {
         case 101:
           // 101=Check Box Extra
@@ -189,9 +205,14 @@ class PosProcess {
               );
           // productBarcode.new_line = 1 (ทดสอบขึ้นบรรทัดใหม่ทุกครั้ง)
           productBarcode.new_line = 1;
+          // ทดสอบ
+          productBarcode.new_line = 0;
           //
           if (productBarcode.barcode.isNotEmpty &&
-              productBarcode.new_line == 1) {
+                  productBarcode.new_line == 1 ||
+              global.posScreenNewDataStyle ==
+                  global.PosScreenNewDataStyleEnum.newLineOnly) {
+            // กรณีสินค้าเป็นประเภทขุึ้นบรรทัดใหม่ทุกครั้ง หรือ ระบบกำหนดให้ขึ้นบรรทัดใหม่ทุกครั้ง
             findIndex = -1;
           } else {
             // กรณีมี Extra ให้เพิ่มบรรทัดใหม่
@@ -199,11 +220,21 @@ class PosProcess {
             if (valueOption.isNotEmpty) {
               findIndex = -1;
             } else {
-              findIndex = findByBarCodeAndPrice(logData.barcode, logData.price);
+              if (global.posScreenNewDataStyle ==
+                  global.PosScreenNewDataStyleEnum.addLastLine) {
+                findIndex = findByBarCodeAndPrice(
+                    logData.barcode, logData.price,
+                    lastLineOnly: true);
+              } else if (global.posScreenNewDataStyle ==
+                  global.PosScreenNewDataStyleEnum.addAllLine) {
+                findIndex =
+                    findByBarCodeAndPrice(logData.barcode, logData.price);
+              }
             }
           }
           if (findIndex == -1) {
             // เพิ่มบรรทัด
+            PosProcessDetailModel detail = PosProcessDetailModel(extra: []);
             detail.index = count++;
             detail.barcode = logData.barcode;
             detail.item_code = logData.code;
@@ -218,8 +249,10 @@ class PosProcess {
             detail.guid = logData.guid_auto_fixed;
             detail.image_url = productBarcode.images_url;
             processResult.details.add(detail);
+            result.lineGuid = detail.guid;
           } else {
             // เพิ่มจำนวน
+            result.lineGuid = processResult.details[findIndex].guid;
             processResult.details[findIndex].qty =
                 (processResult.details[findIndex].qty + logData.qty);
             processCalc(findIndex);

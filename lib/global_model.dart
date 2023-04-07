@@ -185,3 +185,10 @@ class HttpPost {
     );
   }
 }
+
+class PosProcessResultModel {
+  String lineGuid;
+  int lastCommandCode;
+
+  PosProcessResultModel({this.lineGuid = "", this.lastCommandCode = 0});
+}

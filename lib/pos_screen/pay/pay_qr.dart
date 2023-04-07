@@ -1,7 +1,7 @@
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
-import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
+import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pay/pay_qr_screen.dart';

@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../api/sync/model/promotion_model.dart';
+import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PromotionTempHelper {

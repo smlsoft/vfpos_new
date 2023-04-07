@@ -3,63 +3,55 @@ import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class EmployeeHelper {
-  final _box = global.objectBoxStore.box<EmployeeObjectBoxStruct>();
-  /*static final EmployeeHelper _instance = EmployeeHelper.internal();
-
-  factory EmployeeHelper() => _instance;
-
-  EmployeeHelper.internal();
-
-  Future<void> create() async {
-    if (await global.findTable(global.employeeTableName) == false) {
-      await global.clientDb!.execute("CREATE TABLE " +
-          global.employeeTableName +
-          " (guidfixed TEXT PRIMARY KEY,username TEXT, name TEXT,roles TEXT)");
-    }
-  }*/
+  final box = global.objectBoxStore.box<EmployeeObjectBoxStruct>();
 
   int insert(EmployeeObjectBoxStruct value) {
-    return _box.put(value);
+    return box.put(value);
   }
 
   void insertMany(List<EmployeeObjectBoxStruct> values) {
-    _box.putMany(values);
+    box.putMany(values);
   }
 
-  bool deleteByGuidFixed(String guidfixed) {
-    bool _result = false;
-    final _find = _box
-        .query(EmployeeObjectBoxStruct_.guidfixed.equals(guidfixed))
+  bool deleteByGuidFixed(String guid) {
+    bool result = false;
+    final find = box
+        .query(EmployeeObjectBoxStruct_.guidfixed.equals(guid))
         .build()
         .findFirst();
-    if (_find != null) {
-      _result = _box.remove(_find.id);
+    if (find != null) {
+      result = box.remove(find.id);
     }
-    return _result;
+    return result;
   }
 
-  void deleteByGuidFixedMany(List<String> guidfixed) {
-    Condition<EmployeeObjectBoxStruct>? _ids;
-    guidfixed.forEach((_guidfixed) {
-      if (_ids == null)
-        _ids = EmployeeObjectBoxStruct_.guidfixed.equals(_guidfixed);
-      else
-        _ids = _ids?.or(EmployeeObjectBoxStruct_.guidfixed.equals(_guidfixed));
-    });
-    if (_ids != null) {
-      final _find = _box.query(_ids).build().find();
-      _box.removeMany(_find.map((_data) => _data.id).toList());
+  void deleteByGuidFixedMany(List<String> guidFixedList) {
+    Condition<EmployeeObjectBoxStruct>? ids;
+    for (var guidFixed in guidFixedList) {
+      if (ids == null) {
+        ids = EmployeeObjectBoxStruct_.guidfixed.equals(guidFixed);
+      } else {
+        ids = ids.or(EmployeeObjectBoxStruct_.guidfixed.equals(guidFixed));
+      }
+    }
+    if (ids != null) {
+      final find = box.query(ids).build().find();
+      box.removeMany(find.map((data) => data.id).toList());
     }
   }
 
   List<EmployeeObjectBoxStruct> getAll() {
-    return (_box.query()).build().find();
+    return (box.query()).build().find();
   }
 
   List<EmployeeObjectBoxStruct> select({String word = ""}) {
     if (word.trim().isEmpty) {
-      return (_box.query()).build().find();
+      return (box.query()).build().find();
     }
-    return (_box.query()).build().find();
+    return (box.query()).build().find();
+  }
+
+  int count() {
+    return (box.query()).build().count();
   }
 }

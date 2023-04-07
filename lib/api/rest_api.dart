@@ -113,7 +113,7 @@ class RestApiFindEmployeeByWord {
             code: _source.code,
             roles: "" /* _source.roles.toString()*/,
             profilepicture: _source.profilepicture,
-            username: _source.username),
+            username: _source.name),
       );
     }
     return _result;

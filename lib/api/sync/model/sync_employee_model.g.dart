@@ -1,25 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'employee_model.dart';
+part of 'sync_employee_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-EmployeeModel _$EmployeeModelFromJson(Map<String, dynamic> json) =>
-    EmployeeModel(
-      code: json['code'] as String,
+SyncEmployeeModel _$SyncEmployeeModelFromJson(Map<String, dynamic> json) =>
+    SyncEmployeeModel(
       guidfixed: json['guidfixed'] as String,
-      username: json['username'] as String,
+      code: json['code'] as String,
       profilepicture: json['profilepicture'] as String,
       name: json['name'] as String,
+      email: json['email'] as String,
+      isenabled: json['isenabled'] as bool,
     );
 
-Map<String, dynamic> _$EmployeeModelToJson(EmployeeModel instance) =>
+Map<String, dynamic> _$SyncEmployeeModelToJson(SyncEmployeeModel instance) =>
     <String, dynamic>{
-      'code': instance.code,
       'guidfixed': instance.guidfixed,
-      'username': instance.username,
+      'code': instance.code,
+      'email': instance.email,
+      'isenabled': instance.isenabled,
       'name': instance.name,
       'profilepicture': instance.profilepicture,
     };

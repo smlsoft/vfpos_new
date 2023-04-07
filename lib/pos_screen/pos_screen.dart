@@ -24,7 +24,6 @@ import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
-import 'package:dedepos/api/sync/model/payment_api_model.dart';
 import 'package:dedepos/model/json/sale_invoice_model.dart';
 import 'package:dedepos/model/json/sale_invoice_item_model.dart';
 import 'package:dedepos/model/json/transfer_payment_model.dart';
@@ -787,7 +786,10 @@ class _PosScreenState extends State<PosScreen>
               product_count: 0);
       productOptions = product.options();
     }
-    posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
+    posCompileProcess(holdNumber: global.posHoldActiveNumber).then((value) {
+      if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
+        findActiveLineByGuid = value.lineGuid;
+      }
       processEventRefresh(global.posHoldActiveNumber);
     });
   }
@@ -1630,7 +1632,7 @@ class _PosScreenState extends State<PosScreen>
     if (line != 0) {
       productDetail.add(
         Text(line.toString(),
-            style: textStyle.copyWith(color: Colors.blue, fontSize: 12)),
+            style: textStyle.copyWith(color: Colors.blue, fontSize: 10)),
       );
       productDetail.add(rowSpace);
     }
@@ -1638,23 +1640,23 @@ class _PosScreenState extends State<PosScreen>
     if (qty > 1) {
       productDetail.add(rowSpace);
       productDetail.add(Text(" X ${global.moneyFormat.format(qty)} $unitName",
-          style: textStyle.copyWith(color: Colors.red, fontSize: 14)));
+          style: textStyle.copyWith(color: Colors.red, fontSize: 12)));
       productDetail.add(rowSpace);
       productDetail.add(Text(
           "${global.language("price")} $unitName ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
-          style: textStyle.copyWith(color: Colors.blue, fontSize: 14)));
+          style: textStyle.copyWith(color: Colors.blue, fontSize: 12)));
     }
     if (fullDetail) {
       if (price != priceOriginal) {
         productDetail.add(rowSpace);
         productDetail.add(Text(
             "${global.language("original_price")}  ${global.moneyFormat.format(priceOriginal)} ${global.language("money_symbol")}/$unitName ${global.language("new_price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}/$unitName",
-            style: textStyle.copyWith(color: Colors.orange, fontSize: 12)));
+            style: textStyle.copyWith(color: Colors.orange, fontSize: 10)));
       }
       if (barcode.isNotEmpty) {
         productDetail.add(rowSpace);
         productDetail.add(Text(barcode,
-            style: textStyle.copyWith(color: Colors.green, fontSize: 12)));
+            style: textStyle.copyWith(color: Colors.green, fontSize: 10)));
       }
     }
     if (imageUrl != "0" && imageUrl != "" && global.isOnline) {
@@ -1867,7 +1869,7 @@ class _PosScreenState extends State<PosScreen>
         TextEditingController(text: detail.remark);
 
     return Padding(
-        padding: const EdgeInsets.only(left: 4, bottom: 4, right: 4),
+        padding: const EdgeInsets.all(4),
         child: IntrinsicHeight(
             child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2100,7 +2102,7 @@ class _PosScreenState extends State<PosScreen>
         ? false
         : ((activeLineNumber == index) ? true : false);
     TextStyle textStyle = TextStyle(
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: (active) ? FontWeight.bold : FontWeight.normal);
 
     return Container(
@@ -2119,12 +2121,12 @@ class _PosScreenState extends State<PosScreen>
               textStyle: textStyle)
           : Column(
               children: [
-                detailData(
+                detailButton(
                     index: index,
                     detail: detail,
                     active: active,
                     textStyle: textStyle),
-                detailButton(
+                detailData(
                     index: index,
                     detail: detail,
                     active: active,

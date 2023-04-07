@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/api/api_repository.dart';
+import 'package:dedepos/api/sync/api_repository.dart';
+import 'package:dedepos/api/sync/master/sync_bank.dart';
+import 'package:dedepos/api/sync/master/sync_employee.dart';
 import 'package:dedepos/api/user_repository.dart';
 import 'package:dedepos/db/employee_helper.dart';
-import 'package:dedepos/db/master_bank_helper.dart';
+import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/db/product_category_helper.dart';
-import 'package:dedepos/api/sync/model/bank_and_wallet_model.dart';
-import 'package:dedepos/api/sync/model/employee_model.dart';
+import 'package:dedepos/api/sync/model/sync_bank_model.dart';
+import 'package:dedepos/api/sync/model/sync_employee_model.dart';
 import 'package:dedepos/api/sync/model/sync_printer_model.dart';
-import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
+import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/api/sync/model/item_remove_model.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
@@ -19,79 +21,10 @@ import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/global_model.dart' as globalModel;
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:intl/intl.dart';
-
-Future getMaster() async {
-  MasterBankHelper helper = MasterBankHelper();
-  ApiRepository apiRepository = ApiRepository();
-  await apiRepository.getMasterBank().then((result) {
-    if (result.success) {
-      helper.deleteAll();
-      List<ApiBankAndWalletModel> dataFromApi = (result.data as List)
-          .map((newData) => ApiBankAndWalletModel.fromJson(newData))
-          .toList();
-      List<BankAndWalletObjectBoxStruct> data = [];
-      for (var value in dataFromApi) {
-        BankAndWalletObjectBoxStruct newBank = BankAndWalletObjectBoxStruct();
-        newBank.paymentcode = value.paymentcode;
-        newBank.countrycode = value.countrycode;
-        newBank.name1 = value.name1;
-        newBank.name2 = value.name2;
-        newBank.name3 = value.name3;
-        newBank.name4 = value.name4;
-        newBank.name5 = value.name5;
-        newBank.name5 = value.name5;
-        newBank.paymentlogo = value.paymentlogo;
-        newBank.paymenttype = value.paymenttype;
-        newBank.feeRate = value.feerate;
-        newBank.wallettype = value.wallettype;
-        data.add(newBank);
-      }
-      helper.insertMany(data);
-    }
-  }).catchError((e) {
-    print(e.toString());
-  });
-  global.createLogoImageFromBankProvider();
-}
-
-Future syncEmployee(data) async {
-  // Delete
-  List<ItemRemoveModel> removeMany = (data["remove"] as List)
-      .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-      .toList();
-  for (var data in removeMany) {
-    try {
-      global.employeeHelper.deleteByGuidFixed(data.guidfixed);
-    } catch (e) {
-      print(e);
-    }
-  }
-  // Insert
-  List<EmployeeModel> insert = (data["new"] as List)
-      .map((newCate) => EmployeeModel.fromJson(newCate))
-      .toList();
-  List<String> manyForDelete = [];
-  List<EmployeeObjectBoxStruct> insertManyData = [];
-  int count = 100;
-  for (var getData in insert) {
-    count++;
-    //print("Insert Category : " + _data.categoryguid + "/" + _data.name1);
-    manyForDelete.add(getData.guidfixed);
-    insertManyData.add(EmployeeObjectBoxStruct(
-        username: getData.username,
-        code: count.toString(), // _data.code,
-        profilepicture: getData.profilepicture,
-        guidfixed: getData.guidfixed,
-        //roles: _data.roles.toString(),
-        name: getData.name));
-  }
-  EmployeeHelper().deleteByGuidFixedMany(manyForDelete);
-  EmployeeHelper().insertMany(insertManyData);
-}
 
 Future syncProductCategory(data) async {
   List<String> removeMany = [];
@@ -371,26 +304,14 @@ flutter: shopzone 0001-01-01T00:00:00Z
 flutter: staff 2023-02-14T02:39:22Z
 */
 
-String syncFindLastUpdate(
-    List<globalModel.SyncMasterStatusModel> dataList, String tableName) {
-  for (var item in dataList) {
-    if (item.tableName == tableName) {
-      return DateFormat(global.dateFormatSync)
-          .format(DateTime.parse(item.lastUpdate));
-    }
-  }
-  return DateFormat(global.dateFormatSync)
-      .format(DateTime.parse(global.syncDateBegin));
-}
-
 Future syncMasterData() async {
-  String dateBegin = "2000-01-01T00:00:00";
   ApiRepository apiRepository = ApiRepository();
 
-  String lastUpdateTime =
-      global.appStorage.read(global.syncCategoryTimeName) ?? dateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncCategoryTimeName) ??
+      global.syncDateBegin;
   global.syncDataProcess = true;
-  var masterStatus = await apiRepository.serverMasterStatus();
+  List<SyncMasterStatusModel> masterStatus =
+      await apiRepository.serverMasterStatus();
   {
     // หมวดสินค้า
     if (ProductCategoryHelper().count() == 0) {
@@ -398,7 +319,8 @@ Future syncMasterData() async {
     }
     lastUpdateTime = DateFormat(global.dateFormatSync)
         .format(DateTime.parse(lastUpdateTime));
-    var getLastUpdateTime = syncFindLastUpdate(masterStatus, "productcategory");
+    var getLastUpdateTime =
+        global.syncFindLastUpdate(masterStatus, "productcategory");
     if (lastUpdateTime != getLastUpdateTime) {
       print("serverProductCategory Start");
       await apiRepository
@@ -420,13 +342,15 @@ Future syncMasterData() async {
   {
     // Sync Barcode
     String lastUpdateTime =
-        global.appStorage.read(global.syncProductBarcodeTimeName) ?? dateBegin;
+        global.appStorage.read(global.syncProductBarcodeTimeName) ??
+            global.syncDateBegin;
     if (ProductBarcodeHelper().count() == 0) {
       lastUpdateTime = global.syncDateBegin;
     }
     lastUpdateTime = DateFormat(global.dateFormatSync)
         .format(DateTime.parse(lastUpdateTime));
-    var getLastUpdateTime = syncFindLastUpdate(masterStatus, "productbarcode");
+    var getLastUpdateTime =
+        global.syncFindLastUpdate(masterStatus, "productbarcode");
     if (lastUpdateTime != getLastUpdateTime) {
       print("serverProductBarcode Start");
       // Test
@@ -473,53 +397,8 @@ Future syncMasterData() async {
           .write(global.syncProductBarcodeTimeName, getLastUpdateTime);
     }
   }
-  {
-    // Sync Printer
-    String lastUpdateTime =
-        global.appStorage.read(global.syncPrinterTimeName) ?? dateBegin;
-    if (PrinterHelper().count() == 0) {
-      lastUpdateTime = global.syncDateBegin;
-    }
-    lastUpdateTime = DateFormat(global.dateFormatSync)
-        .format(DateTime.parse(lastUpdateTime));
-    var getLastUpdateTime = syncFindLastUpdate(masterStatus, "printer");
-    if (lastUpdateTime != getLastUpdateTime) {
-      await apiRepository
-          .serverPrinter(offset: 0, limit: 1000, lastupdate: lastUpdateTime)
-          .then((value) {
-        if (value.success) {
-          syncPrinter(value.data["printer"]).then((_) {
-            global.appStorage
-                .write(global.syncPrinterTimeName, getLastUpdateTime);
-          });
-        }
-      });
-    }
-  }
-  {
-    // Sync พนักงาน
-    /*String lastUpdateTime =
-        global.appStorage.read(global.syncEmployeeTimeName) ?? dateBegin;
-    lastUpdateTime = dateBegin;
-    if (PrinterHelper().count() == 0) {
-      lastUpdateTime = global.syncDateBegin;
-    }
-    lastUpdateTime = DateFormat(global.dateFormatSync)
-        .format(DateTime.parse(lastUpdateTime));
-    var getLastUpdateTime = syncFindLastUpdate(masterStatus, "employee");
-    if (lastUpdateTime != getLastUpdateTime) {
-      await apiRepository
-          .serverEmployee(offset: 0, limit: 1000, lastupdate: lastUpdateTime)
-          .then((value) {
-        if (value.success) {
-          syncEmployee(value.data["employee"]).then((_) {
-            global.appStorage
-                .write(global.syncEmployeeTimeName, getLastUpdateTime);
-          });
-        }
-      });
-    }*/
-  }
+  syncEmployeeCompare(masterStatus);
+  syncBankCompare(masterStatus);
   global.syncDataSuccess = true;
   global.syncDataProcess = false;
 }

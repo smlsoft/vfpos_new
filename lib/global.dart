@@ -1,3 +1,4 @@
+import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
@@ -23,12 +24,12 @@ import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/db/member_helper.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
-import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
+import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/model/json/print_queue_model.dart';
-import 'package:dedepos/api/sync/sync_master.dart' as sync;
+import 'package:dedepos/api/sync/master/sync_master.dart' as sync;
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
@@ -106,7 +107,6 @@ PosPayModel payScreenData = PosPayModel();
 bool lugenPaymentProvider = true;
 List<PaymentProviderModel> lugenPaymentProviderList = [];
 List<PaymentProviderModel> qrPaymentProviderList = [];
-List<PaymentProviderModel> bankProviderList = [];
 bool payScreenNumberPadIsActive = false;
 double payScreenNumberPadLeft = 100;
 double payScreenNumberPadTop = 100;
@@ -153,6 +153,7 @@ String syncPrinterTimeName = "lastSyncPrinter";
 String syncInventoryTimeName = "lastSyncInventory";
 String syncMemberTimeName = "lastSyncMember";
 String syncEmployeeTimeName = "lastSyncEmployee";
+String syncBankTimeName = "lastSyncBank";
 String syncTableTimeName = "lastSyncTable";
 String syncTableZoneTimeName = "lastSyncTableZone";
 String syncDeviceTimeName = "lastSyncDevice";
@@ -173,6 +174,8 @@ int targetDeviceIpPort = 4040;
 bool targetDeviceConnected = false;
 Function? functionPosScreenRefresh;
 DeviceModeEnum deviceMode = DeviceModeEnum.none;
+PosScreenNewDataStyleEnum posScreenNewDataStyle =
+    PosScreenNewDataStyleEnum.addLastLine;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -182,7 +185,21 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
 
-enum AppModeEnum { posTerminal, posRemote }
+enum AppModeEnum {
+  // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
+  // posRemote = โปรแกรมที่ใช้งานได้ทุกเครื่อง และสามารถส่งคำสั่งไปยังเครื่อง POS ได้
+  posTerminal,
+  posRemote
+}
+
+enum PosScreenNewDataStyleEnum {
+  // newLineOnly = ขึ้นบรรทัดใหม่เสมอ
+  // addLastLine = ถ้า Barcode เดิม ให้เพิ่มในรายการล่าสุด
+  // addAllLine = ถ้า Barcode เดิ่ม ให้เพิ่มในรายการทั้งหมด
+  newLineOnly,
+  addLastLine,
+  addAllLine
+}
 
 enum DeviceModeEnum {
   none,
@@ -644,13 +661,13 @@ double calcDiscountFormula(
 }
 
 Future<void> createLogoImageFromBankProvider() async {
-  for (var element in bankProviderList) {
-    if (element.paymentlogo != "") {
-      String base64 =
-          element.paymentlogo.replaceFirst("data:image/png;base64,", "");
+  List<BankObjectBoxStruct> bankDataList = BankHelper().selectAll();
+  for (var element in bankDataList) {
+    if (element.logo != "") {
+      String base64 = element.logo.replaceFirst("data:image/png;base64,", "");
       Uint8List bytes = base64Decode(base64);
       File file = File(
-          "$pathApplicationDocumentsDirectory/bank${element.paymentcode.toLowerCase()}.png");
+          "$pathApplicationDocumentsDirectory/bank${element.code.toLowerCase()}.png");
       file.writeAsBytes(bytes);
     }
   }
@@ -886,7 +903,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      // await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,
@@ -1135,4 +1152,14 @@ bool isWideScreen() {
       deviceMode == DeviceModeEnum.macosDesktop ||
       deviceMode == DeviceModeEnum.linuxDesktop ||
       deviceMode == DeviceModeEnum.windowsDesktop);
+}
+
+String syncFindLastUpdate(
+    List<SyncMasterStatusModel> dataList, String tableName) {
+  for (var item in dataList) {
+    if (item.tableName == tableName) {
+      return DateFormat(dateFormatSync).format(DateTime.parse(item.lastUpdate));
+    }
+  }
+  return DateFormat(dateFormatSync).format(DateTime.parse(syncDateBegin));
 }

@@ -5,6 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "dedepos (Windows)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "windows"
+        },
+        {
+            "name": "dedepos (android Tabet)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5556"
+        },
+        {
+            "name": "dedepos (android)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },        
+        {
+            "name": "dedepos (sunmi)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "D2s PLUS"
+        }
+
+        /*{TG36232441315
             "name": "dedepos",
             "request": "launch",
             "type": "dart"
@@ -14,6 +39,12 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
-        }
-    ]
+        }*/
+    ],
+	"compounds": [
+		{
+			"name": "All Devices",
+			"configurations": ["dedepos (Windows)", "dedepos (android)","dedepos (android Tabet)","dedepos (sunmi)"],
+		}
+	]
 }

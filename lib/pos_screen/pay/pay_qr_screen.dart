@@ -4,7 +4,7 @@ import 'package:decimal/decimal.dart';
 import 'package:decimal/intl.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
-import 'package:dedepos/model/objectbox/bank_and_wallet_struct.dart';
+import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:lugentpayment/lugentpay.dart';
 import 'package:lugentpayment/qrpaymentresponse.dart';

@@ -6,17 +6,17 @@ class EmployeeObjectBoxStruct {
   @Unique()
   String guidfixed;
   String code;
-  String username;
-  String profilepicture;
+  String email;
+  bool isenabled;
   String name;
-  //String roles;
+  String profilepicture;
 
   EmployeeObjectBoxStruct({
     required this.guidfixed,
-    required this.username,
     required this.code,
-    //required this.roles,
     required this.profilepicture,
     required this.name,
+    required this.email,
+    required this.isenabled,
   });
 }
