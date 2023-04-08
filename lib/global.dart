@@ -1153,6 +1153,12 @@ bool isWideScreen() {
       deviceMode == DeviceModeEnum.windowsDesktop);
 }
 
+bool isDesktopScreen() {
+  return (deviceMode == DeviceModeEnum.macosDesktop ||
+      deviceMode == DeviceModeEnum.linuxDesktop ||
+      deviceMode == DeviceModeEnum.windowsDesktop);
+}
+
 String syncFindLastUpdate(
     List<SyncMasterStatusModel> dataList, String tableName) {
   for (var item in dataList) {

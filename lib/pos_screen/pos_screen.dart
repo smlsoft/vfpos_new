@@ -1257,13 +1257,13 @@ class _PosScreenState extends State<PosScreen>
           checkBoxIndex++) {
         productOptions[groupIndex].choices[checkBoxIndex].selected = false;
       }
-      for (var detailIndex0 = 0;
-          detailIndex0 < data.extra.length;
-          detailIndex0++) {
+      for (var detailIndex = 0;
+          detailIndex < data.extra.length;
+          detailIndex++) {
         for (var checkBoxIndex = 0;
             checkBoxIndex < productOptions[groupIndex].choices.length;
             checkBoxIndex++) {
-          if (data.extra[detailIndex0].guid_code_or_ref ==
+          if (data.extra[detailIndex].guid_code_or_ref ==
               productOptions[groupIndex].choices[checkBoxIndex].guid_fixed) {
             productOptions[groupIndex].choices[checkBoxIndex].selected = true;
           }
@@ -1676,118 +1676,199 @@ class _PosScreenState extends State<PosScreen>
                 : Container()));
   }
 
+  Widget detailHeaderWidget() {
+    double fontSize = (global.isDesktopScreen()) ? 18 : 14;
+    TextStyle textStyle = TextStyle(
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+
+    return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border:
+              const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+          color: Colors.blue.shade100,
+        ),
+        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 4, right: 4),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 5,
+              child: Text(global.language("item_code"),
+                  style: textStyle.copyWith(fontSize: fontSize)),
+            ),
+            Expanded(
+                flex: 1,
+                child: Text(global.language("unit_name"),
+                    style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 1,
+                child: Text(global.language("qty"),
+                    textAlign: TextAlign.right,
+                    style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 1,
+                child: Text(global.language("price"),
+                    textAlign: TextAlign.right,
+                    style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 1,
+                child: Text(global.language("total_amount"),
+                    textAlign: TextAlign.right,
+                    style: textStyle.copyWith(fontSize: fontSize))),
+          ],
+        ));
+  }
+
   Widget detailWidget(
       {required String productName,
       bool fullDetail = false,
       required bool isExtra,
-      int line = 0,
       double qty = 0,
       double price = 0.0,
       double priceOriginal = 0.0,
+      bool isActive = false,
       required double totalAmount,
       required TextStyle textStyle,
       required String barcode,
       required String unitName,
       required imageUrl}) {
+    double fontSize = (global.isDesktopScreen()) ? 16 : 12;
     String description = "";
     Widget rowSpace = const SizedBox(
       width: 4,
     );
-    List<Widget> productDetail = [];
-    if (line != 0) {
-      productDetail.add(
-        Text(line.toString(),
-            style: textStyle.copyWith(color: Colors.blue, fontSize: 10)),
-      );
-      productDetail.add(rowSpace);
-    }
-    productDetail.add(Text(productName, style: textStyle));
-    if (qty > 1) {
-      productDetail.add(rowSpace);
-      productDetail.add(Text(" X ${global.moneyFormat.format(qty)} $unitName",
-          style: textStyle.copyWith(color: Colors.red, fontSize: 12)));
-      productDetail.add(rowSpace);
-      productDetail.add(Text(
-          "${global.language("price")} $unitName ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
-          style: textStyle.copyWith(color: Colors.blue, fontSize: 12)));
-    }
-    if (fullDetail) {
-      if (price != priceOriginal) {
-        productDetail.add(rowSpace);
-        productDetail.add(Text(
-            "${global.language("original_price")}  ${global.moneyFormat.format(priceOriginal)} ${global.language("money_symbol")}/$unitName ${global.language("new_price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}/$unitName",
-            style: textStyle.copyWith(color: Colors.orange, fontSize: 10)));
-      }
-      if (barcode.isNotEmpty) {
-        productDetail.add(rowSpace);
-        productDetail.add(Text(barcode,
-            style: textStyle.copyWith(color: Colors.green, fontSize: 10)));
-      }
-    }
-    if (imageUrl != "0" && imageUrl != "" && global.isOnline) {
-      productDetail.add(rowSpace);
-      productDetail.add(Padding(
-          padding: const EdgeInsets.only(right: 5),
-          child: CachedNetworkImage(
-            width: 25,
-            height: 25,
-            fit: BoxFit.fill,
-            imageUrl: imageUrl,
-            placeholder: (context, url) => const CircularProgressIndicator(),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-          )));
-    }
 
-    return Column(children: [
-      Row(
+    if (global.isDesktopScreen()) {
+      return Row(
         children: [
           Expanded(
-            flex: 6,
-            child: Align(
-                alignment: Alignment.topLeft,
-                child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: productDetail)),
-          ),
-          const SizedBox(
-            width: 2,
-            height: 0,
-          ),
+              flex: 5,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(productName,
+                        style: textStyle.copyWith(fontSize: fontSize)),
+                    if (isActive)
+                      Text(barcode,
+                          style: textStyle.copyWith(fontSize: fontSize * 0.75)),
+                  ])),
           Expanded(
-              flex: 3,
-              child: Align(
-                  alignment: Alignment.topRight,
-                  child: (totalAmount == 0.0)
-                      ? Container()
-                      : Text(global.moneyFormat.format(totalAmount),
-                          style: textStyle))),
+              flex: 1,
+              child: Text(unitName,
+                  style: textStyle.copyWith(fontSize: fontSize))),
+          Expanded(
+              flex: 1,
+              child: Text(global.moneyFormat.format(qty),
+                  textAlign: TextAlign.right,
+                  style: textStyle.copyWith(fontSize: fontSize))),
+          Expanded(
+              flex: 1,
+              child: Text(global.moneyFormat.format(price),
+                  textAlign: TextAlign.right,
+                  style: textStyle.copyWith(fontSize: fontSize))),
+          Expanded(
+              flex: 1,
+              child: Text(global.moneyFormat.format(totalAmount),
+                  textAlign: TextAlign.right,
+                  style: textStyle.copyWith(fontSize: fontSize))),
         ],
-      ),
-      if (description.isNotEmpty)
-        SizedBox(
-            width: double.infinity,
-            child: Text(description,
-                textAlign: TextAlign.left,
-                style: const TextStyle(fontSize: 10, color: Colors.black)))
-    ]);
+      );
+    } else {
+      List<Widget> productDetail = [];
+      productDetail.add(
+          Text(productName, style: textStyle.copyWith(fontSize: fontSize)));
+      if (qty > 1) {
+        productDetail.add(rowSpace);
+        productDetail.add(Text(" X ${global.moneyFormat.format(qty)} $unitName",
+            style: textStyle.copyWith(color: Colors.red, fontSize: fontSize)));
+        productDetail.add(rowSpace);
+        productDetail.add(Text(
+            "${global.language("price")} $unitName ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
+            style: textStyle.copyWith(color: Colors.blue, fontSize: fontSize)));
+      }
+      if (fullDetail) {
+        if (price != priceOriginal) {
+          productDetail.add(rowSpace);
+          productDetail.add(Text(
+              "${global.language("original_price")}  ${global.moneyFormat.format(priceOriginal)} ${global.language("money_symbol")}/$unitName ${global.language("new_price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}/$unitName",
+              style: textStyle.copyWith(
+                  color: Colors.orange, fontSize: fontSize - 2)));
+        }
+        if (barcode.isNotEmpty) {
+          productDetail.add(rowSpace);
+          productDetail.add(Text(barcode,
+              style: textStyle.copyWith(
+                  color: Colors.green, fontSize: fontSize - 2)));
+        }
+      }
+      if (imageUrl != "0" && imageUrl != "" && global.isOnline) {
+        productDetail.add(rowSpace);
+        productDetail.add(Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: CachedNetworkImage(
+              width: 25,
+              height: 25,
+              fit: BoxFit.fill,
+              imageUrl: imageUrl,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            )));
+      }
+
+      return Column(children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Expanded(
+              flex: 6,
+              child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.end,
+                      children: productDetail)),
+            ),
+            const SizedBox(
+              width: 2,
+              height: 0,
+            ),
+            Expanded(
+                flex: 3,
+                child: Align(
+                    alignment: Alignment.topRight,
+                    child: (totalAmount == 0.0)
+                        ? Container()
+                        : Text(global.moneyFormat.format(totalAmount),
+                            style: textStyle.copyWith(fontSize: fontSize)))),
+          ],
+        ),
+        if (description.isNotEmpty)
+          SizedBox(
+              width: double.infinity,
+              child: Text(description,
+                  textAlign: TextAlign.left,
+                  style: const TextStyle(fontSize: 10, color: Colors.black)))
+      ]);
+    }
   }
 
   Widget detailRow(
       {required int index,
       required PosProcessDetailModel detail,
-      required TextStyle textStyle}) {
+      required TextStyle textStyle,
+      bool isActive = false}) {
     double extraAmount = 0.0;
     TextStyle extraTextStyle = TextStyle(
         fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
     String description =
-        "${detail.item_name}/${detail.unit_name}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
+        "${detail.item_name}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
     for (final extra in detail.extra) {
       extraAmount += extra.total_amount;
     }
 
     List<Widget> columnList = [];
     columnList.add(detailWidget(
-        line: index + 1,
+        isActive: isActive,
         fullDetail: true,
         isExtra: false,
         productName: description,
@@ -1872,14 +1953,20 @@ class _PosScreenState extends State<PosScreen>
     Widget widget = Container(
       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 4),
       width: MediaQuery.of(context).size.width,
-      child: detailRow(index: index, detail: detail, textStyle: textStyle),
+      color: (detail.is_void)
+          ? Colors.red.shade100
+          : (index == activeLineNumber)
+              ? Colors.cyan.shade100
+              : (index % 2 == 0)
+                  ? Colors.white
+                  : Colors.grey.shade100,
+      child: detailRow(
+          index: index, detail: detail, textStyle: textStyle, isActive: active),
     );
     return Material(
         color: Colors.white.withOpacity(0),
         child: (detail.is_void)
-            ? Container(
-                decoration: BoxDecoration(color: Colors.red.shade100),
-                child: widget)
+            ? widget
             : InkWell(
                 onTap: () async {
                   activeLineNumber = index;
@@ -2174,9 +2261,7 @@ class _PosScreenState extends State<PosScreen>
       width: double.infinity,
       decoration: BoxDecoration(
         border: const Border(bottom: BorderSide(color: Colors.grey, width: 1)),
-        color: (active)
-            ? global.posTheme.transSelectedBackground
-            : global.posTheme.transBackground,
+        color: Colors.cyan.shade100,
       ),
       child: (active == false || detail.is_void)
           ? detailData(
@@ -2186,12 +2271,12 @@ class _PosScreenState extends State<PosScreen>
               textStyle: textStyle)
           : Column(
               children: [
-                detailButton(
+                detailData(
                     index: index,
                     detail: detail,
                     active: active,
                     textStyle: textStyle),
-                detailData(
+                detailButton(
                     index: index,
                     detail: detail,
                     active: active,
@@ -2720,69 +2805,83 @@ class _PosScreenState extends State<PosScreen>
             context: context,
             removeTop: true,
             child: Container(
-                decoration: const BoxDecoration(
-                    border:
-                        Border(top: BorderSide(color: Colors.black, width: 1))),
-                child: (mode == 0)
-                    ? ListView(
-                        scrollDirection: Axis.vertical,
-                        controller: autoScrollController,
-                        children: <Widget>[
-                            for (int index = 0;
-                                index <
-                                    global
-                                        .posHoldProcessResult[
-                                            global.posHoldActiveNumber]
-                                        .posProcess
-                                        .details
-                                        .length;
-                                index++)
-                              AutoScrollTag(
-                                key: ValueKey(index),
-                                controller: autoScrollController,
-                                index: index,
-                                highlightColor: Colors.black.withOpacity(0.1),
-                                child: Container(
-                                  child: detail(
-                                      global
-                                          .posHoldProcessResult[
-                                              global.posHoldActiveNumber]
-                                          .posProcess
-                                          .details[index],
-                                      index),
-                                ),
-                              )
-                          ])
-                    : ListView(
-                        scrollDirection: Axis.vertical,
-                        children: <Widget>[
-                            for (int index = 0;
-                                index <
-                                    global
-                                        .posHoldProcessResult[
-                                            global.posHoldActiveNumber]
-                                        .posProcess
-                                        .details
-                                        .length;
-                                index++)
-                              Container(
-                                child: (barcode !=
-                                        global
-                                            .posHoldProcessResult[
-                                                global.posHoldActiveNumber]
-                                            .posProcess
-                                            .details[index]
-                                            .barcode)
-                                    ? Container()
-                                    : detail(
-                                        global
-                                            .posHoldProcessResult[
-                                                global.posHoldActiveNumber]
-                                            .posProcess
-                                            .details[index],
-                                        index),
-                              )
-                          ])));
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Colors.black,
+                  ),
+                ),
+                child: Column(children: [
+                  detailHeaderWidget(),
+                  Expanded(
+                      child: (mode == 0)
+                          ? ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(scrollbars: false),
+                              child: ListView(
+                                  scrollDirection: Axis.vertical,
+                                  controller: autoScrollController,
+                                  children: <Widget>[
+                                    for (int index = 0;
+                                        index <
+                                            global
+                                                .posHoldProcessResult[
+                                                    global.posHoldActiveNumber]
+                                                .posProcess
+                                                .details
+                                                .length;
+                                        index++)
+                                      AutoScrollTag(
+                                        key: ValueKey(index),
+                                        controller: autoScrollController,
+                                        index: index,
+                                        highlightColor:
+                                            Colors.black.withOpacity(0.1),
+                                        child: Container(
+                                          child: detail(
+                                              global
+                                                  .posHoldProcessResult[global
+                                                      .posHoldActiveNumber]
+                                                  .posProcess
+                                                  .details[index],
+                                              index),
+                                        ),
+                                      )
+                                  ]))
+                          : ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(scrollbars: false),
+                              child: ListView(
+                                  scrollDirection: Axis.vertical,
+                                  children: <Widget>[
+                                    for (int index = 0;
+                                        index <
+                                            global
+                                                .posHoldProcessResult[
+                                                    global.posHoldActiveNumber]
+                                                .posProcess
+                                                .details
+                                                .length;
+                                        index++)
+                                      Container(
+                                        child: (barcode !=
+                                                global
+                                                    .posHoldProcessResult[global
+                                                        .posHoldActiveNumber]
+                                                    .posProcess
+                                                    .details[index]
+                                                    .barcode)
+                                            ? Container()
+                                            : detail(
+                                                global
+                                                    .posHoldProcessResult[global
+                                                        .posHoldActiveNumber]
+                                                    .posProcess
+                                                    .details[index],
+                                                index),
+                                      )
+                                  ])))
+                ])));
   }
 
   void receiveMoneyDialog() {
