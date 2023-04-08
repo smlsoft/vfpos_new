@@ -75,6 +75,7 @@ PosHoldProcessModel _$PosHoldProcessModelFromJson(Map<String, dynamic> json) =>
     )
       ..logCount = json['logCount'] as int
       ..saleCode = json['saleCode'] as String
+      ..saleName = json['saleName'] as String
       ..customerCode = json['customerCode'] as String
       ..customerName = json['customerName'] as String
       ..customerPhone = json['customerPhone'] as String
@@ -89,6 +90,7 @@ Map<String, dynamic> _$PosHoldProcessModelToJson(
       'holdNumber': instance.holdNumber,
       'logCount': instance.logCount,
       'saleCode': instance.saleCode,
+      'saleName': instance.saleName,
       'customerCode': instance.customerCode,
       'customerName': instance.customerName,
       'customerPhone': instance.customerPhone,

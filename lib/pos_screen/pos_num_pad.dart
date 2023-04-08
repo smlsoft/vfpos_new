@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/widgets/button.dart';
 
 class PosNumPad extends StatefulWidget {
-  final Function? onChange;
+  final Function onChange;
+  final Function onSubmit;
   final String header;
   final Widget? title;
   final String? unitName;
@@ -12,27 +15,35 @@ class PosNumPad extends StatefulWidget {
       {Key? key,
       required this.onChange,
       this.title,
+      required this.onSubmit,
       this.unitName,
       this.header = ""})
       : super(key: key);
 
   @override
-  _PosNumPadState createState() => _PosNumPadState();
+  PosNumPadState createState() => PosNumPadState();
 }
 
-class _PosNumPadState extends State<PosNumPad> {
+class PosNumPadState extends State<PosNumPad> {
   String number = '';
 
-  setValue(String val) {
+  void clear() {
     setState(() {
-      number += val;
+      number = '';
     });
   }
 
-  backspace(String text) {
-    if (text.isNotEmpty) {
+  void addValue(String val) {
+    setState(() {
+      number += val;
+      widget.onChange(number);
+    });
+  }
+
+  void backspace() {
+    if (number.isNotEmpty) {
       setState(() {
-        number = text.split('').sublist(0, text.length - 1).join('');
+        number = number.split('').sublist(0, number.length - 1).join('');
       });
     }
   }
@@ -64,9 +75,20 @@ class _PosNumPadState extends State<PosNumPad> {
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
+                          ),
+                        ],
                         color: Colors.grey.shade100,
                         border: Border.all(color: Colors.blueAccent)),
-                    child: Text(number, style: const TextStyle(fontSize: 32))),
+                    child: Text(number,
+                        style: const TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.bold))),
                 Expanded(
                   child: Column(
                     children: [
@@ -78,26 +100,26 @@ class _PosNumPadState extends State<PosNumPad> {
                               flex: 1,
                               child: NumPadButton(
                                 text: '7',
-                                callBack: () => setValue('7'),
+                                callBack: () => addValue('7'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '8',
-                                callBack: () => setValue('8'),
+                                callBack: () => addValue('8'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '9',
-                                callBack: () => setValue('9'),
+                                callBack: () => addValue('9'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 color: Colors.orange,
                                 text: 'X',
-                                callBack: () => setValue('X'),
+                                callBack: () => addValue('X'),
                               )),
                         ],
                       )),
@@ -109,26 +131,26 @@ class _PosNumPadState extends State<PosNumPad> {
                               flex: 1,
                               child: NumPadButton(
                                 text: '4',
-                                callBack: () => setValue('4'),
+                                callBack: () => addValue('4'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '5',
-                                callBack: () => setValue('5'),
+                                callBack: () => addValue('5'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '6',
-                                callBack: () => setValue('6'),
+                                callBack: () => addValue('6'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 color: Colors.orange,
-                                text: '-',
-                                callBack: () => setValue('-'),
+                                icon: Icons.backspace,
+                                callBack: () => backspace(),
                               )),
                         ],
                       )),
@@ -141,26 +163,26 @@ class _PosNumPadState extends State<PosNumPad> {
                               flex: 1,
                               child: NumPadButton(
                                 text: '1',
-                                callBack: () => setValue('1'),
+                                callBack: () => addValue('1'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '2',
-                                callBack: () => setValue('2'),
+                                callBack: () => addValue('2'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '3',
-                                callBack: () => setValue('3'),
+                                callBack: () => addValue('3'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 color: Colors.orange,
-                                text: '+',
-                                callBack: () => setValue('+'),
+                                text: 'C',
+                                callBack: () => clear(),
                               )),
                         ],
                       )),
@@ -173,45 +195,25 @@ class _PosNumPadState extends State<PosNumPad> {
                               flex: 2,
                               child: NumPadButton(
                                 text: '0',
-                                callBack: () => setValue('0'),
+                                callBack: () => addValue('0'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 text: '.',
-                                callBack: () => setValue('.'),
+                                callBack: () => addValue('.'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
                                 color: Colors.orange,
-                                text: '=',
-                                callBack: () => setValue('='),
-                              )),
-                        ],
-                      )),
-                      Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: global.language('clear'),
-                                color: Colors.red,
+                                text: 'OK',
                                 callBack: () {
+                                  widget.onSubmit(number);
                                   setState(() {
                                     number = '';
                                   });
                                 },
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                icon: Icons.backspace,
-                                color: Colors.orange,
-                                callBack: () => backspace(number),
                               )),
                         ],
                       )),

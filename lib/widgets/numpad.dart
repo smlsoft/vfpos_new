@@ -54,11 +54,19 @@ class _NumberPadState extends State<NumberPad> {
                           left: 4, right: 4, top: 10, bottom: 10),
                       child: widget.title),
                 Container(
-                    margin:
-                        const EdgeInsets.only(left: 4, right: 4, bottom: 10),
+                    margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
                     padding: const EdgeInsets.all(4),
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
                         border: Border.all(color: Colors.blueAccent)),
                     child:
                         Text(numberStr, style: const TextStyle(fontSize: 32))),

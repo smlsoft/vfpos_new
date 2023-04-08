@@ -106,6 +106,7 @@ class PosHoldProcessModel {
   int holdNumber;
   int logCount = 0;
   String saleCode = "";
+  String saleName = "";
   String customerCode = "";
   String customerName = "";
   String customerPhone = "";

@@ -84,7 +84,7 @@ PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
 int syncTimeIntervalMaxBySecond = 10;
 int syncTimeIntervalSecond = 1;
-final moneyFormat = NumberFormat("##,##0.00");
+final moneyFormat = NumberFormat("##,##0.##");
 final qtyShortFormat = NumberFormat("##,##0");
 String objectBoxDatabaseName = "smlposmobile.db";
 String deviceName = "POS01";
@@ -115,10 +115,6 @@ double payScreenNumberPadAmount = 0;
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
     PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-late String saleActiveCode;
-late String saleActiveName;
-late String customerActiveCode;
-late String customerActiveName;
 String userLanguage = "";
 String userLoginCode = "001";
 String userLoginName = "สมชาย";
@@ -176,6 +172,7 @@ Function? functionPosScreenRefresh;
 DeviceModeEnum deviceMode = DeviceModeEnum.none;
 PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
+PosScreenStyleEnum posScreenStyle = PosScreenStyleEnum.desktop;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -184,6 +181,8 @@ enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sumi1 }
 enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
+
+enum PosScreenStyleEnum { tablet, desktop }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -903,7 +902,7 @@ Future<void> loading() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path,

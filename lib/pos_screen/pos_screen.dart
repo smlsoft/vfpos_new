@@ -9,6 +9,7 @@ import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fullscreen/fullscreen.dart';
 import 'package:get/state_manager.dart';
+import 'package:get/utils.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:split_view/split_view.dart';
 import 'dart:developer' as dev;
@@ -86,6 +87,7 @@ class _PosScreenState extends State<PosScreen>
   late bool isVisible;
   //late QRViewController _scanController;
   late AutoScrollController autoScrollController;
+  FocusNode mainFocusNode = FocusNode();
   final String barcodeScanResult = "";
   bool _barcodeScanActive = true;
   String textInput = "";
@@ -114,8 +116,11 @@ class _PosScreenState extends State<PosScreen>
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? scanController;
   int splitViewMode = 1;
-  double gridItemSize = 150;
+  double gridItemSize = 1;
   String findActiveLineByGuid = "";
+  late PosNumPad desktopNumPad;
+  GlobalKey<PosNumPadState> posNumPadGlobalKey = GlobalKey();
+  List<Widget> widgetMessage = [];
 
   void refresh(int holdNumber) {
     processEventRefresh(holdNumber);
@@ -167,10 +172,6 @@ class _PosScreenState extends State<PosScreen>
     dev.log("initState PosScreen 1");
     checkOnline();
     dev.log("initState PosScreen 2");
-    global.saleActiveName = "";
-    global.saleActiveCode = "";
-    global.customerActiveName = "";
-    global.customerActiveCode = "";
     // เรียกรายการประกอบการขายจาก Hold
     global.payScreenData =
         global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
@@ -222,6 +223,30 @@ class _PosScreenState extends State<PosScreen>
     Timer(const Duration(seconds: 1), () async {
       await getProcessFromTerminal();
     });
+    desktopNumPad = PosNumPad(
+      key: posNumPadGlobalKey,
+      onChange: (String number) {
+        setState(() {
+          textInput = number;
+        });
+      },
+      onSubmit: (String number) {
+        onSubmit(number);
+      },
+    );
+  }
+
+  void onSubmit(String number) {
+    String qty = "1.0";
+
+    if (number.trim().isNotEmpty) {
+      if (number.indexOf("X") > 0) {
+        List<String> numberList = number.split("X");
+        qty = numberList[0].trim();
+        number = numberList[1].trim();
+      }
+      logInsert(commandCode: 1, barcode: number, qty: qty);
+    }
   }
 
   Future<void> getProcessFromTerminal() async {
@@ -364,6 +389,7 @@ class _PosScreenState extends State<PosScreen>
     if (closeExtra) {
       //selectProductExtraList.clear();
     }
+    posNumPadGlobalKey.currentState?.clear();
     if (qty.isNotEmpty) {
       qtyForCalc = global.calcTextToNumber(qty);
     }
@@ -405,6 +431,7 @@ class _PosScreenState extends State<PosScreen>
             productNameStr = productSelect.names[0];
             unitCodeStr = productSelect.unit_code;
             unitNameStr = productSelect.unit_names[0];
+            double price = double.tryParse(productSelect.prices[0]) ?? 0.0;
             PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
                 log_date_time: DateTime.now(),
                 hold_number: global.posHoldActiveNumber,
@@ -414,16 +441,42 @@ class _PosScreenState extends State<PosScreen>
                 unit_code: unitCodeStr,
                 unit_name: unitNameStr,
                 qty: qtyForCalc,
-                price: double.tryParse(productSelect.prices[0]) ?? 0.0);
+                price: price);
             findActiveLineByGuid = data.guid_auto_fixed;
             await logHelper.insert(data);
             global.playSound(
                 sound: global.SoundEnum.beep, word: productNameStr);
+            widgetMessage = [
+              Text(productNameStr,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(
+                  "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} $unitNameStr",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green)),
+              Text(
+                  "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language(global.language("money_symbol"))}",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue)),
+              Text("Barcode : $barcode",
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey)),
+            ];
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                backgroundColor: Colors.red,
-                content:
-                    Text("$barcode : ${global.language("item_not_found")}")));
+            widgetMessage = [
+              Center(
+                  child: Text("${global.language("item_not_found")} $barcode",
+                      style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red))),
+            ];
             global.playSound(
                 sound: global.SoundEnum.fail,
                 word: global.language("item_not_found"));
@@ -976,6 +1029,7 @@ class _PosScreenState extends State<PosScreen>
 
   Widget productLevelLabelWidget({
     required String name,
+    String imageUrl = "",
     String unitName = "",
     double price = 0,
     bool withOpacity = true,
@@ -986,53 +1040,79 @@ class _PosScreenState extends State<PosScreen>
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Expanded(
-          child: Container(),
+          child: (imageUrl.trim().isNotEmpty)
+              ? Center(
+                  child: Image(
+                      image: CachedNetworkImageProvider(
+                  imageUrl,
+                )))
+              : Container(),
         ),
         Container(
           width: double.infinity,
           decoration: (withOpacity)
-              ? BoxDecoration(
-                  color: Colors.grey.shade300.withOpacity(0.75),
-                  borderRadius: const BorderRadius.all(Radius.circular(4)))
+              ? const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(4)))
               : const BoxDecoration(),
           child: Padding(
             padding: const EdgeInsets.all(4),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                FittedBox(
-                    fit: BoxFit.fill,
-                    child: Text(
-                      "$price/$unitName",
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Colors.indigo[900],
-                        fontWeight: FontWeight.bold,
-                        shadows: const [
-                          Shadow(offset: Offset(-1, -1), color: Colors.white),
-                          Shadow(offset: Offset(1, -1), color: Colors.white),
-                          Shadow(offset: Offset(1, 1), color: Colors.white),
-                          Shadow(offset: Offset(-1, 1), color: Colors.white),
-                        ],
-                      ),
-                    )),
                 Text(
                   name,
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: fontSize - 2.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    shadows: const [
-                      Shadow(offset: Offset(-1, -1), color: Colors.white),
-                      Shadow(offset: Offset(1, -1), color: Colors.white),
-                      Shadow(offset: Offset(1, 1), color: Colors.white),
-                      Shadow(offset: Offset(-1, 1), color: Colors.white),
-                    ],
                   ),
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+                  maxLines: 3,
                 ),
+                SizedBox(
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                            child: Text(
+                          unitName,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            color: Colors.indigo[900],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                        Positioned(
+                          right: 0,
+                          child: Container(
+                              color: Colors.white,
+                              child: Text(global.moneyFormat.format(price),
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                    fontSize: fontSize + 2,
+                                    color: Colors.indigo[900],
+                                    fontWeight: FontWeight.bold,
+                                    shadows: const [
+                                      Shadow(
+                                          offset: Offset(-0.5, -0.5),
+                                          color: Colors.grey),
+                                      Shadow(
+                                          offset: Offset(0.5, -0.5),
+                                          color: Colors.grey),
+                                      Shadow(
+                                          offset: Offset(0.5, 0.5),
+                                          color: Colors.grey),
+                                      Shadow(
+                                          offset: Offset(-0.5, 0.5),
+                                          color: Colors.grey),
+                                    ],
+                                  ))),
+                        )
+                      ],
+                    )),
               ],
             ),
           ),
@@ -1042,21 +1122,12 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget productLevelWidget(ProductBarcodeObjectBoxStruct product) {
-    BoxDecoration boxDecoration = (product.image_or_color)
-        ? ((product.images_url.isNotEmpty))
-            ? BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: CachedNetworkImageProvider(
-                    product.images_url,
-                  ),
-                ),
-              )
-            : const BoxDecoration()
-        : BoxDecoration(
+    BoxDecoration boxDecoration = (product.image_or_color == false)
+        ? BoxDecoration(
             color: global
                 .colorFromHex(product.color_select_hex.replaceAll("#", "")),
-          );
+          )
+        : const BoxDecoration();
 
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -1080,6 +1151,7 @@ class _PosScreenState extends State<PosScreen>
             width: double.infinity,
             decoration: boxDecoration,
             child: productLevelLabelWidget(
+                imageUrl: product.images_url,
                 name: product.names[0],
                 unitName: product.unit_names[0],
                 price: (product.prices.isEmpty)
@@ -1087,74 +1159,65 @@ class _PosScreenState extends State<PosScreen>
                     : double.tryParse(product.prices[0]) ?? 0.0),
           ),
           if (product.product_count != 0)
-            Stack(
-              children: [
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: InkWell(
-                    onTap: () {
-                      //selectProductExtraList.clear();
-                      displayDetailByBarcode = false;
-                      for (int index = 0;
-                          index <
-                                  global
-                                      .posHoldProcessResult[
-                                          global.posHoldActiveNumber]
-                                      .posProcess
-                                      .details
-                                      .length &&
-                              displayDetailByBarcode == false;
-                          index++) {
-                        if (product.barcode ==
-                            global
-                                .posHoldProcessResult[
-                                    global.posHoldActiveNumber]
-                                .posProcess
-                                .details[index]
-                                .barcode) {
-                          displayDetailByBarcode = true;
-                          activeLineNumber = index;
-                          findActiveLineByGuid = global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .details[index]
-                              .guid;
-                        }
-                      }
-                      setState(() {});
-                      autoScrollController.scrollToIndex(
-                          (activeLineNumber < 0) ? 0 : activeLineNumber,
-                          preferPosition: AutoScrollPosition.begin);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        margin: const EdgeInsets.all(2),
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: FittedBox(
-                          child: Text(
-                            global.formatDoubleTrailingZero(
-                                product.product_count),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: InkWell(
+                onTap: () {
+                  //selectProductExtraList.clear();
+                  displayDetailByBarcode = false;
+                  for (int index = 0;
+                      index <
+                              global
+                                  .posHoldProcessResult[
+                                      global.posHoldActiveNumber]
+                                  .posProcess
+                                  .details
+                                  .length &&
+                          displayDetailByBarcode == false;
+                      index++) {
+                    if (product.barcode ==
+                        global.posHoldProcessResult[global.posHoldActiveNumber]
+                            .posProcess.details[index].barcode) {
+                      displayDetailByBarcode = true;
+                      activeLineNumber = index;
+                      findActiveLineByGuid = global
+                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posProcess
+                          .details[index]
+                          .guid;
+                    }
+                  }
+                  setState(() {});
+                  autoScrollController.scrollToIndex(
+                      (activeLineNumber < 0) ? 0 : activeLineNumber,
+                      preferPosition: AutoScrollPosition.begin);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    margin: const EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: FittedBox(
+                      child: Text(
+                        global.formatDoubleTrailingZero(product.product_count),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
         ],
       ),
@@ -1162,7 +1225,9 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget selectProductLevelListScreenWidget(BoxConstraints constraints) {
-    double menuMinWidth = gridItemSize;
+    double menuMinWidth = (global.isWideScreen())
+        ? (gridItemSize * 25) + 80
+        : (gridItemSize * 50) + 50;
     int widgetPerLine =
         int.parse((constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
     return (global.productListByCategory.isEmpty)
@@ -1363,8 +1428,8 @@ class _PosScreenState extends State<PosScreen>
       ProductCategoryObjectBoxStruct value, double boxSize, bool append) {
     double round = 5;
     return SizedBox(
-        width: 80,
-        height: 80,
+        width: (global.isWideScreen()) ? 80 : 50,
+        height: (global.isWideScreen()) ? 80 : 50,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(0),
@@ -3090,8 +3155,10 @@ class _PosScreenState extends State<PosScreen>
           type: PageTransitionType.rightToLeft, child: const FindEmployee()),
     ).then((value) {
       setState(() {
-        global.saleActiveCode = value[0];
-        global.saleActiveName = value[1];
+        global.posHoldProcessResult[global.posHoldActiveNumber].saleCode =
+            value[0];
+        global.posHoldProcessResult[global.posHoldActiveNumber].saleName =
+            value[1];
       });
     });
   }
@@ -3285,9 +3352,33 @@ class _PosScreenState extends State<PosScreen>
                     child: const FaIcon(FontAwesomeIcons.searchengin),
                     onPressed: () {
                       setState(() {
-                        gridItemSize += 20;
-                        if (gridItemSize > 250) {
-                          gridItemSize = 100;
+                        gridItemSize += 1;
+                        if (gridItemSize > 6) {
+                          gridItemSize = 1;
+                        }
+                      });
+                    }),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor:
+                          (showNumericPad) ? Colors.amber : Colors.white,
+                      backgroundColor: Colors.black,
+                    ),
+                    child: (global.posScreenStyle ==
+                            global.PosScreenStyleEnum.desktop)
+                        ? const Icon(Icons.tablet)
+                        : const FaIcon(FontAwesomeIcons.desktop),
+                    onPressed: () {
+                      setState(() {
+                        if (global.posScreenStyle ==
+                            global.PosScreenStyleEnum.tablet) {
+                          global.posScreenStyle =
+                              global.PosScreenStyleEnum.desktop;
+                        } else {
+                          global.posScreenStyle =
+                              global.PosScreenStyleEnum.tablet;
                         }
                       });
                     }),
@@ -3333,6 +3424,22 @@ class _PosScreenState extends State<PosScreen>
               onPressed: () {
                 setState(() {
                   showButtonMenu = !showButtonMenu;
+                });
+              }),
+        ),
+        Expanded(
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: (showNumericPad) ? Colors.amber : Colors.white,
+                backgroundColor: Colors.black,
+              ),
+              child: const FaIcon(FontAwesomeIcons.searchengin),
+              onPressed: () {
+                setState(() {
+                  gridItemSize += 1;
+                  if (gridItemSize > 3) {
+                    gridItemSize = 1;
+                  }
                 });
               }),
         ),
@@ -3409,7 +3516,8 @@ class _PosScreenState extends State<PosScreen>
                   borderRadius: BorderRadius.circular(2),
                   border: Border.all(width: 0, color: Colors.blue)),
               child: Column(children: [
-                if (global.customerActiveCode.isNotEmpty)
+                if (global.posHoldProcessResult[global.posHoldActiveNumber]
+                    .customerCode.isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
@@ -3420,7 +3528,7 @@ class _PosScreenState extends State<PosScreen>
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        "${global.customerActiveName} (${global.customerActiveCode})",
+                        "${global.posHoldProcessResult[global.posHoldActiveNumber].customerName} (${global.posHoldProcessResult[global.posHoldActiveNumber].customerCode})",
                         style: const TextStyle(
                             fontSize: 20,
                             color: Colors.black,
@@ -3431,13 +3539,20 @@ class _PosScreenState extends State<PosScreen>
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          global.saleActiveCode = "";
-                          global.saleActiveName = "";
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleCode = "";
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleName = "";
                         });
                       },
                     )
                   ]),
-                if (global.saleActiveCode.trim().isNotEmpty)
+                if (global
+                    .posHoldProcessResult[global.posHoldActiveNumber].saleCode
+                    .trim()
+                    .isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
@@ -3448,7 +3563,7 @@ class _PosScreenState extends State<PosScreen>
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        "${global.saleActiveName} (${global.saleActiveCode})",
+                        "${global.posHoldProcessResult[global.posHoldActiveNumber].saleName} (${global.posHoldProcessResult[global.posHoldActiveNumber].saleCode})",
                         style: const TextStyle(
                             fontSize: 14,
                             color: Colors.black,
@@ -3461,8 +3576,12 @@ class _PosScreenState extends State<PosScreen>
                       constraints: const BoxConstraints(),
                       onPressed: () {
                         setState(() {
-                          global.saleActiveCode = "";
-                          global.saleActiveName = "";
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleCode = "";
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleName = "";
                         });
                       },
                     )
@@ -3555,23 +3674,19 @@ class _PosScreenState extends State<PosScreen>
                             children: [
                               Container(
                                   color: Colors.blue,
-                                  child: TabBar(
+                                  child: const TabBar(
                                     tabs: [
                                       Tab(
-                                        icon: const Icon(Icons.list),
-                                        text: global.language('list'),
+                                        icon: Icon(Icons.list),
                                       ),
                                       Tab(
-                                        icon: const Icon(Icons.group_work),
-                                        text: global.language('group'),
+                                        icon: Icon(Icons.group_work),
                                       ),
                                       Tab(
-                                        icon: const Icon(Icons.search),
-                                        text: global.language('search'),
+                                        icon: Icon(Icons.search),
                                       ),
                                       Tab(
-                                        icon: const Icon(Icons.menu),
-                                        text: global.language('menu'),
+                                        icon: Icon(Icons.menu),
                                       ),
                                     ],
                                   )),
@@ -3595,10 +3710,232 @@ class _PosScreenState extends State<PosScreen>
             })));
   }
 
+  Widget posLayoutDesktop() {
+    Size size = MediaQuery.of(context).size;
+    Widget selectProduct = Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        border: Border.all(
+          width: 0,
+          color: Colors.grey.shade200,
+        ),
+      ),
+      child: Column(children: [
+        Expanded(
+            child: Row(children: [
+          Expanded(child: transScreen(mode: 0)),
+          if (productOptions.isNotEmpty) selectProductExtraListWidget()
+        ])),
+      ]),
+    );
+    Widget screenSale = Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(left: 4, right: 4),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0, color: Colors.white),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(left: 8, right: 4),
+              decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(2),
+                  border: Border.all(width: 0, color: Colors.blue)),
+              child: Column(children: [
+                if (global.posHoldProcessResult[global.posHoldActiveNumber]
+                    .customerCode.isNotEmpty)
+                  Row(children: [
+                    Expanded(
+                        child: Row(children: [
+                      Text(
+                        '${global.language('ลูกค้า')} :',
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "${global.posHoldProcessResult[global.posHoldActiveNumber].customerName} (${global.posHoldProcessResult[global.posHoldActiveNumber].customerCode})",
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ])),
+                    IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleCode = "";
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleName = "";
+                        });
+                      },
+                    )
+                  ]),
+                if (global
+                    .posHoldProcessResult[global.posHoldActiveNumber].saleCode
+                    .trim()
+                    .isNotEmpty)
+                  Row(children: [
+                    Expanded(
+                        child: Row(children: [
+                      Text(
+                        '${global.language('sale')} : ',
+                        style:
+                            const TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "${global.posHoldProcessResult[global.posHoldActiveNumber].saleName} (${global.posHoldProcessResult[global.posHoldActiveNumber].saleCode})",
+                        style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ])),
+                    IconButton(
+                      icon: const Icon(Icons.clear),
+                      padding: const EdgeInsets.all(2),
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        setState(() {
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleCode = "";
+                          global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .saleName = "";
+                        });
+                      },
+                    )
+                  ]),
+              ])),
+          Expanded(
+            child: Column(children: [
+              Container(
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
+                width: double.infinity,
+                height: 150,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(2),
+                    border: Border.all(width: 0, color: Colors.blue),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 5.0,
+                      ),
+                    ]),
+                child: Wrap(
+                    alignment: WrapAlignment.start,
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: widgetMessage),
+              ),
+              Expanded(child: desktopNumPad),
+            ]),
+          ),
+          posLayoutBottom(),
+        ],
+      ),
+    );
+
+    return SafeArea(
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: RawKeyboardListener(
+              autofocus: true,
+              includeSemantics: true,
+              focusNode: mainFocusNode,
+              onKey: (RawKeyEvent key) {
+                if (key.runtimeType.toString() == 'RawKeyDownEvent') {
+                  String keyLabel = key.logicalKey.keyLabel.toUpperCase();
+                  if (keyLabel == "BACKSPACE") {
+                    if (posNumPadGlobalKey.currentState != null) {
+                      posNumPadGlobalKey.currentState!.backspace();
+                    }
+                  }
+                  if (keyLabel.contains("NUMPAD") ||
+                      keyLabel.contains("MULTIPLY")) {
+                    keyLabel =
+                        keyLabel.removeAllWhitespace.replaceAll("NUMPAD", "");
+                    if (keyLabel.contains("DECIMAL")) {
+                      keyLabel = ".";
+                    }
+                    if (keyLabel == "MULTIPLY") {
+                      keyLabel = "*";
+                    }
+                    if ("01234567890*.".contains(keyLabel)) {
+                      posNumPadGlobalKey.currentState?.addValue(keyLabel);
+                    }
+                  }
+                }
+              },
+              child: Stack(children: [
+                Container(
+                    color: Colors.white,
+                    width: size.width,
+                    child: SplitView(
+                      gripColor: Colors.blueGrey.shade100,
+                      controller: splitViewController,
+                      //onWeightChanged: (w) => print("Horizontal $w"),
+                      indicator: const SplitIndicator(
+                          viewMode: SplitViewMode.Horizontal),
+                      viewMode: SplitViewMode.Horizontal,
+                      activeIndicator: const SplitIndicator(
+                        viewMode: SplitViewMode.Horizontal,
+                        isActive: true,
+                      ),
+                      children: (splitViewMode == 1)
+                          ? [
+                              selectProduct,
+                              screenSale,
+                            ]
+                          : [
+                              screenSale,
+                              selectProduct,
+                            ],
+                    )),
+                if (showNumericPad)
+                  Positioned(
+                      left: showNumericPadLeft,
+                      top: showNumericPadTop,
+                      child: LongPressDraggable(
+                        feedback: SizedBox(
+                          width: 250,
+                          height: 310,
+                          child: Center(child: numericPadWidget()),
+                        ),
+                        childWhenDragging: Container(),
+                        onDraggableCanceled:
+                            (Velocity velocity, Offset offset) {
+                          setState(() {
+                            showNumericPadLeft = offset.dx;
+                            showNumericPadTop = offset.dy;
+                          });
+                        },
+                        child: SizedBox(
+                            width: 250, height: 310, child: numericPadWidget()),
+                      )),
+              ]),
+            )));
+  }
+
   Widget appLayoutPos() {
-    return (global.isWideScreen())
-        ? posLayoutWideScreen()
-        : posLayoutPhoneScreen();
+    return (global.isWideScreen() &&
+            global.posScreenStyle == global.PosScreenStyleEnum.desktop)
+        ? posLayoutDesktop()
+        : (global.isWideScreen())
+            ? posLayoutWideScreen()
+            : posLayoutPhoneScreen();
   }
 
   Widget appLayoutRestaurant() {
@@ -3801,6 +4138,12 @@ class _PosScreenState extends State<PosScreen>
                 useKeyDownEvent: true,
                 bufferDuration: const Duration(milliseconds: 200),
                 onBarcodeScanned: (barcode) async {
+                  if (barcode.trim().isEmpty) {
+                    if (posNumPadGlobalKey.currentState != null) {
+                      barcode = posNumPadGlobalKey.currentState!.number;
+                      posNumPadGlobalKey.currentState!.clear();
+                    }
+                  }
                   print('------------------------ Scan Barcode : $barcode');
                   if (!isVisible || _barcodeScanActive == false) return;
                   logInsert(

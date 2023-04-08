@@ -23,11 +23,15 @@ Future<String> saveBill(
   global.billHelper.insert(BillObjectBoxStruct(
       date_time: DateTime.now(),
       doc_number: docNumber,
-      customer_code: global.customerActiveCode,
-      customer_name: global.customerActiveName,
+      customer_code:
+          global.posHoldProcessResult[global.posHoldActiveNumber].customerCode,
+      customer_name:
+          global.posHoldProcessResult[global.posHoldActiveNumber].customerName,
       customer_telephone: "",
-      sale_code: global.saleActiveCode,
-      sale_name: global.saleActiveName,
+      sale_code:
+          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode,
+      sale_name:
+          global.posHoldProcessResult[global.posHoldActiveNumber].saleName,
       total_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
           .posProcess.total_amount,
       cashier_code: global.userLoginCode,
