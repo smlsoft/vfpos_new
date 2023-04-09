@@ -11,14 +11,23 @@ import 'package:dedepos/model/system/pos_pay_model.dart';
 class PayCashWidget extends StatefulWidget {
   final BuildContext blocContext;
 
-  PayCashWidget({required this.blocContext});
-  _PayCashWidgetState createState() => _PayCashWidgetState();
+  const PayCashWidget({super.key, required this.blocContext});
+
+  PayCashWidgetState createState() => PayCashWidgetState();
 }
 
-class _PayCashWidgetState extends State<PayCashWidget> {
+class PayCashWidgetState extends State<PayCashWidget> {
+  double diffAmount = 0;
+
   @override
   void initState() {
     super.initState();
+  }
+
+  void setPayAmount(double payAmount) {
+    setState(() {
+      diffAmount = payAmount + global.payScreenData.cash_amount;
+    });
   }
 
   void refreshEvent() {
@@ -217,37 +226,93 @@ class _PayCashWidgetState extends State<PayCashWidget> {
           Padding(
               padding:
                   const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
-              child: Container(
-                height: 120,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    color: Colors.white70,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                          offset: const Offset(0, 2),
-                          color: Colors.blueGrey.shade200,
-                          spreadRadius: 4,
-                          blurRadius: 4)
-                    ]),
-                padding: const EdgeInsets.only(right: 15),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                      global.moneyFormat
-                          .format(global.payScreenData.cash_amount),
-                      style: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 60,
-                          fontWeight: FontWeight.bold,
-                          shadows: [
-                            Shadow(offset: Offset(-1, -1), color: Colors.white),
-                            Shadow(offset: Offset(1, -1), color: Colors.white),
-                            Shadow(offset: Offset(1, 1), color: Colors.white),
-                            Shadow(offset: Offset(-1, 1), color: Colors.white),
-                          ])),
+              child: Row(children: [
+                Container(
+                  height: 100,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                            offset: const Offset(0, 2),
+                            color: Colors.blueGrey.shade200,
+                            spreadRadius: 4,
+                            blurRadius: 4)
+                      ]),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () {
+                      global.payScreenData.cash_amount = diffAmount;
+                      global.payScreenData.cash_amount_text = "";
+                      refreshEvent();
+                    },
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: FittedBox(
+                            fit: BoxFit.fill,
+                            child: Text(
+                              global.moneyFormat.format(diffAmount),
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                        offset: Offset(-0.25, -0.25),
+                                        color: Colors.white),
+                                    Shadow(
+                                        offset: Offset(0.25, -0.25),
+                                        color: Colors.white),
+                                    Shadow(
+                                        offset: Offset(0.25, 0.25),
+                                        color: Colors.white),
+                                    Shadow(
+                                        offset: Offset(-0.25, 0.25),
+                                        color: Colors.white),
+                                  ]),
+                            ))),
+                  ),
                 ),
-              )),
+                const SizedBox(width: 8),
+                Expanded(
+                    child: Container(
+                  height: 100,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                            offset: const Offset(0, 2),
+                            color: Colors.blueGrey.shade200,
+                            spreadRadius: 4,
+                            blurRadius: 4)
+                      ]),
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                        global.moneyFormat
+                            .format(global.payScreenData.cash_amount),
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 60,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                  offset: Offset(-1, -1), color: Colors.white),
+                              Shadow(
+                                  offset: Offset(1, -1), color: Colors.white),
+                              Shadow(offset: Offset(1, 1), color: Colors.white),
+                              Shadow(
+                                  offset: Offset(-1, 1), color: Colors.white),
+                            ])),
+                  ),
+                ))
+              ])),
           Expanded(
             child: Column(
               children: [

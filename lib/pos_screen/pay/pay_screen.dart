@@ -48,8 +48,11 @@ import '../pos_util.dart' as posUtil;
 
 class PayScreen extends StatefulWidget {
   final PosProcessModel posProcess;
+  final int defaultTabIndex;
 
-  const PayScreen({Key? key, required this.posProcess}) : super(key: key);
+  const PayScreen(
+      {Key? key, required this.posProcess, required this.defaultTabIndex})
+      : super(key: key);
 
   @override
   _PayScreenState createState() => _PayScreenState();
@@ -60,6 +63,8 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
   late TabController tabBarMenuController;
   double sumTotalPayAmount = 0;
   double diffAmount = 0;
+  GlobalKey<PayCashWidgetState> posPayCashGlobalKey = GlobalKey();
+  GlobalKey<PayQrWidgetState> posQrGlobalKey = GlobalKey();
 
   @override
   void initState() {
@@ -77,6 +82,14 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       });
     });
     sendPayScreenCommandToCustomerDisplay();
+    tabBarMenuController.index = widget.defaultTabIndex;
+    Timer(const Duration(milliseconds: 200), () {
+      reCalc();
+      if (widget.defaultTabIndex == 2) {
+        posQrGlobalKey.currentState!.promptPay(
+            amount: diffAmount, provider: global.qrPaymentProviderList[0]);
+      }
+    });
   }
 
   @override
@@ -483,6 +496,9 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
         sumQr() +
         global.payScreenData.discount_amount;
     diffAmount = widget.posProcess.total_amount - sumTotalPayAmount;
+    if (posPayCashGlobalKey.currentState != null) {
+      posPayCashGlobalKey.currentState!.setPayAmount(diffAmount);
+    }
   }
 
   void payProcessSave() async {
@@ -903,8 +919,8 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                           child: ElevatedButton(
                             style: OutlinedButton.styleFrom(
                               minimumSize: (global.isWideScreen())
-                                  ? Size(0, 60)
-                                  : Size(0, 30),
+                                  ? const Size(0, 60)
+                                  : const Size(0, 30),
                               padding: EdgeInsets.zero,
                               backgroundColor: Colors.red,
                             ),
@@ -929,8 +945,8 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                           child: ElevatedButton(
                             style: OutlinedButton.styleFrom(
                               minimumSize: (global.isWideScreen())
-                                  ? Size(0, 60)
-                                  : Size(0, 30),
+                                  ? const Size(0, 60)
+                                  : const Size(0, 30),
                               padding: EdgeInsets.zero,
                               backgroundColor: Colors.green,
                             ),
@@ -938,64 +954,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                               payProcessSave();
                             },
                             child: Text(
-                              global.language("pay_cash"),
-                              style: TextStyle(
-                                fontSize: (global.isWideScreen()) ? 20.0 : 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    (global.isWideScreen())
-                        ? const SizedBox(
-                            width: 10,
-                            height: 10,
-                          )
-                        : Container(),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: (global.isWideScreen())
-                                  ? Size(0, 60)
-                                  : Size(0, 30),
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Colors.green,
-                            ),
-                            onPressed: () async {
-                              global.sendProcessToCustomerDisplay();
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              global.language("pay_credit_card"),
-                              style: TextStyle(
-                                fontSize: (global.isWideScreen()) ? 20.0 : 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: (global.isWideScreen()) ? 10 : 5,
-                          height: (global.isWideScreen()) ? 10 : 5,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: (global.isWideScreen())
-                                  ? Size(0, 60)
-                                  : Size(0, 30),
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Colors.green,
-                            ),
-                            onPressed: () async {
-                              payProcessSave();
-                            },
-                            child: Text(
-                              global.language("pay_qr_code"),
+                              global.language("pay"),
                               style: TextStyle(
                                 fontSize: (global.isWideScreen()) ? 20.0 : 12,
                               ),
@@ -1028,7 +987,10 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
     {
       tabBarList
           .add(Text(global.language('cash'), textAlign: TextAlign.center));
-      tabViewList.add(PayCashWidget(blocContext: blocContext));
+      tabViewList.add(PayCashWidget(
+        blocContext: blocContext,
+        key: posPayCashGlobalKey,
+      ));
     }
     {
       tabBarList
@@ -1039,8 +1001,10 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
     {
       tabBarList
           .add(Text(global.language('qr_code'), textAlign: TextAlign.center));
-      tabViewList.add(
-          PayQrWidget(posProcess: widget.posProcess, blocContext: blocContext));
+      tabViewList.add(PayQrWidget(
+          key: posQrGlobalKey,
+          posProcess: widget.posProcess,
+          blocContext: blocContext));
     }
     {
       tabBarList.add(
@@ -1363,7 +1327,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(4),
                   child: Column(children: <Widget>[
                     paySummeryScreen(),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Expanded(child: payDetailScreen(blocContext)),
                   ])),
         ),

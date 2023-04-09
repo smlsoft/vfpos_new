@@ -121,6 +121,11 @@ class _PosScreenState extends State<PosScreen>
   late PosNumPad desktopNumPad;
   GlobalKey<PosNumPadState> posNumPadGlobalKey = GlobalKey();
   List<Widget> widgetMessage = [];
+  String widgetMessageImageUrl = "";
+  double listTextHeight = 1;
+
+  /// 0=Number,1=ค้นหาสินค้า,2=หมวดสินค้า,3=ค้นหาลูกค้า
+  int desktopWidgetMode = 0;
 
   void refresh(int holdNumber) {
     processEventRefresh(holdNumber);
@@ -168,7 +173,6 @@ class _PosScreenState extends State<PosScreen>
     context
         .read<ProductCategoryBloc>()
         .add(ProductCategoryLoadStart(parentCategoryGuid: ''));
-
     dev.log("initState PosScreen 1");
     checkOnline();
     dev.log("initState PosScreen 2");
@@ -448,26 +452,38 @@ class _PosScreenState extends State<PosScreen>
                 sound: global.SoundEnum.beep, word: productNameStr);
             widgetMessage = [
               Text(productNameStr,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.bold)),
               Text(
+                  overflow: TextOverflow.ellipsis,
                   "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} $unitNameStr",
                   style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.green)),
               Text(
+                  overflow: TextOverflow.ellipsis,
                   "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language(global.language("money_symbol"))}",
                   style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.cyan)),
+              Text(
+                  overflow: TextOverflow.ellipsis,
+                  "${global.language("total")} ${global.moneyFormat.format(qtyForCalc * price)} ${global.language(global.language("money_symbol"))}",
+                  style: const TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.blue)),
               Text("Barcode : $barcode",
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey)),
             ];
+            widgetMessageImageUrl = productSelect.images_url;
           } else {
             widgetMessage = [
               Center(
@@ -477,6 +493,7 @@ class _PosScreenState extends State<PosScreen>
                           fontWeight: FontWeight.bold,
                           color: Colors.red))),
             ];
+            widgetMessageImageUrl = "";
             global.playSound(
                 sound: global.SoundEnum.fail,
                 word: global.language("item_not_found"));
@@ -773,7 +790,7 @@ class _PosScreenState extends State<PosScreen>
                                 },
                                 child: const Icon(Icons.add)))),
                     Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: Align(
                             alignment: Alignment.center,
                             child: ElevatedButton(
@@ -1034,7 +1051,7 @@ class _PosScreenState extends State<PosScreen>
     double price = 0,
     bool withOpacity = true,
   }) {
-    double fontSize = 16.0;
+    double fontSize = 14.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -1064,8 +1081,7 @@ class _PosScreenState extends State<PosScreen>
                   name,
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                    fontSize: fontSize - 2.0,
-                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize * 0.8,
                     color: Colors.black,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -1196,8 +1212,8 @@ class _PosScreenState extends State<PosScreen>
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: Container(
-                    width: 30,
-                    height: 30,
+                    width: 20,
+                    height: 20,
                     margin: const EdgeInsets.all(2),
                     padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
@@ -1209,8 +1225,6 @@ class _PosScreenState extends State<PosScreen>
                         global.formatDoubleTrailingZero(product.product_count),
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
@@ -1224,26 +1238,40 @@ class _PosScreenState extends State<PosScreen>
     );
   }
 
-  Widget selectProductLevelListScreenWidget(BoxConstraints constraints) {
-    double menuMinWidth = (global.isWideScreen())
-        ? (gridItemSize * 25) + 80
-        : (gridItemSize * 50) + 50;
-    int widgetPerLine =
-        int.parse((constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
-    return (global.productListByCategory.isEmpty)
-        ? const Center(
-            child: Icon(Icons.select_all, color: Colors.grey, size: 200))
-        : GridView.count(
-            padding: EdgeInsets.zero,
-            crossAxisCount: widgetPerLine,
-            children: [
-              for (final detail in global.productListByCategory)
-                Container(
-                  margin: const EdgeInsets.all(4),
-                  child: productLevelWidget(detail),
-                ),
-            ],
-          );
+  Widget selectProductLevelListScreenWidget() {
+    double menuMinWidth =
+        (global.isWideScreen()) ? (gridItemSize * 120) : (gridItemSize * 100);
+    int widgetPerLine = int.parse(
+        (MediaQuery.of(context).size.width / menuMinWidth).toStringAsFixed(0));
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        print(
+            constraints.maxWidth.toString() + " : " + menuMinWidth.toString());
+        if (constraints.maxWidth > menuMinWidth) {
+          widgetPerLine = int.parse(
+              (constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
+        } else {
+          widgetPerLine = 1;
+        }
+        return Container(
+            color: Colors.grey[200],
+            child: (global.productListByCategory.isEmpty)
+                ? const Center(
+                    child:
+                        Icon(Icons.select_all, color: Colors.grey, size: 200))
+                : GridView.count(
+                    padding: EdgeInsets.zero,
+                    crossAxisCount: widgetPerLine,
+                    children: [
+                      for (final detail in global.productListByCategory)
+                        Container(
+                          margin: const EdgeInsets.all(4),
+                          child: productLevelWidget(detail),
+                        ),
+                    ],
+                  ));
+      },
+    );
   }
 
   Widget selectProductLevelExtraListCheckWidget(int groupIndex) {
@@ -1424,12 +1452,12 @@ class _PosScreenState extends State<PosScreen>
     }
   }
 
-  Widget selectProductLevelCardWidget(
-      ProductCategoryObjectBoxStruct value, double boxSize, bool append) {
+  Widget selectProductLevelCardWidget(ProductCategoryObjectBoxStruct value,
+      double boxSize, bool append, double widthHeight) {
     double round = 5;
     return SizedBox(
-        width: (global.isWideScreen()) ? 80 : 50,
-        height: (global.isWideScreen()) ? 80 : 50,
+        width: widthHeight,
+        height: widthHeight,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.all(0),
@@ -1494,12 +1522,14 @@ class _PosScreenState extends State<PosScreen>
                         color: Colors.black,
                         shadows: [
                           Shadow(
-                              offset: Offset(-0.5, -0.5), color: Colors.white),
+                              offset: Offset(-0.95, -0.95),
+                              color: Colors.white),
                           Shadow(
-                              offset: Offset(0.5, -0.5), color: Colors.white),
-                          Shadow(offset: Offset(0.5, 0.5), color: Colors.white),
+                              offset: Offset(0.95, -0.95), color: Colors.white),
                           Shadow(
-                              offset: Offset(-0.5, 0.5), color: Colors.white),
+                              offset: Offset(0.95, 0.95), color: Colors.white),
+                          Shadow(
+                              offset: Offset(-0.95, 0.95), color: Colors.white),
                         ],
                       )),
                 ),
@@ -1510,43 +1540,59 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget selectProductLevelSelectWidget() {
+    double widthHeight = (global.isDesktopScreen())
+        ? 50
+        : (global.isWideScreen())
+            ? 80
+            : 50;
     List<Widget> categorySelectedList = [];
     //print("selectProductLevelSelectWidget");
 
     if (global.productCategoryCodeSelected.isNotEmpty) {
       categorySelectedList.add(
-        SizedBox(
-          width: 80,
-          height: 80,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size(gridItemSize, gridItemSize),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+        Container(
+          width: widthHeight,
+          height: widthHeight,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 1,
+                offset: const Offset(0, 1), // changes position of shadow
               ),
-            ),
-            onPressed: () {
-              global.productCategoryChildList.clear();
-              global.productCategoryCodeSelected.clear();
-              categoryGuidSelected = "";
-              productOptions.clear();
-              loadCategory();
-              setState(() {
-                PosProcess().sumCategoryCount(global
-                    .posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess);
-              });
-            },
-            child: Text(
-              global.language("restart"),
-            ),
+            ],
           ),
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              onPressed: () {
+                global.productCategoryChildList.clear();
+                global.productCategoryCodeSelected.clear();
+                categoryGuidSelected = "";
+                productOptions.clear();
+                loadCategory();
+                setState(() {
+                  PosProcess().sumCategoryCount(global
+                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess);
+                });
+              },
+              child: const Center(
+                  child: Icon(
+                Icons.restart_alt,
+              ))),
         ),
       );
       for (var categoryList in global.productCategoryCodeSelected) {
-        categorySelectedList.add(
-            selectProductLevelCardWidget(categoryList, gridItemSize, false));
+        categorySelectedList.add(selectProductLevelCardWidget(
+            categoryList, gridItemSize, false, widthHeight));
       }
     } else {
       categorySelectedList.add(Container());
@@ -1561,10 +1607,10 @@ class _PosScreenState extends State<PosScreen>
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.grey.shade100,
+            color: Colors.grey.shade300,
             width: 1,
           ),
-          color: Colors.cyan.shade100,
+          color: Colors.grey.shade300,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -1574,22 +1620,23 @@ class _PosScreenState extends State<PosScreen>
                 ? Container()
                 : Column(children: [
                     Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
+                        spacing: 5,
+                        runSpacing: 5,
                         children: categorySelectedList),
                     const SizedBox(
                       height: 10,
                     ),
                   ]),
-            Wrap(spacing: 10, runSpacing: 10, children: [
+            Wrap(spacing: 5, runSpacing: 5, children: [
               for (final value in categoryList)
-                selectProductLevelCardWidget(value, gridItemSize, true)
+                selectProductLevelCardWidget(
+                    value, gridItemSize, true, widthHeight)
             ])
           ],
         ));
   }
 
-  Widget selectProductLevelWidget(BoxConstraints constraints) {
+  Widget selectProductLevelWidget() {
     return Padding(
       padding: const EdgeInsets.only(top: 0, bottom: 0, right: 0, left: 0),
       child: Container(
@@ -1597,7 +1644,7 @@ class _PosScreenState extends State<PosScreen>
         padding: const EdgeInsets.all(2),
         child: Column(children: [
           Expanded(
-            child: selectProductLevelListScreenWidget(constraints),
+            child: selectProductLevelListScreenWidget(),
           ),
           if (displayDetailByBarcode && activeLineNumber > -1)
             SizedBox(
@@ -1677,46 +1724,97 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget detailHeaderWidget() {
-    double fontSize = (global.isDesktopScreen()) ? 18 : 14;
-    TextStyle textStyle = TextStyle(
-        color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      double fontSize = (constraints.maxWidth / 50) * listTextHeight;
+      TextStyle textStyle = TextStyle(
+          color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
 
-    return Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border:
-              const Border(bottom: BorderSide(color: Colors.black, width: 1)),
-          color: Colors.blue.shade100,
-        ),
-        padding: const EdgeInsets.only(top: 10, bottom: 10, left: 4, right: 4),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 5,
-              child: Text(global.language("item_code"),
-                  style: textStyle.copyWith(fontSize: fontSize)),
-            ),
-            Expanded(
-                flex: 1,
-                child: Text(global.language("unit_name"),
-                    style: textStyle.copyWith(fontSize: fontSize))),
-            Expanded(
-                flex: 1,
-                child: Text(global.language("qty"),
-                    textAlign: TextAlign.right,
-                    style: textStyle.copyWith(fontSize: fontSize))),
-            Expanded(
-                flex: 1,
-                child: Text(global.language("price"),
-                    textAlign: TextAlign.right,
-                    style: textStyle.copyWith(fontSize: fontSize))),
-            Expanded(
-                flex: 1,
-                child: Text(global.language("total_amount"),
-                    textAlign: TextAlign.right,
-                    style: textStyle.copyWith(fontSize: fontSize))),
-          ],
-        ));
+      return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border:
+                const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+            color: Colors.blue.shade100,
+          ),
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Text(global.language("item_description"),
+                    style: textStyle.copyWith(fontSize: fontSize)),
+              ),
+              Expanded(
+                  flex: 1,
+                  child: Text(global.language("unit_name"),
+                      style: textStyle.copyWith(fontSize: fontSize))),
+              Expanded(
+                  flex: 1,
+                  child: Text(global.language("qty"),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(fontSize: fontSize))),
+              Expanded(
+                  flex: 1,
+                  child: Text(global.language("price"),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(fontSize: fontSize))),
+              Expanded(
+                  flex: 2,
+                  child: Text(global.language("total"),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(fontSize: fontSize))),
+            ],
+          ));
+    });
+  }
+
+  Widget detailFooterWidget() {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      double fontSize = (constraints.maxWidth / 50) * listTextHeight;
+      TextStyle textStyle = TextStyle(
+          color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+
+      return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border:
+                const Border(top: BorderSide(color: Colors.black, width: 1)),
+            color: Colors.blue.shade100,
+          ),
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Text(
+                    "${global.language("total")} ${global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length} ${global.language("item")}",
+                    style: textStyle.copyWith(fontSize: fontSize)),
+              ),
+              Expanded(flex: 1, child: Container()),
+              Expanded(
+                  flex: 1,
+                  child: Text(
+                      global.moneyFormat.format(global
+                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posProcess
+                          .total_piece),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(fontSize: fontSize))),
+              Expanded(flex: 1, child: Container()),
+              Expanded(
+                  flex: 2,
+                  child: Text(
+                      global.moneyFormat.format(global
+                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posProcess
+                          .total_amount),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(fontSize: fontSize))),
+            ],
+          ));
+    });
   }
 
   Widget detailWidget(
@@ -1731,125 +1829,178 @@ class _PosScreenState extends State<PosScreen>
       required TextStyle textStyle,
       required String barcode,
       required String unitName,
-      required imageUrl}) {
-    double fontSize = (global.isDesktopScreen()) ? 16 : 12;
-    String description = "";
-    Widget rowSpace = const SizedBox(
-      width: 4,
-    );
-
-    if (global.isDesktopScreen()) {
-      return Row(
-        children: [
-          Expanded(
-              flex: 5,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(productName,
-                        style: textStyle.copyWith(fontSize: fontSize)),
-                    if (isActive)
-                      Text(barcode,
-                          style: textStyle.copyWith(fontSize: fontSize * 0.75)),
-                  ])),
-          Expanded(
-              flex: 1,
-              child: Text(unitName,
-                  style: textStyle.copyWith(fontSize: fontSize))),
-          Expanded(
-              flex: 1,
-              child: Text(global.moneyFormat.format(qty),
-                  textAlign: TextAlign.right,
-                  style: textStyle.copyWith(fontSize: fontSize))),
-          Expanded(
-              flex: 1,
-              child: Text(global.moneyFormat.format(price),
-                  textAlign: TextAlign.right,
-                  style: textStyle.copyWith(fontSize: fontSize))),
-          Expanded(
-              flex: 1,
-              child: Text(global.moneyFormat.format(totalAmount),
-                  textAlign: TextAlign.right,
-                  style: textStyle.copyWith(fontSize: fontSize))),
-        ],
+      required String imageUrl}) {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      double fontSize = (constraints.maxWidth / 50) * listTextHeight;
+      String description = "";
+      Widget rowSpace = const SizedBox(
+        width: 4,
       );
-    } else {
-      List<Widget> productDetail = [];
-      productDetail.add(
-          Text(productName, style: textStyle.copyWith(fontSize: fontSize)));
-      if (qty > 1) {
-        productDetail.add(rowSpace);
-        productDetail.add(Text(" X ${global.moneyFormat.format(qty)} $unitName",
-            style: textStyle.copyWith(color: Colors.red, fontSize: fontSize)));
-        productDetail.add(rowSpace);
-        productDetail.add(Text(
-            "${global.language("price")} $unitName ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
-            style: textStyle.copyWith(color: Colors.blue, fontSize: fontSize)));
-      }
-      if (fullDetail) {
-        if (price != priceOriginal) {
-          productDetail.add(rowSpace);
-          productDetail.add(Text(
-              "${global.language("original_price")}  ${global.moneyFormat.format(priceOriginal)} ${global.language("money_symbol")}/$unitName ${global.language("new_price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}/$unitName",
-              style: textStyle.copyWith(
-                  color: Colors.orange, fontSize: fontSize - 2)));
-        }
-        if (barcode.isNotEmpty) {
-          productDetail.add(rowSpace);
-          productDetail.add(Text(barcode,
-              style: textStyle.copyWith(
-                  color: Colors.green, fontSize: fontSize - 2)));
-        }
-      }
-      if (imageUrl != "0" && imageUrl != "" && global.isOnline) {
-        productDetail.add(rowSpace);
-        productDetail.add(Padding(
-            padding: const EdgeInsets.only(right: 5),
-            child: CachedNetworkImage(
-              width: 25,
-              height: 25,
-              fit: BoxFit.fill,
-              imageUrl: imageUrl,
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            )));
-      }
 
-      return Column(children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+      if (1 == 1) {
+        return Row(
           children: [
             Expanded(
-              flex: 6,
-              child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.end,
-                      children: productDetail)),
-            ),
-            const SizedBox(
-              width: 2,
-              height: 0,
-            ),
+                flex: 5,
+                child: Row(children: [
+                  Expanded(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                        Text(productName,
+                            style: textStyle.copyWith(fontSize: fontSize)),
+                        if (isActive)
+                          Text(barcode,
+                              style: textStyle.copyWith(
+                                  fontSize: fontSize * 0.75)),
+                      ])),
+                  if (isActive && imageUrl.isNotEmpty)
+                    Container(
+                        width: 50,
+                        height: 50,
+                        margin: const EdgeInsets.only(right: 5),
+                        padding: const EdgeInsets.only(right: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.blueAccent),
+                        ),
+                        child: Center(
+                            child: CachedNetworkImage(
+                          fit: BoxFit.fill,
+                          imageUrl: imageUrl,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        )))
+                ])),
             Expanded(
-                flex: 3,
-                child: Align(
-                    alignment: Alignment.topRight,
-                    child: (totalAmount == 0.0)
-                        ? Container()
-                        : Text(global.moneyFormat.format(totalAmount),
-                            style: textStyle.copyWith(fontSize: fontSize)))),
+                flex: 1,
+                child: Text(unitName,
+                    style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 1,
+                child: (qty == 0)
+                    ? Container()
+                    : Text(global.moneyFormat.format(qty),
+                        textAlign: TextAlign.right,
+                        style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 1,
+                child: (price == 0)
+                    ? Container()
+                    : ((price == priceOriginal))
+                        ? Text(global.moneyFormat.format(price),
+                            textAlign: TextAlign.right,
+                            style: textStyle.copyWith(fontSize: fontSize))
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(global.moneyFormat.format(priceOriginal),
+                                  textAlign: TextAlign.right,
+                                  style: textStyle.copyWith(
+                                      fontSize: fontSize * 0.75,
+                                      color: Colors.red,
+                                      fontStyle: FontStyle.italic)),
+                              Text(global.moneyFormat.format(price),
+                                  textAlign: TextAlign.right,
+                                  style: textStyle.copyWith(
+                                      fontSize: fontSize,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold))
+                            ],
+                          )),
+            Expanded(
+                flex: 2,
+                child: Text(global.moneyFormat.format(totalAmount),
+                    textAlign: TextAlign.right,
+                    style: textStyle.copyWith(
+                        fontSize: fontSize, fontWeight: FontWeight.bold))),
           ],
-        ),
-        if (description.isNotEmpty)
-          SizedBox(
-              width: double.infinity,
-              child: Text(description,
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(fontSize: 10, color: Colors.black)))
-      ]);
-    }
+        );
+      } else {
+        List<Widget> productDetail = [];
+        productDetail.add(
+            Text(productName, style: textStyle.copyWith(fontSize: fontSize)));
+        if (qty > 1) {
+          productDetail.add(rowSpace);
+          productDetail.add(Text(
+              " X ${global.moneyFormat.format(qty)} $unitName",
+              style:
+                  textStyle.copyWith(color: Colors.red, fontSize: fontSize)));
+          productDetail.add(rowSpace);
+          productDetail.add(Text(
+              "${global.language("price")} $unitName ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
+              style:
+                  textStyle.copyWith(color: Colors.blue, fontSize: fontSize)));
+        }
+        if (fullDetail) {
+          if (price != priceOriginal) {
+            productDetail.add(rowSpace);
+            productDetail.add(Text(
+                "${global.language("original_price")}  ${global.moneyFormat.format(priceOriginal)} ${global.language("money_symbol")}/$unitName ${global.language("new_price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}/$unitName",
+                style: textStyle.copyWith(
+                    color: Colors.orange, fontSize: fontSize - 2)));
+          }
+          if (barcode.isNotEmpty) {
+            productDetail.add(rowSpace);
+            productDetail.add(Text(barcode,
+                style: textStyle.copyWith(
+                    color: Colors.green, fontSize: fontSize - 2)));
+          }
+        }
+        if (imageUrl != "0" && imageUrl != "" && global.isOnline) {
+          productDetail.add(rowSpace);
+          productDetail.add(Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: CachedNetworkImage(
+                width: 25,
+                height: 25,
+                fit: BoxFit.fill,
+                imageUrl: imageUrl,
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              )));
+        }
+
+        return Column(children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Expanded(
+                flex: 6,
+                child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.end,
+                        children: productDetail)),
+              ),
+              const SizedBox(
+                width: 2,
+                height: 0,
+              ),
+              Expanded(
+                  flex: 3,
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: (totalAmount == 0.0)
+                          ? Container()
+                          : Text(global.moneyFormat.format(totalAmount),
+                              style: textStyle.copyWith(fontSize: fontSize)))),
+            ],
+          ),
+          if (description.isNotEmpty)
+            SizedBox(
+                width: double.infinity,
+                child: Text(description,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(fontSize: 10, color: Colors.black)))
+        ]);
+      }
+    });
   }
 
   Widget detailRow(
@@ -2020,7 +2171,8 @@ class _PosScreenState extends State<PosScreen>
     TextEditingController textFieldRemarkController =
         TextEditingController(text: detail.remark);
 
-    return Padding(
+    return Container(
+        color: Colors.cyan.shade100,
         padding: const EdgeInsets.all(4),
         child: IntrinsicHeight(
             child: Row(
@@ -2257,12 +2409,8 @@ class _PosScreenState extends State<PosScreen>
         fontSize: 14,
         fontWeight: (active) ? FontWeight.bold : FontWeight.normal);
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      decoration: BoxDecoration(
-        border: const Border(bottom: BorderSide(color: Colors.grey, width: 1)),
-        color: Colors.cyan.shade100,
-      ),
       child: (active == false || detail.is_void)
           ? detailData(
               index: index,
@@ -2504,92 +2652,121 @@ class _PosScreenState extends State<PosScreen>
     );
   }
 
+  void payScreen(int tabIndex) async {
+    dynamic result = await Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeft,
+        child: PayScreen(
+          defaultTabIndex: tabIndex,
+          posProcess: global
+              .posHoldProcessResult[global.posHoldActiveNumber].posProcess,
+        ),
+      ),
+    );
+    if (result != null) {
+      if (result == true) {
+        setState(() {
+          restartClearData();
+        });
+      }
+    }
+  }
+
   Widget totalAndPayScreen() {
     // แสดงยอดรวมทั้งสิ้น
 
     return SizedBox(
       width: double.infinity,
-      child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        (global.posHoldActiveNumber != 0)
-            ? Container(
-                margin: const EdgeInsets.only(right: 5),
-                padding: const EdgeInsets.only(
-                    left: 10, right: 10, top: 0, bottom: 0),
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 4,
-                      blurRadius: 4,
-                      offset: const Offset(0, 2), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child:
-                    Center(child: Text(global.posHoldActiveNumber.toString())))
-            : Container(),
-        Expanded(
-          child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.green),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            ),
-            onPressed: () async {
-              dynamic result = await Navigator.push(
-                context,
-                PageTransition(
-                  type: PageTransitionType.rightToLeft,
-                  child: PayScreen(
-                    posProcess: global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          (global.posHoldActiveNumber != 0)
+              ? Container(
+                  margin: const EdgeInsets.only(right: 5),
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 0, bottom: 0),
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 4,
+                        blurRadius: 4,
+                        offset:
+                            const Offset(0, 2), // changes position of shadow
+                      ),
+                    ],
                   ),
-                ),
-              );
-              if (result != null) {
-                if (result == true) {
-                  setState(() {
-                    restartClearData();
-                  });
-                }
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(5),
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: Row(
-                  children: [
-                    Text(global.language("total"),
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                        )),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(
-                        global.moneyFormat.format(global
-                            .posHoldProcessResult[global.posHoldActiveNumber]
-                            .posProcess
-                            .total_amount),
-                        style: const TextStyle(
-                            fontSize: 24.0, fontWeight: FontWeight.bold)),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Text(global.language("money_symbol"),
-                        style: const TextStyle(
-                          fontSize: 20.0,
-                        ))
-                  ],
+                  child: Center(
+                      child: Text(global.posHoldActiveNumber.toString())))
+              : Container(),
+          Expanded(
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.green),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              ),
+              onPressed: () {
+                payScreen(0);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(5),
+                child: FittedBox(
+                  fit: BoxFit.fill,
+                  child: Row(
+                    children: [
+                      Text(global.language("total"),
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                          )),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                          global.moneyFormat.format(global
+                              .posHoldProcessResult[global.posHoldActiveNumber]
+                              .posProcess
+                              .total_amount),
+                          style: const TextStyle(
+                              fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(global.language("money_symbol"),
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                          ))
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ]),
+          const SizedBox(
+            width: 4,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              payScreen(3);
+            },
+            child: const FaIcon(FontAwesomeIcons.creditCard),
+          ),
+          const SizedBox(
+            width: 4,
+          ),
+          ElevatedButton(
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.zero,
+            ),
+            onPressed: () async {
+              payScreen(2);
+            },
+            child: const Icon(Icons.qr_code),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2880,7 +3057,8 @@ class _PosScreenState extends State<PosScreen>
                                                     .details[index],
                                                 index),
                                       )
-                                  ])))
+                                  ]))),
+                  detailFooterWidget(),
                 ])));
   }
 
@@ -3332,7 +3510,56 @@ class _PosScreenState extends State<PosScreen>
           width: double.infinity,
           child: Row(
             children: [
-              if (tabletTabController.index == 1)
+              if (global.isDesktopScreen())
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Icon(
+                        Icons.numbers,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          desktopWidgetMode = 0;
+                        });
+                      }),
+                ),
+              if (global.isDesktopScreen())
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Icon(
+                        Icons.search,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          desktopWidgetMode = 1;
+                        });
+                      }),
+                ),
+              if (global.isDesktopScreen())
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
+                      ),
+                      child: const Icon(
+                        Icons.grid_on,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          desktopWidgetMode = 2;
+                        });
+                      }),
+                ),
+              if (global.isDesktopScreen() == false &&
+                  tabletTabController.index == 1)
                 Expanded(
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -3348,7 +3575,8 @@ class _PosScreenState extends State<PosScreen>
                         });
                       }),
                 ),
-              if (tabletTabController.index == 0)
+              if (global.isDesktopScreen() == false &&
+                  tabletTabController.index == 0)
                 Expanded(
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -3385,7 +3613,9 @@ class _PosScreenState extends State<PosScreen>
                       backgroundColor: Colors.black,
                     ),
                     child: const FaIcon(FontAwesomeIcons.addressBook),
-                    onPressed: () {}),
+                    onPressed: () {
+                      desktopWidgetMode = 3;
+                    }),
               ),
               Expanded(
                 child: ElevatedButton(
@@ -3444,16 +3674,29 @@ class _PosScreenState extends State<PosScreen>
               Expanded(
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      foregroundColor:
-                          (showNumericPad) ? Colors.amber : Colors.white,
                       backgroundColor: Colors.black,
                     ),
                     child: const FaIcon(FontAwesomeIcons.searchengin),
                     onPressed: () {
                       setState(() {
-                        gridItemSize += 1;
-                        if (gridItemSize > 6) {
+                        gridItemSize += 0.2;
+                        if (gridItemSize > 1.75) {
                           gridItemSize = 1;
+                        }
+                      });
+                    }),
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                    ),
+                    child: const FaIcon(FontAwesomeIcons.textHeight),
+                    onPressed: () {
+                      setState(() {
+                        listTextHeight += 0.1;
+                        if (listTextHeight > 2) {
+                          listTextHeight = 1;
                         }
                       });
                     }),
@@ -3535,9 +3778,24 @@ class _PosScreenState extends State<PosScreen>
               child: const FaIcon(FontAwesomeIcons.searchengin),
               onPressed: () {
                 setState(() {
-                  gridItemSize += 1;
-                  if (gridItemSize > 3) {
+                  gridItemSize += 0.2;
+                  if (gridItemSize > 1.75) {
                     gridItemSize = 1;
+                  }
+                });
+              }),
+        ),
+        Expanded(
+          child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+              ),
+              child: const FaIcon(FontAwesomeIcons.textHeight),
+              onPressed: () {
+                setState(() {
+                  listTextHeight += 0.1;
+                  if (listTextHeight > 2) {
+                    listTextHeight = 1;
                   }
                 });
               }),
@@ -3580,7 +3838,7 @@ class _PosScreenState extends State<PosScreen>
                       physics: const NeverScrollableScrollPhysics(),
                       controller: tabletTabController,
                       children: [
-                        selectProductLevelWidget(constraints),
+                        selectProductLevelWidget(),
                         findByText(),
                         Container(
                           width: double.infinity,
@@ -3779,7 +4037,7 @@ class _PosScreenState extends State<PosScreen>
                                         icon: Icon(Icons.list),
                                       ),
                                       Tab(
-                                        icon: Icon(Icons.group_work),
+                                        icon: Icon(Icons.grid_view),
                                       ),
                                       Tab(
                                         icon: Icon(Icons.search),
@@ -3796,7 +4054,7 @@ class _PosScreenState extends State<PosScreen>
                                   Expanded(
                                       child: TabBarView(children: [
                                     transScreen(mode: 0),
-                                    selectProductLevelWidget(constraints),
+                                    selectProductLevelWidget(),
                                     findByText(),
                                     Container()
                                     //commandScreen(),
@@ -3916,32 +4174,49 @@ class _PosScreenState extends State<PosScreen>
                     )
                   ]),
               ])),
-          Expanded(
-            child: Column(children: [
-              Container(
-                margin: const EdgeInsets.all(4),
-                padding: const EdgeInsets.all(4),
-                width: double.infinity,
-                height: 150,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(2),
-                    border: Border.all(width: 0, color: Colors.blue),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 5.0,
-                      ),
-                    ]),
-                child: Wrap(
-                    alignment: WrapAlignment.start,
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: widgetMessage),
+          if (desktopWidgetMode == 0)
+            Expanded(
+              child: Column(children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 4, bottom: 4),
+                  padding: const EdgeInsets.all(10),
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(2),
+                      border: Border.all(width: 0, color: Colors.blue),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 5.0,
+                        ),
+                      ]),
+                  child: Row(children: [
+                    Expanded(
+                        child: SingleChildScrollView(
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: widgetMessage))),
+                    if (widgetMessageImageUrl.isNotEmpty)
+                      Image(
+                          image: CachedNetworkImageProvider(
+                        widgetMessageImageUrl,
+                      ))
+                  ]),
+                ),
+                Expanded(child: desktopNumPad),
+              ]),
+            ),
+          if (desktopWidgetMode == 1) Expanded(child: findByText()),
+          if (desktopWidgetMode == 2)
+            Expanded(
+                child: Column(children: [
+              Expanded(
+                child: selectProductLevelListScreenWidget(),
               ),
-              Expanded(child: desktopNumPad),
-            ]),
-          ),
+              selectProductLevelSelectWidget(),
+            ])),
           posLayoutBottom(),
         ],
       ),

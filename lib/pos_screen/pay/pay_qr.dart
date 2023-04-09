@@ -22,16 +22,17 @@ class PayQrWidget extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
 
-  const PayQrWidget({required this.posProcess, required this.blocContext});
+  const PayQrWidget(
+      {super.key, required this.posProcess, required this.blocContext});
 
   @override
-  _PayQrWidgetState createState() => _PayQrWidgetState();
+  PayQrWidgetState createState() => PayQrWidgetState();
 }
 
-class _PayQrWidgetState extends State<PayQrWidget> {
+class PayQrWidgetState extends State<PayQrWidget> {
   final _descriptionController = TextEditingController();
   double _amount = 0;
-  GlobalKey _widgetKey = GlobalKey();
+  GlobalKey widgetKey = GlobalKey();
 
   @override
   void initState() {
@@ -63,27 +64,27 @@ class _PayQrWidgetState extends State<PayQrWidget> {
         width: double.infinity,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade400, width: 2),
-          borderRadius: BorderRadius.all(Radius.circular(4)),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(global
               .language('กรณีชำระด้วย QR Code มากกว่า 1 รายการ (แบ่งจ่าย)')),
           Container(
-            padding: EdgeInsets.only(left: 4, right: 4),
+            padding: const EdgeInsets.only(left: 4, right: 4),
             child: Row(children: [
               Expanded(
                   flex: 2,
                   child: TextField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
-                      border: UnderlineInputBorder(),
+                      border: const UnderlineInputBorder(),
                       labelText: global.language('รายละเอียด'),
                     ),
                   )),
               Expanded(
                   flex: 1,
                   child: Container(
-                      key: _widgetKey,
+                      key: widgetKey,
                       width: double.infinity,
                       child: ElevatedButton(
                           onPressed: () {
@@ -99,7 +100,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                             global.payScreenNumberPadWidget =
                                 PayScreenNumberPadWidgetEnum.number;
                             final RenderBox _renderBox =
-                                _widgetKey.currentContext?.findRenderObject()
+                                widgetKey.currentContext?.findRenderObject()
                                     as RenderBox;
                             final Size _size = _renderBox.size;
                             final Offset _offset =
@@ -118,11 +119,11 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                             children: [
                               Text(
                                 global.language('จำนวนเงิน'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                               Text(global.moneyFormat.format(_amount),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.right),
@@ -130,19 +131,19 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                           )))),
             ]),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.green.shade400, width: 2),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
               ),
               child: Column(
                 children: [
                   Container(
-                      padding: EdgeInsets.all(2),
+                      padding: const EdgeInsets.all(2),
                       width: double.infinity,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(4),
                             topRight: Radius.circular(4)),
@@ -150,12 +151,8 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                       ),
                       child: Center(
                         child: Text(
-                            global.language('ประเภท Wallet ชำระจำนวน') +
-                                ' : ' +
-                                global.moneyFormat.format(_amount) +
-                                ' ' +
-                                global.language('money_symbol'),
-                            style: TextStyle(
+                            '${global.language('ประเภท Wallet ชำระจำนวน')} : ${global.moneyFormat.format(_amount)} ${global.language('money_symbol')}',
+                            style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       )),
                   qrList(_amount),
@@ -173,7 +170,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.grey.shade400, width: 2),
-        borderRadius: BorderRadius.all(Radius.circular(4)),
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
@@ -186,9 +183,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                 Column(
                   children: [
                     Image.asset(
-                      ("assets/images/qrpay/" +
-                              global.payScreenData.qr[index].provider_code +
-                              ".png")
+                      ("assets/images/qrpay/${global.payScreenData.qr[index].provider_code}.png")
                           .toLowerCase(),
                       height: 40,
                     ),
@@ -207,7 +202,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
             ),
           ),
           trailing: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.delete,
               size: 30.0,
               color: Colors.redAccent,
@@ -252,7 +247,7 @@ class _PayQrWidgetState extends State<PayQrWidget> {
       children: <Widget>[
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Text(
@@ -270,6 +265,64 @@ class _PayQrWidgetState extends State<PayQrWidget> {
     setState(() {});
   }
 
+  void promptPay(
+      {required double amount, required PaymentProviderModel provider}) {
+    refreshEvent();
+    if (amount != 0.0) {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: PayQrScreen(
+                    context: context, provider: provider, amount: amount),
+              );
+            });
+          }).then((value) {
+        if (value) {
+          if (value == true) {
+            if (saveData(provider.paymentcode, provider.names[0].name)) {
+              _descriptionController.text = '';
+              _amount = 0.0;
+              global.payScreenNumberPadText = "";
+              global.payScreenNumberPadAmount = 0;
+            }
+          }
+          refreshEvent();
+        }
+      });
+    } else {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: Column(children: [
+                  Text(global.language('กรุณาบันทึกจำนวนเงินที่จะชำระ')),
+                  const SizedBox(height: 18),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    label: Text(
+                      global.language("close"),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ]),
+              );
+            });
+          });
+    }
+  }
+
   Widget qrList(double amount) {
     double iconHeight = 100;
     double iconWidth = 100;
@@ -281,10 +334,10 @@ class _PayQrWidgetState extends State<PayQrWidget> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.green.shade100,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
         ),
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         child: Wrap(spacing: 2, runSpacing: 2, children: [
           for (var provider in providerList)
             CommandButton(
@@ -292,70 +345,13 @@ class _PayQrWidgetState extends State<PayQrWidget> {
                 width: iconWidth,
                 primaryColor: Colors.white,
                 label: (provider.providercode.isEmpty)
-                    ? provider.names[0].name + " : " + provider.bookbankcode
-                    : provider.providercode + " : " + provider.names[0].name,
+                    ? "${provider.names[0].name} : ${provider.bookbankcode}"
+                    : "${provider.providercode} : ${provider.names[0].name}",
                 imgAssetPath:
-                    ("assets/images/qrpay/" + provider.paymentcode + ".png")
+                    ("assets/images/qrpay/${provider.paymentcode}.png")
                         .toLowerCase(),
                 onPressed: () {
-                  refreshEvent();
-                  if (amount != 0.0) {
-                    showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return StatefulBuilder(builder: (context, setState) {
-                            return AlertDialog(
-                              title: PayQrScreen(
-                                  context: context,
-                                  provider: provider,
-                                  amount: amount),
-                            );
-                          });
-                        }).then((value) {
-                      if (value) {
-                        if (value == true) {
-                          if (saveData(
-                              provider.paymentcode, provider.names[0].name)) {
-                            _descriptionController.text = '';
-                            _amount = 0.0;
-                            global.payScreenNumberPadText = "";
-                            global.payScreenNumberPadAmount = 0;
-                          }
-                        }
-                        refreshEvent();
-                      }
-                    });
-                  } else {
-                    showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return StatefulBuilder(builder: (context, setState) {
-                            return AlertDialog(
-                              title: Column(children: [
-                                Text(global
-                                    .language('กรุณาบันทึกจำนวนเงินที่จะชำระ')),
-                                SizedBox(height: 18),
-                                ElevatedButton.icon(
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  label: Text(
-                                    global.language("close"),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                )
-                              ]),
-                            );
-                          });
-                        });
-                  }
+                  promptPay(amount: amount, provider: provider);
                 })
         ]));
   }
