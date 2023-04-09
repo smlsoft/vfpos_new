@@ -522,7 +522,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
     String moneySymbol = global.language('money_symbol');
     reCalc();
     TextStyle textStyle = TextStyle(
-      fontSize: (global.isWideScreen()) ? 24 : 10,
+      fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 24 : 10,
     );
     List<Widget> list = [
       // รายละเอียด/รูปแบบ การชำระเงิน
@@ -549,7 +549,10 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                     global.language("รูปแบบการชำระ"),
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: (global.isWideScreen()) ? 24 : 14,
+                      fontSize:
+                          (global.isTabletScreen() || global.isDesktopScreen())
+                              ? 24
+                              : 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -779,7 +782,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
-      (global.isWideScreen())
+      (global.isTabletScreen() || global.isDesktopScreen())
           ? const SizedBox(
               width: 10,
               height: 10,
@@ -811,7 +814,10 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                   global.language("การชำระเงิน"),
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: (global.isWideScreen()) ? 24 : 14,
+                    fontSize:
+                        (global.isTabletScreen() || global.isDesktopScreen())
+                            ? 24
+                            : 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -918,7 +924,8 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                           flex: 1,
                           child: ElevatedButton(
                             style: OutlinedButton.styleFrom(
-                              minimumSize: (global.isWideScreen())
+                              minimumSize: (global.isTabletScreen() ||
+                                      global.isDesktopScreen())
                                   ? const Size(0, 60)
                                   : const Size(0, 30),
                               padding: EdgeInsets.zero,
@@ -931,20 +938,30 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                             child: Text(
                               global.language("back"),
                               style: TextStyle(
-                                fontSize: (global.isWideScreen()) ? 20.0 : 12,
+                                fontSize: (global.isTabletScreen() ||
+                                        global.isDesktopScreen())
+                                    ? 20.0
+                                    : 12,
                               ),
                             ),
                           ),
                         ),
                         SizedBox(
-                          width: (global.isWideScreen()) ? 10 : 5,
-                          height: (global.isWideScreen()) ? 10 : 5,
+                          width: (global.isTabletScreen() ||
+                                  global.isDesktopScreen())
+                              ? 10
+                              : 5,
+                          height: (global.isTabletScreen() ||
+                                  global.isDesktopScreen())
+                              ? 10
+                              : 5,
                         ),
                         Expanded(
                           flex: 1,
                           child: ElevatedButton(
                             style: OutlinedButton.styleFrom(
-                              minimumSize: (global.isWideScreen())
+                              minimumSize: (global.isTabletScreen() ||
+                                      global.isDesktopScreen())
                                   ? const Size(0, 60)
                                   : const Size(0, 30),
                               padding: EdgeInsets.zero,
@@ -956,7 +973,10 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                             child: Text(
                               global.language("pay"),
                               style: TextStyle(
-                                fontSize: (global.isWideScreen()) ? 20.0 : 12,
+                                fontSize: (global.isTabletScreen() ||
+                                        global.isDesktopScreen())
+                                    ? 20.0
+                                    : 12,
                               ),
                             ),
                           ),
@@ -969,7 +989,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
         ),
       )),
     ];
-    if (global.isWideScreen()) {
+    if (global.isTabletScreen() || global.isDesktopScreen()) {
       return Column(
         children: list,
       );
@@ -1296,7 +1316,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       return Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
-          child: (global.isWideScreen())
+          child: (global.isTabletScreen() || global.isDesktopScreen())
               ? Stack(children: [
                   Padding(
                       padding: const EdgeInsets.all(4),

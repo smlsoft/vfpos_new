@@ -172,7 +172,6 @@ Function? functionPosScreenRefresh;
 DeviceModeEnum deviceMode = DeviceModeEnum.none;
 PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
-PosScreenStyleEnum posScreenStyle = PosScreenStyleEnum.desktop;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -181,8 +180,6 @@ enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sumi1 }
 enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
-
-enum PosScreenStyleEnum { tablet, desktop }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -1145,12 +1142,9 @@ Future scanServerByName(String name) async {
   }
 }
 
-bool isWideScreen() {
+bool isTabletScreen() {
   return (deviceMode == DeviceModeEnum.androidTablet ||
-      deviceMode == DeviceModeEnum.ipad ||
-      deviceMode == DeviceModeEnum.macosDesktop ||
-      deviceMode == DeviceModeEnum.linuxDesktop ||
-      deviceMode == DeviceModeEnum.windowsDesktop);
+      deviceMode == DeviceModeEnum.ipad);
 }
 
 bool isDesktopScreen() {
