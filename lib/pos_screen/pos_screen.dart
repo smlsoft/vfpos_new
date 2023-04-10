@@ -2878,7 +2878,7 @@ class _PosScreenState extends State<PosScreen>
       const SizedBox(
         width: 4,
       ),
-      commandButton(
+      /*commandButton(
         label: (global.speechToTextVisible)
             ? global.language("speech_to_text_on")
             : global.language("speech_to_text_off"),
@@ -2897,7 +2897,7 @@ class _PosScreenState extends State<PosScreen>
       ),
       const SizedBox(
         width: 4,
-      ),
+      ),*/
       commandButton(
           label: global.language('restart'),
           onPressed: () {

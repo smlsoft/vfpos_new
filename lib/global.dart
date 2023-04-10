@@ -298,7 +298,7 @@ void playSoundForWindows(String waveFileName) {
 }
 
 void playSound({SoundEnum sound = SoundEnum.beep, String word = ""}) async {
-  final audioPlayer = AudioPlayer();
+  /*final audioPlayer = AudioPlayer();
   try {
     if (speechToTextVisible && word.isNotEmpty) {
       if (Platform.isAndroid || Platform.isIOS) {
@@ -343,7 +343,7 @@ void playSound({SoundEnum sound = SoundEnum.beep, String word = ""}) async {
     }
   } catch (e) {
     print(e);
-  }
+  }*/
 }
 
 String imageUrl(String guid) {
