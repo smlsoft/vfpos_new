@@ -381,17 +381,17 @@ List<String> wordSplit(String word) {
 
 double calcTextToNumber(String text) {
   double result = 0;
-  String text0 = text.trim();
-  while (text0.contains(" ")) {
-    text0 = text0.replaceAll(" ", "");
+  String textTrim = text.trim();
+  while (textTrim.contains(" ")) {
+    textTrim = textTrim.replaceAll(" ", "");
   }
-  if (text0.isNotEmpty) {
-    text0 = text0
+  if (textTrim.isNotEmpty) {
+    textTrim = textTrim
         .replaceAll("X", "")
         .replaceAll("x", "")
         .replaceAll("+", "")
         .replaceAll("-", "");
-    result = double.parse(text0);
+    result = double.parse(textTrim);
   }
   return result;
 }
@@ -1071,8 +1071,8 @@ String getImageForTest() {
     'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/251_FIT_N__RIGHT_FOUR_SEASONS_330ML_1024x1024@2x.jpg?v=1586836584',
     'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/nestle_ice_cream_oreo_cone_1_1024x1024@2x.jpg?v=1587117184',
     'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1ts9iXyMxStMrVq_md9dNcYw3PtHxwqtq_1024x1024@2x.png?v=1585991136',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/faa22afb6b279e9a57ac6756d7100c5a_medium_96b3c449-e5c9-4b18-909f-16089453972a_360x.png?v=1587173843'
-        'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/VITAMILKCHOCOSHAKE300ML-500x500_1024x1024@2x.jpg?v=1586880107',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/faa22afb6b279e9a57ac6756d7100c5a_medium_96b3c449-e5c9-4b18-909f-16089453972a_360x.png?v=1587173843',
+    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/VITAMILKCHOCOSHAKE300ML-500x500_1024x1024@2x.jpg?v=1586880107',
     'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/unnamed_1024x1024@2x.jpg?v=1587129692'
   ];
   return images[Random().nextInt(images.length)];
