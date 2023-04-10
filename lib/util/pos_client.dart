@@ -28,7 +28,7 @@ class _PosClientState extends State<PosClient> {
         findTerminalTimer.cancel();
         global.loginSuccess = true;
         setState(() {
-          Navigator.of(context).pushReplacementNamed('/menu');
+          Navigator.of(context).pushReplacementNamed('menu');
         });
       }
     });

@@ -193,3 +193,13 @@ class PosProcessResultModel {
 
   PosProcessResultModel({this.lineGuid = "", this.lastCommandCode = 0});
 }
+
+class InformationModel {
+  // 0=Image,1=Video
+  int mode = 0;
+  String sourceUrl = "";
+  int delaySecond = 10;
+
+  InformationModel(
+      {required this.mode, required delaySecond, required this.sourceUrl});
+}

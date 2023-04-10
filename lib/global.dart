@@ -1,5 +1,7 @@
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
+import 'package:presentation_displays/display.dart';
+import 'package:presentation_displays/displays_manager.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
 import 'package:dedepos/api/network/server.dart';
@@ -59,12 +61,16 @@ import 'package:dedepos/api/network/server.dart' as network;
 import 'package:text_to_speech/text_to_speech.dart';
 import 'package:objectbox/objectbox.dart';
 
+DisplayManager displayManager = DisplayManager();
+bool isInternalCustomerDisplayConnected = false;
+late Display internalCustomerDisplay;
 var httpClient = http.Client();
 late BuildContext globalContext;
 void posProcessRefresh = () {};
 String ipAddress = "";
 List<String> errorMessage = [];
 AuthService appAuth = AuthService();
+List<InformationModel> informationList = <InformationModel>[];
 bool initSuccess = false;
 late List<LanguageSystemCodeModel> languageSystemCode;
 late String pathApplicationDocumentsDirectory;
@@ -172,6 +178,7 @@ Function? functionPosScreenRefresh;
 DeviceModeEnum deviceMode = DeviceModeEnum.none;
 PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
+DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -180,6 +187,8 @@ enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sumi1 }
 enum PosVersionEnum { pos, restaurant, vfpos }
 
 enum SoundEnum { beep, fail, buttonTing }
+
+enum DisplayMachineEnum { customerDisplay, posTerminal }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -607,6 +616,13 @@ Future<void> sendProcessToCustomerDisplay() async {
       }
     }
   }
+  if (Platform.isAndroid &&
+      displayMachine == DisplayMachineEnum.posTerminal &&
+      isInternalCustomerDisplayConnected == true) {
+    // Send to Sunmi จอสอง
+    displayManager.transferDataToPresentation(
+        jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+  }
 }
 
 Future<void> sendProcessToRemote() async {
@@ -799,9 +815,9 @@ Future<void> registerRemoteToTerminal() async {
   }
 }
 
-Future<void> loading() async {
+Future<void> startLoading() async {
   {
-    dev.log("loadConst");
+    dev.log("startLoading");
     loadConfig();
     // Payment
     qrPaymentProviderList.add(PaymentProviderModel(
@@ -898,7 +914,7 @@ Future<void> loading() async {
     final isExists = await objectBoxDirectory.exists();
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
-      dev.log("===??? $isExists");
+      dev.log("ObjectBox Data : $isExists");
       // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
@@ -920,7 +936,7 @@ Future<void> loading() async {
         queriesCaseSensitiveDefault: false);
   }
   int xxx = ProductBarcodeHelper().count();
-  print("xxx $xxx");
+  print("ProductBarcodeHelper().count() $xxx");
   //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
   //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
   {

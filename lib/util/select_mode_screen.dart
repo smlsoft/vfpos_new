@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dedepos/global_model.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                             onPressed: () {
                               global.appMode = global.AppModeEnum.posTerminal;
                               Navigator.of(context)
-                                  .pushReplacementNamed('/login');
+                                  .pushReplacementNamed('login');
                             },
                             child: Text(global.language('pos_terminal'))),
                         const SizedBox(
@@ -38,7 +39,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                             onPressed: () {
                               global.appMode = global.AppModeEnum.posRemote;
                               Navigator.of(context)
-                                  .pushReplacementNamed('/client');
+                                  .pushReplacementNamed('client');
                             },
                             child: Text(global.language('pos_client'))),
                       ],

@@ -16,7 +16,7 @@ class _WelcomeState extends State<Welcome> {
     super.initState();
     Timer(const Duration(seconds: 1), () {
       if (global.initSuccess) {
-        Navigator.of(context).pushReplacementNamed('/select_mode');
+        Navigator.of(context).pushReplacementNamed('select_mode');
       }
     });
   }

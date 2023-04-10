@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fullscreen/fullscreen.dart';
 import 'package:get/state_manager.dart';
 import 'package:get/utils.dart';
+import 'package:presentation_displays/displays_manager.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:split_view/split_view.dart';
 import 'dart:developer' as dev;
@@ -178,14 +179,13 @@ class _PosScreenState extends State<PosScreen>
     } else if (global.isTabletScreen()) {
       deviceMode = 1;
     } else {
-      deviceMode = 3;
+      deviceMode = 2;
     }
+
     context
         .read<ProductCategoryBloc>()
         .add(ProductCategoryLoadStart(parentCategoryGuid: ''));
-    dev.log("initState PosScreen 1");
     checkOnline();
-    dev.log("initState PosScreen 2");
     // เรียกรายการประกอบการขายจาก Hold
     global.payScreenData =
         global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
@@ -212,7 +212,6 @@ class _PosScreenState extends State<PosScreen>
         }
       });
     }
-    dev.log("initState PosScreen 3");
     deviceTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
       network.testPrinterConnect();
     });
@@ -236,6 +235,13 @@ class _PosScreenState extends State<PosScreen>
     global.functionPosScreenRefresh = refresh;
     Timer(const Duration(seconds: 1), () async {
       await getProcessFromTerminal();
+      // Sunmi จอแสดงผล
+      if (Platform.isAndroid) {
+        if (global.isInternalCustomerDisplayConnected) {
+          global.displayManager
+              .showSecondaryDisplay(displayId: 1, routerName: "presentation");
+        }
+      }
     });
     desktopNumPad = PosNumPad(
       key: posNumPadGlobalKey,
@@ -248,6 +254,22 @@ class _PosScreenState extends State<PosScreen>
         onSubmit(number);
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    global.functionPosScreenRefresh = null;
+    deviceTimer.cancel();
+    posScreenTimer.cancel();
+    messageTimer.cancel();
+    if (global.isTabletScreen() || global.isDesktopScreen()) {
+      tabletTabController.dispose();
+    }
+    global.sendProcessToCustomerDisplay();
+    if (Platform.isAndroid) {
+      if (global.isInternalCustomerDisplayConnected) {}
+    }
   }
 
   void onSubmit(String number) {
@@ -276,19 +298,6 @@ class _PosScreenState extends State<PosScreen>
           global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
       setState(() {});
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    global.functionPosScreenRefresh = null;
-    deviceTimer.cancel();
-    posScreenTimer.cancel();
-    messageTimer.cancel();
-    if (global.isTabletScreen() || global.isDesktopScreen()) {
-      tabletTabController.dispose();
-    }
-    global.sendProcessToCustomerDisplay();
   }
 
   void loadCategory() {
@@ -3749,6 +3758,42 @@ class _PosScreenState extends State<PosScreen>
         ]));
   }
 
+  Widget posLayoutBottomMobile() {
+    return Container(
+        padding: const EdgeInsets.only(top: 5, bottom: 5),
+        width: double.infinity,
+        child: Row(children: [
+          if (Platform.isAndroid || Platform.isIOS)
+            Expanded(
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.black,
+                  ),
+                  child: const FaIcon(FontAwesomeIcons.barcode),
+                  onPressed: () {
+                    setState(() {
+                      scannerStart = !scannerStart;
+                    });
+                  }),
+            ),
+          Expanded(
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.black,
+                ),
+                child: const FaIcon(FontAwesomeIcons.addressBook),
+                onPressed: () {
+                  desktopWidgetMode = 3;
+                }),
+          ),
+          posButtonShowMenu(),
+          posButtonGridItemSize(),
+          posButtonListTextHeight(),
+        ]));
+  }
+
   Widget posLayoutBottom() {
     Widget menuList = Container();
     switch (deviceMode) {
@@ -3757,6 +3802,9 @@ class _PosScreenState extends State<PosScreen>
         break;
       case 1:
         menuList = posLayoutBottomTablet();
+        break;
+      case 2:
+        menuList = posLayoutBottomMobile();
         break;
     }
     /*if (global.isDesktopScreen()) {
@@ -4390,7 +4438,7 @@ class _PosScreenState extends State<PosScreen>
                   margin: const EdgeInsets.only(top: 4, bottom: 4),
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
-                  height: 150,
+                  height: 180,
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(2),
@@ -4520,98 +4568,6 @@ class _PosScreenState extends State<PosScreen>
             : posLayoutPhoneScreen();
   }
 
-  Widget appLayoutRestaurant() {
-    return (global.isTabletScreen() || global.isDesktopScreen())
-        ? SafeArea(
-            child: Scaffold(
-            body: Container(
-                decoration: const BoxDecoration(color: Colors.black),
-                child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Column(
-                          children: [
-                            Expanded(child: selectProduct()),
-                            if (showButtonMenu)
-                              SizedBox(
-                                  height: 190,
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        //Expanded(child: commandScreen()),
-                                        numericPadWidget()
-                                      ])),
-                          ],
-                        )),
-                        Column(
-                          children: [/*commandScreen(),*/ numericPadWidget()],
-                        ),
-                      ],
-                    ))),
-          ))
-        : SafeArea(
-            child: DefaultTabController(
-                length: 4,
-                child: Builder(builder: (BuildContext context) {
-                  final TabController tabController =
-                      DefaultTabController.of(context);
-                  tabController.addListener(() {
-                    if (!tabController.indexIsChanging) {
-                      if (tabController.index == 2) {
-                        SystemChannels.textInput.invokeMethod('TextInput.show');
-                      } else {
-                        SystemChannels.textInput.invokeMethod('TextInput.hide');
-                      }
-                    }
-                  });
-                  return Scaffold(
-                      body: Container(
-                          decoration: const BoxDecoration(color: Colors.black),
-                          child: Container(
-                              color: Colors.white,
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
-                                children: [
-                                  Container(
-                                      color: Colors.blue,
-                                      child: TabBar(
-                                        tabs: [
-                                          Tab(
-                                            icon: const Icon(Icons.list),
-                                            text: global.language('list'),
-                                          ),
-                                          Tab(
-                                            icon: const Icon(Icons.group_work),
-                                            text: global.language('group'),
-                                          ),
-                                          Tab(
-                                            icon: const Icon(Icons.search),
-                                            text: global.language('search'),
-                                          ),
-                                          Tab(
-                                            icon: const Icon(Icons.menu),
-                                            text: global.language('menu'),
-                                          ),
-                                        ],
-                                      )),
-                                  Expanded(
-                                      child: TabBarView(
-                                    children: [
-                                      transScreen(mode: 0),
-                                      Container(),
-                                      /*selectProductLevelWidget()*/
-                                      findByText(),
-                                      //commandScreen(),
-                                    ],
-                                  )),
-                                ],
-                              ))));
-                })));
-  }
-
   Widget buildButton(String buttonText) {
     return Expanded(
       child: Card(
@@ -4737,9 +4693,6 @@ class _PosScreenState extends State<PosScreen>
                 child: Scaffold(
                     resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.black,
-                    body: (global.appMode == global.AppModeEnum.posTerminal ||
-                            global.appMode == global.AppModeEnum.posRemote)
-                        ? appLayoutPos()
-                        : appLayoutRestaurant()))));
+                    body: appLayoutPos()))));
   }
 }

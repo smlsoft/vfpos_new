@@ -297,11 +297,14 @@ class PayCashWidgetState extends State<PayCashWidget> {
                     child: Text(
                         global.moneyFormat
                             .format(global.payScreenData.cash_amount),
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Colors.blue,
-                            fontSize: 60,
+                            fontSize: (global.isDesktopScreen() ||
+                                    global.isTabletScreen())
+                                ? 50
+                                : 24,
                             fontWeight: FontWeight.bold,
-                            shadows: [
+                            shadows: const [
                               Shadow(
                                   offset: Offset(-1, -1), color: Colors.white),
                               Shadow(

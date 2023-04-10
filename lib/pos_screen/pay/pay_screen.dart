@@ -349,7 +349,8 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
 
   void paySuccessDialog() {
     String moneySymbol = global.language('money_symbol');
-    double fontSize = 32;
+    double fontSize =
+        (global.isDesktopScreen() || global.isTabletScreen()) ? 32 : 24;
 
     showDialog(
       barrierDismissible: false,
@@ -452,7 +453,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          '${global.moneyFormat.format(diffAmount)} ${moneySymbol}',
+                          '${global.moneyFormat.format(diffAmount)} $moneySymbol',
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: fontSize,
@@ -1346,9 +1347,9 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
               : Padding(
                   padding: const EdgeInsets.all(4),
                   child: Column(children: <Widget>[
-                    paySummeryScreen(),
-                    const SizedBox(height: 5),
                     Expanded(child: payDetailScreen(blocContext)),
+                    const SizedBox(height: 5),
+                    paySummeryScreen(),
                   ])),
         ),
       );

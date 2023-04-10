@@ -26,6 +26,9 @@ import 'package:dedepos/util/network.dart' as network;
 
 Future<void> startServer() async {
   if (global.ipAddress.isNotEmpty) {
+    network.connectivity();
+    global.ipAddress = await network.ipAddress();
+    global.targetDeviceIpAddress = global.ipAddress;
     var server =
         await HttpServer.bind(global.ipAddress, global.targetDeviceIpPort);
     dev.log(

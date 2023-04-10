@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class Loading extends StatefulWidget {
-  const Loading({Key? key}) : super(key: key);
+class LoadingScreen extends StatefulWidget {
+  const LoadingScreen({Key? key}) : super(key: key);
 
   @override
-  _LoadingState createState() => _LoadingState();
+  _LoadingScreenState createState() => _LoadingScreenState();
 }
 
-class _LoadingState extends State<Loading> {
+class _LoadingScreenState extends State<LoadingScreen> {
   Timer? timerSwitchToMenu;
 
   void init() async {
@@ -26,13 +26,13 @@ class _LoadingState extends State<Loading> {
 
     if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
-        Navigator.of(context).pushReplacementNamed('/client');
+        Navigator.of(context).pushReplacementNamed('client');
       });
     } else {
       timerSwitchToMenu =
           Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
-          Navigator.of(context).pushReplacementNamed('/menu');
+          Navigator.of(context).pushReplacementNamed('menu');
         }
         setState(() {});
       });

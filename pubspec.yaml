@@ -85,6 +85,9 @@ dependencies:
   network_tools: ^3.0.0+3
   esc_pos_utils: ^1.1.0
   msix: ^3.7.0
+  flutter_flavorizr: ^2.1.5
+  presentation_displays: ^0.2.3
+  video_player: ^2.5.2
   
 dev_dependencies:
   flutter_driver:
@@ -117,4 +120,35 @@ flutter:
         - asset: assets/fonts/prompt/Prompt-Regular.ttf
         - asset: assets/fonts/prompt/Prompt-Bold.ttf
         - asset: assets/fonts/prompt/Prompt-SemiBold.ttf
+
+flavorizr:
+  app:
+    android:
+      flavorDimensions: "flavor-type"
+    ios:
+
+  flavors:
+    dedepos:
+      app:
+        name: "DEDE POS"
+      android:
+        applicationId: "com.smlsoft.dedepos"
+      ios:
+        bundleId: "com.smlsoft.dedepos"
+      windows:
+        packageId: "com.smlsoft.dedepos"
+      macos:
+        bundleId: "com.smlsoft.dedepos"
+
+    smlmobilepos:
+      app:
+        name: "SML Mobile POS"
+      android:
+        applicationId: "com.smlsoft.smlmobilepos"
+      ios:
+        bundleId: "com.smlsoft.smlmobilepos"
+      windows:
+        packageId: "com.smlsoft.smlmobilepos"
+      macos:
+        bundleId: "com.smlsoft.smlmobilepos"
 

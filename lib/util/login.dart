@@ -19,7 +19,7 @@ class _LoginState extends State<Login> {
     super.initState();
     Timer(const Duration(seconds: 1), () {
       global.loginSuccess = true;
-      Navigator.of(context).pushReplacementNamed('/loading');
+      Navigator.of(context).pushReplacementNamed('loading');
     });
   }
 
@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
                   if (value == "0000") {
                     Future.delayed(const Duration(milliseconds: 100), () {
                       global.loginSuccess = true;
-                      Navigator.of(context).pushReplacementNamed('/loading');
+                      Navigator.of(context).pushReplacementNamed('loading');
                     });
                   }
                 },

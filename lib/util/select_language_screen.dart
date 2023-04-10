@@ -55,7 +55,7 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                                 GetStorage()
                                     .write('language', global.userLanguage);
                                 Navigator.of(context)
-                                    .pushReplacementNamed('/menu');
+                                    .pushReplacementNamed('menu');
                               });
                             },
                           );
