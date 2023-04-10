@@ -123,7 +123,7 @@ class _PosScreenState extends State<PosScreen>
   GlobalKey<PosNumPadState> posNumPadGlobalKey = GlobalKey();
   List<Widget> widgetMessage = [];
   String widgetMessageImageUrl = "";
-  double listTextHeight = 1;
+  double listTextHeight = 1.5;
 
   /// 0=Desktop,1=Tablet,2=Mobile
   int deviceMode = 0;
@@ -3600,8 +3600,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget posLayoutBottomDesktop() {
-    return Container(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
+    return SizedBox(
         width: double.infinity,
         child: Row(children: [
           Expanded(
@@ -3675,7 +3674,7 @@ class _PosScreenState extends State<PosScreen>
             foregroundColor: (showNumericPad) ? Colors.amber : Colors.white,
             backgroundColor: Colors.black,
           ),
-          child: (deviceMode == 1)
+          child: (deviceMode != 1)
               ? const Icon(Icons.tablet)
               : const FaIcon(FontAwesomeIcons.desktop),
           onPressed: () {
@@ -3691,8 +3690,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget posLayoutBottomTablet() {
-    return Container(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
+    return SizedBox(
         width: double.infinity,
         child: Row(children: [
           Expanded(
@@ -3807,259 +3805,6 @@ class _PosScreenState extends State<PosScreen>
         menuList = posLayoutBottomMobile();
         break;
     }
-    /*if (global.isDesktopScreen()) {
-      menu = Container(
-          padding: const EdgeInsets.only(top: 5, bottom: 5),
-          width: double.infinity,
-          child: Row(
-            children: [
-              if (global.isDesktopScreen() &&
-                  global.posScreenStyle == global.PosScreenStyleEnum.desktop)
-              if (global.isDesktopScreen())
-              if (global.isDesktopScreen() == false &&
-                  tabletTabController.index == 1)
-                Expanded(
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black,
-                      ),
-                      child: const Icon(
-                        Icons.grid_on,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          tabletTabController.index = 0;
-                        });
-                      }),
-                ),
-              if (tabletTabController.index == 0)
-                Expanded(
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black,
-                      ),
-                      child: const Icon(
-                        Icons.search,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          tabletTabController.index = 1;
-                        });
-                      }),
-                ),
-              if (Platform.isAndroid || Platform.isIOS)
-                Expanded(
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.black,
-                      ),
-                      child: const FaIcon(FontAwesomeIcons.barcode),
-                      onPressed: () {
-                        setState(() {
-                          scannerStart = !scannerStart;
-                        });
-                      }),
-                ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.black,
-                    ),
-                    child: const FaIcon(FontAwesomeIcons.addressBook),
-                    onPressed: () {
-                      desktopWidgetMode = 3;
-                    }),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor:
-                          (showNumericPad) ? Colors.amber : Colors.white,
-                      backgroundColor: Colors.black,
-                    ),
-                    child: const FaIcon(FontAwesomeIcons.calculator),
-                    onPressed: () {
-                      setState(() {
-                        showNumericPad = !showNumericPad;
-                      });
-                    }),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.black,
-                    ),
-                    child: Icon(
-                      (showButtonMenu)
-                          ? Icons.arrow_downward
-                          : Icons.arrow_upward,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        showButtonMenu = !showButtonMenu;
-                      });
-                    }),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.black,
-                    ),
-                    child: const FaIcon(FontAwesomeIcons.rotate),
-                    onPressed: () {
-                      setState(() {
-                        if (splitViewMode == 1) {
-                          splitViewMode = 2;
-                          splitViewController = SplitViewController(
-                              weights: [0.4, 0.6],
-                              limits: [WeightLimit(min: 0.2, max: 0.8)]);
-                        } else {
-                          splitViewMode = 1;
-                          splitViewController = SplitViewController(
-                              weights: [0.6, 0.4],
-                              limits: [WeightLimit(min: 0.2, max: 0.8)]);
-                        }
-                      });
-                    }),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                    ),
-                    child: const FaIcon(FontAwesomeIcons.searchengin),
-                    onPressed: () {
-                      setState(() {
-                        gridItemSize += 0.2;
-                        if (gridItemSize > 1.75) {
-                          gridItemSize = 1;
-                        }
-                      });
-                    }),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                    ),
-                    child: const FaIcon(FontAwesomeIcons.textHeight),
-                    onPressed: () {
-                      setState(() {
-                        listTextHeight += 0.1;
-                        if (listTextHeight > 2) {
-                          listTextHeight = 1;
-                        }
-                      });
-                    }),
-              ),
-              Expanded(
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor:
-                          (showNumericPad) ? Colors.amber : Colors.white,
-                      backgroundColor: Colors.black,
-                    ),
-                    child: (global.posScreenStyle ==
-                            global.PosScreenStyleEnum.desktop)
-                        ? const Icon(Icons.tablet)
-                        : const FaIcon(FontAwesomeIcons.desktop),
-                    onPressed: () {
-                      setState(() {
-                        if (global.posScreenStyle ==
-                            global.PosScreenStyleEnum.tablet) {
-                          global.posScreenStyle =
-                              global.PosScreenStyleEnum.desktop;
-                        } else {
-                          global.posScreenStyle =
-                              global.PosScreenStyleEnum.tablet;
-                        }
-                      });
-                    }),
-              ),
-            ],
-          ));
-    } else {
-      menu = Row(children: [
-        if (Platform.isAndroid || Platform.isIOS)
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const FaIcon(FontAwesomeIcons.barcode),
-                onPressed: () {
-                  setState(() {
-                    scannerStart = !scannerStart;
-                  });
-                }),
-          ),
-        Expanded(
-          child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.black,
-              ),
-              child: const FaIcon(FontAwesomeIcons.calculator),
-              onPressed: () {
-                setState(() {});
-              }),
-        ),
-        Expanded(
-          child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.black,
-              ),
-              child: Icon(
-                (showButtonMenu) ? Icons.arrow_downward : Icons.arrow_upward,
-              ),
-              onPressed: () {
-                setState(() {
-                  showButtonMenu = !showButtonMenu;
-                });
-              }),
-        ),
-        Expanded(
-          child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                foregroundColor: (showNumericPad) ? Colors.amber : Colors.white,
-                backgroundColor: Colors.black,
-              ),
-              child: const FaIcon(FontAwesomeIcons.searchengin),
-              onPressed: () {
-                setState(() {
-                  gridItemSize += 0.2;
-                  if (gridItemSize > 1.75) {
-                    gridItemSize = 1;
-                  }
-                });
-              }),
-        ),
-        Expanded(
-          child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-              ),
-              child: const FaIcon(FontAwesomeIcons.textHeight),
-              onPressed: () {
-                setState(() {
-                  listTextHeight += 0.1;
-                  if (listTextHeight > 2) {
-                    listTextHeight = 1;
-                  }
-                });
-              }),
-        ),
-      ]);
-    }*/
-
     return Column(children: [
       Container(
           height: 40,

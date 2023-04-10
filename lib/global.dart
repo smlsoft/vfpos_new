@@ -16,7 +16,6 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:ffi';
 import 'dart:io';
-import 'package:flutter_beep/flutter_beep.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:dedepos/util/app_auth.dart';
 import 'package:dedepos/db/bill_detail_extra_helper.dart';

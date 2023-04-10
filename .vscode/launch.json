@@ -9,31 +9,31 @@
             "request": "launch",
             "type": "dart",
             "deviceId": "windows"
-        },
+        },*/
         {
             "name": "Android Tabet",
             "request": "launch",
             "type": "dart",
-            "deviceId": "emulator-5556"
+            "deviceId": "M40Pro EEA"
         },
         {
-            "name": "Android Phone",
+            "name": "Android Tablet (Emulator)",
             "request": "launch",
             "type": "dart",
             "deviceId": "emulator-5554"
         },        
-        {
+        /*{
             "name": "Android SUNMI",
             "request": "launch",
             "type": "dart",
             "deviceId": "D2s PLUS"
         },*/
-        {
+        /*{
             "name": "macOS",
             "request": "launch",
             "type": "dart",
             "deviceId": "macos"
-        },
+        },*/
         /*{
             "name": "Iphone 14 Pro Max",
             "request": "launch",
@@ -53,10 +53,10 @@
             "flutterMode": "profile"
         }*/
     ],
-	/*"compounds": [
+	"compounds": [
 		{
 			"name": "All Devices",
-			"configurations": ["Windows", "Android Phone","Android Tabet","Android SUNMI","Macos","Iphone 14 Pro Max"],
+			"configurations": [ "Android Tabet", "Android Tablet (Emulator)"],
 		}
-	]*/
+	]
 }
