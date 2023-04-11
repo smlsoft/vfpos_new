@@ -3,7 +3,7 @@ description: dede pos project.
 
 publish_to: 'none' 
 
-version: 1.2.0+11
+version: 1.2.1+11
 
 environment:
   sdk: ">=2.18.4 <3.0.0"
@@ -124,6 +124,8 @@ flavorizr:
     android:
       flavorDimensions: "flavor-type"
     ios:
+    windows:
+    macos:
 
   flavors:
     dedepos:
@@ -138,17 +140,29 @@ flavorizr:
       macos:
         bundleId: "com.smlsoft.dedepos"
 
-    smlmobilepos:
+    smlsuperpos:
       app:
-        name: "SML Mobile POS"
+        name: "SML Super POS"
       android:
-        applicationId: "com.smlsoft.smlmobilepos"
+        applicationId: "com.smlsoft.smlsuperpos"
       ios:
-        bundleId: "com.smlsoft.smlmobilepos"
+        bundleId: "com.smlsoft.smlsuperpos"
       windows:
-        packageId: "com.smlsoft.smlmobilepos"
+        packageId: "com.smlsoft.smlsuperpos"
       macos:
-        bundleId: "com.smlsoft.smlmobilepos"
+        bundleId: "com.smlsoft.smlsuperpos"
+
+    smlmobilesales:
+      app:
+        name: "SML Mobile Sales"
+      android:
+        applicationId: "com.smlsoft.smlmobilesales"
+      ios:
+        bundleId: "com.smlsoft.smlmobilesales"
+      windows:
+        packageId: "com.smlsoft.smlmobilesales"
+      macos:
+        bundleId: "com.smlsoft.smlmobilesales"
 
     vfpos:
       app:
@@ -161,4 +175,3 @@ flavorizr:
         packageId: "com.smlsoft.vfpos"
       macos:
         bundleId: "com.smlsoft.vfpos"
-

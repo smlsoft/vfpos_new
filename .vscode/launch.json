@@ -20,7 +20,7 @@
             "name": "Android Tablet (Emulator)",
             "request": "launch",
             "type": "dart",
-            "deviceId": "emulator-5554"
+            "deviceId": "emulator-5556"
         },        
         /*{
             "name": "Android SUNMI",
