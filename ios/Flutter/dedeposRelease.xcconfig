@@ -1,0 +1,6 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_dedepos.dart
+ASSET_PREFIX=dedepos
+BUNDLE_NAME=DEDE POS
+BUNDLE_DISPLAY_NAME=DEDE POS

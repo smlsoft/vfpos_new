@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/db/printer_helper.dart';
+import 'package:dedepos/flavors.dart';
 import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/model/json/receive_money_model.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
@@ -28,13 +29,78 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  List<Widget> menuListProduct = [];
+  late List<Widget> menuPosList;
+  late List<Widget>? menuVisitList;
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
   TextEditingController password = TextEditingController();
 
   var appBarHeight = AppBar().preferredSize.height;
+
+  List<Widget> menuForVisit() {
+    return [
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'กำหนดพิกัด GPRS',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'ถ่ายรูปหน้าร้าน',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'ถ่ายรูปสินค้า',
+          callBack: () {}),
+    ];
+  }
+
+  List<Widget> menuPos() {
+    return [
+      menuItem(
+          icon: Icons.point_of_sale,
+          title: 'pos_screen',
+          callBack: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PosScreen(),
+              ),
+            );
+          }),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'พิมพ์ใบกำกับภาษี(แบบเต็ม)',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'พิมพ์สำเนาใบเสร็จ',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'ยกเลิกใบเสร็จ',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined, title: 'คืนสินค้า', callBack: () {}),
+      menuItem(
+          icon: Icons.request_quote,
+          title: 'รับเงินทอน',
+          callBack: () {
+            receiveMoneyDialog();
+          }),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'ส่งยอดขาย',
+          callBack: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Container() /*SendMoney()*/,
+              ),
+            );
+          }),
+    ];
+  }
 
   Widget menuItem(
       {required IconData icon,
@@ -95,50 +161,10 @@ class _MenuScreenState extends State<MenuScreen> {
     }
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-    menuListProduct.add(
-      menuItem(
-          icon: Icons.point_of_sale,
-          title: 'pos_screen',
-          callBack: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PosScreen(),
-              ),
-            );
-          }),
-    );
-    menuListProduct.add(menuItem(
-        icon: Icons.list_alt_outlined,
-        title: 'พิมพ์ใบกำกับภาษี(แบบเต็ม)',
-        callBack: () {}));
-    menuListProduct.add(menuItem(
-        icon: Icons.list_alt_outlined,
-        title: 'พิมพ์สำเนาใบเสร็จ',
-        callBack: () {}));
-    menuListProduct.add(menuItem(
-        icon: Icons.list_alt_outlined,
-        title: 'ยกเลิกใบเสร็จ',
-        callBack: () {}));
-    menuListProduct.add(menuItem(
-        icon: Icons.list_alt_outlined, title: 'คืนสินค้า', callBack: () {}));
-    menuListProduct.add(menuItem(
-        icon: Icons.request_quote,
-        title: 'รับเงินทอน',
-        callBack: () {
-          receiveMoneyDialog();
-        }));
-    menuListProduct.add(menuItem(
-        icon: Icons.list_alt_outlined,
-        title: 'ส่งยอดขาย',
-        callBack: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Container() /*SendMoney()*/,
-            ),
-          );
-        }));
+    menuPosList = menuPos();
+    if (F.appFlavor == Flavor.SMLMOBILESALES) {
+      menuVisitList = menuForVisit();
+    }
     syncBillProcess();
   }
 
@@ -330,7 +356,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           child: GridView.builder(
                             shrinkWrap: true,
                             physics: const BouncingScrollPhysics(),
-                            itemCount: menuListProduct.length,
+                            itemCount: menuPosList.length,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount:
@@ -339,11 +365,32 @@ class _MenuScreenState extends State<MenuScreen> {
                               mainAxisSpacing: 5.0,
                             ),
                             itemBuilder: (BuildContext context, int index) {
-                              return menuListProduct[index];
+                              return menuPosList[index];
                             },
                           ),
                         ),
                       ),
+                      if (menuVisitList != null)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: menuVisitList!.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount:
+                                    MediaQuery.of(context).size.width ~/ 150,
+                                crossAxisSpacing: 5.0,
+                                mainAxisSpacing: 5.0,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return menuVisitList![index];
+                              },
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
