@@ -54,6 +54,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    global.getDeviceModel(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(

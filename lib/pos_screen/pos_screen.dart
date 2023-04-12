@@ -3618,6 +3618,9 @@ class _PosScreenState extends State<PosScreen>
                   });
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           Expanded(
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -3632,6 +3635,9 @@ class _PosScreenState extends State<PosScreen>
                     desktopWidgetMode = 1;
                   });
                 }),
+          ),
+          const SizedBox(
+            width: 4,
           ),
           Expanded(
             child: ElevatedButton(
@@ -3648,6 +3654,9 @@ class _PosScreenState extends State<PosScreen>
                   });
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           Expanded(
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -3659,10 +3668,25 @@ class _PosScreenState extends State<PosScreen>
                   desktopWidgetMode = 3;
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonShowMenu(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonRotate(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonGridItemSize(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonListTextHeight(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonSwitchDesktopTablet(),
         ]));
   }
@@ -3708,6 +3732,9 @@ class _PosScreenState extends State<PosScreen>
                   });
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           Expanded(
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -3723,6 +3750,9 @@ class _PosScreenState extends State<PosScreen>
                   });
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           if (Platform.isAndroid || Platform.isIOS)
             Expanded(
               child: ElevatedButton(
@@ -3737,6 +3767,10 @@ class _PosScreenState extends State<PosScreen>
                     });
                   }),
             ),
+          if (Platform.isAndroid || Platform.isIOS)
+            const SizedBox(
+              width: 4,
+            ),
           Expanded(
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -3748,10 +3782,25 @@ class _PosScreenState extends State<PosScreen>
                   desktopWidgetMode = 3;
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonShowMenu(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonRotate(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonGridItemSize(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonListTextHeight(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonSwitchDesktopTablet(),
         ]));
   }
@@ -3775,6 +3824,9 @@ class _PosScreenState extends State<PosScreen>
                     });
                   }),
             ),
+          const SizedBox(
+            width: 4,
+          ),
           Expanded(
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -3786,8 +3838,17 @@ class _PosScreenState extends State<PosScreen>
                   desktopWidgetMode = 3;
                 }),
           ),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonShowMenu(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonGridItemSize(),
+          const SizedBox(
+            width: 4,
+          ),
           posButtonListTextHeight(),
         ]));
   }
@@ -3810,7 +3871,13 @@ class _PosScreenState extends State<PosScreen>
           height: 40,
           margin: const EdgeInsets.only(top: 5),
           child: totalAndPayScreen()),
+      SizedBox(
+        height: 5,
+      ),
       menuList,
+      SizedBox(
+        height: 5,
+      ),
       if (showButtonMenu)
         Padding(
             padding: const EdgeInsets.only(bottom: 4), child: commandWidget())
