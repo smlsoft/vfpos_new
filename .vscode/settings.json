@@ -2,5 +2,6 @@
     "cSpell.words": [
         "Struct"
     ],
-    "cmake.sourceDirectory": "${workspaceFolder}/windows"
+    "cmake.sourceDirectory": "${workspaceFolder}/windows",
+    "java.configuration.updateBuildConfiguration": "disabled"
 }

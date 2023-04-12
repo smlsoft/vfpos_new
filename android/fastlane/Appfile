@@ -1,2 +1,0 @@
-json_key_file("/Users/suteemongkol/android-api-key/pc-api-5821174520038868015-412-70b9610de97c.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
-package_name("com.smlsoft.dedepos") # e.g. com.krausefx.app

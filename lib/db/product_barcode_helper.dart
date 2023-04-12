@@ -28,13 +28,11 @@ class ProductBarcodeHelper {
   }
 
   void insertMany(List<ProductBarcodeObjectBoxStruct> values) {
-    for (var value in values) {
-      box.putAsync(value);
-    }
+    box.putMany(values);
   }
 
   Future insert(ProductBarcodeObjectBoxStruct value) async {
-    return box.putAsync(value);
+    return box.put(value);
   }
 
   List<ProductBarcodeObjectBoxStruct> packData(

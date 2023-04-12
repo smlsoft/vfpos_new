@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:presentation_displays/display.dart';
@@ -7,7 +8,6 @@ import 'dart:math';
 import 'package:dedepos/api/network/server.dart';
 import 'package:ffi/ffi.dart';
 import 'package:win32/win32.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:dedepos/api/network/sync_model.dart';
@@ -214,6 +214,43 @@ enum DeviceModeEnum {
   linuxDesktop,
   androidPhone,
   androidTablet,
+}
+
+Future<Position> determinePosition() async {
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  // Test if location services are enabled.
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled don't continue
+    // accessing the position and request users of the
+    // App to enable the location services.
+    return Future.error('Location services are disabled.');
+  }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permissions are denied, next time you could try
+      // requesting permissions again (this is also where
+      // Android's shouldShowRequestPermissionRationale
+      // returned true. According to Android guidelines
+      // your App should show an explanatory UI now.
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  if (permission == LocationPermission.deniedForever) {
+    // Permissions are denied forever, handle appropriately.
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
+
+  // When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+  return await Geolocator.getCurrentPosition();
 }
 
 Future<void> getDeviceModel(BuildContext context) async {
@@ -917,9 +954,7 @@ Future<void> startLoading() async {
       // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path,
-        maxDBSizeInKB: 1024000,
-        queriesCaseSensitiveDefault: false);
+        directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
   } catch (e) {
     dev.log(e.toString());
     // โครงสร้างเปลี่ยน เริ่ม Sync ใหม่ทั้งหมด
@@ -930,9 +965,7 @@ Future<void> startLoading() async {
     }
 
     objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path,
-        maxDBSizeInKB: 1024000,
-        queriesCaseSensitiveDefault: false);
+        directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
   }
   int xxx = ProductBarcodeHelper().count();
   print("ProductBarcodeHelper().count() $xxx");

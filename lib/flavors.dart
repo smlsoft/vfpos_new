@@ -1,4 +1,5 @@
 enum Flavor {
+  DEV,
   DEDEPOS,
   SMLSUPERPOS,
   SMLMOBILESALES,
@@ -12,6 +13,8 @@ class F {
 
   static String get title {
     switch (appFlavor) {
+      case Flavor.DEV:
+        return 'DEDE POS';
       case Flavor.DEDEPOS:
         return 'DEDE POS';
       case Flavor.SMLSUPERPOS:
