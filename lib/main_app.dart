@@ -51,6 +51,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   if (Platform.isAndroid) {
     // Position position = await global.determinePosition();
   }

@@ -8,7 +8,6 @@ import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
-import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/network.dart';
 import 'package:dedepos/widgets/button.dart';
@@ -29,12 +28,22 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  int menuMode = 0; // 0=Menu,1=Select Language
   late List<Widget> menuPosList;
   late List<Widget>? menuVisitList;
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
   TextEditingController password = TextEditingController();
+  List<String> countryNames = [
+    "English",
+    "Thai",
+    "Laos",
+    "Chinese",
+    "Japan",
+    "Korea"
+  ];
+  List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 
   var appBarHeight = AppBar().preferredSize.height;
 
@@ -53,6 +62,36 @@ class _MenuScreenState extends State<MenuScreen> {
           title: 'ถ่ายรูปสินค้า',
           callBack: () {}),
     ];
+  }
+
+  Widget selectLanguage() {
+    return Container(
+        padding: const EdgeInsets.all(4),
+        color: Colors.white,
+        child: ListView.builder(
+            itemCount: countryNames.length,
+            itemBuilder: (_, index) {
+              return Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        global.userLanguage = countryCodes[index];
+                        GetStorage().write('language', global.userLanguage);
+                        menuMode = 0;
+                      });
+                    },
+                    child: Row(children: [
+                      Image.asset(
+                        'assets/flags/${countryCodes[index]}.png',
+                        width: 100,
+                        height: 100,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(countryNames[index])
+                    ]),
+                  ));
+            }));
   }
 
   List<Widget> menuPos() {
@@ -157,10 +196,12 @@ class _MenuScreenState extends State<MenuScreen> {
     try {
       global.userLanguage = GetStorage().read("language");
     } catch (_) {
-      global.userLanguage = "en";
+      global.userLanguage = "";
     }
+    menuMode = (global.userLanguage.isNotEmpty) ? 0 : 1;
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
     menuPosList = menuPos();
     if (F.appFlavor == Flavor.SMLMOBILESALES) {
       menuVisitList = menuForVisit();
@@ -242,158 +283,164 @@ class _MenuScreenState extends State<MenuScreen> {
               centerTitle: true,
               title: Text(
                   "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_client")}"),
-              actions: [
-                IconButton(
-                  icon: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green, width: 2),
-                      ),
-                      child: Image.asset(
-                          'assets/flags/${global.userLanguage}.png')),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SelectLanguageScreen()),
-                    );
-                  },
-                ),
-                PopupMenuButton(
-                  elevation: 2,
-                  icon: const Icon(Icons.more_vert),
-                  offset: Offset(0.0, appBarHeight),
-                  onSelected: (value) {
-                    if (value == 1) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PrinterConfigScreen(),
-                        ),
-                      );
-                    }
-                  },
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0),
-                      topLeft: Radius.circular(8.0),
-                      topRight: Radius.circular(8.0),
-                    ),
-                  ),
-                  itemBuilder: (ctx) => [
-                    buildPopupMenuItem(
-                      title: global.language('printer_config'),
-                      valueCode: 1,
-                      iconData: Icons.print_rounded,
-                    ),
-                    buildPopupMenuItem(
-                      title: global.language('logout'),
-                      valueCode: 9,
-                      iconData: Icons.logout,
-                    ),
-                  ],
-                )
-              ]),
-          resizeToAvoidBottomInset: false,
-          body: (global.userLoginCode.isEmpty)
-              ? Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      colorFilter: ColorFilter.mode(
-                          Colors.black.withOpacity(0.25), BlendMode.dstATop),
-                      image: const AssetImage('assets/images/login.png'),
-                      fit: BoxFit.cover,
-                    ),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 7,
-                        offset:
-                            const Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  margin: const EdgeInsets.all(10),
-                  child: SizedBox(
-                      width: double.infinity,
-                      child: Center(
-                        child: Container(
-                            width: 200,
-                            height: 100,
+              actions: (menuMode == 1)
+                  ? []
+                  : [
+                      IconButton(
+                        icon: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 10,
-                                  blurRadius: 7,
-                                  offset: const Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ],
+                              border: Border.all(color: Colors.green, width: 2),
                             ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                posLoginDialog();
-                              },
-                              child: Text(
-                                global.language("login"),
-                                overflow: TextOverflow.clip,
-                              ),
-                            )),
-                      )))
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      infoWidget,
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          child: GridView.builder(
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: menuPosList.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount:
-                                  MediaQuery.of(context).size.width ~/ 150,
-                              crossAxisSpacing: 5.0,
-                              mainAxisSpacing: 5.0,
-                            ),
-                            itemBuilder: (BuildContext context, int index) {
-                              return menuPosList[index];
-                            },
-                          ),
-                        ),
+                            child: Image.asset(
+                                'assets/flags/${global.userLanguage}.png')),
+                        onPressed: () {
+                          setState(() {
+                            menuMode = 1;
+                          });
+                        },
                       ),
-                      if (menuVisitList != null)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            child: GridView.builder(
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: menuVisitList!.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount:
-                                    MediaQuery.of(context).size.width ~/ 150,
-                                crossAxisSpacing: 5.0,
-                                mainAxisSpacing: 5.0,
+                      PopupMenuButton(
+                        elevation: 2,
+                        icon: const Icon(Icons.more_vert),
+                        offset: Offset(0.0, appBarHeight),
+                        onSelected: (value) {
+                          if (value == 1) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const PrinterConfigScreen(),
                               ),
-                              itemBuilder: (BuildContext context, int index) {
-                                return menuVisitList![index];
-                              },
-                            ),
+                            );
+                          }
+                        },
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8.0),
+                            bottomRight: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0),
                           ),
                         ),
-                    ],
-                  ),
-                ),
+                        itemBuilder: (ctx) => [
+                          buildPopupMenuItem(
+                            title: global.language('printer_config'),
+                            valueCode: 1,
+                            iconData: Icons.print_rounded,
+                          ),
+                          buildPopupMenuItem(
+                            title: global.language('logout'),
+                            valueCode: 9,
+                            iconData: Icons.logout,
+                          ),
+                        ],
+                      )
+                    ]),
+          resizeToAvoidBottomInset: false,
+          body: (menuMode == 1)
+              ? selectLanguage()
+              : (global.userLoginCode.isEmpty)
+                  ? Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.25),
+                              BlendMode.dstATop),
+                          image: const AssetImage('assets/images/login.png'),
+                          fit: BoxFit.cover,
+                        ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 7,
+                            offset: const Offset(
+                                0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      margin: const EdgeInsets.all(10),
+                      child: SizedBox(
+                          width: double.infinity,
+                          child: Center(
+                            child: Container(
+                                width: 200,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 10,
+                                      blurRadius: 7,
+                                      offset: const Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    posLoginDialog();
+                                  },
+                                  child: Text(
+                                    global.language("login"),
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                )),
+                          )))
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          infoWidget,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: menuPosList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      MediaQuery.of(context).size.width ~/ 150,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 5.0,
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return menuPosList[index];
+                                },
+                              ),
+                            ),
+                          ),
+                          if (menuVisitList != null)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: menuVisitList!.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).size.width ~/
+                                            150,
+                                    crossAxisSpacing: 5.0,
+                                    mainAxisSpacing: 5.0,
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return menuVisitList![index];
+                                  },
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
         ),
       ),
     );

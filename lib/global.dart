@@ -1,3 +1,4 @@
+import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
@@ -129,6 +130,7 @@ int machineNumber = 1;
 String selectTableCode = "";
 String selectTableGroup = "";
 ThemeStruct posTheme = ThemeStruct();
+GlobalKey<PosNumPadState> posNumPadProductWeightGlobalKey = GlobalKey();
 bool transDisplayImage = true;
 List<ProductCategoryObjectBoxStruct> productCategoryCodeSelected = [];
 List<ProductCategoryObjectBoxStruct> productCategoryList = [];

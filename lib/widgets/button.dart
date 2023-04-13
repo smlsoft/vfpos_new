@@ -26,8 +26,12 @@ class NumPadButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget label = icon != null
-        ? Icon(icon,
-            color: (textAndIconColor == null) ? Colors.white : textAndIconColor)
+        ? FittedBox(
+            fit: BoxFit.fill,
+            child: Icon(icon,
+                color: (textAndIconColor == null)
+                    ? Colors.white
+                    : textAndIconColor))
         : Text(text ?? "",
             style: TextStyle(
                 fontSize: 80,

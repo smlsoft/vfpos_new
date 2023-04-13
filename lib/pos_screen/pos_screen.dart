@@ -1,3 +1,5 @@
+import 'package:dedepos/pos_screen/pos_product_weight.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
@@ -11,7 +13,6 @@ import 'package:fullscreen/fullscreen.dart';
 import 'package:get/state_manager.dart';
 import 'package:get/utils.dart';
 import 'package:presentation_displays/displays_manager.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:split_view/split_view.dart';
 import 'dart:developer' as dev;
 import 'dart:math';
@@ -81,6 +82,7 @@ class PosScreen extends StatefulWidget {
 
 class _PosScreenState extends State<PosScreen>
     with SingleTickerProviderStateMixin {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late Timer posScreenTimer;
   late Timer messageTimer;
   late Timer deviceTimer;
@@ -89,10 +91,11 @@ class _PosScreenState extends State<PosScreen>
   //late QRViewController _scanController;
   late AutoScrollController autoScrollController;
   FocusNode mainFocusNode = FocusNode();
-  final String barcodeScanResult = "";
+  String qrCodeBarcodeScannerResult = "";
   bool barcodeScanActive = true;
   String textInput = "";
-  late bool scannerStart = false;
+  bool qrCodeBarcodeScannerStart = false;
+  bool qrCodeBarcodeScannerSuccess = false;
   bool showButtonMenu = true;
   String categoryGuidSelected = "";
   final TextEditingController empCode = TextEditingController();
@@ -114,18 +117,16 @@ class _PosScreenState extends State<PosScreen>
   bool showNumericPad = false;
   double showNumericPadTop = 100;
   double showNumericPadLeft = 100;
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? scanController;
   int splitViewMode = 1;
   double gridItemSize = 1;
   String findActiveLineByGuid = "";
-  late PosNumPad desktopNumPad;
   GlobalKey<PosNumPadState> posNumPadGlobalKey = GlobalKey();
   List<Widget> widgetMessage = [];
   String widgetMessageImageUrl = "";
   double listTextHeight = 1.5;
 
-  /// 0=Desktop,1=Tablet,2=Mobile
+  /// 0=Desktop,1=Tablet,2=Phone
   int deviceMode = 0;
 
   /// 0=Number,1=ค้นหาสินค้า,2=หมวดสินค้า,3=ค้นหาลูกค้า
@@ -243,17 +244,6 @@ class _PosScreenState extends State<PosScreen>
         }
       }
     });
-    desktopNumPad = PosNumPad(
-      key: posNumPadGlobalKey,
-      onChange: (String number) {
-        setState(() {
-          textInput = number;
-        });
-      },
-      onSubmit: (String number) {
-        onSubmit(number);
-      },
-    );
   }
 
   @override
@@ -451,58 +441,65 @@ class _PosScreenState extends State<PosScreen>
           String unitCodeStr = "";
           String unitNameStr = "";
           if (productSelect != null) {
-            productNameStr = productSelect.names[0];
-            unitCodeStr = productSelect.unit_code;
-            unitNameStr = productSelect.unit_names[0];
-            double price = double.tryParse(productSelect.prices[0]) ?? 0.0;
-            PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
-                log_date_time: DateTime.now(),
-                hold_number: global.posHoldActiveNumber,
-                command_code: commandCode,
-                barcode: barcode,
-                name: productNameStr,
-                unit_code: unitCodeStr,
-                unit_name: unitNameStr,
-                qty: qtyForCalc,
-                price: price);
-            findActiveLineByGuid = data.guid_auto_fixed;
-            await logHelper.insert(data);
-            global.playSound(
-                sound: global.SoundEnum.beep, word: productNameStr);
-            widgetMessage = [
-              Text(productNameStr,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold)),
-              Text(
-                  overflow: TextOverflow.ellipsis,
-                  "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} $unitNameStr",
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green)),
-              Text(
-                  overflow: TextOverflow.ellipsis,
-                  "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language(global.language("money_symbol"))}",
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.cyan)),
-              Text(
-                  overflow: TextOverflow.ellipsis,
-                  "${global.language("total")} ${global.moneyFormat.format(qtyForCalc * price)} ${global.language(global.language("money_symbol"))}",
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue)),
-              Text("Barcode : $barcode",
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey)),
-            ];
-            widgetMessageImageUrl = productSelect.images_url;
+            if (1 == 0) {
+              // สินค้าชั่งน้ำหนัก
+              qtyForCalc = await productWeightScreen(
+                  productSelect.barcode, productSelect.images_url);
+            }
+            if (qtyForCalc != 0) {
+              productNameStr = productSelect.names[0];
+              unitCodeStr = productSelect.unit_code;
+              unitNameStr = productSelect.unit_names[0];
+              double price = double.tryParse(productSelect.prices[0]) ?? 0.0;
+              PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
+                  log_date_time: DateTime.now(),
+                  hold_number: global.posHoldActiveNumber,
+                  command_code: commandCode,
+                  barcode: barcode,
+                  name: productNameStr,
+                  unit_code: unitCodeStr,
+                  unit_name: unitNameStr,
+                  qty: qtyForCalc,
+                  price: price);
+              findActiveLineByGuid = data.guid_auto_fixed;
+              await logHelper.insert(data);
+              global.playSound(
+                  sound: global.SoundEnum.beep, word: productNameStr);
+              widgetMessage = [
+                Text(productNameStr,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold)),
+                Text(
+                    overflow: TextOverflow.ellipsis,
+                    "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} $unitNameStr",
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green)),
+                Text(
+                    overflow: TextOverflow.ellipsis,
+                    "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language(global.language("money_symbol"))}",
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.cyan)),
+                Text(
+                    overflow: TextOverflow.ellipsis,
+                    "${global.language("total")} ${global.moneyFormat.format(qtyForCalc * price)} ${global.language(global.language("money_symbol"))}",
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue)),
+                Text("Barcode : $barcode",
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey)),
+              ];
+              widgetMessageImageUrl = productSelect.images_url;
+            }
           } else {
             widgetMessage = [
               Center(
@@ -1049,16 +1046,21 @@ class _PosScreenState extends State<PosScreen>
 
     controller.scannedDataStream.listen((scanData) async {
       textInput = "";
-      String barcodeScanResult = scanData.code.toString();
+      qrCodeBarcodeScannerResult = scanData.code.toString();
       logInsert(
           commandCode: 1,
-          barcode: barcodeScanResult,
+          barcode: qrCodeBarcodeScannerResult,
           qty: (textInput.isEmpty) ? "1.0" : textInput);
       processEvent(
-          barcode: barcodeScanResult, holdNumber: global.posHoldActiveNumber);
+          barcode: qrCodeBarcodeScannerResult,
+          holdNumber: global.posHoldActiveNumber);
 
       await controller.pauseCamera();
+      qrCodeBarcodeScannerSuccess = true;
+      setState(() {});
       await Future.delayed(const Duration(seconds: 1));
+      qrCodeBarcodeScannerSuccess = false;
+      setState(() {});
       await controller.resumeCamera();
     });
   }
@@ -1697,47 +1699,36 @@ class _PosScreenState extends State<PosScreen>
         ));
   }
 
-  Widget selectProduct() {
+  Widget selectProductByQrCodeOrBarcode() {
     return Scaffold(
-        floatingActionButton: Wrap(children: [
-          Visibility(
-              visible: !scannerStart,
-              child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: FittedBox(
-                      child: FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        showButtonMenu = !showButtonMenu;
-                      });
-                    },
-                    child: const Icon(Icons.menu),
-                  )))),
-          Visibility(
-              visible: scannerStart,
-              child: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    scannerStart = false;
-                  });
-                },
-                child: const Icon(Icons.close),
-              ))
-        ]),
-        body: Container(
-            decoration: const BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: (scannerStart)
-                ? Column(children: [
-                    Expanded(
-                        child: QRView(
+        floatingActionButton: Visibility(
+            visible: qrCodeBarcodeScannerStart,
+            child: FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  qrCodeBarcodeScannerStart = false;
+                });
+              },
+              child: const Icon(Icons.close),
+            )),
+        body: (qrCodeBarcodeScannerStart)
+            ? (qrCodeBarcodeScannerSuccess)
+                ? Center(child: Text(qrCodeBarcodeScannerResult))
+                : Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.blue,
+                    ),
+                    child: QRView(
                       key: qrKey,
                       onQRViewCreated: onQRViewCreated,
-                    )),
-                  ])
-                : Container()));
+                      overlay: QrScannerOverlayShape(
+                          borderColor: Colors.red,
+                          borderRadius: 10,
+                          borderLength: 30,
+                          borderWidth: 10,
+                          cutOutSize: 150),
+                    ))
+            : Container());
   }
 
   Widget detailHeaderWidget() {
@@ -1855,168 +1846,86 @@ class _PosScreenState extends State<PosScreen>
         width: 4,
       );
 
-      if (1 == 1) {
-        return Row(
-          children: [
-            Expanded(
-                flex: 5,
-                child: Row(children: [
-                  Expanded(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+      return Row(
+        children: [
+          Expanded(
+              flex: 5,
+              child: Row(children: [
+                Expanded(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      Text(productName,
+                          style: textStyle.copyWith(fontSize: fontSize)),
+                      if (isActive)
+                        Text(barcode,
+                            style:
+                                textStyle.copyWith(fontSize: fontSize * 0.75)),
+                    ])),
+                if (isActive && imageUrl.isNotEmpty)
+                  Container(
+                      width: 50,
+                      height: 50,
+                      margin: const EdgeInsets.only(right: 5),
+                      padding: const EdgeInsets.only(right: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.blueAccent),
+                      ),
+                      child: Center(
+                          child: CachedNetworkImage(
+                        fit: BoxFit.fill,
+                        imageUrl: imageUrl,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      )))
+              ])),
+          Expanded(
+              flex: 1,
+              child: Text(unitName,
+                  style: textStyle.copyWith(fontSize: fontSize))),
+          Expanded(
+              flex: 1,
+              child: (qty == 0)
+                  ? Container()
+                  : Text(global.moneyFormat.format(qty),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(fontSize: fontSize))),
+          Expanded(
+              flex: 1,
+              child: (price == 0)
+                  ? Container()
+                  : ((price == priceOriginal))
+                      ? Text(global.moneyFormat.format(price),
+                          textAlign: TextAlign.right,
+                          style: textStyle.copyWith(fontSize: fontSize))
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                        Text(productName,
-                            style: textStyle.copyWith(fontSize: fontSize)),
-                        if (isActive)
-                          Text(barcode,
-                              style: textStyle.copyWith(
-                                  fontSize: fontSize * 0.75)),
-                      ])),
-                  if (isActive && imageUrl.isNotEmpty)
-                    Container(
-                        width: 50,
-                        height: 50,
-                        margin: const EdgeInsets.only(right: 5),
-                        padding: const EdgeInsets.only(right: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.blueAccent),
-                        ),
-                        child: Center(
-                            child: CachedNetworkImage(
-                          fit: BoxFit.fill,
-                          imageUrl: imageUrl,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                        )))
-                ])),
-            Expanded(
-                flex: 1,
-                child: Text(unitName,
-                    style: textStyle.copyWith(fontSize: fontSize))),
-            Expanded(
-                flex: 1,
-                child: (qty == 0)
-                    ? Container()
-                    : Text(global.moneyFormat.format(qty),
-                        textAlign: TextAlign.right,
-                        style: textStyle.copyWith(fontSize: fontSize))),
-            Expanded(
-                flex: 1,
-                child: (price == 0)
-                    ? Container()
-                    : ((price == priceOriginal))
-                        ? Text(global.moneyFormat.format(price),
-                            textAlign: TextAlign.right,
-                            style: textStyle.copyWith(fontSize: fontSize))
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(global.moneyFormat.format(priceOriginal),
-                                  textAlign: TextAlign.right,
-                                  style: textStyle.copyWith(
-                                      fontSize: fontSize * 0.75,
-                                      color: Colors.red,
-                                      fontStyle: FontStyle.italic)),
-                              Text(global.moneyFormat.format(price),
-                                  textAlign: TextAlign.right,
-                                  style: textStyle.copyWith(
-                                      fontSize: fontSize,
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold))
-                            ],
-                          )),
-            Expanded(
-                flex: 2,
-                child: Text(global.moneyFormat.format(totalAmount),
-                    textAlign: TextAlign.right,
-                    style: textStyle.copyWith(
-                        fontSize: fontSize, fontWeight: FontWeight.bold))),
-          ],
-        );
-      } else {
-        List<Widget> productDetail = [];
-        productDetail.add(
-            Text(productName, style: textStyle.copyWith(fontSize: fontSize)));
-        if (qty > 1) {
-          productDetail.add(rowSpace);
-          productDetail.add(Text(
-              " X ${global.moneyFormat.format(qty)} $unitName",
-              style:
-                  textStyle.copyWith(color: Colors.red, fontSize: fontSize)));
-          productDetail.add(rowSpace);
-          productDetail.add(Text(
-              "${global.language("price")} $unitName ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
-              style:
-                  textStyle.copyWith(color: Colors.blue, fontSize: fontSize)));
-        }
-        if (fullDetail) {
-          if (price != priceOriginal) {
-            productDetail.add(rowSpace);
-            productDetail.add(Text(
-                "${global.language("original_price")}  ${global.moneyFormat.format(priceOriginal)} ${global.language("money_symbol")}/$unitName ${global.language("new_price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}/$unitName",
-                style: textStyle.copyWith(
-                    color: Colors.orange, fontSize: fontSize - 2)));
-          }
-          if (barcode.isNotEmpty) {
-            productDetail.add(rowSpace);
-            productDetail.add(Text(barcode,
-                style: textStyle.copyWith(
-                    color: Colors.green, fontSize: fontSize - 2)));
-          }
-        }
-        if (imageUrl != "0" && imageUrl != "" && global.isOnline) {
-          productDetail.add(rowSpace);
-          productDetail.add(Padding(
-              padding: const EdgeInsets.only(right: 5),
-              child: CachedNetworkImage(
-                width: 25,
-                height: 25,
-                fit: BoxFit.fill,
-                imageUrl: imageUrl,
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              )));
-        }
-
-        return Column(children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Expanded(
-                flex: 6,
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.end,
-                        children: productDetail)),
-              ),
-              const SizedBox(
-                width: 2,
-                height: 0,
-              ),
-              Expanded(
-                  flex: 3,
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: (totalAmount == 0.0)
-                          ? Container()
-                          : Text(global.moneyFormat.format(totalAmount),
-                              style: textStyle.copyWith(fontSize: fontSize)))),
-            ],
-          ),
-          if (description.isNotEmpty)
-            SizedBox(
-                width: double.infinity,
-                child: Text(description,
-                    textAlign: TextAlign.left,
-                    style: const TextStyle(fontSize: 10, color: Colors.black)))
-        ]);
-      }
+                            Text(global.moneyFormat.format(priceOriginal),
+                                textAlign: TextAlign.right,
+                                style: textStyle.copyWith(
+                                    fontSize: fontSize * 0.75,
+                                    color: Colors.red,
+                                    fontStyle: FontStyle.italic)),
+                            Text(global.moneyFormat.format(price),
+                                textAlign: TextAlign.right,
+                                style: textStyle.copyWith(
+                                    fontSize: fontSize,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.bold))
+                          ],
+                        )),
+          Expanded(
+              flex: 2,
+              child: Text(global.moneyFormat.format(totalAmount),
+                  textAlign: TextAlign.right,
+                  style: textStyle.copyWith(
+                      fontSize: fontSize, fontWeight: FontWeight.bold))),
+        ],
+      );
     });
   }
 
@@ -2669,6 +2578,17 @@ class _PosScreenState extends State<PosScreen>
     );
   }
 
+  Future<double> productWeightScreen(String barcode, String imageUrl) async {
+    var result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PosProductWeightScreen(
+                  name: "หมู : " + barcode,
+                  imageUrl: imageUrl,
+                )));
+    return (result == null) ? 0 : result;
+  }
+
   void payScreen(int tabIndex) async {
     dynamic result = await Navigator.push(
       context,
@@ -2922,24 +2842,24 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget transScreenScanBarcodeQrCode() {
-    return (scannerStart)
+    return (qrCodeBarcodeScannerStart)
         ? Container(
             color: Colors.white,
             width: double.infinity,
             height: 120,
             child: Row(children: [
-              /*Expanded(
+              Expanded(
                   child: QRView(
-                key: _qrKey,
-                onQRViewCreated: _onQRViewCreated,
-              )),*/
+                key: qrKey,
+                onQRViewCreated: onQRViewCreated,
+              )),
               Column(
                 children: [
                   Expanded(
                       child: ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        scannerStart = !scannerStart;
+                        qrCodeBarcodeScannerStart = !qrCodeBarcodeScannerStart;
                       });
                     },
                     child: Text(
@@ -3424,12 +3344,13 @@ class _PosScreenState extends State<PosScreen>
             PageTransition(
                 type: PageTransitionType.rightToLeft, child: findItemScreen))
         .then((value) async {
-      if (value != null)
+      if (value != null) {
         logInsert(
             commandCode: value.command,
             barcode: value.data.barcode,
             qty: value.qty.toString(),
             price: value.priceOrPersent);
+      }
     });
     barcodeScanActive = true;
   }
@@ -3520,154 +3441,104 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget posButtonShowMenu() {
-    return Expanded(
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.black,
-          ),
-          child: Icon(
-            (showButtonMenu) ? Icons.arrow_downward : Icons.arrow_upward,
-          ),
-          onPressed: () {
-            setState(() {
-              showButtonMenu = !showButtonMenu;
-            });
-          }),
-    );
+    return myButton(
+        child:
+            Icon((showButtonMenu) ? Icons.arrow_downward : Icons.arrow_upward),
+        onPressed: () {
+          setState(() {
+            showButtonMenu = !showButtonMenu;
+          });
+        });
   }
 
   Widget posButtonRotate() {
-    return Expanded(
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.black,
-          ),
-          child: const FaIcon(FontAwesomeIcons.rotate),
-          onPressed: () {
-            setState(() {
-              if (splitViewMode == 1) {
-                splitViewMode = 2;
-                splitViewController = SplitViewController(
-                    weights: [0.4, 0.6],
-                    limits: [WeightLimit(min: 0.2, max: 0.8)]);
-              } else {
-                splitViewMode = 1;
-                splitViewController = SplitViewController(
-                    weights: [0.6, 0.4],
-                    limits: [WeightLimit(min: 0.2, max: 0.8)]);
-              }
-            });
-          }),
-    );
+    return myButton(
+        child: const FittedBox(child: FaIcon(FontAwesomeIcons.rotate)),
+        onPressed: () {
+          setState(() {
+            if (splitViewMode == 1) {
+              splitViewMode = 2;
+              splitViewController = SplitViewController(
+                  weights: [0.4, 0.6],
+                  limits: [WeightLimit(min: 0.2, max: 0.8)]);
+            } else {
+              splitViewMode = 1;
+              splitViewController = SplitViewController(
+                  weights: [0.6, 0.4],
+                  limits: [WeightLimit(min: 0.2, max: 0.8)]);
+            }
+          });
+        });
   }
 
   Widget posButtonGridItemSize() {
-    return Expanded(
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-          ),
-          child: const FaIcon(FontAwesomeIcons.searchengin),
-          onPressed: () {
-            setState(() {
-              gridItemSize += 0.2;
-              if (gridItemSize > 1.75) {
-                gridItemSize = 1;
-              }
-            });
-          }),
-    );
+    return myButton(
+        child: const FittedBox(child: FaIcon(FontAwesomeIcons.searchengin)),
+        onPressed: () {
+          setState(() {
+            gridItemSize += 0.2;
+            if (gridItemSize > 1.75) {
+              gridItemSize = 1;
+            }
+          });
+        });
   }
 
   Widget posButtonListTextHeight() {
-    return Expanded(
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-          ),
-          child: const FaIcon(FontAwesomeIcons.textHeight),
-          onPressed: () {
-            setState(() {
-              listTextHeight += 0.1;
-              if (listTextHeight > 2) {
-                listTextHeight = 0.5;
-              }
-            });
-          }),
-    );
+    return myButton(
+        child: const FittedBox(child: FaIcon(FontAwesomeIcons.textHeight)),
+        onPressed: () {
+          setState(() {
+            listTextHeight += 0.1;
+            if (listTextHeight > 2) {
+              listTextHeight = 0.5;
+            }
+          });
+        });
   }
 
   Widget posLayoutBottomDesktop() {
     return SizedBox(
         width: double.infinity,
         child: Row(children: [
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const Icon(
-                  Icons.numbers,
-                ),
-                onPressed: () {
-                  setState(() {
-                    desktopWidgetMode = 0;
-                  });
-                }),
+          myButton(
+            child: const Icon(
+              Icons.numbers,
+            ),
+            onPressed: () {
+              setState(() {
+                desktopWidgetMode = 0;
+              });
+            },
           ),
           const SizedBox(
             width: 4,
           ),
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const Icon(
-                  Icons.search,
-                ),
-                onPressed: () {
-                  setState(() {
-                    desktopWidgetMode = 1;
-                  });
-                }),
-          ),
+          myButton(
+              child: const Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  desktopWidgetMode = 1;
+                });
+              }),
           const SizedBox(
             width: 4,
           ),
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const Icon(
-                  Icons.grid_on,
-                ),
-                onPressed: () {
-                  setState(() {
-                    desktopWidgetMode = 2;
-                  });
-                }),
-          ),
+          myButton(
+              child: const Icon(Icons.grid_on),
+              onPressed: () {
+                setState(() {
+                  desktopWidgetMode = 2;
+                });
+              }),
           const SizedBox(
             width: 4,
           ),
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const FaIcon(FontAwesomeIcons.addressBook),
-                onPressed: () {
-                  desktopWidgetMode = 3;
-                }),
-          ),
+          myButton(
+              child: const FaIcon(FontAwesomeIcons.addressBook),
+              onPressed: () {
+                desktopWidgetMode = 3;
+              }),
           const SizedBox(
             width: 4,
           ),
@@ -3692,96 +3563,77 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget posButtonSwitchDesktopTablet() {
+    return myButton(
+        child: (deviceMode == 0)
+            ? const Icon(Icons.tablet)
+            : const FaIcon(FontAwesomeIcons.desktop),
+        onPressed: () {
+          setState(() {
+            if (deviceMode == 0) {
+              deviceMode = 1;
+            } else {
+              deviceMode = 0;
+            }
+          });
+        });
+  }
+
+  Widget myButton({required Widget child, required Function onPressed}) {
     return Expanded(
-      child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: (showNumericPad) ? Colors.amber : Colors.white,
-            backgroundColor: Colors.black,
-          ),
-          child: (deviceMode != 1)
-              ? const Icon(Icons.tablet)
-              : const FaIcon(FontAwesomeIcons.desktop),
-          onPressed: () {
-            setState(() {
-              if (deviceMode == 0) {
-                deviceMode = 1;
-              } else {
-                deviceMode = 0;
-              }
-            });
-          }),
-    );
+        child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.blue,
+              minimumSize: Size.zero,
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+            ),
+            child: FittedBox(child: child),
+            onPressed: () {
+              onPressed();
+            }));
   }
 
   Widget posLayoutBottomTablet() {
     return SizedBox(
         width: double.infinity,
         child: Row(children: [
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const Icon(
-                  Icons.grid_on,
-                ),
-                onPressed: () {
-                  setState(() {
-                    tabletTabController.index = 0;
-                  });
-                }),
-          ),
-          const SizedBox(
-            width: 4,
-          ),
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const Icon(
-                  Icons.search,
-                ),
-                onPressed: () {
-                  setState(() {
-                    tabletTabController.index = 1;
-                  });
-                }),
-          ),
-          const SizedBox(
-            width: 4,
-          ),
           if (Platform.isAndroid || Platform.isIOS)
-            Expanded(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.black,
-                  ),
-                  child: const FaIcon(FontAwesomeIcons.barcode),
-                  onPressed: () {
-                    setState(() {
-                      scannerStart = !scannerStart;
-                    });
-                  }),
-            ),
+            myButton(
+                child: const FaIcon(FontAwesomeIcons.barcode),
+                onPressed: () {
+                  qrCodeBarcodeScannerStart = !qrCodeBarcodeScannerStart;
+                }),
           if (Platform.isAndroid || Platform.isIOS)
             const SizedBox(
               width: 4,
             ),
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const FaIcon(FontAwesomeIcons.addressBook),
-                onPressed: () {
-                  desktopWidgetMode = 3;
-                }),
+          myButton(
+              child: const Icon(Icons.grid_on),
+              onPressed: () {
+                setState(() {
+                  tabletTabController.index = 0;
+                });
+              }),
+          const SizedBox(
+            width: 4,
           ),
+          myButton(
+              child: const Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  tabletTabController.index = 1;
+                });
+              }),
+          const SizedBox(
+            width: 4,
+          ),
+          myButton(
+              child: const FaIcon(FontAwesomeIcons.addressBook),
+              onPressed: () {
+                setState(() {
+                  tabletTabController.index = 3;
+                });
+              }),
           const SizedBox(
             width: 4,
           ),
@@ -3805,39 +3657,28 @@ class _PosScreenState extends State<PosScreen>
         ]));
   }
 
-  Widget posLayoutBottomMobile() {
+  Widget posLayoutBottomPhone() {
     return Container(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         width: double.infinity,
         child: Row(children: [
           if (Platform.isAndroid || Platform.isIOS)
-            Expanded(
-              child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.black,
-                  ),
-                  child: const FaIcon(FontAwesomeIcons.barcode),
-                  onPressed: () {
-                    setState(() {
-                      scannerStart = !scannerStart;
-                    });
-                  }),
-            ),
-          const SizedBox(
-            width: 4,
-          ),
-          Expanded(
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.black,
-                ),
-                child: const FaIcon(FontAwesomeIcons.addressBook),
+            myButton(
+                child: const FaIcon(FontAwesomeIcons.barcode),
                 onPressed: () {
-                  desktopWidgetMode = 3;
+                  setState(() {
+                    qrCodeBarcodeScannerStart = !qrCodeBarcodeScannerStart;
+                  });
                 }),
-          ),
+          if (Platform.isAndroid || Platform.isIOS)
+            const SizedBox(
+              width: 4,
+            ),
+          myButton(
+              child: const FaIcon(FontAwesomeIcons.addressBook),
+              onPressed: () {
+                desktopWidgetMode = 3;
+              }),
           const SizedBox(
             width: 4,
           ),
@@ -3863,21 +3704,23 @@ class _PosScreenState extends State<PosScreen>
         menuList = posLayoutBottomTablet();
         break;
       case 2:
-        menuList = posLayoutBottomMobile();
+        menuList = posLayoutBottomPhone();
         break;
     }
     return Column(children: [
       Container(
-          height: 40,
+          height: 50,
           margin: const EdgeInsets.only(top: 5),
           child: totalAndPayScreen()),
-      SizedBox(
-        height: 5,
-      ),
+      if (deviceMode != 2)
+        const SizedBox(
+          height: (5),
+        ),
       menuList,
-      SizedBox(
-        height: 5,
-      ),
+      if (deviceMode != 2)
+        const SizedBox(
+          height: 5,
+        ),
       if (showButtonMenu)
         Padding(
             padding: const EdgeInsets.only(bottom: 4), child: commandWidget())
@@ -3934,6 +3777,13 @@ class _PosScreenState extends State<PosScreen>
       ),
       child: Column(
         children: [
+          if ((Platform.isAndroid || Platform.isIOS) &&
+              qrCodeBarcodeScannerStart)
+            SizedBox(
+              width: double.infinity,
+              height: 200,
+              child: selectProductByQrCodeOrBarcode(),
+            ),
           Container(
               width: double.infinity,
               padding: const EdgeInsets.only(left: 8, right: 4),
@@ -4120,6 +3970,13 @@ class _PosScreenState extends State<PosScreen>
                                   (BuildContext context,
                                       BoxConstraints constraints) {
                                 return Column(children: [
+                                  if ((Platform.isAndroid || Platform.isIOS) &&
+                                      qrCodeBarcodeScannerStart)
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 200,
+                                      child: selectProductByQrCodeOrBarcode(),
+                                    ),
                                   Expanded(
                                       child: TabBarView(children: [
                                     transScreen(mode: 0),
@@ -4274,7 +4131,18 @@ class _PosScreenState extends State<PosScreen>
                       ))
                   ]),
                 ),
-                Expanded(child: desktopNumPad),
+                Expanded(
+                    child: PosNumPad(
+                  key: posNumPadGlobalKey,
+                  onChange: (String number) {
+                    setState(() {
+                      textInput = number;
+                    });
+                  },
+                  onSubmit: (String number) {
+                    onSubmit(number);
+                  },
+                )),
               ]),
             ),
           if (desktopWidgetMode == 1) Expanded(child: findByText()),
@@ -4495,12 +4363,21 @@ class _PosScreenState extends State<PosScreen>
                     }
                   }
                   print('------------------------ Scan Barcode : $barcode');
-                  if (!isVisible || barcodeScanActive == false) return;
-                  logInsert(
-                      commandCode: 1,
-                      barcode: barcode,
-                      qty: (textInput.isEmpty) ? "1.0" : textInput);
-                  textInput = "";
+                  if (global.posNumPadProductWeightGlobalKey.currentState !=
+                      null) {
+                    // เปิดหน้าจอน้ำหนัก
+                    print('------------------------ Pass Barcode : $barcode');
+                    global.posNumPadProductWeightGlobalKey.currentState!
+                        .passValue(barcode);
+                  } else {
+                    if (isVisible == true || barcodeScanActive == true) {
+                      logInsert(
+                          commandCode: 1,
+                          barcode: barcode,
+                          qty: (textInput.isEmpty) ? "1.0" : textInput);
+                      textInput = "";
+                    }
+                  }
                 },
                 child: Scaffold(
                     resizeToAvoidBottomInset: false,

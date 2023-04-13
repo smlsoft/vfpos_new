@@ -33,6 +33,13 @@ class PosNumPadState extends State<PosNumPad> {
     });
   }
 
+  void passValue(String val) {
+    setState(() {
+      number = "";
+      widget.onSubmit(val);
+    });
+  }
+
   void addValue(String val) {
     setState(() {
       number += val;
@@ -207,7 +214,7 @@ class PosNumPadState extends State<PosNumPad> {
                               flex: 1,
                               child: NumPadButton(
                                 color: Colors.orange,
-                                text: 'OK',
+                                icon: Icons.check,
                                 callBack: () {
                                   widget.onSubmit(number);
                                   setState(() {
