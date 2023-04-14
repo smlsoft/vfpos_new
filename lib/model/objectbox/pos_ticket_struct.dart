@@ -10,7 +10,7 @@ class PosTicketObjectBoxStruct {
   @Unique()
   late String guidfixed;
   late String ticketName;
-  late int printMode; // 0 = Raw, 1 = Image
+  late int printMode; // 0 = Raw (Text Mode), 1 = Image
   late int printerWidth;
   late bool logo;
   late bool shopName;
@@ -32,7 +32,7 @@ class PosTicketObjectBoxStruct {
 
   PosTicketObjectBoxStruct(
       {this.logo = true,
-      this.printMode = 1,
+      this.printMode = 0,
       this.printerWidth = 640,
       this.guidfixed = "",
       this.ticketName = "",
