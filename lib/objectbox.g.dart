@@ -4,7 +4,7 @@
 // With a Dart package, run `dart run build_runner build`.
 // See also https://docs.objectbox.io/getting-started#generate-objectbox-code
 
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, depend_on_referenced_packages
 // coverage:ignore-file
 
 import 'dart:typed_data';
@@ -20,6 +20,7 @@ import 'model/objectbox/config_struct.dart';
 import 'model/objectbox/employees_struct.dart';
 import 'model/objectbox/member_struct.dart';
 import 'model/objectbox/pos_log_struct.dart';
+import 'model/objectbox/pos_ticket_struct.dart';
 import 'model/objectbox/printer_struct.dart';
 import 'model/objectbox/product_barcode_struct.dart';
 import 'model/objectbox/product_category_struct.dart';
@@ -903,6 +904,126 @@ final _entities = <ModelEntity>[
             indexId: const IdUid(21, 7052323437904781753))
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(15, 2127985611515005097),
+      name: 'PosTicketObjectBoxStruct',
+      lastPropertyId: const IdUid(28, 478159652125428818),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 972534635053660167),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 8628338812576183952),
+            name: 'guidfixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(22, 2148263337621240197)),
+        ModelProperty(
+            id: const IdUid(3, 580674825288130477),
+            name: 'ticketName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 8871613654414298731),
+            name: 'logo',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 1831298125002478241),
+            name: 'cashierDetail',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 3617778420652016186),
+            name: 'customerDetail',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 2303917206377445340),
+            name: 'customerAddress',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 1776911516758878033),
+            name: 'customerTaxId',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 37100495742644418),
+            name: 'lineNumber',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 7707237703001259841),
+            name: 'qty',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 3164781445193601271),
+            name: 'descriptionWidth',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 4651088592151032410),
+            name: 'qtyWidth',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 5283627247557061711),
+            name: 'priceWidth',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 296528441411546642),
+            name: 'amountWidth',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 230704910897431760),
+            name: 'saleDetail',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 5867970385024309129),
+            name: 'docNoQrCode',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(23, 2737177335974334323),
+            name: 'shopName',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(24, 8311794372866382193),
+            name: 'shopAddress',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(25, 2668327529347811758),
+            name: 'shopTaxId',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(26, 7005101514092169746),
+            name: 'shopTel',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(27, 542627224307418463),
+            name: 'printMode',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 478159652125428818),
+            name: 'printerWidth',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -926,8 +1047,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(14, 3900470632385326390),
-      lastIndexId: const IdUid(21, 7052323437904781753),
+      lastEntityId: const IdUid(15, 2127985611515005097),
+      lastIndexId: const IdUid(22, 2148263337621240197),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [1146034735562944753, 2941303872910854793],
@@ -993,7 +1114,13 @@ ModelDefinition getObjectBoxModel() {
         4792815990252412549,
         5730527790961685603,
         727866571201428571,
-        6773530017712009824
+        6773530017712009824,
+        393389747110202106,
+        1927664948694960214,
+        5724175065729708968,
+        3207517907374948448,
+        4959334329666701118,
+        1061488025613655637
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1753,6 +1880,83 @@ ModelDefinition getObjectBoxModel() {
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
+        }),
+    PosTicketObjectBoxStruct: EntityDefinition<PosTicketObjectBoxStruct>(
+        model: _entities[12],
+        toOneRelations: (PosTicketObjectBoxStruct object) => [],
+        toManyRelations: (PosTicketObjectBoxStruct object) => {},
+        getId: (PosTicketObjectBoxStruct object) => object.id,
+        setId: (PosTicketObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (PosTicketObjectBoxStruct object, fb.Builder fbb) {
+          final guidfixedOffset = fbb.writeString(object.guidfixed);
+          final ticketNameOffset = fbb.writeString(object.ticketName);
+          fbb.startTable(29);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, guidfixedOffset);
+          fbb.addOffset(2, ticketNameOffset);
+          fbb.addBool(3, object.logo);
+          fbb.addBool(8, object.cashierDetail);
+          fbb.addBool(9, object.customerDetail);
+          fbb.addBool(10, object.customerAddress);
+          fbb.addBool(11, object.customerTaxId);
+          fbb.addBool(12, object.lineNumber);
+          fbb.addBool(13, object.qty);
+          fbb.addFloat64(15, object.descriptionWidth);
+          fbb.addFloat64(16, object.qtyWidth);
+          fbb.addFloat64(17, object.priceWidth);
+          fbb.addFloat64(18, object.amountWidth);
+          fbb.addBool(19, object.saleDetail);
+          fbb.addBool(21, object.docNoQrCode);
+          fbb.addBool(22, object.shopName);
+          fbb.addBool(23, object.shopAddress);
+          fbb.addBool(24, object.shopTaxId);
+          fbb.addBool(25, object.shopTel);
+          fbb.addInt64(26, object.printMode);
+          fbb.addInt64(27, object.printerWidth);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = PosTicketObjectBoxStruct(
+              logo: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 10, false),
+              printMode:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 56, 0),
+              printerWidth:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0),
+              guidfixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              ticketName: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, ''),
+              shopName: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 48, false),
+              shopAddress: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 50, false),
+              shopTaxId: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 52, false),
+              shopTel: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 54, false),
+              cashierDetail: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 20, false),
+              customerDetail: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
+              customerAddress: const fb.BoolReader().vTableGet(buffer, rootOffset, 24, false),
+              customerTaxId: const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false),
+              lineNumber: const fb.BoolReader().vTableGet(buffer, rootOffset, 28, false),
+              qty: const fb.BoolReader().vTableGet(buffer, rootOffset, 30, false),
+              descriptionWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0),
+              qtyWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
+              priceWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0),
+              amountWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0),
+              saleDetail: const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false),
+              docNoQrCode: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
         })
   };
 
@@ -2419,4 +2623,95 @@ class BankObjectBoxStruct_ {
   /// see [BankObjectBoxStruct.guidfixed]
   static final guidfixed =
       QueryStringProperty<BankObjectBoxStruct>(_entities[11].properties[4]);
+}
+
+/// [PosTicketObjectBoxStruct] entity fields to define ObjectBox queries.
+class PosTicketObjectBoxStruct_ {
+  /// see [PosTicketObjectBoxStruct.id]
+  static final id = QueryIntegerProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[0]);
+
+  /// see [PosTicketObjectBoxStruct.guidfixed]
+  static final guidfixed = QueryStringProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[1]);
+
+  /// see [PosTicketObjectBoxStruct.ticketName]
+  static final ticketName = QueryStringProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[2]);
+
+  /// see [PosTicketObjectBoxStruct.logo]
+  static final logo = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[3]);
+
+  /// see [PosTicketObjectBoxStruct.cashierDetail]
+  static final cashierDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[4]);
+
+  /// see [PosTicketObjectBoxStruct.customerDetail]
+  static final customerDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[5]);
+
+  /// see [PosTicketObjectBoxStruct.customerAddress]
+  static final customerAddress = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[6]);
+
+  /// see [PosTicketObjectBoxStruct.customerTaxId]
+  static final customerTaxId = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[7]);
+
+  /// see [PosTicketObjectBoxStruct.lineNumber]
+  static final lineNumber = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[8]);
+
+  /// see [PosTicketObjectBoxStruct.qty]
+  static final qty = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[9]);
+
+  /// see [PosTicketObjectBoxStruct.descriptionWidth]
+  static final descriptionWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[10]);
+
+  /// see [PosTicketObjectBoxStruct.qtyWidth]
+  static final qtyWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[11]);
+
+  /// see [PosTicketObjectBoxStruct.priceWidth]
+  static final priceWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[12]);
+
+  /// see [PosTicketObjectBoxStruct.amountWidth]
+  static final amountWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[13]);
+
+  /// see [PosTicketObjectBoxStruct.saleDetail]
+  static final saleDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[14]);
+
+  /// see [PosTicketObjectBoxStruct.docNoQrCode]
+  static final docNoQrCode = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[15]);
+
+  /// see [PosTicketObjectBoxStruct.shopName]
+  static final shopName = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[16]);
+
+  /// see [PosTicketObjectBoxStruct.shopAddress]
+  static final shopAddress = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[17]);
+
+  /// see [PosTicketObjectBoxStruct.shopTaxId]
+  static final shopTaxId = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[18]);
+
+  /// see [PosTicketObjectBoxStruct.shopTel]
+  static final shopTel = QueryBooleanProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[19]);
+
+  /// see [PosTicketObjectBoxStruct.printMode]
+  static final printMode = QueryIntegerProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[20]);
+
+  /// see [PosTicketObjectBoxStruct.printerWidth]
+  static final printerWidth = QueryIntegerProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[21]);
 }

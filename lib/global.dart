@@ -1,3 +1,4 @@
+import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
@@ -180,6 +181,7 @@ DeviceModeEnum deviceMode = DeviceModeEnum.none;
 PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
+PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -315,7 +317,18 @@ String formatDoubleTrailingZero(double value) {
 }
 
 Future<Uint8List> thaiEncode(String word) async {
-  return await CharsetConverter.encode('TIS620', word);
+  if (Platform.isWindows) {
+    try {
+      if (word == "") {
+        word = " ";
+      }
+      return await CharsetConverter.encode('windows-874', word);
+    } catch (e) {
+      return await CharsetConverter.encode('windows-874', " ");
+    }
+  } else {
+    return await CharsetConverter.encode('TIS620', word);
+  }
 }
 
 void playSoundForWindows(String waveFileName) {
@@ -1193,4 +1206,25 @@ String syncFindLastUpdate(
     }
   }
   return DateFormat(dateFormatSync).format(DateTime.parse(syncDateBegin));
+}
+
+void testPrinterConnect() async {
+  stderr.writeln('Test Printer Connect Start');
+  if (printerList.isNotEmpty) {
+    for (var printer in printerList) {
+      try {
+        final Socket socket = await Socket.connect(
+            printer.printer_ip_address, printer.printer_port,
+            timeout: const Duration(seconds: 5));
+        printer.is_ready = true;
+        socket.destroy();
+      } catch (e) {
+        stderr.writeln(e.toString());
+        printer.is_ready = false;
+        errorMessage.add(
+            "${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
+      }
+    }
+  }
+  stderr.writeln('Test Printer Connect Stop');
 }

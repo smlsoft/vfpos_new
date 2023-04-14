@@ -415,24 +415,3 @@ Future<void> startServer() async {
   }
   return "";
 }*/
-
-void testPrinterConnect() async {
-  /*stderr.writeln('Test Printer Connect Start');
-  if (global.isServer) {
-    for (var printer in global.printerList) {
-      try {
-        final Socket socket = await Socket.connect(
-            printer.printer_ip_address, printer.printer_port,
-            timeout: const Duration(seconds: 5));
-        printer.is_ready = true;
-        socket.destroy();
-      } catch (e) {
-        stderr.writeln(e.toString());
-        printer.is_ready = false;
-        global.errorMessage.add(
-            "${global.language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${global.language("not_ready")} $e");
-      }
-    }
-  }
-  stderr.writeln('Test Printer Connect Stop');*/
-}

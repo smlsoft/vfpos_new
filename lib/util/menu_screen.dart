@@ -273,7 +273,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 child: const Icon(Icons.logout)),
           ],
         ));
-
+    bool windowsDesktopFullScreen = false;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
@@ -281,8 +281,9 @@ class _MenuScreenState extends State<MenuScreen> {
           backgroundColor: Colors.blue[100],
           appBar: AppBar(
               centerTitle: true,
+              foregroundColor: Colors.white,
               title: Text(
-                  "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_client")}"),
+                  "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_remote")}"),
               actions: (menuMode == 1)
                   ? []
                   : [

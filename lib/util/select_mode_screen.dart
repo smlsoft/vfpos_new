@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/pos_screen/pos_print_image.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 
@@ -20,7 +21,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
         home: SafeArea(
             child: Scaffold(
                 resizeToAvoidBottomInset: false,
-                body: Container(
+                body: SizedBox(
                     width: double.infinity,
                     child: Center(
                         child: Column(
@@ -41,7 +42,7 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
                               Navigator.of(context)
                                   .pushReplacementNamed('client');
                             },
-                            child: Text(global.language('pos_client'))),
+                            child: Text(global.language('pos_remote'))),
                       ],
                     ))))));
   }

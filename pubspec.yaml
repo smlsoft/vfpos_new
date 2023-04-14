@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
+      
   auto_size_text: ^3.0.0
   awesome_dialog: ^3.0.2
   cached_network_image: ^3.2.3
@@ -106,6 +106,7 @@ flutter:
     - assets/
     - assets/audios/
     - assets/images/
+    - assets/images/qrpay/
     - assets/flags/
     - assets/fonts/
      
@@ -184,3 +185,4 @@ flavorizr:
         packageId: "com.smlsoft.vfpos"
       macos:
         bundleId: "com.smlsoft.vfpos"
+

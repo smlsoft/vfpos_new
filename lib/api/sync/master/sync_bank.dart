@@ -126,5 +126,6 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
     }
     print("Update SyncBank Success : " + BankHelper().count().toString());
     global.appStorage.write(global.syncBankTimeName, getLastUpdateTime);
+    global.createLogoImageFromBankProvider();
   }
 }

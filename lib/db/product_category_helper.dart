@@ -40,7 +40,6 @@ class ProductCategoryHelper {
 
   Future<ProductCategoryObjectBoxStruct?> selectByCategoryGuidFindFirst(
       String guid) async {
-    print("[" + guid + "]");
     if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter = HttpParameterModel(guid: guid);
       HttpGetDataModel json = HttpGetDataModel(

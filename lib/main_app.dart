@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_secondary_screen.dart';
 import 'package:dedepos/util/pos_client.dart';
@@ -51,7 +50,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   if (Platform.isAndroid) {
     // Position position = await global.determinePosition();
   }

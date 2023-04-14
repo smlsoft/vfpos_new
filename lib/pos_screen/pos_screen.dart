@@ -214,13 +214,13 @@ class _PosScreenState extends State<PosScreen>
       });
     }
     deviceTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
-      network.testPrinterConnect();
+      global.testPrinterConnect();
     });
     posScreenTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
       // checkSync();
     });
     messageTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
-      /*if (global.errorMessage.isNotEmpty) {
+      if (global.errorMessage.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(global.errorMessage.join("\n")),
           backgroundColor: Colors.red,
@@ -228,7 +228,7 @@ class _PosScreenState extends State<PosScreen>
         ));
         global.errorMessage.clear();
         global.playSound(sound: global.SoundEnum.beep);
-      }*/
+      }
     });
     global.syncRefreshProductCategory = true;
     processEvent(holdNumber: global.posHoldActiveNumber);
@@ -4016,7 +4016,7 @@ class _PosScreenState extends State<PosScreen>
       width: double.infinity,
       padding: const EdgeInsets.only(left: 4, right: 4),
       decoration: BoxDecoration(
-        border: Border.all(width: 0, color: Colors.white),
+        border: Border.all(width: 1, color: Colors.black),
         color: Colors.white,
       ),
       child: Column(
@@ -4242,7 +4242,11 @@ class _PosScreenState extends State<PosScreen>
 
   Widget appLayoutPos() {
     return (deviceMode == 0)
-        ? posLayoutDesktop()
+        ? Container(
+            decoration: BoxDecoration(
+              border: Border.all(width: 1, color: Colors.black),
+            ),
+            child: posLayoutDesktop())
         : (deviceMode == 1)
             ? posLayoutTabletScreen()
             : posLayoutPhoneScreen();
@@ -4263,7 +4267,7 @@ class _PosScreenState extends State<PosScreen>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "$buttonText",
+                    buttonText,
                   ),
                 ],
               ),
