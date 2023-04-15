@@ -17,7 +17,7 @@ import 'package:collection/collection.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:promptpay/promptpay.dart';
 
-void printBill(String docNo) {
+Future<void> printBill(String docNo) async {
   if (global.posTicket.printMode == 0) {
     printBillText(docNo);
   } else {

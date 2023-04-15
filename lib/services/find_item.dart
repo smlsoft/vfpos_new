@@ -18,7 +18,7 @@ class FindItem extends StatefulWidget {
 }
 
 class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
-  final _debouncer = global.Debounce(500);
+  final debouncer = global.Debounce(500);
   final List<FindItemModel> _findByCodeNameLastResult = [];
   ScrollController? _findByTextScrollController;
   final TextEditingController _textFindByTextController =
@@ -78,7 +78,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                 focusNode: _textFindByTextFocus,
                 controller: _textFindByTextController,
                 onChanged: (string) {
-                  _debouncer.run(() {
+                  debouncer.run(() {
                     _findByCodeNameLastResult.clear();
                     context.read<FindItemByCodeNameBarcodeBloc>().add(
                         FindItemByCodeNameBarcodeLoadStart(
@@ -97,32 +97,32 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                     icon: const Icon(Icons.clear),
                   ),
                 )),
-            Container(
-                child: Row(children: [
-              Expanded(flex: 3, child: Text("barcode" + "/" + "item_code")),
-              Expanded(flex: 6, child: Text("item_name")),
-              Expanded(flex: 2, child: Text("unit_name")),
-              Expanded(
+            Row(children: [
+              const Expanded(
+                  flex: 3, child: Text("barcode" + "/" + "item_code")),
+              const Expanded(flex: 6, child: Text("item_name")),
+              const Expanded(flex: 2, child: Text("unit_name")),
+              const Expanded(
                   flex: 2,
                   child: Align(
                       alignment: Alignment.centerRight, child: Text("price"))),
-              Expanded(
+              const Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("minus"))),
-              Expanded(
+              const Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("qty"))),
-              Expanded(
+              const Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("plus"))),
-              Expanded(
+              const Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("save")))
-            ])),
+            ]),
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(
@@ -148,7 +148,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                           alignment: Alignment.center,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(2),
+                                padding: const EdgeInsets.all(2),
                               ),
                               onPressed: () {
                                 setState(() {
@@ -156,14 +156,14 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                     _detail.qty = _detail.qty - 1.0;
                                 });
                               },
-                              child: Icon(Icons.remove)))),
+                              child: const Icon(Icons.remove)))),
                   Expanded(
                       flex: 1,
                       child: Align(
                           alignment: Alignment.center,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(2),
+                                padding: const EdgeInsets.all(2),
                               ),
                               onPressed: () async {
                                 await showDialog(
@@ -207,21 +207,21 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                           alignment: Alignment.center,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(2),
+                                padding: const EdgeInsets.all(2),
                               ),
                               onPressed: () {
                                 setState(() {
                                   _detail.qty = _detail.qty + 1.0;
                                 });
                               },
-                              child: Icon(Icons.add)))),
+                              child: const Icon(Icons.add)))),
                   Expanded(
                       flex: 1,
                       child: Align(
                           alignment: Alignment.center,
                           child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(2),
+                                padding: const EdgeInsets.all(2),
                               ),
                               onPressed: () {
                                 Navigator.pop(
@@ -237,7 +237,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                             unit_code: _detail.unit_code,
                                             unit_name: _detail.unit_names[0])));
                               },
-                              child: Icon(Icons.save))))
+                              child: const Icon(Icons.save))))
                 ]));
               }).toList(),
             )))

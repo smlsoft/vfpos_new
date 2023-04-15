@@ -74,7 +74,8 @@ class PrintProcess {
     String firstBreak = "ใโไเแ";
     String endBreak = "ๆฯะ";
     for (int columnIndex = 0; columnIndex < column.length; columnIndex++) {
-      String word = column[columnIndex].text.replaceAll(" ", " " + "๛");
+      String word = column[columnIndex].text.replaceAll(" ", "๛");
+      //String word = column[columnIndex].text;
       for (int loop2 = 0; loop2 < firstBreak.length; loop2++) {
         word = word.replaceAll(firstBreak[loop2], " ${firstBreak[loop2]}");
       }
@@ -124,15 +125,15 @@ class PrintProcess {
     for (int rowIndex = 0; rowIndex < rowList.length; rowIndex++) {
       for (int columnIndex = 0; columnIndex < column.length; columnIndex++) {
         if (column[columnIndex].align == PrintColumnAlign.right) {
-          StringBuffer _space = StringBuffer();
+          StringBuffer space = StringBuffer();
           int thaiLength = await thaiCount(rowList[rowIndex][columnIndex].text);
           for (int loop = 0;
               loop < columnWidthList[columnIndex] - thaiLength;
               loop++) {
-            _space.write(" ");
+            space.write(" ");
           }
           rowList[rowIndex][columnIndex].text =
-              _space.toString() + rowList[rowIndex][columnIndex].text;
+              space.toString() + rowList[rowIndex][columnIndex].text;
         }
       }
     }

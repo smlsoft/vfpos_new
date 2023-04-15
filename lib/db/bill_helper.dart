@@ -3,7 +3,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/objectbox.g.dart';
 
 class BillHelper {
-  final _box = global.objectBoxStore.box<BillObjectBoxStruct>();
+  final box = global.objectBoxStore.box<BillObjectBoxStruct>();
 
   /*static final BillHelper _instance = BillHelper.internal();
 
@@ -20,37 +20,42 @@ class BillHelper {
   }*/
 
   List<BillObjectBoxStruct> selectByDocNumber({String docNumber = ""}) {
-    return _box
+    return box
         .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
         .build()
         .find();
   }
 
   List<BillObjectBoxStruct> selectSyncIsFalse() {
-    return _box
-        .query(BillObjectBoxStruct_.is_sync.equals(false))
-        .build()
-        .find();
+    return box.query(BillObjectBoxStruct_.is_sync.equals(false)).build().find();
   }
 
   int insert(BillObjectBoxStruct value) {
-    return _box.put(value);
+    return box.put(value);
   }
 
   List<BillObjectBoxStruct> select(
       {String where = "", int limit = 0, int offset = 0}) {
-    if (where.isNotEmpty) where = " where " + where;
-    return (_box.query()).build().find();
+    return (box.query()).build().find();
+  }
+
+  List<BillObjectBoxStruct> selectOrderByDateTimeDesc() {
+    return (box
+            .query()
+            .order(BillObjectBoxStruct_.date_time, flags: Order.descending)
+            .build()
+          ..limit = 100)
+        .find();
   }
 
   bool deleteByDocNumber(String docNumber) {
     bool _result = false;
-    final _find = _box
+    final _find = box
         .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
         .build()
         .findFirst();
     if (_find != null) {
-      _result = _box.remove(_find.id);
+      _result = box.remove(_find.id);
     }
     return _result;
   }

@@ -30,6 +30,7 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   int menuMode = 0; // 0=Menu,1=Select Language
   late List<Widget> menuPosList;
+  late List<Widget> menuShiftList;
   late List<Widget>? menuVisitList;
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
@@ -109,18 +110,14 @@ class _MenuScreenState extends State<MenuScreen> {
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: 'พิมพ์ใบกำกับภาษี(แบบเต็ม)',
+          title: 'รับคืนสินค้า',
           callBack: () {}),
-      menuItem(
-          icon: Icons.list_alt_outlined,
-          title: 'พิมพ์สำเนาใบเสร็จ',
-          callBack: () {}),
-      menuItem(
-          icon: Icons.list_alt_outlined,
-          title: 'ยกเลิกใบเสร็จ',
-          callBack: () {}),
-      menuItem(
-          icon: Icons.list_alt_outlined, title: 'คืนสินค้า', callBack: () {}),
+    ];
+  }
+
+  List<Widget> menuShift() {
+    return [
+      menuItem(icon: Icons.list_alt_outlined, title: 'เปิดกะ', callBack: () {}),
       menuItem(
           icon: Icons.request_quote,
           title: 'รับเงินทอน',
@@ -138,41 +135,46 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             );
           }),
+      menuItem(icon: Icons.list_alt_outlined, title: 'ปิดกะ', callBack: () {}),
     ];
   }
 
   Widget menuItem(
       {required IconData icon,
       required String title,
+      Color color = Colors.white,
       required Function callBack}) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      child: InkWell(
-        onTap: () {
-          callBack();
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              icon,
-              size: 30,
-              color: const Color(0xFFF56045),
-            ),
-            AutoSizeText(
-              global.language(title),
-              textAlign: TextAlign.center,
-              // overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black87,
-              ),
-              maxLines: 1,
-            )
-          ],
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
         ),
+      ),
+      onPressed: () {
+        callBack();
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            icon,
+            size: 30,
+            color: const Color(0xFFF56045),
+          ),
+          AutoSizeText(
+            global.language(title),
+            textAlign: TextAlign.center,
+            // overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 18,
+              color: Colors.black87,
+            ),
+            maxLines: 1,
+          )
+        ],
       ),
     );
   }
@@ -203,6 +205,7 @@ class _MenuScreenState extends State<MenuScreen> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
     menuPosList = menuPos();
+    menuShiftList = menuShift();
     if (F.appFlavor == Flavor.SMLMOBILESALES) {
       menuVisitList = menuForVisit();
     }
@@ -412,6 +415,26 @@ class _MenuScreenState extends State<MenuScreen> {
                                 ),
                                 itemBuilder: (BuildContext context, int index) {
                                   return menuPosList[index];
+                                },
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: menuShiftList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      MediaQuery.of(context).size.width ~/ 150,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 5.0,
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return menuShiftList[index];
                                 },
                               ),
                             ),

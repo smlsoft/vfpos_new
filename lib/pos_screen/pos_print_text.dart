@@ -117,51 +117,85 @@ Future<void> printBillText(String docNo) async {
     int widthCharQty = 0;
 
     printProcess.columnWidth.clear();
-    double sumWidth = global.posTicket.descriptionWidth +
-        global.posTicket.priceWidth +
-        global.posTicket.amountWidth;
-    if (global.posTicket.qty) {
-      sumWidth += global.posTicket.qtyWidth;
-    }
-    double calcWidth = charPerLine / sumWidth;
-    widthCharDescription =
-        (global.posTicket.descriptionWidth * calcWidth).toInt();
-    widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
-    widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
-    if (global.posTicket.qty) {
-      widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
-    }
-    if (widthCharQty <= 5) {
-      global.posTicket.qty = false;
-    }
-    printProcess.columnWidth.add(widthCharDescription.toDouble());
-    if (global.posTicket.qty) {
-      printProcess.columnWidth.add(widthCharQty.toDouble());
-    }
-    printProcess.columnWidth.add(widthCharPrice.toDouble());
-    printProcess.columnWidth.add(widthCharAmount.toDouble());
-    //
-    await printProcess.drawLine(printer);
-    printProcess.column.clear();
-    printProcess.column.add(PrintColumn(text: global.language("description")));
-    if (global.posTicket.qty) {
+    {
+      double sumWidth = global.posTicket.descriptionWidth +
+          global.posTicket.priceWidth +
+          global.posTicket.amountWidth;
+      if (global.posTicket.qty) {
+        sumWidth += global.posTicket.qtyWidth;
+      }
+      double calcWidth = charPerLine / sumWidth;
+      widthCharDescription =
+          (global.posTicket.descriptionWidth * calcWidth).toInt();
+      widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
+      widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
+      if (global.posTicket.qty) {
+        widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
+      }
+      if (widthCharQty <= 5) {
+        global.posTicket.qty = false;
+      }
+      printProcess.columnWidth.clear();
+      printProcess.columnWidth.add(widthCharDescription.toDouble());
+      if (global.posTicket.qty) {
+        printProcess.columnWidth.add(widthCharQty.toDouble());
+      }
+      printProcess.columnWidth.add(widthCharPrice.toDouble());
+      printProcess.columnWidth.add(widthCharAmount.toDouble());
+      //
+      await printProcess.drawLine(printer);
+      printProcess.column.clear();
+      printProcess.column
+          .add(PrintColumn(text: global.language("description")));
+      if (global.posTicket.qty) {
+        printProcess.column.add(PrintColumn(
+            text: global.language("qty"), align: PrintColumnAlign.right));
+      }
       printProcess.column.add(PrintColumn(
-          text: global.language("qty"), align: PrintColumnAlign.right));
+          text: global.language("price"), align: PrintColumnAlign.right));
+      printProcess.column.add(PrintColumn(
+          text: global.language("total"), align: PrintColumnAlign.right));
+      await printProcess.lineFeed(printer, const PosStyles(bold: true));
+      await printProcess.drawLine(printer);
     }
-    printProcess.column.add(PrintColumn(
-        text: global.language("price"), align: PrintColumnAlign.right));
-    printProcess.column.add(PrintColumn(
-        text: global.language("total"), align: PrintColumnAlign.right));
-    await printProcess.lineFeed(printer, const PosStyles(bold: true));
-    await printProcess.drawLine(printer);
 
     /// ส่วนของการแสดงรายการสินค้า
     for (var detail in billDetails) {
       /// สินค้าทั่วไป
+      double sumWidth = global.posTicket.descriptionWidth +
+          global.posTicket.priceWidth +
+          global.posTicket.amountWidth;
+      if (global.posTicket.qty) {
+        sumWidth += global.posTicket.qtyWidth;
+      }
+      double calcWidth = charPerLine / sumWidth;
+      widthCharDescription =
+          (global.posTicket.descriptionWidth * calcWidth).toInt();
+      widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
+      widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
+      if (global.posTicket.qty) {
+        widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
+      }
+      if (widthCharQty <= 5) {
+        global.posTicket.qty = false;
+      }
+      printProcess.columnWidth.clear();
+      double descColumnWidth = widthCharDescription.toDouble();
+      if (detail.price == detail.total_amount) {
+        descColumnWidth += widthCharPrice;
+      }
+      printProcess.columnWidth.add(widthCharDescription.toDouble());
+      if (global.posTicket.qty) {
+        printProcess.columnWidth.add(widthCharQty.toDouble());
+      }
+      if (detail.price != detail.total_amount) {
+        printProcess.columnWidth.add(widthCharPrice.toDouble());
+      }
+      printProcess.columnWidth.add(widthCharAmount.toDouble());
       printProcess.column.clear();
       String desc =
           (global.posTicket.lineNumber) ? "${detail.line_number}." : "";
-      desc += "${detail.item_name} ${detail.unit_name}";
+      desc += "${detail.item_name}/${detail.unit_name}";
       if (detail.discount_text.isNotEmpty) {
         desc = "$desc ${global.language("discount")}";
         if (detail.discount_text.contains("%") ||
@@ -171,9 +205,6 @@ Future<void> printBillText(String docNo) async {
         desc = "$desc ${global.moneyFormat.format(detail.discount)}";
         desc = "$desc ${global.language("money_symbol")}/${detail.unit_name}";
       }
-      if (global.posTicket.qty == false && detail.qty > 1) {
-        desc = "$desc x ${global.moneyFormat.format(detail.qty)}";
-      }
       printProcess.column.add(PrintColumn(text: desc));
       if (global.posTicket.qty) {
         printProcess.column.add(PrintColumn(
@@ -181,11 +212,13 @@ Future<void> printBillText(String docNo) async {
                 (detail.qty == 0) ? "" : global.moneyFormat.format(detail.qty),
             align: PrintColumnAlign.right));
       }
-      printProcess.column.add(PrintColumn(
-          text: (detail.price == 0)
-              ? ""
-              : global.moneyFormat.format(detail.price),
-          align: PrintColumnAlign.right));
+      if (detail.price != detail.total_amount) {
+        printProcess.column.add(PrintColumn(
+            text: (detail.price == 0)
+                ? ""
+                : "${global.moneyFormat.format(detail.qty)}x${global.moneyFormat.format(detail.price)}",
+            align: PrintColumnAlign.right));
+      }
       printProcess.column.add(PrintColumn(
           text: (detail.total_amount == 0)
               ? ""

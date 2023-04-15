@@ -1,4 +1,7 @@
+import 'package:dedepos/pos_screen/pos_bill_vat.dart';
+import 'package:dedepos/pos_screen/pos_cancel_.dart';
 import 'package:dedepos/pos_screen/pos_product_weight.dart';
+import 'package:dedepos/pos_screen/pos_reprint_bill.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/global_model.dart';
@@ -2770,75 +2773,95 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget commandWidget() {
-    List<Widget> commandList = [
-      commandButton(
-        label: global.language("hold_bill"),
-        onPressed: () {
-          holdBill();
-        },
-      ),
-      const SizedBox(
-        width: 4,
-      ),
-      commandButton(
-        label: global.language('open_cash_drawer'),
-        onPressed: () {
-          openCashDrawer();
-        },
-      ),
-      const SizedBox(
-        width: 4,
-      ),
-      commandButton(
-        label: global.language('select_employee'),
-        onPressed: () {
-          findEmployee();
-        },
-      ),
-      const SizedBox(
-        width: 4,
-      ),
-      /*commandButton(
-        label: (global.speechToTextVisible)
-            ? global.language("speech_to_text_on")
-            : global.language("speech_to_text_off"),
-        onPressed: () {
-          setState(() {
-            if (global.speechToTextVisible) {
-              global.playSound(word: global.language('speech_to_text_off'));
-              global.speechToTextVisible = false;
-            } else {
-              global.speechToTextVisible = true;
-              global.playSound(word: global.language('speech_to_text_on'));
-            }
-          });
-          processEvent(holdNumber: global.posHoldActiveNumber);
-        },
-      ),
-      const SizedBox(
-        width: 4,
-      ),*/
-      commandButton(
-          label: global.language('restart'),
+    return Column(children: [
+      IntrinsicHeight(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        commandButton(
+          label: global.language("hold_bill"),
           onPressed: () {
-            restart();
-          }),
+            holdBill();
+          },
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        commandButton(
+          label: global.language('open_cash_drawer'),
+          onPressed: () {
+            openCashDrawer();
+          },
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        commandButton(
+          label: global.language('select_employee'),
+          onPressed: () {
+            findEmployee();
+          },
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        commandButton(
+            label: global.language('restart'),
+            onPressed: () {
+              restart();
+            }),
+      ])),
       const SizedBox(
-        width: 4,
+        height: 4,
       ),
-      commandButton(
-        label: global.language('main_screen'),
-        //icon: Icons.web,
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-    ];
-
-    return IntrinsicHeight(
-        child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: commandList));
+      IntrinsicHeight(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        commandButton(
+            label: global.language('reprint_bill'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PosReprintBillScreen(),
+                ),
+              );
+            }),
+        const SizedBox(
+          width: 4,
+        ),
+        commandButton(
+            label: global.language('full_bill_vat'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PosBillVatScreen(),
+                ),
+              );
+            }),
+        const SizedBox(
+          width: 4,
+        ),
+        commandButton(
+            label: global.language('cancel_bill'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PosCancelBillScreen(),
+                ),
+              );
+            }),
+        const SizedBox(
+          width: 4,
+        ),
+        commandButton(
+          label: global.language('main_screen'),
+          //icon: Icons.web,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ]))
+    ]);
   }
 
   Widget transScreenScanBarcodeQrCode() {
@@ -3723,7 +3746,7 @@ class _PosScreenState extends State<PosScreen>
         ),
       if (showButtonMenu)
         Padding(
-            padding: const EdgeInsets.only(bottom: 4), child: commandWidget())
+            padding: const EdgeInsets.only(bottom: 4), child: commandWidget()),
     ]);
   }
 

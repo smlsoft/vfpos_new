@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:dedepos/model/json/pos_model.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 // import 'package:last_qr_scanner/last_qr_scanner.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:cached_network_image/cached_network_image.dart';
-import '../model/json/pos_model.dart';
 
 class FindItem extends StatefulWidget {
   const FindItem({Key? key}) : super(key: key);

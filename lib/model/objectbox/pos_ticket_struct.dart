@@ -45,7 +45,7 @@ class PosTicketObjectBoxStruct {
       this.customerAddress = true,
       this.customerTaxId = true,
       this.lineNumber = true,
-      this.qty = true,
+      this.qty = false,
       this.descriptionWidth = 40,
       this.qtyWidth = 10,
       this.priceWidth = 12,

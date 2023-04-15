@@ -510,7 +510,6 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             discountFormula: global.payScreenData.discount_formula,
             discountAmount: global.payScreenData.discount_amount)
         .then((docNumber) async {
-      print(docNumber);
       if (docNumber.isNotEmpty) {
         printBill(docNumber);
         syncBillProcess();

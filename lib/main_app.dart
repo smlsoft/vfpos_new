@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_secondary_screen.dart';
 import 'package:dedepos/util/pos_client.dart';
@@ -89,8 +90,7 @@ Future<void> mainApp() async {
           BlocProvider(
               create: (context) => FindEmployeeByNameBloc(
                   apiFindEmployeeByName: RestApiFindEmployeeByWord())),
-          /*BlocProvider(create: (context) => OrderProcessBloc()),
-        BlocProvider(create: (context) => TableBloc()),*/
+          BlocProvider(create: (context) => BillBloc()),
           BlocProvider(create: (context) => PayScreenBloc()),
           BlocProvider(create: (context) => ServerBloc()),
           BlocProvider(
