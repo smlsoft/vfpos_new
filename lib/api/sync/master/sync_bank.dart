@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/api_repository.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/api/sync/model/sync_bank_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/api/sync/model/item_remove_model.dart';
-import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/objectbox.g.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 

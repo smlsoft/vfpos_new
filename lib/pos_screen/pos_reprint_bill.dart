@@ -62,6 +62,7 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
                                     onPressed: () {
                                       printBill(dataList[index].doc_number);
                                       Navigator.pop(context);
+                                      Navigator.pop(context);
                                     },
                                     child: Text(global.language("confirm"))),
                               ],

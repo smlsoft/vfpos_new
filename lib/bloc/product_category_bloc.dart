@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/db/product_category_helper.dart';

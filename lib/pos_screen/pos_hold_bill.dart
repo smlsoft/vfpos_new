@@ -1,9 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class PosHoldBill extends StatefulWidget {
   const PosHoldBill({Key? key}) : super(key: key);

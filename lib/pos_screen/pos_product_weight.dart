@@ -1,10 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
-import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:flutter/services.dart';
 import 'package:get/utils.dart';
 
 class PosProductWeightScreen extends StatefulWidget {

@@ -1,5 +1,3 @@
-import 'dart:developer';
-import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';

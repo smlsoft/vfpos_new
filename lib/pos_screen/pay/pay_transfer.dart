@@ -1,15 +1,11 @@
-import 'dart:convert';
-
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
 

@@ -1,6 +1,5 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/pos_screen/pos_print.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;

@@ -1,16 +1,7 @@
-import 'dart:convert';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/api/sync/model/promotion_model.dart';
-import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
-import 'package:uuid/uuid.dart';
 import 'dart:async';
-import 'package:dedepos/db/pos_log_helper.dart';
-import 'package:dedepos/model/objectbox/pos_log_struct.dart';
-import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
-import 'pos_process.dart';
-import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global.dart' as global;
 
 Future<String> saveBill(

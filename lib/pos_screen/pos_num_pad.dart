@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/widgets/button.dart';
 
 class PosNumPad extends StatefulWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class ButtomBill extends StatelessWidget {
+class ButtonBill extends StatelessWidget {
   final String label;
   final Function()? onPressed;
   final Color color;
 
-  const ButtomBill({
+  const ButtonBill({
     Key? key,
     required this.label,
     required this.onPressed,

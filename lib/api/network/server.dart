@@ -1,27 +1,18 @@
-import 'dart:math';
 import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:dedepos/db/pos_log_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
-import 'package:dedepos/model/system/printer_model.dart';
-import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:http/http.dart' as http;
 import 'package:dedepos/util/network.dart' as network;
 
 Future<void> startServer() async {

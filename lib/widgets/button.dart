@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class NumPadButton extends StatelessWidget {
   final String? text;

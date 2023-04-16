@@ -1,6 +1,4 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:dedepos/global.dart' as global;
 
 Widget screenBoxShadowLabelAndNumber(

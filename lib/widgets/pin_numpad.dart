@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dedepos/global.dart' as global;
 import 'button.dart';
 
 class PinNumberPad extends StatefulWidget {

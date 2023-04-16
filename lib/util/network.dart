@@ -1,10 +1,5 @@
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dedepos/global.dart' as global;
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> connectivity() async {
   final connectivityResult = await (Connectivity().checkConnectivity());

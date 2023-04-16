@@ -85,6 +85,10 @@ dependencies:
   text_to_speech: ^0.2.3
   geolocator: ^9.0.2
   audio_session: ^0.1.13
+  win32: ^3.1.4
+  ffi: ^2.0.1
+  uuid: ^3.0.7
+  bloc: ^8.1.1
   
 dev_dependencies:
   flutter_driver:

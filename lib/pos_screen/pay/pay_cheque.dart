@@ -1,43 +1,39 @@
-import 'dart:convert';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 
 class PayCheque extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
-  const PayCheque({required this.posProcess, required this.blocContext});
+  const PayCheque(
+      {super.key, required this.posProcess, required this.blocContext});
 
   @override
   _PayChequeState createState() => _PayChequeState();
 }
 
 class _PayChequeState extends State<PayCheque> {
-  GlobalKey _chequeNumberKey = GlobalKey();
-  GlobalKey _branchNumberKey = GlobalKey();
-  GlobalKey _amountNumberKey = GlobalKey();
-  GlobalKey _dueDateKey = GlobalKey();
-  String _bankCode = "";
-  String _bankName = "";
-  String _chequeNumber = "";
-  double _chequeAmount = 0;
-  String _branchNumber = "";
-  DateTime _dueDate = DateTime.now();
-  int _buttonIndex = 0;
+  GlobalKey chequeNumberKey = GlobalKey();
+  GlobalKey branchNumberKey = GlobalKey();
+  GlobalKey amountNumberKey = GlobalKey();
+  GlobalKey dueDateKey = GlobalKey();
+  String bankCode = "";
+  String bankName = "";
+  String chequeNumber = "";
+  double chequeAmount = 0;
+  String branchNumber = "";
+  DateTime dueDate = DateTime.now();
+  int buttonIndex = 0;
 
   @override
   void initState() {
@@ -49,14 +45,14 @@ class _PayChequeState extends State<PayCheque> {
   }
 
   bool saveData() {
-    if (_chequeNumber.trim().isNotEmpty && _chequeAmount > 0) {
+    if (chequeNumber.trim().isNotEmpty && chequeAmount > 0) {
       global.payScreenData.cheque.add(PayChequeModel(
           due_date: DateTime.now(),
-          bank_code: _bankCode,
-          bank_name: _bankName,
-          cheque_number: _chequeNumber,
-          branch_number: _branchNumber,
-          amount: _chequeAmount));
+          bank_code: bankCode,
+          bank_name: bankName,
+          cheque_number: chequeNumber,
+          branch_number: branchNumber,
+          amount: chequeAmount));
       return true;
     } else {
       return false;
@@ -64,7 +60,7 @@ class _PayChequeState extends State<PayCheque> {
   }
 
   Widget cardDetail() {
-  List<BankObjectBoxStruct> bankDataList = BankHelper().selectAll();
+    List<BankObjectBoxStruct> bankDataList = BankHelper().selectAll();
     return Card(
       elevation: 3.0,
       color: Colors.white,
@@ -94,7 +90,7 @@ class _PayChequeState extends State<PayCheque> {
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
@@ -104,22 +100,19 @@ class _PayChequeState extends State<PayCheque> {
                                                     height: 50,
                                                     child: Image.asset(global
                                                         .findLogoImageFromCreditCardProvider(
-                                                            bankDataList[
-                                                                    index]
+                                                            bankDataList[index]
                                                                 .code))),
-                                                SizedBox(width: 10),
+                                                const SizedBox(width: 10),
                                                 Text(bankDataList[index]
-                                                    .names[0]
-                                                    )
+                                                    .names[0])
                                               ]),
                                               onPressed: () {
                                                 global.payScreenNumberPadIsActive =
                                                     false;
-                                                _bankCode = bankDataList[index]
-                                                    .code;
-                                                _bankName = bankDataList[index]
-                                                    .names[0]
-                                                    ;
+                                                bankCode =
+                                                    bankDataList[index].code;
+                                                bankName = bankDataList[index]
+                                                    .names[0];
                                                 Navigator.of(context).pop();
                                                 refreshEvent();
                                               },
@@ -136,41 +129,41 @@ class _PayChequeState extends State<PayCheque> {
                                   alignment: Alignment.center,
                                   width: 100,
                                   height: 50,
-                                  child: (_bankCode.isNotEmpty)
+                                  child: (bankCode.isNotEmpty)
                                       ? Image.asset(global
                                           .findLogoImageFromCreditCardProvider(
-                                              _bankCode))
+                                              bankCode))
                                       : Container())),
-                          Text(
+                          const Text(
                             'ธนาคาร',
                             style: TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
                         ],
                       ))),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                   child: Container(
-                      key: _chequeNumberKey,
+                      key: chequeNumberKey,
                       height: 90,
                       child: ElevatedButton(
                           onPressed: () {
-                            if (_bankCode.isNotEmpty) {
+                            if (bankCode.isNotEmpty) {
                               global.numberPadCallBack = () {
                                 setState(() {
-                                  _chequeNumber = global.payScreenNumberPadText;
+                                  chequeNumber = global.payScreenNumberPadText;
                                 });
                               };
                               if (global.payScreenNumberPadIsActive =
-                                  true && _buttonIndex == 1) {
+                                  true && buttonIndex == 1) {
                                 global.payScreenNumberPadIsActive = false;
-                                _buttonIndex = 0;
+                                buttonIndex = 0;
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.text;
-                                global.payScreenNumberPadText = _chequeNumber;
-                                final RenderBox _renderBox = _chequeNumberKey
+                                global.payScreenNumberPadText = chequeNumber;
+                                final RenderBox _renderBox = chequeNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
                                 final Size _size = _renderBox.size;
@@ -180,7 +173,7 @@ class _PayChequeState extends State<PayCheque> {
                                     _offset.dx + (_size.width * 1.1);
                                 global.payScreenNumberPadTop =
                                     _offset.dy - _size.height;
-                                _buttonIndex = 1;
+                                buttonIndex = 1;
                               }
                               refreshEvent();
                             }
@@ -191,40 +184,40 @@ class _PayChequeState extends State<PayCheque> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        _chequeNumber,
-                                        style: TextStyle(fontSize: 32),
+                                        chequeNumber,
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('เลขที่เช็ค'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
                           )))),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                   child: Container(
-                      key: _branchNumberKey,
+                      key: branchNumberKey,
                       height: 90,
                       child: ElevatedButton(
                           onPressed: () {
-                            if (_bankCode.isNotEmpty) {
+                            if (bankCode.isNotEmpty) {
                               global.numberPadCallBack = () {
                                 setState(() {
-                                  _branchNumber = global.payScreenNumberPadText;
+                                  branchNumber = global.payScreenNumberPadText;
                                 });
                               };
                               if (global.payScreenNumberPadIsActive =
-                                  true && _buttonIndex == 2) {
+                                  true && buttonIndex == 2) {
                                 global.payScreenNumberPadIsActive = false;
-                                _buttonIndex = 0;
+                                buttonIndex = 0;
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.text;
-                                global.payScreenNumberPadText = _branchNumber;
-                                final RenderBox _renderBox = _branchNumberKey
+                                global.payScreenNumberPadText = branchNumber;
+                                final RenderBox _renderBox = branchNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
                                 final Size _size = _renderBox.size;
@@ -234,7 +227,7 @@ class _PayChequeState extends State<PayCheque> {
                                     _offset.dx + (_size.width * 1.1);
                                 global.payScreenNumberPadTop =
                                     _offset.dy - _size.height;
-                                _buttonIndex = 2;
+                                buttonIndex = 2;
                               }
                               refreshEvent();
                             }
@@ -245,42 +238,42 @@ class _PayChequeState extends State<PayCheque> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        _branchNumber,
-                                        style: TextStyle(fontSize: 32),
+                                        branchNumber,
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('เลขที่สาขา'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
                           )))),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                   child: Container(
-                      key: _dueDateKey,
+                      key: dueDateKey,
                       height: 90,
                       child: ElevatedButton(
                           onPressed: () async {
-                            if (_bankCode.isNotEmpty) {
+                            if (bankCode.isNotEmpty) {
                               global.payScreenNumberPadIsActive = false;
                               DateTime? _newDateTime =
                                   await showRoundedDatePicker(
                                 context: context,
-                                locale: Locale("th", "TH"),
+                                locale: const Locale("th", "TH"),
                                 era: EraMode.BUDDHIST_YEAR,
-                                initialDate: _dueDate,
+                                initialDate: dueDate,
                                 firstDate: DateTime(DateTime.now().year - 10),
                                 lastDate: DateTime(DateTime.now().year + 10),
                                 borderRadius: 16,
                               );
-                              _dueDate = _newDateTime ?? DateTime.now();
+                              dueDate = _newDateTime ?? DateTime.now();
                               refreshEvent();
                             }
                           },
@@ -294,41 +287,41 @@ class _PayChequeState extends State<PayCheque> {
                                           child: Text(
                                         DateFormat.yMMMMEEEEd()
                                             .formatInBuddhistCalendarThai(
-                                                _dueDate),
-                                        style: TextStyle(fontSize: 32),
+                                                dueDate),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.center,
                                       )))),
                               Text(
                                 global.language('วันที่ถึงกำหนด'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
                           )))),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                   child: Container(
-                      key: _amountNumberKey,
+                      key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
                           onPressed: () {
-                            if (_bankCode.isNotEmpty) {
+                            if (bankCode.isNotEmpty) {
                               global.numberPadCallBack = () {
                                 setState(() {
-                                  _chequeAmount = global.calcTextToNumber(
+                                  chequeAmount = global.calcTextToNumber(
                                       global.payScreenNumberPadText);
                                 });
                               };
                               if (global.payScreenNumberPadIsActive =
-                                  true && _buttonIndex == 3) {
+                                  true && buttonIndex == 3) {
                                 global.payScreenNumberPadIsActive = false;
-                                _buttonIndex = 0;
+                                buttonIndex = 0;
                               } else {
                                 global.payScreenNumberPadIsActive = true;
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.number;
-                                global.payScreenNumberPadAmount = _chequeAmount;
-                                final RenderBox _renderBox = _amountNumberKey
+                                global.payScreenNumberPadAmount = chequeAmount;
+                                final RenderBox _renderBox = amountNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
                                 final Size _size = _renderBox.size;
@@ -338,14 +331,14 @@ class _PayChequeState extends State<PayCheque> {
                                     _offset.dx + (_size.width * 1.1);
                                 global.payScreenNumberPadTop =
                                     _offset.dy - _size.height;
-                                global.payScreenNumberPadAmount = _chequeAmount;
+                                global.payScreenNumberPadAmount = chequeAmount;
                                 global.payScreenNumberPadText =
-                                    (_chequeAmount == 0)
+                                    (chequeAmount == 0)
                                         ? ""
-                                        : _chequeAmount
+                                        : chequeAmount
                                             .toString()
                                             .replaceAll(".0", "");
-                                _buttonIndex = 3;
+                                buttonIndex = 3;
                               }
                               refreshEvent();
                             }
@@ -356,14 +349,13 @@ class _PayChequeState extends State<PayCheque> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        global.moneyFormat
-                                            .format(_chequeAmount),
-                                        style: TextStyle(fontSize: 32),
+                                        global.moneyFormat.format(chequeAmount),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('จำนวนเงิน'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
@@ -378,10 +370,10 @@ class _PayChequeState extends State<PayCheque> {
                   icon: const Icon(Icons.push_pin),
                   onPressed: () {
                     if (saveData()) {
-                      _bankCode = "";
-                      _chequeAmount = 0;
-                      _chequeNumber = "";
-                      _branchNumber = "";
+                      bankCode = "";
+                      chequeAmount = 0;
+                      chequeNumber = "";
+                      branchNumber = "";
                       global.payScreenNumberPadText = "";
                       global.payScreenNumberPadAmount = 0;
                       refreshEvent();
@@ -390,7 +382,7 @@ class _PayChequeState extends State<PayCheque> {
                   },
                   label: Text(
                     global.language("บันทึกเช็ค"),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -399,7 +391,7 @@ class _PayChequeState extends State<PayCheque> {
                   style: ElevatedButton.styleFrom(
                     elevation: 8,
                     backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
@@ -410,7 +402,7 @@ class _PayChequeState extends State<PayCheque> {
     );
   }
 
-  Widget _buildCreditCard({required int index}) {
+  Widget buildCreditCard({required int index}) {
     return Column(
       children: [
         Card(
@@ -424,18 +416,18 @@ class _PayChequeState extends State<PayCheque> {
             child: ListTile(
               title: Row(
                 children: [
-                  Container(
+                  SizedBox(
                       width: 100,
                       height: 50,
                       child: Image.asset(
                           global.findLogoImageFromCreditCardProvider(
                               global.payScreenData.cheque[index].bank_code))),
-                  SizedBox(width: 10),
-                  _buildDetailsBlock(
+                  const SizedBox(width: 10),
+                  buildDetailsBlock(
                       label: global.language("เลขที่เช็ค"),
                       value: global.payScreenData.cheque[index].cheque_number),
-                  SizedBox(width: 50),
-                  _buildDetailsBlock(
+                  const SizedBox(width: 50),
+                  buildDetailsBlock(
                       label: global.language("เลขที่สาขา"),
                       value: global.payScreenData.cheque[index].branch_number),
                 ],
@@ -445,13 +437,13 @@ class _PayChequeState extends State<PayCheque> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    _buildDetailsBlock(
+                    buildDetailsBlock(
                       label: global.language('วันที่ถึงกำหนด'),
                       value: DateFormat.yMMMMEEEEd()
                           .formatInBuddhistCalendarThai(
                               global.payScreenData.cheque[index].due_date),
                     ),
-                    _buildDetailsBlock(
+                    buildDetailsBlock(
                         label: global.language('ยอดเงิน'),
                         value: global.moneyFormat
                             .format(global.payScreenData.cheque[index].amount)),
@@ -459,7 +451,7 @@ class _PayChequeState extends State<PayCheque> {
                 ),
               ),
               trailing: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
                     size: 30.0,
                     color: Colors.redAccent,
@@ -499,7 +491,7 @@ class _PayChequeState extends State<PayCheque> {
     );
   }
 
-  Column _buildDetailsBlock({required String label, required String value}) {
+  Column buildDetailsBlock({required String label, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -523,7 +515,7 @@ class _PayChequeState extends State<PayCheque> {
 
   @override
   Widget build(BuildContext context) {
-    if (_chequeAmount == 0) _chequeAmount = diffAmount();
+    if (chequeAmount == 0) chequeAmount = diffAmount();
     return Scaffold(
         body: SingleChildScrollView(
             child: Padding(
@@ -536,7 +528,7 @@ class _PayChequeState extends State<PayCheque> {
               children: <Widget>[
                 ...global.payScreenData.cheque.map((_detail) {
                   var _index = global.payScreenData.cheque.indexOf(_detail);
-                  return _buildCreditCard(index: _index);
+                  return buildCreditCard(index: _index);
                 }).toList()
               ],
             ),

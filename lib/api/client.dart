@@ -1,23 +1,22 @@
 import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
 import 'app_const.dart';
 import 'package:dedepos/global.dart' as global;
 
 class Client {
   Dio init() {
-    Dio _dio = Dio();
-    _dio.interceptors.add(ApiInterceptors());
+    Dio dio = Dio();
+    dio.interceptors.add(ApiInterceptors());
 
     String endPointService = AppConfig.serviceApi;
 
     endPointService +=
         endPointService[endPointService.length - 1] == "/" ? "" : "/";
 
-    _dio.options.baseUrl = endPointService;
-    _dio.options.connectTimeout = 20000; //20s
-    _dio.options.receiveTimeout = 30000; //5s
+    dio.options.baseUrl = endPointService;
+    dio.options.connectTimeout = 20000; //20s
+    dio.options.receiveTimeout = 30000; //5s
 
-    return _dio;
+    return dio;
   }
 }
 

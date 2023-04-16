@@ -2,12 +2,10 @@ import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
-import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:presentation_displays/displays_manager.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
-import 'package:dedepos/api/network/server.dart';
 import 'package:ffi/ffi.dart';
 import 'package:win32/win32.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
@@ -16,7 +14,6 @@ import 'package:dedepos/api/network/sync_model.dart';
 import 'package:localstore/localstore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
-import 'dart:ffi';
 import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:dedepos/util/app_auth.dart';
@@ -31,7 +28,6 @@ import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
-import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/api/sync/master/sync_master.dart' as sync;
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
@@ -43,7 +39,6 @@ import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:dedepos/model/objectbox/config_struct.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'dart:async';
 import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
@@ -54,13 +49,8 @@ import 'db/bill_helper.dart';
 import 'db/config_helper.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'dart:typed_data';
 import 'package:charset_converter/charset_converter.dart';
 import 'model/json/language_model.dart';
-import 'model/json/pos_model.dart';
-import 'package:dedepos/api/network/server.dart' as network;
-import 'package:text_to_speech/text_to_speech.dart';
-import 'package:objectbox/objectbox.dart';
 
 DisplayManager displayManager = DisplayManager();
 bool isInternalCustomerDisplayConnected = false;
@@ -768,6 +758,15 @@ String language(String code) {
 Color colorFromHex(String hexColor) {
   final hexCode = hexColor.replaceAll('#', '');
   return Color(int.parse('FF$hexCode', radix: 16));
+}
+
+String posScreenListHeightName = "posScreenListHeight";
+double posScreenListHeightGet() {
+  return appStorage.read(posScreenListHeightName) ?? 1.0;
+}
+
+void posScreenListHeightSet(double value) {
+  appStorage.write(posScreenListHeightName, value);
 }
 
 void loadConfig() {

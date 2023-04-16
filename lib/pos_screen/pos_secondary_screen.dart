@@ -14,10 +14,10 @@ class PosSecondaryScreen extends StatefulWidget {
   const PosSecondaryScreen({Key? key}) : super(key: key);
 
   @override
-  _PosSecondaryScreenState createState() => _PosSecondaryScreenState();
+  PosSecondaryScreenState createState() => PosSecondaryScreenState();
 }
 
-class _PosSecondaryScreenState extends State<PosSecondaryScreen> {
+class PosSecondaryScreenState extends State<PosSecondaryScreen> {
   PosHoldProcessModel processResult = PosHoldProcessModel(holdNumber: 0);
   final ScrollController detailScrollController = ScrollController();
   int changeScreenDelaySecond = 1;

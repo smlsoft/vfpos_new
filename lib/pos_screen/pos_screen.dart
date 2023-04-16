@@ -9,46 +9,20 @@ import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
-import 'package:dedepos/pos_screen/pos_print.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:fullscreen/fullscreen.dart';
-import 'package:get/state_manager.dart';
 import 'package:get/utils.dart';
-import 'package:presentation_displays/displays_manager.dart';
 import 'package:split_view/split_view.dart';
 import 'dart:developer' as dev;
-import 'dart:math';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
-import 'package:dedepos/api/app_const.dart';
-import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/model/credit_card_payment_model.dart';
-import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
-import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/model/json/payment_model.dart';
-import 'package:dedepos/model/json/sale_invoice_model.dart';
-import 'package:dedepos/model/json/sale_invoice_item_model.dart';
-import 'package:dedepos/model/json/transfer_payment_model.dart';
-import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/services/find_employee.dart';
 import 'package:dedepos/services/find_member.dart';
 import 'package:dedepos/pos_screen/pos_hold_bill.dart';
-import 'package:dedepos/widgets/button_bill.dart';
-import 'package:dedepos/widgets/roundmenu.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:dedepos/db/product_category_helper.dart';
-import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/model/json/receive_money_model.dart';
-import 'package:dedepos/api/sync/model/promotion_model.dart';
-import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:flutter_barcode_listener/flutter_barcode_listener.dart';
 import 'package:dedepos/widgets/numpad.dart';
@@ -61,20 +35,14 @@ import 'package:dedepos/widgets/button.dart';
 import 'package:dedepos/db/pos_log_helper.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
-import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'pos_process.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
-import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/api/network/server.dart' as network;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
-import 'package:dedepos/model/json/print_queue_model.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
-import 'pos_util.dart' as posUtil;
 
 class PosScreen extends StatefulWidget {
   const PosScreen({Key? key}) : super(key: key);
@@ -127,7 +95,7 @@ class _PosScreenState extends State<PosScreen>
   GlobalKey<PosNumPadState> posNumPadGlobalKey = GlobalKey();
   List<Widget> widgetMessage = [];
   String widgetMessageImageUrl = "";
-  double listTextHeight = 1.5;
+  late double listTextHeight = global.posScreenListHeightGet();
 
   /// 0=Desktop,1=Tablet,2=Phone
   int deviceMode = 0;
@@ -3516,6 +3484,7 @@ class _PosScreenState extends State<PosScreen>
             if (listTextHeight > 2) {
               listTextHeight = 0.5;
             }
+            global.posScreenListHeightSet(listTextHeight);
           });
         });
   }

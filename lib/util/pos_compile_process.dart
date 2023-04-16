@@ -1,6 +1,5 @@
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
 
 Future<PosProcessResultModel> posCompileProcess(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dedepos/global.dart' as global;
 
 class PayButton extends StatelessWidget {
   final GestureTapCallback onPressed;

@@ -1,10 +1,6 @@
 import 'dart:async';
-
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/widgets/numpad.dart';
-import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class PosClient extends StatefulWidget {

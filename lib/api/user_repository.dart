@@ -1,7 +1,4 @@
 import 'dart:convert';
-
-import 'package:get_storage/get_storage.dart';
-
 import 'client.dart';
 import 'package:dio/dio.dart';
 

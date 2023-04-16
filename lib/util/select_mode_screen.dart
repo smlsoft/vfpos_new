@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:dedepos/global_model.dart';
-import 'package:dedepos/pos_screen/pos_print_image.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 
