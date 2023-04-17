@@ -1768,7 +1768,7 @@ class _PosScreenState extends State<PosScreen>
               Expanded(
                 flex: 5,
                 child: Text(
-                    "${global.language("total")} ${global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length} ${global.language("item")}",
+                    "${global.language("total")} ${global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length} ${global.language("line")}",
                     style: textStyle.copyWith(fontSize: fontSize)),
               ),
               Expanded(flex: 1, child: Container()),

@@ -74,7 +74,7 @@
     },
     {
       "id": "3:8200473711235576786",
-      "lastPropertyId": "13:7905978071712598234",
+      "lastPropertyId": "14:2405522170662206015",
       "name": "BillDetailObjectBoxStruct",
       "properties": [
         {
@@ -142,13 +142,18 @@
           "id": "13:7905978071712598234",
           "name": "total_amount",
           "type": 8
+        },
+        {
+          "id": "14:2405522170662206015",
+          "name": "sku",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "21:8298043862021191374",
+      "lastPropertyId": "36:7609151361712366329",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -253,6 +258,76 @@
           "id": "21:8298043862021191374",
           "name": "sum_qr_code",
           "type": 8
+        },
+        {
+          "id": "22:4227198458679852788",
+          "name": "total_before_amount",
+          "type": 8
+        },
+        {
+          "id": "23:7917826286910847708",
+          "name": "total_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "24:722289284511599717",
+          "name": "vat_rate",
+          "type": 8
+        },
+        {
+          "id": "25:7257208570699036067",
+          "name": "total_except_amount",
+          "type": 8
+        },
+        {
+          "id": "26:7069971456431047903",
+          "name": "full_vat_name",
+          "type": 9
+        },
+        {
+          "id": "27:4830121931595650587",
+          "name": "full_vat_address",
+          "type": 9
+        },
+        {
+          "id": "28:6201507979459234438",
+          "name": "full_vat_tax_id",
+          "type": 9
+        },
+        {
+          "id": "29:2995577683092967566",
+          "name": "full_vat_branch_number",
+          "type": 9
+        },
+        {
+          "id": "31:5804252044748145462",
+          "name": "print_copy_bill_date_time",
+          "type": 30
+        },
+        {
+          "id": "32:8002487207660003381",
+          "name": "is_cancel",
+          "type": 1
+        },
+        {
+          "id": "33:8396861034979695969",
+          "name": "cancel_date_time",
+          "type": 9
+        },
+        {
+          "id": "34:6652086552953897356",
+          "name": "cancel_user_code",
+          "type": 9
+        },
+        {
+          "id": "35:1402536342252470897",
+          "name": "cancel_user_name",
+          "type": 9
+        },
+        {
+          "id": "36:7609151361712366329",
+          "name": "cancel_reason",
+          "type": 9
         }
       ],
       "relations": []
@@ -373,7 +448,7 @@
     },
     {
       "id": "6:1162831814308106896",
-      "lastPropertyId": "3:7361895675452458520",
+      "lastPropertyId": "4:8195153540722984911",
       "name": "ConfigObjectBoxStruct",
       "properties": [
         {
@@ -383,13 +458,13 @@
           "flags": 1
         },
         {
-          "id": "2:4892252268093927252",
-          "name": "device_code",
+          "id": "3:7361895675452458520",
+          "name": "last_doc_number",
           "type": 9
         },
         {
-          "id": "3:7361895675452458520",
-          "name": "last_doc_number",
+          "id": "4:8195153540722984911",
+          "name": "device_id",
           "type": 9
         }
       ],
@@ -1089,7 +1164,9 @@
     5724175065729708968,
     3207517907374948448,
     4959334329666701118,
-    1061488025613655637
+    1061488025613655637,
+    4892252268093927252,
+    7012798260610235098
   ],
   "retiredRelationUids": [],
   "version": 1

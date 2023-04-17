@@ -109,19 +109,27 @@ class PosProcessPromotionModel {
 
 @JsonSerializable()
 class PosProcessModel {
-  late double total_piece;
-  late double total_amount;
-  late double total_discount_from_promotion;
-  late String qr_code;
-  late List<PosProcessDetailModel> details;
-  late List<PromotionTempModel> select_promotion_temp_list;
-  late List<PosProcessPromotionModel> promotion_list;
+  double total_piece;
+  double total_amount;
+  double total_discount_from_promotion;
+  String qr_code;
+  double vat_rate;
+  double total_vat_amount;
+  double total_before_amount;
+  double total_except_amount;
+  List<PosProcessDetailModel> details;
+  List<PromotionTempModel> select_promotion_temp_list;
+  List<PosProcessPromotionModel> promotion_list;
 
   PosProcessModel(
       {this.total_piece = 0.0,
       this.total_amount = 0.0,
       this.total_discount_from_promotion = 0,
       this.qr_code = "",
+      this.vat_rate = 0,
+      this.total_vat_amount = 0,
+      this.total_before_amount = 0,
+      this.total_except_amount = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
       this.promotion_list = const []});

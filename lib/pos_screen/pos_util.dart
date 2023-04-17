@@ -29,6 +29,14 @@ Future<String> saveBill(
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
       is_sync: false,
+      vat_rate: global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.vat_rate,
+      total_before_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.total_before_amount,
+      total_except_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.total_except_amount,
+      total_vat_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess.total_vat_amount,          
       discount_formula: discountFormula,
       sum_discount: discountAmount,
       sum_coupon: sumCoupon(),
@@ -139,7 +147,7 @@ Future<String> saveBill(
   global.billPayHelper.insertMany(pays);
   // Running เลขที่ใบเสร็จ
   global.configHelper.update(ConfigObjectBoxStruct(
-      device_code: global.deviceName, last_doc_number: docNumber));
+      device_id: global.deviceId, last_doc_number: docNumber));
   return docNumber;
 }
 

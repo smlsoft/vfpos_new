@@ -23,6 +23,7 @@ import 'package:dedepos/db/bill_pay_helper.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/db/member_helper.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
@@ -84,7 +85,8 @@ int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.##");
 final qtyShortFormat = NumberFormat("##,##0");
 String objectBoxDatabaseName = "smlposmobile.db";
-String deviceName = "POS01";
+String deviceId = "POS01";
+String deviceName = "เครื่อง POS สำนักงานใหญ่ 1";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
 List<SyncDeviceModel> posRemoteDeviceList = [];
 //"http://192.168.1.4:8084";
@@ -445,11 +447,9 @@ Future<String> billRunning() async {
   bool success = false;
   while (success == false) {
     int number = 0;
-    String deviceCode = "";
     List<ConfigObjectBoxStruct> configGet = configHelper.select();
     if (configGet.isNotEmpty) {
       ConfigObjectBoxStruct config = configGet[0];
-      deviceCode = config.device_code;
       List<String> split = config.last_doc_number.split("-");
       if (split.isNotEmpty) {
         number = int.tryParse(split[split.length - 1]) ?? 0;
@@ -462,7 +462,7 @@ Future<String> billRunning() async {
       }
     }
     result =
-        "$deviceCode-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
+        "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
 
     /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
     var find = billHelper.selectByDocNumber(docNumber: result);
@@ -470,7 +470,7 @@ Future<String> billRunning() async {
       success = true;
     } else {
       configHelper.update(ConfigObjectBoxStruct(
-          device_code: deviceCode, last_doc_number: result));
+          device_id: global.deviceId, last_doc_number: result));
     }
   }
   return result;
@@ -596,7 +596,7 @@ Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
     SyncDeviceModel info = SyncDeviceModel(
-        device: deviceName,
+        device: deviceId,
         ip: "",
         holdNumberActive: 0,
         connected: true,

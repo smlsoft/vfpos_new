@@ -59,4 +59,16 @@ class BillHelper {
     }
     return _result;
   }
+
+  void updateRePrintBill(String docNumber) {
+    final find = box
+        .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
+        .build()
+        .findFirst();
+    if (find != null) {
+      find.print_copy_bill_date_time.add(DateTime.now().toString());
+      find.is_sync = false;
+      box.put(find);
+    }
+  }
 }

@@ -10,7 +10,7 @@ PosTicketObjectBoxStruct _$PosTicketObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     PosTicketObjectBoxStruct(
       logo: json['logo'] as bool? ?? true,
-      printMode: json['printMode'] as int? ?? 1,
+      printMode: json['printMode'] as int? ?? 0,
       printerWidth: json['printerWidth'] as int? ?? 640,
       guidfixed: json['guidfixed'] as String? ?? "",
       ticketName: json['ticketName'] as String? ?? "",
@@ -23,7 +23,7 @@ PosTicketObjectBoxStruct _$PosTicketObjectBoxStructFromJson(
       customerAddress: json['customerAddress'] as bool? ?? true,
       customerTaxId: json['customerTaxId'] as bool? ?? true,
       lineNumber: json['lineNumber'] as bool? ?? true,
-      qty: json['qty'] as bool? ?? true,
+      qty: json['qty'] as bool? ?? false,
       descriptionWidth: (json['descriptionWidth'] as num?)?.toDouble() ?? 40,
       qtyWidth: (json['qtyWidth'] as num?)?.toDouble() ?? 10,
       priceWidth: (json['priceWidth'] as num?)?.toDouble() ?? 12,

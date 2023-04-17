@@ -219,64 +219,87 @@ class _MenuScreenState extends State<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget infoWidget = Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 1,
-              blurRadius: 7,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  posLoginDialog();
-                },
-                child: (global.userLoginCode.isEmpty)
-                    ? Row(children: const [
-                        Icon(
-                          Icons.key,
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          "Login",
-                          overflow: TextOverflow.clip,
-                        ),
-                      ])
-                    : Row(children: [
-                        const Icon(
-                          Icons.verified_user,
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "${global.userLoginCode} : ${global.userLoginName}",
-                          overflow: TextOverflow.clip,
-                        ),
-                      ])),
+    Widget infoWidget = Column(children: [
+      Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    posLoginDialog();
+                  },
+                  child: (global.userLoginCode.isEmpty)
+                      ? Row(children: const [
+                          Icon(
+                            Icons.key,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            "Login",
+                            overflow: TextOverflow.clip,
+                          ),
+                        ])
+                      : Row(children: [
+                          const Icon(
+                            Icons.verified_user,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "${global.userLoginCode} : ${global.userLoginName}",
+                            overflow: TextOverflow.clip,
+                          ),
+                        ])),
+              const Spacer(),
+              ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      global.userLoginCode = "";
+                      global.userLoginName = "";
+                    });
+                  },
+                  child: const Icon(Icons.logout)),
+            ],
+          )),
+      Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          margin:
+              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+          padding: const EdgeInsets.all(8.0),
+          child: Row(children: [
+            Text(global.deviceId),
             const Spacer(),
-            ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    global.userLoginCode = "";
-                    global.userLoginName = "";
-                  });
-                },
-                child: const Icon(Icons.logout)),
-          ],
-        ));
-    bool windowsDesktopFullScreen = false;
+            Text(global.deviceName)
+          ])),
+    ]);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
@@ -395,76 +418,84 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 )),
                           )))
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          infoWidget,
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: menuPosList.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      MediaQuery.of(context).size.width ~/ 150,
-                                  crossAxisSpacing: 5.0,
-                                  mainAxisSpacing: 5.0,
-                                ),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return menuPosList[index];
-                                },
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: menuShiftList.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      MediaQuery.of(context).size.width ~/ 150,
-                                  crossAxisSpacing: 5.0,
-                                  mainAxisSpacing: 5.0,
-                                ),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return menuShiftList[index];
-                                },
-                              ),
-                            ),
-                          ),
-                          if (menuVisitList != null)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: menuVisitList!.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        MediaQuery.of(context).size.width ~/
-                                            150,
-                                    crossAxisSpacing: 5.0,
-                                    mainAxisSpacing: 5.0,
+                  : Column(children: [
+                      infoWidget,
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  child: GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: menuPosList.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          MediaQuery.of(context).size.width ~/
+                                              150,
+                                      crossAxisSpacing: 5.0,
+                                      mainAxisSpacing: 5.0,
+                                    ),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return menuPosList[index];
+                                    },
                                   ),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return menuVisitList![index];
-                                  },
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  child: GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: menuShiftList.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          MediaQuery.of(context).size.width ~/
+                                              150,
+                                      crossAxisSpacing: 5.0,
+                                      mainAxisSpacing: 5.0,
+                                    ),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return menuShiftList[index];
+                                    },
+                                  ),
+                                ),
+                              ),
+                              if (menuVisitList != null)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    child: GridView.builder(
+                                      shrinkWrap: true,
+                                      physics: const BouncingScrollPhysics(),
+                                      itemCount: menuVisitList!.length,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount:
+                                            MediaQuery.of(context).size.width ~/
+                                                150,
+                                        crossAxisSpacing: 5.0,
+                                        mainAxisSpacing: 5.0,
+                                      ),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return menuVisitList![index];
+                                      },
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ]),
         ),
       ),
     );

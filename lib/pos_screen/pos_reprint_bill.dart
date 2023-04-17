@@ -1,4 +1,5 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
+import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,8 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
                                 TextButton(
                                     onPressed: () {
                                       printBill(dataList[index].doc_number);
+                                      BillHelper().updateRePrintBill(
+                                          dataList[index].doc_number);
                                       Navigator.pop(context);
                                       Navigator.pop(context);
                                     },
@@ -99,6 +102,16 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
                               Text(
                                 global.moneyFormat
                                     .format(dataList[index].total_amount),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ]),
+                            TableRow(children: [
+                              const Text("สำเนา"),
+                              Text(
+                                global.moneyFormat.format(dataList[index]
+                                    .print_copy_bill_date_time
+                                    .length),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
