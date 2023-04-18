@@ -19,11 +19,11 @@ class BillHelper {
     }
   }*/
 
-  List<BillObjectBoxStruct> selectByDocNumber({String docNumber = ""}) {
+  BillObjectBoxStruct? selectByDocNumber({String docNumber = ""}) {
     return box
         .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
         .build()
-        .find();
+        .findFirst();
   }
 
   List<BillObjectBoxStruct> selectSyncIsFalse() {
@@ -58,6 +58,17 @@ class BillHelper {
       _result = box.remove(_find.id);
     }
     return _result;
+  }
+
+  void updatesIsCancel({required String docNumber, required bool value}) {
+    final find = box
+        .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
+        .build()
+        .findFirst();
+    if (find != null) {
+      find.is_cancel = value;
+      box.put(find);
+    }
   }
 
   void updateRePrintBill(String docNumber) {

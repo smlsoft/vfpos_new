@@ -1,5 +1,5 @@
 import 'package:dedepos/pos_screen/pos_bill_vat.dart';
-import 'package:dedepos/pos_screen/pos_cancel_.dart';
+import 'package:dedepos/pos_screen/pos_cancel_bill.dart';
 import 'package:dedepos/pos_screen/pos_product_weight.dart';
 import 'package:dedepos/pos_screen/pos_reprint_bill.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';

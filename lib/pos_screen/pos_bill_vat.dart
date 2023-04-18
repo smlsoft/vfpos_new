@@ -1,6 +1,10 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
+import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
+import 'package:dedepos/pos_screen/pos_bill_vat_detail.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
+import 'package:dedepos/pos_screen/pos_reprint_bill_detail.dart';
+import 'package:dedepos/pos_screen/pos_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
@@ -31,7 +35,7 @@ class _PosBillVatScreenState extends State<PosBillVatScreen> {
         }
         return Scaffold(
             appBar: AppBar(
-              title: Text(global.language("full_bill_vat")),
+              title: Text(global.language("pos_bill_vat")),
             ),
             body: Padding(
               padding: const EdgeInsets.all(10),
@@ -45,65 +49,22 @@ class _PosBillVatScreenState extends State<PosBillVatScreen> {
                 ),
                 itemBuilder: (context, index) {
                   return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      backgroundColor: (dataList[index].is_cancel)
+                          ? Colors.red.shade100
+                          : Colors.blue.shade100,
+                    ),
                     onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text(global.language("reprint_bill")),
-                              content: Text(dataList[index].doc_number),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(global.language("cancel"))),
-                                TextButton(
-                                    onPressed: () {
-                                      printBill(dataList[index].doc_number);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(global.language("confirm"))),
-                              ],
-                            );
-                          });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PosBillVatDetailScreen(
+                              docNumber: dataList[index].doc_number),
+                        ),
+                      );
                     },
-                    child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Table(
-                          columnWidths: const {
-                            0: FlexColumnWidth(1),
-                            1: FlexColumnWidth(3),
-                          },
-                          children: [
-                            TableRow(children: [
-                              const Text("เลขที่"),
-                              Text(
-                                dataList[index].doc_number,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
-                            TableRow(children: [
-                              const Text("วันที่"),
-                              Text(
-                                global
-                                    .dateTimeFormat(dataList[index].date_time),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
-                            TableRow(children: [
-                              const Text("มูลค่า"),
-                              Text(
-                                global.moneyFormat
-                                    .format(dataList[index].total_amount),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ]),
-                          ],
-                        )),
+                    child: posBill(dataList[index]),
                   );
                 },
               ),

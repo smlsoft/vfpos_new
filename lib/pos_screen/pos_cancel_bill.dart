@@ -1,21 +1,21 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
+import 'package:dedepos/pos_screen/pos_cancel_bill_detail.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
-import 'package:dedepos/pos_screen/pos_reprint_bill_detail.dart';
 import 'package:dedepos/pos_screen/pos_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 
-class PosReprintBillScreen extends StatefulWidget {
+class PosCancelBillScreen extends StatefulWidget {
   @override
-  const PosReprintBillScreen({Key? key}) : super(key: key);
+  const PosCancelBillScreen({Key? key}) : super(key: key);
 
-  _PosReprintBillScreenState createState() => _PosReprintBillScreenState();
+  _PosCancelBillScreenState createState() => _PosCancelBillScreenState();
 }
 
-class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
+class _PosCancelBillScreenState extends State<PosCancelBillScreen> {
   List<BillObjectBoxStruct> dataList = [];
 
   @override
@@ -34,7 +34,7 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
         }
         return Scaffold(
             appBar: AppBar(
-              title: Text(global.language("reprint_bill")),
+              title: Text(global.language("cancel_bill")),
             ),
             body: Padding(
               padding: const EdgeInsets.all(10),
@@ -58,7 +58,7 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosReprintBillDetailScreen(
+                          builder: (context) => PosCancelBillDetailScreen(
                               docNumber: dataList[index].doc_number),
                         ),
                       );

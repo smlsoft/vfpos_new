@@ -3,6 +3,7 @@ import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'dart:async';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:flutter/material.dart';
 
 Future<String> saveBill(
     {required double cashAmount,
@@ -29,14 +30,18 @@ Future<String> saveBill(
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
       is_sync: false,
-      vat_rate: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.vat_rate,
-      total_before_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_before_amount,
-      total_except_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_except_amount,
+      vat_rate: global
+          .posHoldProcessResult[global.posHoldActiveNumber].posProcess.vat_rate,
+      total_before_amount: global
+          .posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess
+          .total_before_amount,
+      total_except_amount: global
+          .posHoldProcessResult[global.posHoldActiveNumber]
+          .posProcess
+          .total_except_amount,
       total_vat_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_vat_amount,          
+          .posProcess.total_vat_amount,
       discount_formula: discountFormula,
       sum_discount: discountAmount,
       sum_coupon: sumCoupon(),
@@ -192,4 +197,118 @@ Future<void> processPromotionTemp() async {
           });
       });
     }*/
+}
+
+Widget posBill(BillObjectBoxStruct bill) {
+  return Container(
+      padding: const EdgeInsets.all(4),
+      child: Table(
+        columnWidths: const {
+          0: FlexColumnWidth(1),
+          1: FlexColumnWidth(3),
+        },
+        children: [
+          TableRow(children: [
+            const Text("เลขที่"),
+            Text(
+              bill.doc_number,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ]),
+          TableRow(children: [
+            const Text("วันที่"),
+            Text(
+              global.dateTimeFormat(bill.date_time),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ]),
+          TableRow(children: [
+            const Text("มูลค่า"),
+            Text(
+              global.moneyFormat.format(bill.total_amount),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ]),
+          TableRow(children: [
+            const Text("สำเนา"),
+            Text(
+              global.moneyFormat.format(bill.print_copy_bill_date_time.length),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ]),
+        ],
+      ));
+}
+
+Widget posBillDetail(
+    BillObjectBoxStruct bill, List<BillDetailObjectBoxStruct> billDetails) {
+  return Column(
+    children: [
+      Table(
+        columnWidths: const {
+          0: FlexColumnWidth(1),
+          1: FlexColumnWidth(3),
+        },
+        children: [
+          TableRow(
+            children: [
+              Text(global.language("doc_number") + ": "),
+              Text(bill.doc_number),
+            ],
+          ),
+          TableRow(
+            children: [
+              Text(global.language("date_time") + ": "),
+              Text(bill.date_time.toString()),
+            ],
+          ),
+          TableRow(
+            children: [
+              Text(global.language("total") + ": "),
+              Text(global.moneyFormat.format(bill.total_amount)),
+            ],
+          ),
+          TableRow(
+            children: [
+              Text(global.language("discount") + ": "),
+              Text(bill.discount_formula),
+            ],
+          ),
+        ],
+      ),
+      Table(
+        columnWidths: const {
+          0: FlexColumnWidth(1),
+          1: FlexColumnWidth(3),
+          2: FlexColumnWidth(3),
+          3: FlexColumnWidth(3),
+          4: FlexColumnWidth(3),
+          5: FlexColumnWidth(3),
+        },
+        children: [
+          TableRow(
+            children: [
+              Text(global.language("line")),
+              Text(global.language("product")),
+              Text(global.language("unit_name")),
+              Text(global.language("qty")),
+              Text(global.language("price")),
+              Text(global.language("amount")),
+            ],
+          ),
+          for (var i = 0; i < billDetails.length; i++)
+            TableRow(
+              children: [
+                Text((i + 1).toString()),
+                Text(billDetails[i].item_name),
+                Text(billDetails[i].unit_name),
+                Text(global.moneyFormat.format(billDetails[i].qty)),
+                Text(global.moneyFormat.format(billDetails[i].price)),
+                Text(global.moneyFormat.format(billDetails[i].total_amount)),
+              ],
+            ),
+        ],
+      ),
+    ],
+  );
 }

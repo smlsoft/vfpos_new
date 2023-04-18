@@ -466,7 +466,7 @@ Future<String> billRunning() async {
 
     /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
     var find = billHelper.selectByDocNumber(docNumber: result);
-    if (find.isEmpty) {
+    if (find == null) {
       success = true;
     } else {
       configHelper.update(ConfigObjectBoxStruct(

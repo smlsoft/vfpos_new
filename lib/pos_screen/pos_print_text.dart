@@ -78,178 +78,181 @@ Future<void> printBillText(String docNo) async {
     //
     await printProcess.drawLine(printer);
     //
-    BillObjectBoxStruct bill =
-        global.billHelper.selectByDocNumber(docNumber: docNo)[0];
-    printProcess.column.clear();
-    printProcess.columnWidth.clear();
-    printProcess.columnWidth.add(1);
-    printProcess.column.add(
-        PrintColumn(text: "${global.language("doc_no")} : ${bill.doc_number}"));
-    await printProcess.lineFeed(printer, const PosStyles(bold: false));
-    //
-    printProcess.column.clear();
-    printProcess.columnWidth.clear();
-    printProcess.columnWidth.add(1);
-    printProcess.column.add(PrintColumn(
-        text: "${global.language("doc_date")} : 10/10/2564 16:30",
-        align: PrintColumnAlign.left));
-    await printProcess.lineFeed(printer, const PosStyles(bold: false));
-    //
-    //
-    List<BillDetailObjectBoxStruct> billDetails =
-        global.billDetailHelper.selectByDocNumber(docNumber: docNo);
-    //
-    List<BillPayObjectBoxStruct> payDetails =
-        global.billPayHelper.selectByDocNumber(docNumber: docNo);
-    //
-    int widthCharDescription = 0;
-    int widthCharPrice = 0;
-    int widthCharAmount = 0;
-    int widthCharQty = 0;
-
-    printProcess.columnWidth.clear();
-    {
-      double sumWidth = global.posTicket.descriptionWidth +
-          global.posTicket.priceWidth +
-          global.posTicket.amountWidth;
-      if (global.posTicket.qty) {
-        sumWidth += global.posTicket.qtyWidth;
-      }
-      double calcWidth = charPerLine / sumWidth;
-      widthCharDescription =
-          (global.posTicket.descriptionWidth * calcWidth).toInt();
-      widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
-      widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
-      if (global.posTicket.qty) {
-        widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
-      }
-      if (widthCharQty <= 5) {
-        global.posTicket.qty = false;
-      }
+    BillObjectBoxStruct? bill =
+        global.billHelper.selectByDocNumber(docNumber: docNo);
+    if (bill != null) {
+      printProcess.column.clear();
       printProcess.columnWidth.clear();
-      printProcess.columnWidth.add(widthCharDescription.toDouble());
-      if (global.posTicket.qty) {
-        printProcess.columnWidth.add(widthCharQty.toDouble());
-      }
-      printProcess.columnWidth.add(widthCharPrice.toDouble());
-      printProcess.columnWidth.add(widthCharAmount.toDouble());
+      printProcess.columnWidth.add(1);
+      printProcess.column.add(PrintColumn(
+          text: "${global.language("doc_no")} : ${bill.doc_number}"));
+      await printProcess.lineFeed(printer, const PosStyles(bold: false));
       //
+      printProcess.column.clear();
+      printProcess.columnWidth.clear();
+      printProcess.columnWidth.add(1);
+      printProcess.column.add(PrintColumn(
+          text: "${global.language("doc_date")} : 10/10/2564 16:30",
+          align: PrintColumnAlign.left));
+      await printProcess.lineFeed(printer, const PosStyles(bold: false));
+      //
+      //
+      List<BillDetailObjectBoxStruct> billDetails =
+          global.billDetailHelper.selectByDocNumber(docNumber: docNo);
+      //
+      List<BillPayObjectBoxStruct> payDetails =
+          global.billPayHelper.selectByDocNumber(docNumber: docNo);
+      //
+      int widthCharDescription = 0;
+      int widthCharPrice = 0;
+      int widthCharAmount = 0;
+      int widthCharQty = 0;
+
+      printProcess.columnWidth.clear();
+      {
+        double sumWidth = global.posTicket.descriptionWidth +
+            global.posTicket.priceWidth +
+            global.posTicket.amountWidth;
+        if (global.posTicket.qty) {
+          sumWidth += global.posTicket.qtyWidth;
+        }
+        double calcWidth = charPerLine / sumWidth;
+        widthCharDescription =
+            (global.posTicket.descriptionWidth * calcWidth).toInt();
+        widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
+        widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
+        if (global.posTicket.qty) {
+          widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
+        }
+        if (widthCharQty <= 5) {
+          global.posTicket.qty = false;
+        }
+        printProcess.columnWidth.clear();
+        printProcess.columnWidth.add(widthCharDescription.toDouble());
+        if (global.posTicket.qty) {
+          printProcess.columnWidth.add(widthCharQty.toDouble());
+        }
+        printProcess.columnWidth.add(widthCharPrice.toDouble());
+        printProcess.columnWidth.add(widthCharAmount.toDouble());
+        //
+        await printProcess.drawLine(printer);
+        printProcess.column.clear();
+        printProcess.column
+            .add(PrintColumn(text: global.language("description")));
+        if (global.posTicket.qty) {
+          printProcess.column.add(PrintColumn(
+              text: global.language("qty"), align: PrintColumnAlign.right));
+        }
+        printProcess.column.add(PrintColumn(
+            text: global.language("price"), align: PrintColumnAlign.right));
+        printProcess.column.add(PrintColumn(
+            text: global.language("total"), align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.drawLine(printer);
+      }
+
+      /// ส่วนของการแสดงรายการสินค้า
+      for (var detail in billDetails) {
+        /// สินค้าทั่วไป
+        double sumWidth = global.posTicket.descriptionWidth +
+            global.posTicket.priceWidth +
+            global.posTicket.amountWidth;
+        if (global.posTicket.qty) {
+          sumWidth += global.posTicket.qtyWidth;
+        }
+        double calcWidth = charPerLine / sumWidth;
+        widthCharDescription =
+            (global.posTicket.descriptionWidth * calcWidth).toInt();
+        widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
+        widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
+        if (global.posTicket.qty) {
+          widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
+        }
+        if (widthCharQty <= 5) {
+          global.posTicket.qty = false;
+        }
+        printProcess.columnWidth.clear();
+        double descColumnWidth = widthCharDescription.toDouble();
+        if (detail.price == detail.total_amount) {
+          descColumnWidth += widthCharPrice;
+        }
+        printProcess.columnWidth.add(widthCharDescription.toDouble());
+        if (global.posTicket.qty) {
+          printProcess.columnWidth.add(widthCharQty.toDouble());
+        }
+        if (detail.price != detail.total_amount) {
+          printProcess.columnWidth.add(widthCharPrice.toDouble());
+        }
+        printProcess.columnWidth.add(widthCharAmount.toDouble());
+        printProcess.column.clear();
+        String desc =
+            (global.posTicket.lineNumber) ? "${detail.line_number}." : "";
+        desc += "${detail.item_name}/${detail.unit_name}";
+        if (detail.discount_text.isNotEmpty) {
+          desc = "$desc ${global.language("discount")}";
+          if (detail.discount_text.contains("%") ||
+              detail.discount_text.contains(",")) {
+            desc = "$desc ${detail.discount_text}=";
+          }
+          desc = "$desc ${global.moneyFormat.format(detail.discount)}";
+          desc = "$desc ${global.language("money_symbol")}/${detail.unit_name}";
+        }
+        printProcess.column.add(PrintColumn(text: desc));
+        if (global.posTicket.qty) {
+          printProcess.column.add(PrintColumn(
+              text: (detail.qty == 0)
+                  ? ""
+                  : global.moneyFormat.format(detail.qty),
+              align: PrintColumnAlign.right));
+        }
+        if (detail.price != detail.total_amount) {
+          printProcess.column.add(PrintColumn(
+              text: (detail.price == 0)
+                  ? ""
+                  : "${global.moneyFormat.format(detail.qty)}x${global.moneyFormat.format(detail.price)}",
+              align: PrintColumnAlign.right));
+        }
+        printProcess.column.add(PrintColumn(
+            text: (detail.total_amount == 0)
+                ? ""
+                : global.moneyFormat.format(detail.total_amount),
+            align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles());
+
+        /// สินค้าเพิ่ม (Extra)
+        List<BillDetailExtraObjectBoxStruct> extras =
+            global.billDetailExtraHelper.selectByDocNumberAndLineNumber(
+                docNumber: detail.doc_number, lineNumber: detail.line_number);
+        for (var extra in extras) {
+          printProcess.column.clear();
+          String desc = "* ${extra.item_name} ${extra.unit_name}";
+          printProcess.column.add(PrintColumn(text: desc));
+          printProcess.column.add(PrintColumn(
+              text: (extra.total_amount == 0)
+                  ? ""
+                  : global.moneyFormat.format(extra.total_amount),
+              align: PrintColumnAlign.right));
+          printProcess.column
+              .add(PrintColumn(text: "", align: PrintColumnAlign.right));
+          await printProcess.lineFeed(printer, const PosStyles());
+        }
+      }
+
+      // พิมพ์ยอดรวม
       await printProcess.drawLine(printer);
+      printProcess.columnWidth.clear();
+      printProcess.columnWidth.add(25);
+      printProcess.columnWidth.add(8);
       printProcess.column.clear();
       printProcess.column
-          .add(PrintColumn(text: global.language("description")));
-      if (global.posTicket.qty) {
-        printProcess.column.add(PrintColumn(
-            text: global.language("qty"), align: PrintColumnAlign.right));
-      }
+          .add(PrintColumn(text: global.language("total_amount")));
       printProcess.column.add(PrintColumn(
-          text: global.language("price"), align: PrintColumnAlign.right));
-      printProcess.column.add(PrintColumn(
-          text: global.language("total"), align: PrintColumnAlign.right));
+          text: global.moneyFormat.format(bill.total_amount),
+          align: PrintColumnAlign.right));
       await printProcess.lineFeed(printer, const PosStyles(bold: true));
       await printProcess.drawLine(printer);
-    }
-
-    /// ส่วนของการแสดงรายการสินค้า
-    for (var detail in billDetails) {
-      /// สินค้าทั่วไป
-      double sumWidth = global.posTicket.descriptionWidth +
-          global.posTicket.priceWidth +
-          global.posTicket.amountWidth;
-      if (global.posTicket.qty) {
-        sumWidth += global.posTicket.qtyWidth;
-      }
-      double calcWidth = charPerLine / sumWidth;
-      widthCharDescription =
-          (global.posTicket.descriptionWidth * calcWidth).toInt();
-      widthCharPrice = (global.posTicket.priceWidth * calcWidth).toInt();
-      widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
-      if (global.posTicket.qty) {
-        widthCharQty = (global.posTicket.qtyWidth * calcWidth).toInt();
-      }
-      if (widthCharQty <= 5) {
-        global.posTicket.qty = false;
-      }
-      printProcess.columnWidth.clear();
-      double descColumnWidth = widthCharDescription.toDouble();
-      if (detail.price == detail.total_amount) {
-        descColumnWidth += widthCharPrice;
-      }
-      printProcess.columnWidth.add(widthCharDescription.toDouble());
-      if (global.posTicket.qty) {
-        printProcess.columnWidth.add(widthCharQty.toDouble());
-      }
-      if (detail.price != detail.total_amount) {
-        printProcess.columnWidth.add(widthCharPrice.toDouble());
-      }
-      printProcess.columnWidth.add(widthCharAmount.toDouble());
-      printProcess.column.clear();
-      String desc =
-          (global.posTicket.lineNumber) ? "${detail.line_number}." : "";
-      desc += "${detail.item_name}/${detail.unit_name}";
-      if (detail.discount_text.isNotEmpty) {
-        desc = "$desc ${global.language("discount")}";
-        if (detail.discount_text.contains("%") ||
-            detail.discount_text.contains(",")) {
-          desc = "$desc ${detail.discount_text}=";
-        }
-        desc = "$desc ${global.moneyFormat.format(detail.discount)}";
-        desc = "$desc ${global.language("money_symbol")}/${detail.unit_name}";
-      }
-      printProcess.column.add(PrintColumn(text: desc));
-      if (global.posTicket.qty) {
-        printProcess.column.add(PrintColumn(
-            text:
-                (detail.qty == 0) ? "" : global.moneyFormat.format(detail.qty),
-            align: PrintColumnAlign.right));
-      }
-      if (detail.price != detail.total_amount) {
-        printProcess.column.add(PrintColumn(
-            text: (detail.price == 0)
-                ? ""
-                : "${global.moneyFormat.format(detail.qty)}x${global.moneyFormat.format(detail.price)}",
-            align: PrintColumnAlign.right));
-      }
-      printProcess.column.add(PrintColumn(
-          text: (detail.total_amount == 0)
-              ? ""
-              : global.moneyFormat.format(detail.total_amount),
-          align: PrintColumnAlign.right));
-      await printProcess.lineFeed(printer, const PosStyles());
-
-      /// สินค้าเพิ่ม (Extra)
-      List<BillDetailExtraObjectBoxStruct> extras = global.billDetailExtraHelper
-          .selectByDocNumberAndLineNumber(
-              docNumber: detail.doc_number, lineNumber: detail.line_number);
-      for (var extra in extras) {
-        printProcess.column.clear();
-        String desc = "* ${extra.item_name} ${extra.unit_name}";
-        printProcess.column.add(PrintColumn(text: desc));
-        printProcess.column.add(PrintColumn(
-            text: (extra.total_amount == 0)
-                ? ""
-                : global.moneyFormat.format(extra.total_amount),
-            align: PrintColumnAlign.right));
-        printProcess.column
-            .add(PrintColumn(text: "", align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles());
-      }
-    }
-
-    // พิมพ์ยอดรวม
-    await printProcess.drawLine(printer);
-    printProcess.columnWidth.clear();
-    printProcess.columnWidth.add(25);
-    printProcess.columnWidth.add(8);
-    printProcess.column.clear();
-    printProcess.column.add(PrintColumn(text: global.language("total_amount")));
-    printProcess.column.add(PrintColumn(
-        text: global.moneyFormat.format(bill.total_amount),
-        align: PrintColumnAlign.right));
-    await printProcess.lineFeed(printer, const PosStyles(bold: true));
-    await printProcess.drawLine(printer);
-    // พิมพ์ Promotion
-    /*if (_havePromotion) {
+      // พิมพ์ Promotion
+      /*if (_havePromotion) {
       _print.columnWidth.clear();
       _print.columnWidth.add(1);
       _print.column.clear();
@@ -272,40 +275,42 @@ Future<void> printBillText(String docNo) async {
         }
       }
     }*/
-    if (totalDiscountAndPromotion != 0) {
-      int oldLength = printProcess.length;
-      printProcess.length = printProcess.length ~/ 2;
+      if (totalDiscountAndPromotion != 0) {
+        int oldLength = printProcess.length;
+        printProcess.length = printProcess.length ~/ 2;
+        printProcess.columnWidth.clear();
+        printProcess.columnWidth.add(1);
+        printProcess.column.clear();
+        printProcess.column.add(PrintColumn(
+            text:
+                "${global.language("bill_discount_save")} ${global.moneyFormat.format(totalDiscountAndPromotion * -1)} ${global.language("money_symbol")}"));
+        await printProcess.lineFeed(
+            printer,
+            const PosStyles(
+                height: PosTextSize.size2, width: PosTextSize.size2));
+        printProcess.length = oldLength;
+        await printProcess.drawLine(printer);
+        // ยอดรวม
+        printProcess.columnWidth.clear();
+        printProcess.columnWidth.add(25);
+        printProcess.columnWidth.add(8);
+        printProcess.column.clear();
+        printProcess.column.add(PrintColumn(
+            text: global.language("total_after_discount_and_promoiton")));
+        printProcess.column.add(PrintColumn(
+            text: global.moneyFormat.format(bill.total_amount),
+            align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.drawLine(printer);
+      }
       printProcess.columnWidth.clear();
       printProcess.columnWidth.add(1);
       printProcess.column.clear();
-      printProcess.column.add(PrintColumn(
-          text:
-              "${global.language("bill_discount_save")} ${global.moneyFormat.format(totalDiscountAndPromotion * -1)} ${global.language("money_symbol")}"));
-      await printProcess.lineFeed(printer,
-          const PosStyles(height: PosTextSize.size2, width: PosTextSize.size2));
-      printProcess.length = oldLength;
-      await printProcess.drawLine(printer);
-      // ยอดรวม
-      printProcess.columnWidth.clear();
-      printProcess.columnWidth.add(25);
-      printProcess.columnWidth.add(8);
-      printProcess.column.clear();
-      printProcess.column.add(PrintColumn(
-          text: global.language("total_after_discount_and_promoiton")));
-      printProcess.column.add(PrintColumn(
-          text: global.moneyFormat.format(bill.total_amount),
-          align: PrintColumnAlign.right));
+      printProcess.column
+          .add(PrintColumn(text: global.language("bill_pay_list")));
       await printProcess.lineFeed(printer, const PosStyles(bold: true));
-      await printProcess.drawLine(printer);
-    }
-    printProcess.columnWidth.clear();
-    printProcess.columnWidth.add(1);
-    printProcess.column.clear();
-    printProcess.column
-        .add(PrintColumn(text: global.language("bill_pay_list")));
-    await printProcess.lineFeed(printer, const PosStyles(bold: true));
-    // ชำระเงินสด
-    /*List<BillPayStruct> _billPayDetail = await global.billPayHelper.select(
+      // ชำระเงินสด
+      /*List<BillPayStruct> _billPayDetail = await global.billPayHelper.select(
       where: " doc_number = '" + docNo + "' order by trans_flag asc ",
     );
 
@@ -416,187 +421,68 @@ Future<void> printBillText(String docNo) async {
         await _print.lineFeed(printer, PosStyles());
       }
     }*/
-    // เช็ค
-    // if (chequeList.length > 0) {
-    //   _print.columnWidth.clear();
-    //   _print.columnWidth.add(1);
-    //   _print.column.clear();
-    //   _print.column.add(PrintColumn(text: "pos".tr(gender: "cheque")));
-    //   await _print.lineFeed(printer, PosStyles(bold: true));
-    //   for (var _payChequeObj in chequeList) {
-    //     _sumCheque += _payChequeObj.amount;
-    //     _print.columnWidth.clear();
-    //     _print.columnWidth.add(25);
-    //     _print.columnWidth.add(8);
-    //     _print.column.clear();
-    //     _print.column.add(PrintColumn(text: _payChequeObj.cheque_number));
-    //     _print.column.add(PrintColumn(
-    //         text: global.moneyFormat.format(_payChequeObj.amount),
-    //         align: PrintColumnAlign.right));
-    //     await _print.lineFeed(printer, PosStyles());
-    //   }
-    // }
-    // // ส่วนลด
-    // if (discountList.length > 0) {
-    //   _print.columnWidth.clear();
-    //   _print.columnWidth.add(1);
-    //   _print.column.clear();
-    //   _print.column.add(PrintColumn(text: "pos".tr(gender: "discount")));
-    //   await _print.lineFeed(printer, PosStyles(bold: true));
-    //   for (var _payDiscountObj in discountList) {
-    //     _sumDiscount += _payDiscountObj.amount;
-    //     _print.columnWidth.clear();
-    //     _print.columnWidth.add(25);
-    //     _print.columnWidth.add(8);
-    //     _print.column.clear();
-    //     _print.column.add(PrintColumn(text: _payDiscountObj.description));
-    //     _print.column.add(PrintColumn(
-    //         text: global.moneyFormat.format(_payDiscountObj.amount),
-    //         align: PrintColumnAlign.right));
-    //     await _print.lineFeed(printer, PosStyles());
-    //   }
-    // }
-    // // คูปอง
-    // if (couponList.length > 0) {
-    //   _print.columnWidth.clear();
-    //   _print.columnWidth.add(1);
-    //   _print.column.clear();
-    //   _print.column.add(PrintColumn(text: "pos".tr(gender: "coupon")));
-    //   await _print.lineFeed(printer, PosStyles(bold: true));
-    //   for (var _payCouponObj in couponList) {
-    //     _sumCoupon += _payCouponObj.amount;
-    //     _print.columnWidth.clear();
-    //     _print.columnWidth.add(25);
-    //     _print.columnWidth.add(8);
-    //     _print.column.clear();
-    //     _print.column.add(PrintColumn(text: _payCouponObj.code));
-    //     _print.column.add(PrintColumn(
-    //         text: global.moneyFormat.format(_payCouponObj.amount),
-    //         align: PrintColumnAlign.right));
-    //     await _print.lineFeed(printer, PosStyles());
-    //   }
-    // }
-    // Wallet
-    // if (walletList.length > 0) {
-    //   _print.columnWidth.clear();
-    //   _print.columnWidth.add(1);
-    //   _print.column.clear();
-    //   _print.column.add(PrintColumn(text: "pos".tr(gender: "wallet")));
-    //   await _print.lineFeed(printer, PosStyles(bold: true));
-    //   for (var _payWalletObj in walletList) {
-    //     _sumWallet += _payWalletObj.amount;
-    //     _print.columnWidth.clear();
-    //     _print.columnWidth.add(25);
-    //     _print.columnWidth.add(8);
-    //     _print.column.clear();
-    //     _print.column.add(PrintColumn(text: _payWalletObj.bank_code));
-    //     _print.column.add(PrintColumn(
-    //         text: global.moneyFormat.format(_payWalletObj.amount),
-    //         align: PrintColumnAlign.right));
-    //     await _print.lineFeed(printer, PosStyles());
-    //   }
-    // }
-
-    if (bill.pay_cash_amount > 0) {
-      // รวมเงินสด
-      printProcess.columnWidth.clear();
-      printProcess.columnWidth.add(25);
-      printProcess.columnWidth.add(8);
-      printProcess.column.clear();
-      printProcess.column.add(PrintColumn(text: global.language("cash")));
-      printProcess.column.add(PrintColumn(
-          text: global.moneyFormat.format(bill.pay_cash_amount),
-          align: PrintColumnAlign.right));
-      await printProcess.lineFeed(printer, const PosStyles());
-    }
-    if (bill.sum_discount > 0) {
-      // รวมส่วนลด
-      printProcess.columnWidth.clear();
-      printProcess.columnWidth.add(25);
-      printProcess.columnWidth.add(8);
-      printProcess.column.clear();
-      String discountFormula = global.language("discount");
-      if (bill.discount_formula.isNotEmpty) {
-        discountFormula += " : ${bill.discount_formula}";
-      }
-      printProcess.column.add(PrintColumn(text: discountFormula));
-      printProcess.column.add(PrintColumn(
-          text: global.moneyFormat.format(bill.sum_discount),
-          align: PrintColumnAlign.right));
-      await printProcess.lineFeed(printer, const PosStyles());
-    }
-    if (payDetails.isNotEmpty) {
-      for (int payType in [1, 2, 3, 4, 5]) {
-        bool headPrinted = false;
-        for (int _i = 0; _i < payDetails.length; _i++) {
-          if (payDetails[_i].trans_flag == payType) {
-            if (headPrinted == false) {
-              String header = "";
-              switch (payDetails[_i].trans_flag) {
-                case 1:
-                  header = global.language("credit_card");
-                  break;
-                case 2:
-                  header = global.language("transfer");
-                  break;
-                case 3:
-                  header = global.language("cheque");
-                  break;
-                case 4:
-                  header = global.language("coupon");
-                  break;
-                case 5:
-                  header = global.language("wallet");
-                  break;
-              }
-              printProcess.columnWidth.clear();
-              printProcess.columnWidth.add(1);
-              printProcess.column.clear();
-              printProcess.column.add(PrintColumn(text: header));
-              await printProcess.lineFeed(printer, const PosStyles(bold: true));
-              headPrinted = true;
-            }
-            String detailText = "";
-            switch (payDetails[_i].trans_flag) {
-              case 1:
-                detailText =
-                    "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name} : ${payDetails[_i].card_number}";
-                break;
-              case 2:
-                detailText =
-                    "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name}";
-                if (payDetails[_i].bank_account_no.isNotEmpty) {
-                  detailText += " : ${payDetails[_i].bank_account_no}";
-                }
-                break;
-              case 3:
-                detailText =
-                    "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name} : ${payDetails[_i].approved_code} : ${payDetails[_i].cheque_number}";
-                break;
-              case 4:
-                detailText =
-                    "${payDetails[_i].number} : ${payDetails[_i].description}";
-                break;
-              case 5:
-                detailText = payDetails[_i].provider_name;
-                if (payDetails[_i].description.isNotEmpty) {
-                  detailText += " ${payDetails[_i].description}";
-                }
-                break;
-            }
-            printProcess.columnWidth.clear();
-            printProcess.columnWidth.add(25);
-            printProcess.columnWidth.add(8);
-            printProcess.column.clear();
-            printProcess.column.add(PrintColumn(text: detailText));
-            printProcess.column.add(PrintColumn(
-                text: global.moneyFormat.format(payDetails[_i].amount),
-                align: PrintColumnAlign.right));
-            await printProcess.lineFeed(printer, const PosStyles());
-          }
-        }
-      }
-
+      // เช็ค
+      // if (chequeList.length > 0) {
+      //   _print.columnWidth.clear();
+      //   _print.columnWidth.add(1);
+      //   _print.column.clear();
+      //   _print.column.add(PrintColumn(text: "pos".tr(gender: "cheque")));
+      //   await _print.lineFeed(printer, PosStyles(bold: true));
+      //   for (var _payChequeObj in chequeList) {
+      //     _sumCheque += _payChequeObj.amount;
+      //     _print.columnWidth.clear();
+      //     _print.columnWidth.add(25);
+      //     _print.columnWidth.add(8);
+      //     _print.column.clear();
+      //     _print.column.add(PrintColumn(text: _payChequeObj.cheque_number));
+      //     _print.column.add(PrintColumn(
+      //         text: global.moneyFormat.format(_payChequeObj.amount),
+      //         align: PrintColumnAlign.right));
+      //     await _print.lineFeed(printer, PosStyles());
+      //   }
+      // }
+      // // ส่วนลด
+      // if (discountList.length > 0) {
+      //   _print.columnWidth.clear();
+      //   _print.columnWidth.add(1);
+      //   _print.column.clear();
+      //   _print.column.add(PrintColumn(text: "pos".tr(gender: "discount")));
+      //   await _print.lineFeed(printer, PosStyles(bold: true));
+      //   for (var _payDiscountObj in discountList) {
+      //     _sumDiscount += _payDiscountObj.amount;
+      //     _print.columnWidth.clear();
+      //     _print.columnWidth.add(25);
+      //     _print.columnWidth.add(8);
+      //     _print.column.clear();
+      //     _print.column.add(PrintColumn(text: _payDiscountObj.description));
+      //     _print.column.add(PrintColumn(
+      //         text: global.moneyFormat.format(_payDiscountObj.amount),
+      //         align: PrintColumnAlign.right));
+      //     await _print.lineFeed(printer, PosStyles());
+      //   }
+      // }
+      // // คูปอง
+      // if (couponList.length > 0) {
+      //   _print.columnWidth.clear();
+      //   _print.columnWidth.add(1);
+      //   _print.column.clear();
+      //   _print.column.add(PrintColumn(text: "pos".tr(gender: "coupon")));
+      //   await _print.lineFeed(printer, PosStyles(bold: true));
+      //   for (var _payCouponObj in couponList) {
+      //     _sumCoupon += _payCouponObj.amount;
+      //     _print.columnWidth.clear();
+      //     _print.columnWidth.add(25);
+      //     _print.columnWidth.add(8);
+      //     _print.column.clear();
+      //     _print.column.add(PrintColumn(text: _payCouponObj.code));
+      //     _print.column.add(PrintColumn(
+      //         text: global.moneyFormat.format(_payCouponObj.amount),
+      //         align: PrintColumnAlign.right));
+      //     await _print.lineFeed(printer, PosStyles());
+      //   }
+      // }
+      // Wallet
+      // if (walletList.length > 0) {
       //   _print.columnWidth.clear();
       //   _print.columnWidth.add(1);
       //   _print.column.clear();
@@ -615,55 +501,176 @@ Future<void> printBillText(String docNo) async {
       //     await _print.lineFeed(printer, PosStyles());
       //   }
       // }
-    }
-    double sumTotalPayAmount = bill.pay_cash_amount +
-        bill.sum_discount +
-        bill.sum_coupon +
-        bill.sum_credit_card +
-        bill.sum_money_transfer +
-        bill.sum_cheque +
-        bill.sum_qr_code;
-    double diffAmount = bill.total_amount - sumTotalPayAmount;
-    // ยอดรวมจ่าย
-    printProcess.columnWidth.clear();
-    printProcess.columnWidth.add(25);
-    printProcess.columnWidth.add(8);
-    printProcess.column.clear();
-    printProcess.column
-        .add(PrintColumn(text: global.language("total_pay_bill")));
-    printProcess.column.add(PrintColumn(
-        text: global.moneyFormat.format(sumTotalPayAmount),
-        align: PrintColumnAlign.right));
-    await printProcess.lineFeed(printer, const PosStyles(bold: true));
-    await printProcess.drawLine(printer);
-    printProcess.columnWidth.clear();
-    printProcess.columnWidth.add(25);
-    printProcess.columnWidth.add(8);
 
-    if (diffAmount > 0) {
+      if (bill.pay_cash_amount > 0) {
+        // รวมเงินสด
+        printProcess.columnWidth.clear();
+        printProcess.columnWidth.add(25);
+        printProcess.columnWidth.add(8);
+        printProcess.column.clear();
+        printProcess.column.add(PrintColumn(text: global.language("cash")));
+        printProcess.column.add(PrintColumn(
+            text: global.moneyFormat.format(bill.pay_cash_amount),
+            align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles());
+      }
+      if (bill.sum_discount > 0) {
+        // รวมส่วนลด
+        printProcess.columnWidth.clear();
+        printProcess.columnWidth.add(25);
+        printProcess.columnWidth.add(8);
+        printProcess.column.clear();
+        String discountFormula = global.language("discount");
+        if (bill.discount_formula.isNotEmpty) {
+          discountFormula += " : ${bill.discount_formula}";
+        }
+        printProcess.column.add(PrintColumn(text: discountFormula));
+        printProcess.column.add(PrintColumn(
+            text: global.moneyFormat.format(bill.sum_discount),
+            align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles());
+      }
+      if (payDetails.isNotEmpty) {
+        for (int payType in [1, 2, 3, 4, 5]) {
+          bool headPrinted = false;
+          for (int _i = 0; _i < payDetails.length; _i++) {
+            if (payDetails[_i].trans_flag == payType) {
+              if (headPrinted == false) {
+                String header = "";
+                switch (payDetails[_i].trans_flag) {
+                  case 1:
+                    header = global.language("credit_card");
+                    break;
+                  case 2:
+                    header = global.language("transfer");
+                    break;
+                  case 3:
+                    header = global.language("cheque");
+                    break;
+                  case 4:
+                    header = global.language("coupon");
+                    break;
+                  case 5:
+                    header = global.language("wallet");
+                    break;
+                }
+                printProcess.columnWidth.clear();
+                printProcess.columnWidth.add(1);
+                printProcess.column.clear();
+                printProcess.column.add(PrintColumn(text: header));
+                await printProcess.lineFeed(
+                    printer, const PosStyles(bold: true));
+                headPrinted = true;
+              }
+              String detailText = "";
+              switch (payDetails[_i].trans_flag) {
+                case 1:
+                  detailText =
+                      "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name} : ${payDetails[_i].card_number}";
+                  break;
+                case 2:
+                  detailText =
+                      "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name}";
+                  if (payDetails[_i].bank_account_no.isNotEmpty) {
+                    detailText += " : ${payDetails[_i].bank_account_no}";
+                  }
+                  break;
+                case 3:
+                  detailText =
+                      "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name} : ${payDetails[_i].approved_code} : ${payDetails[_i].cheque_number}";
+                  break;
+                case 4:
+                  detailText =
+                      "${payDetails[_i].number} : ${payDetails[_i].description}";
+                  break;
+                case 5:
+                  detailText = payDetails[_i].provider_name;
+                  if (payDetails[_i].description.isNotEmpty) {
+                    detailText += " ${payDetails[_i].description}";
+                  }
+                  break;
+              }
+              printProcess.columnWidth.clear();
+              printProcess.columnWidth.add(25);
+              printProcess.columnWidth.add(8);
+              printProcess.column.clear();
+              printProcess.column.add(PrintColumn(text: detailText));
+              printProcess.column.add(PrintColumn(
+                  text: global.moneyFormat.format(payDetails[_i].amount),
+                  align: PrintColumnAlign.right));
+              await printProcess.lineFeed(printer, const PosStyles());
+            }
+          }
+        }
+
+        //   _print.columnWidth.clear();
+        //   _print.columnWidth.add(1);
+        //   _print.column.clear();
+        //   _print.column.add(PrintColumn(text: "pos".tr(gender: "wallet")));
+        //   await _print.lineFeed(printer, PosStyles(bold: true));
+        //   for (var _payWalletObj in walletList) {
+        //     _sumWallet += _payWalletObj.amount;
+        //     _print.columnWidth.clear();
+        //     _print.columnWidth.add(25);
+        //     _print.columnWidth.add(8);
+        //     _print.column.clear();
+        //     _print.column.add(PrintColumn(text: _payWalletObj.bank_code));
+        //     _print.column.add(PrintColumn(
+        //         text: global.moneyFormat.format(_payWalletObj.amount),
+        //         align: PrintColumnAlign.right));
+        //     await _print.lineFeed(printer, PosStyles());
+        //   }
+        // }
+      }
+      double sumTotalPayAmount = bill.pay_cash_amount +
+          bill.sum_discount +
+          bill.sum_coupon +
+          bill.sum_credit_card +
+          bill.sum_money_transfer +
+          bill.sum_cheque +
+          bill.sum_qr_code;
+      double diffAmount = bill.total_amount - sumTotalPayAmount;
+      // ยอดรวมจ่าย
+      printProcess.columnWidth.clear();
+      printProcess.columnWidth.add(25);
+      printProcess.columnWidth.add(8);
       printProcess.column.clear();
       printProcess.column
-          .add(PrintColumn(text: global.language("total_more_diff")));
+          .add(PrintColumn(text: global.language("total_pay_bill")));
       printProcess.column.add(PrintColumn(
-          text: global.moneyFormat.format(diffAmount),
+          text: global.moneyFormat.format(sumTotalPayAmount),
           align: PrintColumnAlign.right));
       await printProcess.lineFeed(printer, const PosStyles(bold: true));
       await printProcess.drawLine(printer);
-    } else {
-      double diffAmountplus = sumTotalPayAmount - bill.total_amount;
-      printProcess.column.clear();
-      printProcess.column.add(PrintColumn(text: global.language("total_diff")));
-      printProcess.column.add(PrintColumn(
-          text: global.moneyFormat.format(diffAmountplus),
-          align: PrintColumnAlign.right));
-      await printProcess.lineFeed(printer, const PosStyles(bold: true));
-      await printProcess.drawLine(printer);
-    }
+      printProcess.columnWidth.clear();
+      printProcess.columnWidth.add(25);
+      printProcess.columnWidth.add(8);
 
-    //printer.feed(2);
-    {
-      /// ส่วนของการพิมพ์ส QRCODE (Promotpay)
-      /*String _qrcodePromptpay =
+      if (diffAmount > 0) {
+        printProcess.column.clear();
+        printProcess.column
+            .add(PrintColumn(text: global.language("total_more_diff")));
+        printProcess.column.add(PrintColumn(
+            text: global.moneyFormat.format(diffAmount),
+            align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.drawLine(printer);
+      } else {
+        double diffAmountplus = sumTotalPayAmount - bill.total_amount;
+        printProcess.column.clear();
+        printProcess.column
+            .add(PrintColumn(text: global.language("total_diff")));
+        printProcess.column.add(PrintColumn(
+            text: global.moneyFormat.format(diffAmountplus),
+            align: PrintColumnAlign.right));
+        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.drawLine(printer);
+      }
+
+      //printer.feed(2);
+      {
+        /// ส่วนของการพิมพ์ส QRCODE (Promotpay)
+        /*String _qrcodePromptpay =
           PromptPay.generateQRData("0899223131", amount: _bill.total_amount);
       printer.qrcode(_qrcodePromptpay, size: QRSize.Size8);
       _print.columnWidth.clear();
@@ -674,37 +681,38 @@ Future<void> printBillText(String docNo) async {
           align: PrintColumnAlign.center));
       await _print.lineFeed(printer, PosStyles(bold: true));
       await _print.drawLine(printer);*/
-      if (global.posTicket.saleDetail && bill.sale_code.isNotEmpty) {
-        printProcess.columnWidth.clear();
-        printProcess.columnWidth.add(1);
-        printProcess.column.clear();
-        printProcess.column.add(PrintColumn(
-            text:
-                "${global.language("sale_code")} : ${bill.sale_name} (${bill.sale_code})",
-            align: PrintColumnAlign.center));
-        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        if (global.posTicket.saleDetail && bill.sale_code.isNotEmpty) {
+          printProcess.columnWidth.clear();
+          printProcess.columnWidth.add(1);
+          printProcess.column.clear();
+          printProcess.column.add(PrintColumn(
+              text:
+                  "${global.language("sale_code")} : ${bill.sale_name} (${bill.sale_code})",
+              align: PrintColumnAlign.center));
+          await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        }
+        if (global.posTicket.cashierDetail && bill.cashier_code.isNotEmpty) {
+          printProcess.columnWidth.clear();
+          printProcess.columnWidth.add(1);
+          printProcess.column.clear();
+          printProcess.column.add(PrintColumn(
+              text:
+                  "${global.language("cashier")} : ${bill.cashier_name} (${bill.cashier_code})",
+              align: PrintColumnAlign.center));
+          await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        }
       }
-      if (global.posTicket.cashierDetail && bill.cashier_code.isNotEmpty) {
-        printProcess.columnWidth.clear();
-        printProcess.columnWidth.add(1);
-        printProcess.column.clear();
-        printProcess.column.add(PrintColumn(
-            text:
-                "${global.language("cashier")} : ${bill.cashier_name} (${bill.cashier_code})",
-            align: PrintColumnAlign.center));
-        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+      if (global.posTicket.docNoQrCode) {
+        printer.qrcode(bill.doc_number, size: QRSize.Size8);
       }
+      printer.cut();
+      printer.disconnect();
+      print("Printer Connect Sucess.");
+    } else {
+      print("Printer Connect fail." +
+          global.printerCashierIpAddress +
+          ":" +
+          global.printerCashierIpPort.toString());
     }
-    if (global.posTicket.docNoQrCode) {
-      printer.qrcode(bill.doc_number, size: QRSize.Size8);
-    }
-    printer.cut();
-    printer.disconnect();
-    print("Printer Connect Sucess.");
-  } else {
-    print("Printer Connect fail." +
-        global.printerCashierIpAddress +
-        ":" +
-        global.printerCashierIpPort.toString());
   }
 }

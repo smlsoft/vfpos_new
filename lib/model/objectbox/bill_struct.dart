@@ -38,8 +38,10 @@ class BillObjectBoxStruct {
   /// ยอดรวมสินค้ายกเว้น vat
   double total_except_amount;
 
-  /// พนักงานขาย
+  /// รหัสพนักงานขาย
   String sale_code;
+
+  /// ชื่อพนักงานขาย
   String sale_name;
 
   /// สถานะการ Sync (true = Sync แล้ว, false = ยังไม่ Sync)
@@ -106,29 +108,29 @@ class BillObjectBoxStruct {
   List<String> print_copy_bill_date_time;
 
   BillObjectBoxStruct(
-      {required this.doc_number,
+      {this.doc_number = "",
       required this.date_time,
-      required this.customer_code,
-      required this.customer_name,
-      required this.customer_telephone,
-      required this.vat_rate,
-      required this.total_amount,
-      required this.total_before_amount,
-      required this.total_vat_amount,
-      required this.total_except_amount,
-      required this.cashier_code,
-      required this.cashier_name,
-      required this.sale_code,
-      required this.sale_name,
-      required this.is_sync,
-      required this.discount_formula,
-      required this.pay_cash_amount,
-      required this.sum_discount,
-      required this.sum_qr_code,
-      required this.sum_credit_card,
-      required this.sum_money_transfer,
-      required this.sum_coupon,
-      required this.sum_cheque,
+      this.customer_code = "",
+      this.customer_name = "",
+      this.customer_telephone = "",
+      this.vat_rate = 0.0,
+      this.total_amount = 0.0,
+      this.total_before_amount = 0.0,
+      this.total_vat_amount = 0.0,
+      this.total_except_amount = 0.0,
+      this.cashier_code = "",
+      this.cashier_name = "",
+      this.sale_code = "",
+      this.sale_name = "",
+      this.is_sync = false,
+      this.discount_formula = "",
+      this.pay_cash_amount = 0.0,
+      this.sum_discount = 0.0,
+      this.sum_qr_code = 0.0,
+      this.sum_credit_card = 0.0,
+      this.sum_money_transfer = 0.0,
+      this.sum_coupon = 0.0,
+      this.sum_cheque = 0.0,
       this.is_cancel = false,
       this.cancel_date_time = "",
       this.cancel_user_code = "",
