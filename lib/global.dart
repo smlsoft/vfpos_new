@@ -1,3 +1,4 @@
+import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
@@ -588,8 +589,13 @@ Future<void> printQueueStartServer() async {
   }
 }
 
-String dateTimeFormat(DateTime dateTime) {
-  return DateFormat('dd/MM/yyyy kk:mm').format(dateTime);
+String dateTimeFormat(DateTime dateTime, {bool showTime = true}) {
+  var formatter = DateFormat.yMMMMEEEEd('th_TH');
+  if (showTime) {
+    return "${formatter.formatInBuddhistCalendarThai(dateTime)} - ${DateFormat.Hm().format(dateTime)}";
+  } else {
+    return formatter.formatInBuddhistCalendarThai(dateTime);
+  }
 }
 
 Future<void> systemProcess() async {

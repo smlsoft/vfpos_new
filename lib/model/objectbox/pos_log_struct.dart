@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:dedepos/global.dart' as global;
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';

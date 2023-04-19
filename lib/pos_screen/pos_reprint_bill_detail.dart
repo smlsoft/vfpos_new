@@ -51,36 +51,43 @@ class _PosReprintBillDetailScreenState
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    ElevatedButton(
-                      child: Text(global.language("reprint_bill")),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(global.language("reprint_bill")),
-                                content: Text(bill.doc_number),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(global.language("cancel"))),
-                                  TextButton(
-                                      onPressed: () {
-                                        printBill(bill.doc_number);
-                                        BillHelper()
-                                            .updateRePrintBill(bill.doc_number);
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(global.language("confirm"))),
-                                ],
-                              );
-                            });
-                      },
-                    ),
+                    SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          label: Text(global.language("reprint_bill")),
+                          icon: const Icon(Icons.print),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title:
+                                        Text(global.language("reprint_bill")),
+                                    content: Text(bill.doc_number),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child:
+                                              Text(global.language("cancel"))),
+                                      TextButton(
+                                          onPressed: () {
+                                            printBill(bill.doc_number);
+                                            BillHelper().updateRePrintBill(
+                                                bill.doc_number);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child:
+                                              Text(global.language("confirm"))),
+                                    ],
+                                  );
+                                });
+                          },
+                        )),
+                    const SizedBox(height: 10),
                     posBillDetail(bill, billDetails),
                   ],
                 ),

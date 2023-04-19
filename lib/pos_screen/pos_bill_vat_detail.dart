@@ -21,6 +21,11 @@ class PosBillVatDetailScreen extends StatefulWidget {
 class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
   BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now());
   List<BillDetailObjectBoxStruct> billDetails = [];
+  TextEditingController taxIdController = TextEditingController();
+  TextEditingController customerCodeController = TextEditingController();
+  TextEditingController branchNumberController = TextEditingController();
+  TextEditingController customerNameController = TextEditingController();
+  TextEditingController customerAddressController = TextEditingController();
 
   @override
   void initState() {
@@ -31,6 +36,16 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
   }
 
   @override
+  void dispose() {
+    taxIdController.dispose();
+    customerCodeController.dispose();
+    branchNumberController.dispose();
+    customerNameController.dispose();
+    customerAddressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<BillBloc, BillState>(
       builder: (context, state) {
@@ -38,6 +53,11 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
           if (state.bill != null) {
             bill = state.bill!;
             billDetails = state.billDetails;
+            taxIdController.text = bill.full_vat_tax_id;
+            customerCodeController.text = bill.customer_code;
+            branchNumberController.text = bill.full_vat_branch_number;
+            customerNameController.text = bill.full_vat_name;
+            customerAddressController.text = bill.full_vat_address;
           }
           context.read<BillBloc>().add(BillLoadByDocNumberFinish());
         }
@@ -60,21 +80,13 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
                         children: [
                           TableRow(children: [
                             TableCell(
-                                child:
-                                    Text(global.language("customer_tax_id"))),
+                                child: Text(
+                              global.language("customer_tax_id"),
+                            )),
                             TableCell(
                               child: TextField(
-                                  controller: TextEditingController(
-                                      text: bill.full_vat_tax_id)),
-                            )
-                          ]),
-                          TableRow(children: [
-                            TableCell(
-                                child: Text(global.language("customer_code"))),
-                            TableCell(
-                              child: TextField(
-                                  controller: TextEditingController(
-                                      text: bill.customer_code)),
+                                controller: taxIdController,
+                              ),
                             )
                           ]),
                           TableRow(children: [
@@ -83,17 +95,27 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
                                     global.language("customer_branch_number"))),
                             TableCell(
                               child: TextField(
-                                  controller: TextEditingController(
-                                      text: bill.full_vat_branch_number)),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  controller: branchNumberController),
+                            )
+                          ]),
+                          TableRow(children: [
+                            TableCell(
+                                child: Text(global.language("customer_code"))),
+                            TableCell(
+                              child:
+                                  TextField(controller: customerCodeController),
                             )
                           ]),
                           TableRow(children: [
                             TableCell(
                                 child: Text(global.language("customer_name"))),
                             TableCell(
-                              child: TextField(
-                                  controller: TextEditingController(
-                                      text: bill.full_vat_name)),
+                              child:
+                                  TextField(controller: customerNameController),
                             )
                           ]),
                           TableRow(children: [
@@ -104,44 +126,60 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
                               child: TextField(
                                   keyboardType: TextInputType.multiline,
                                   maxLines: 3,
-                                  controller: TextEditingController(
-                                      text: bill.full_vat_address)),
+                                  controller: customerAddressController),
                             )
                           ]),
                         ]),
                     const SizedBox(
                       height: 10,
                     ),
-                    ElevatedButton(
-                      child: Text(global.language("pos_bill_vat")),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(global.language("pos_bill_vat")),
-                                content: Text(bill.doc_number),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(global.language("cancel"))),
-                                  TextButton(
-                                      onPressed: () {
-                                        printBill(bill.doc_number);
-                                        BillHelper()
-                                            .updateRePrintBill(bill.doc_number);
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(global.language("confirm"))),
-                                ],
-                              );
-                            });
-                      },
-                    ),
+                    SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          label: Text(global.language("pos_bill_vat")),
+                          icon: const Icon(Icons.print),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title:
+                                        Text(global.language("pos_bill_vat")),
+                                    content: Text(bill.doc_number),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child:
+                                              Text(global.language("cancel"))),
+                                      TextButton(
+                                          onPressed: () {
+                                            BillHelper().updatesFullVat(
+                                              docNumber: bill.doc_number,
+                                              taxId: taxIdController.text,
+                                              branchNumber:
+                                                  branchNumberController.text,
+                                              customerCode:
+                                                  customerCodeController.text,
+                                              customerName:
+                                                  customerNameController.text,
+                                              customerAddress:
+                                                  customerAddressController
+                                                      .text,
+                                            );
+                                            printBill(bill.doc_number);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context);
+                                          },
+                                          child:
+                                              Text(global.language("confirm"))),
+                                    ],
+                                  );
+                                });
+                          },
+                        )),
                     const SizedBox(
                       height: 10,
                     ),

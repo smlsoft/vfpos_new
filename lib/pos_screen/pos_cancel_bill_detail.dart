@@ -21,6 +21,7 @@ class PosCancelBillDetailScreen extends StatefulWidget {
 class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
   BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now());
   List<BillDetailObjectBoxStruct> billDetails = [];
+  TextEditingController cancelDescriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,12 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
     context
         .read<BillBloc>()
         .add(BillLoadByDocNumber(docNumber: widget.docNumber));
+  }
+
+  @override
+  void dispose() {
+    cancelDescriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,40 +59,71 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                   children: [
                     (bill.is_cancel)
                         ? Container()
-                        : ElevatedButton(
-                            child: Text(global.language("cancel_bill")),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title:
-                                          Text(global.language("cancel_bill")),
-                                      content: Text(bill.doc_number),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                                global.language("cancel"))),
-                                        TextButton(
-                                            onPressed: () {
-                                              bill.is_cancel = true;
-                                              BillHelper().updatesIsCancel(
-                                                  docNumber: bill.doc_number,
-                                                  value: true);
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(
-                                                global.language("confirm"))),
-                                      ],
-                                    );
-                                  });
-                            },
-                          ),
+                        : Container(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            width: double.infinity,
+                            child: Column(children: [
+                              Table(
+                                defaultVerticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                columnWidths: const {
+                                  0: FlexColumnWidth(1),
+                                  1: FlexColumnWidth(3),
+                                },
+                                children: [
+                                  TableRow(children: [
+                                    TableCell(
+                                        child: Text(
+                                      global.language("calcel_description"),
+                                    )),
+                                    TableCell(
+                                      child: TextField(
+                                        controller: cancelDescriptionController,
+                                      ),
+                                    )
+                                  ]),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Container(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    child: Text(global.language("cancel_bill")),
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(global
+                                                  .language("cancel_bill")),
+                                              content: Text(bill.doc_number),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(global
+                                                        .language("cancel"))),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      bill.is_cancel = true;
+                                                      BillHelper()
+                                                          .updatesIsCancel(
+                                                              docNumber: bill
+                                                                  .doc_number,description : cancelDescriptionController.text,
+                                                              value: true);
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(global
+                                                        .language("confirm"))),
+                                              ],
+                                            );
+                                          });
+                                    },
+                                  ))
+                            ])),
                     posBillDetail(bill, billDetails),
                   ],
                 ),

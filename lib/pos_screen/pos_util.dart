@@ -242,73 +242,138 @@ Widget posBill(BillObjectBoxStruct bill) {
 
 Widget posBillDetail(
     BillObjectBoxStruct bill, List<BillDetailObjectBoxStruct> billDetails) {
-  return Column(
-    children: [
-      Table(
-        columnWidths: const {
-          0: FlexColumnWidth(1),
-          1: FlexColumnWidth(3),
-        },
-        children: [
-          TableRow(
-            children: [
-              Text(global.language("doc_number") + ": "),
-              Text(bill.doc_number),
-            ],
-          ),
-          TableRow(
-            children: [
-              Text(global.language("date_time") + ": "),
-              Text(bill.date_time.toString()),
-            ],
-          ),
-          TableRow(
-            children: [
-              Text(global.language("total") + ": "),
-              Text(global.moneyFormat.format(bill.total_amount)),
-            ],
-          ),
-          TableRow(
-            children: [
-              Text(global.language("discount") + ": "),
-              Text(bill.discount_formula),
-            ],
+  return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 4.0,
+            spreadRadius: 0.5,
+            offset: Offset(0.5, 0.5),
           ),
         ],
       ),
-      Table(
-        columnWidths: const {
-          0: FlexColumnWidth(1),
-          1: FlexColumnWidth(3),
-          2: FlexColumnWidth(3),
-          3: FlexColumnWidth(3),
-          4: FlexColumnWidth(3),
-          5: FlexColumnWidth(3),
-        },
+      child: Column(
         children: [
-          TableRow(
+          Table(
+            columnWidths: const {
+              0: FlexColumnWidth(1),
+              1: FlexColumnWidth(3),
+            },
             children: [
-              Text(global.language("line")),
-              Text(global.language("product")),
-              Text(global.language("unit_name")),
-              Text(global.language("qty")),
-              Text(global.language("price")),
-              Text(global.language("amount")),
+              TableRow(
+                children: [
+                  Text(global.language("doc_number")),
+                  Text(bill.doc_number),
+                ],
+              ),
+              TableRow(
+                children: [
+                  Text(global.language("doc_date")),
+                  Text(global.dateTimeFormat(bill.date_time)),
+                ],
+              ),
+              TableRow(
+                children: [
+                  Text(global.language("total_amount")),
+                  Text(global.moneyFormat.format(bill.total_amount)),
+                ],
+              ),
+              TableRow(
+                children: [
+                  Text(global.language("discount")),
+                  Text(bill.discount_formula),
+                ],
+              ),
             ],
           ),
-          for (var i = 0; i < billDetails.length; i++)
-            TableRow(
-              children: [
-                Text((i + 1).toString()),
-                Text(billDetails[i].item_name),
-                Text(billDetails[i].unit_name),
-                Text(global.moneyFormat.format(billDetails[i].qty)),
-                Text(global.moneyFormat.format(billDetails[i].price)),
-                Text(global.moneyFormat.format(billDetails[i].total_amount)),
-              ],
-            ),
+          const SizedBox(height: 4),
+          Table(
+            border: TableBorder.all(width: 0.5, color: Colors.grey),
+            columnWidths: const {
+              0: FlexColumnWidth(1),
+              1: FlexColumnWidth(5),
+              2: FlexColumnWidth(2),
+              3: FlexColumnWidth(2),
+              4: FlexColumnWidth(2),
+              5: FlexColumnWidth(3),
+            },
+            children: [
+              TableRow(
+                decoration: BoxDecoration(color: Colors.cyan.shade100),
+                children: [
+                  Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(
+                        global.language("line"),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(global.language("item_name"),
+                          style: const TextStyle(fontWeight: FontWeight.bold))),
+                  Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(global.language("unit_name"),
+                          style: const TextStyle(fontWeight: FontWeight.bold))),
+                  Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(global.language("qty"),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right)),
+                  Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(global.language("price"),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right)),
+                  Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Text(global.language("total_amount"),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right)),
+                ],
+              ),
+              for (var i = 0; i < billDetails.length; i++)
+                TableRow(
+                  decoration: BoxDecoration(
+                      color:
+                          (i % 2 == 0) ? Colors.white : Colors.grey.shade200),
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text((i + 1).toString(),
+                            textAlign: TextAlign.center)),
+                    Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(billDetails[i].item_name)),
+                    Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(billDetails[i].unit_name)),
+                    Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(
+                            global.moneyFormat.format(billDetails[i].qty),
+                            textAlign: TextAlign.right)),
+                    Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(
+                            global.moneyFormat.format(billDetails[i].price),
+                            textAlign: TextAlign.right)),
+                    Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Text(
+                            global.moneyFormat
+                                .format(billDetails[i].total_amount),
+                            textAlign: TextAlign.right)),
+                  ],
+                ),
+            ],
+          ),
         ],
-      ),
-    ],
-  );
+      ));
 }

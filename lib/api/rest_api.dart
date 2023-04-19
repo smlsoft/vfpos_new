@@ -101,21 +101,21 @@ class RestApiFindMemberByTelName {
 
 class RestApiFindEmployeeByWord {
   Future<List<FindEmployeeModel>> findEmployeeByWord(String word) async {
-    List<FindEmployeeModel> _result = [];
-    EmployeeHelper _employeeHelper = EmployeeHelper();
-    List<EmployeeObjectBoxStruct> _select =
-        await _employeeHelper.select(word: word);
-    for (int _index = 0; _index < _select.length; _index++) {
-      EmployeeObjectBoxStruct _source = _select[_index];
-      _result.add(
+    List<FindEmployeeModel> result = [];
+    EmployeeHelper employeeHelper = EmployeeHelper();
+    List<EmployeeObjectBoxStruct> select =
+        employeeHelper.select(word: word);
+    for (int _index = 0; _index < select.length; _index++) {
+      EmployeeObjectBoxStruct _source = select[_index];
+      result.add(
         FindEmployeeModel(
             name: _source.name,
             code: _source.code,
             roles: "" /* _source.roles.toString()*/,
-            profilepicture: _source.profilepicture,
+            profile_picture: _source.profile_picture,
             username: _source.name),
       );
     }
-    return _result;
+    return result;
   }
 }

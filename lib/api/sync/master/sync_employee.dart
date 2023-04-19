@@ -31,9 +31,9 @@ Future syncEmployee(List<ItemRemoveModel> removeList,
       guidfixed: newData.guidfixed,
       code: newData.code,
       email: newData.email,
-      isenabled: newData.isenabled,
+      is_enabled: newData.isenabled,
       name: newData.name,
-      profilepicture: newData.profilepicture,
+      profile_picture: newData.profilepicture,
     );
 
     print("Sync Employee : " + newData.code + " " + newData.name);

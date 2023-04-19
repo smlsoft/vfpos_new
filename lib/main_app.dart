@@ -18,7 +18,9 @@ import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 import 'package:dedepos/bloc/server_bloc.dart';
 import 'package:dedepos/api/network/server.dart' as server;
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:presentation_displays/display.dart';
+import 'package:intl/intl.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -47,6 +49,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = "th";
+  initializeDateFormatting();
   if (Platform.isAndroid) {
     // Position position = await global.determinePosition();
   }
@@ -94,11 +98,11 @@ Future<void> mainApp() async {
         ],
         child: MaterialApp(
           onGenerateRoute: generateRoute,
-          initialRoute: 'select_mode',
+          initialRoute: 'login',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            fontFamily: 'Prompt',
-          ),
+              // fontFamily: 'Prompt',
+              ),
         ),
       ),
     );

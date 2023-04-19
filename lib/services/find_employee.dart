@@ -113,7 +113,7 @@ class _FindEmployeeState extends State<FindEmployee>
                 child: CachedNetworkImage(
                   width: 100,
                   height: 80,
-                  imageUrl: _findResult[index].profilepicture,
+                  imageUrl: _findResult[index].profile_picture,
                   fit: BoxFit.fill,
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 )),

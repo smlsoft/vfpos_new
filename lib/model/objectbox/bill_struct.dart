@@ -53,6 +53,9 @@ class BillObjectBoxStruct {
   /// วันที่ยกเลิก
   String cancel_date_time;
 
+  /// เหตุผลที่ยกเลิก
+  String cancel_description;
+
   /// พนักงานที่ยกเลิก
   String cancel_user_code;
 
@@ -91,6 +94,12 @@ class BillObjectBoxStruct {
 
   /// ชำระเงินโดย Coupon
   double sum_coupon;
+
+  /// พิมพ์ใบกำกับภาษีแบบเต็มแล้ว
+  bool full_vat_print;
+
+  /// เลขที่ใบกำกับภาษีแบบเต็ม
+  String full_vat_doc_number;
 
   /// ชื่อลูกค้าใบกำกับภาษีแบบเต็ม
   String full_vat_name;
@@ -136,6 +145,9 @@ class BillObjectBoxStruct {
       this.cancel_user_code = "",
       this.cancel_user_name = "",
       this.cancel_reason = "",
+      this.cancel_description = "",
+      this.full_vat_print = false,
+      this.full_vat_doc_number = "",
       this.full_vat_name = "",
       this.full_vat_address = "",
       this.full_vat_tax_id = "",
@@ -285,7 +297,7 @@ class BillPayObjectBoxStruct {
   late String branch_number;
 
   /// รหัสอ้างอิงธนาคาร
-  late String bank_referance;
+  late String bank_reference;
 
   /// วันที่สั่งจ่ายบนเช็ค
   late DateTime due_date;
@@ -303,10 +315,10 @@ class BillPayObjectBoxStruct {
   late String number;
 
   /// อ้างอิง 1
-  late String referance_one;
+  late String reference_one;
 
   /// อ้างอิง 2
-  late String referance_two;
+  late String reference_two;
 
   /// รหัสกระเป๋า เจ้าของเงิน (Provider)
   late String provider_code;
@@ -327,13 +339,13 @@ class BillPayObjectBoxStruct {
     this.bank_name = "",
     this.bank_account_no = "",
     this.branch_number = "",
-    this.bank_referance = "",
+    this.bank_reference = "",
     this.cheque_number = "",
     this.code = "",
     this.description = "",
     this.number = "",
-    this.referance_one = "",
-    this.referance_two = "",
+    this.reference_one = "",
+    this.reference_two = "",
     this.provider_code = "",
     this.provider_name = "",
     this.amount = 0,
