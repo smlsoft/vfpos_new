@@ -1758,8 +1758,7 @@ class _PosScreenState extends State<PosScreen>
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border:
-                const Border(top: BorderSide(color: Colors.black, width: 1)),
+            border: Border.all(color: Colors.black, width: 1),
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
