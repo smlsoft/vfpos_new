@@ -391,6 +391,7 @@ class _PosScreenState extends State<PosScreen>
           if (posLogSelect.isNotEmpty) {
             await logHelper.insert(PosLogObjectBoxStruct(
                 guid_code_ref: guidCodeRef,
+                doc_mode: global.posScreenToInt(),
                 guid_ref: guidRef,
                 log_date_time: DateTime.now(),
                 hold_number: global.posHoldActiveNumber,
@@ -427,6 +428,7 @@ class _PosScreenState extends State<PosScreen>
               double price = double.tryParse(productSelect.prices[0]) ?? 0.0;
               PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
                   log_date_time: DateTime.now(),
+                  doc_mode: global.posScreenToInt(),
                   hold_number: global.posHoldActiveNumber,
                   command_code: commandCode,
                   barcode: barcode,
@@ -496,6 +498,7 @@ class _PosScreenState extends State<PosScreen>
             await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
           await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -517,6 +520,7 @@ class _PosScreenState extends State<PosScreen>
             await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
           await logHelper.insert(PosLogObjectBoxStruct(
+              doc_mode: global.posScreenToInt(),
               guid_ref: findActiveLineByGuid,
               log_date_time: DateTime.now(),
               hold_number: global.posHoldActiveNumber,
@@ -535,6 +539,7 @@ class _PosScreenState extends State<PosScreen>
       case 4:
         // 4=แก้จำนวน
         await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -544,6 +549,7 @@ class _PosScreenState extends State<PosScreen>
       case 5:
         // 5=แก้ราคา
         await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -553,6 +559,7 @@ class _PosScreenState extends State<PosScreen>
       case 6:
         // 6=แก้ส่วนลด
         await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -562,6 +569,7 @@ class _PosScreenState extends State<PosScreen>
       case 8:
         // 8=แก้หมายเหตุ
         await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
@@ -571,6 +579,7 @@ class _PosScreenState extends State<PosScreen>
       case 9:
         // 9=ลบรายการ
         await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
             log_date_time: DateTime.now(),
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
@@ -4377,20 +4386,56 @@ class _PosScreenState extends State<PosScreen>
                     }
                   }
                 },
-                child:
-                    (global.posScreenMode == global.PosScreenModeEnum.posSale)
-                        ? Scaffold(
-                            resizeToAvoidBottomInset: false,
-                            backgroundColor: Colors.black,
-                            body: appLayoutPos())
-                        : Scaffold(
-                            appBar: AppBar(
-                              automaticallyImplyLeading: false,
-                              backgroundColor: Colors.red,
-                              title: Text('รับคืนสินค้า'),
-                            ),
-                            resizeToAvoidBottomInset: false,
-                            backgroundColor: Colors.black,
-                            body: appLayoutPos()))));
+                child: Scaffold(
+                    appBar: AppBar(
+                      automaticallyImplyLeading: false,
+                      backgroundColor: (global.posScreenMode ==
+                              global.PosScreenModeEnum.posSale)
+                          ? Colors.blue
+                          : Colors.red,
+                      title: Row(
+                        children: [
+                          Text(
+                              (global.posScreenMode ==
+                                      global.PosScreenModeEnum.posSale)
+                                  ? 'ขายสินค้า'
+                                  : 'รับคืนสินค้า',
+                              style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 10.0,
+                                      color: Colors.black54,
+                                      offset: Offset(5.0, 5.0),
+                                    ),
+                                  ])),
+                          const Spacer(),
+                          const Text("DEDE POS",
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 10.0,
+                                      color: Colors.black54,
+                                      offset: Offset(5.0, 5.0),
+                                    ),
+                                  ])),
+                        ],
+                      ),
+                    ),
+                    body: Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 4,
+                            spreadRadius: 1.0,
+                            offset: Offset(
+                                3.0, 3.0), // shadow direction: bottom right
+                          )
+                        ]),
+                        child: appLayoutPos())))));
   }
 }

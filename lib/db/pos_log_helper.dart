@@ -39,10 +39,14 @@ class PosLogHelper {
   }
 
   List<PosLogObjectBoxStruct> selectByHoldNumberIsVoidSuccess(
-      {required int holdNumber, int isVoid = 0, int success = 0}) {
+      {required int holdNumber,
+      int isVoid = 0,
+      int success = 0,
+      required int docMode}) {
     return (global.objectBoxStore.box<PosLogObjectBoxStruct>().query(
             PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
                 PosLogObjectBoxStruct_.is_void.equals(isVoid) &
+                PosLogObjectBoxStruct_.doc_mode.equals(docMode) &
                 PosLogObjectBoxStruct_.success.equals(success))
           ..order(PosLogObjectBoxStruct_.log_date_time))
         .build()

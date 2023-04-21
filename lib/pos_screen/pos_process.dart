@@ -91,7 +91,7 @@ class PosProcess {
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
         .selectByHoldNumberIsVoidSuccess(
-            holdNumber: holdNumber, isVoid: 0, success: 0);
+            holdNumber: holdNumber, isVoid: 0, success: 0,docMode:global.posScreenToInt());
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {
