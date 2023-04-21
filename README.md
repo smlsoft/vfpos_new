@@ -26,3 +26,9 @@ mongodb://root:smlmgdb@178.128.55.234:27017/?authMechanism=DEFAULT
 -- สร้าง APP หลายตัว
 flutter pub run flutter_flavorizr
 flutter build appbundle --flavor smlmobilesales -t lib/main_smlmobilesales.dart --release
+
+
+huawei:agconnect
+assets:download
+
+flutter pub run flutter_flavorizr -p assets:download,assets:extract

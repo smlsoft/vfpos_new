@@ -84,6 +84,13 @@
             "type": "dart",
             "flutterMode": "profile"
         }*/
+        {
+            "name" : "VFPOS",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_development.dart",
+            "args": ["--flavor", "vfpos", "--target", "lib/main_vfpos.dart" ]
+        },
     ],
 	"compounds": [
 		{

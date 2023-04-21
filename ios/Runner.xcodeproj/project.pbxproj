@@ -9,27 +9,15 @@
 /* Begin PBXBuildFile section */
 		029532687F9A55B3CC760F69 /* vfposLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C18F955F0E7482F128A1919 /* vfposLaunchScreen.storyboard */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		314511FF0EB3F509B8C51519 /* vfposProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 2BA80B3C6C07BA18F857EA12 /* vfposProfile.xcconfig */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5C36BF3A216363E912AE2189 /* smlmobilesalesLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E798DDF97F2A2944C55B0870 /* smlmobilesalesLaunchScreen.storyboard */; };
 		5E6610D3D4F881160C9D317B /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE79560EBE7B5BEFDE35856E /* Pods_Runner.framework */; };
-		6A3F7746B5E79ECF51551FAF /* smlsuperposProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 947331CA6C2160C02F98AF5E /* smlsuperposProfile.xcconfig */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
-		84088B5A6566EB095D398294 /* dedeposRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 32E5FBD86A2E424279EFDBCE /* dedeposRelease.xcconfig */; };
-		8CB77B413D7401611F1C663E /* smlmobilesalesDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4387205FC728617638E8FE49 /* smlmobilesalesDebug.xcconfig */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		A321CC796431ADDC58C3F24F /* smlsuperposRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = C4630FABB2DAB08E9E3ECAB1 /* smlsuperposRelease.xcconfig */; };
-		A714249CA2E2D7756145A587 /* vfposDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EFE50804476DC7803F740649 /* vfposDebug.xcconfig */; };
-		AEB72C96197D10198496207E /* smlmobilesalesProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1A3025F7B9FE5E240F5556B3 /* smlmobilesalesProfile.xcconfig */; };
-		B8DEBF9A7F1920E8BE95F9E2 /* dedeposProfile.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E6B99A19F74BA88817316950 /* dedeposProfile.xcconfig */; };
 		BC134B90219396E833F40727 /* smlsuperposLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF279BBB488CC9B6D6F8BA9E /* smlsuperposLaunchScreen.storyboard */; };
 		DDFE0D0AE6BA8FD99B9E86F5 /* dedeposLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 772528A75E481A3A3AD45338 /* dedeposLaunchScreen.storyboard */; };
-		DE5A527CC12748032DB4A9DD /* vfposRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = FF1FDE2F47E535565827AAB7 /* vfposRelease.xcconfig */; };
-		E3BEE120C8402023EFB228FB /* dedeposDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 44426BBF25137E3679783289 /* dedeposDebug.xcconfig */; };
-		F8F519844A6156E28AB6CEB2 /* smlmobilesalesRelease.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 9726606B0A23CAB99CFFA652 /* smlmobilesalesRelease.xcconfig */; };
-		FA721FA006F74F45B8D594DF /* smlsuperposDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 217057899D51D7EE24590E1B /* smlsuperposDebug.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,10 +34,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0272A264D796D95E5EC977B6 /* Pods-Runner.debug-dedepos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-dedepos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-dedepos.xcconfig"; sourceTree = "<group>"; };
 		14079D3D41CBB813669EEF78 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		1A3025F7B9FE5E240F5556B3 /* smlmobilesalesProfile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = smlmobilesalesProfile.xcconfig; path = Flutter/smlmobilesalesProfile.xcconfig; sourceTree = "<group>"; };
+		1FB57F7B1AAE8C4EDE8CF6BD /* Pods-Runner.profile-smlmobilesales.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-smlmobilesales.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-smlmobilesales.xcconfig"; sourceTree = "<group>"; };
 		217057899D51D7EE24590E1B /* smlsuperposDebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = smlsuperposDebug.xcconfig; path = Flutter/smlsuperposDebug.xcconfig; sourceTree = "<group>"; };
 		2BA80B3C6C07BA18F857EA12 /* vfposProfile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = vfposProfile.xcconfig; path = Flutter/vfposProfile.xcconfig; sourceTree = "<group>"; };
 		32E5FBD86A2E424279EFDBCE /* dedeposRelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = dedeposRelease.xcconfig; path = Flutter/dedeposRelease.xcconfig; sourceTree = "<group>"; };
@@ -57,12 +47,16 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4387205FC728617638E8FE49 /* smlmobilesalesDebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = smlmobilesalesDebug.xcconfig; path = Flutter/smlmobilesalesDebug.xcconfig; sourceTree = "<group>"; };
 		44426BBF25137E3679783289 /* dedeposDebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = dedeposDebug.xcconfig; path = Flutter/dedeposDebug.xcconfig; sourceTree = "<group>"; };
+		4B18065D28A5D16E2474C6D3 /* Pods-Runner.release-smlsuperpos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-smlsuperpos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-smlsuperpos.xcconfig"; sourceTree = "<group>"; };
+		4F61409CE183F8A46B992510 /* Pods-Runner.release-dedepos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-dedepos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-dedepos.xcconfig"; sourceTree = "<group>"; };
 		5C18F955F0E7482F128A1919 /* vfposLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = vfposLaunchScreen.storyboard; path = Runner/vfposLaunchScreen.storyboard; sourceTree = "<group>"; };
+		6A35D596C5098E205F349D4F /* Pods-Runner.debug-smlsuperpos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-smlsuperpos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-smlsuperpos.xcconfig"; sourceTree = "<group>"; };
 		6F0C972A5EFA2500FF30576B /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		772528A75E481A3A3AD45338 /* dedeposLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = dedeposLaunchScreen.storyboard; path = Runner/dedeposLaunchScreen.storyboard; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		856E825661BF3A8263CBF094 /* Pods-Runner.release-vfpos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-vfpos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-vfpos.xcconfig"; sourceTree = "<group>"; };
 		947331CA6C2160C02F98AF5E /* smlsuperposProfile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = smlsuperposProfile.xcconfig; path = Flutter/smlsuperposProfile.xcconfig; sourceTree = "<group>"; };
 		9726606B0A23CAB99CFFA652 /* smlmobilesalesRelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = smlmobilesalesRelease.xcconfig; path = Flutter/smlmobilesalesRelease.xcconfig; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
@@ -72,13 +66,19 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B5B57E2B3594AFA1FC2B0308 /* Pods-Runner.release-smlmobilesales.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-smlmobilesales.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-smlmobilesales.xcconfig"; sourceTree = "<group>"; };
+		BE317F356234EB1768C9221B /* Pods-Runner.profile-smlsuperpos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-smlsuperpos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-smlsuperpos.xcconfig"; sourceTree = "<group>"; };
 		C4630FABB2DAB08E9E3ECAB1 /* smlsuperposRelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = smlsuperposRelease.xcconfig; path = Flutter/smlsuperposRelease.xcconfig; sourceTree = "<group>"; };
 		C639FF11278295A000EC2620 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		CF279BBB488CC9B6D6F8BA9E /* smlsuperposLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = smlsuperposLaunchScreen.storyboard; path = Runner/smlsuperposLaunchScreen.storyboard; sourceTree = "<group>"; };
+		D1A0421F6B1C4D964BB5E466 /* Pods-Runner.profile-dedepos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-dedepos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-dedepos.xcconfig"; sourceTree = "<group>"; };
 		D61462F1295A9BEE00D9F1A8 /* RunnerProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RunnerProfile.entitlements; sourceTree = "<group>"; };
+		DBEBC1208E71E91555D73DA3 /* Pods-Runner.debug-vfpos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-vfpos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-vfpos.xcconfig"; sourceTree = "<group>"; };
 		E6B99A19F74BA88817316950 /* dedeposProfile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = dedeposProfile.xcconfig; path = Flutter/dedeposProfile.xcconfig; sourceTree = "<group>"; };
 		E798DDF97F2A2944C55B0870 /* smlmobilesalesLaunchScreen.storyboard */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.storyboard; name = smlmobilesalesLaunchScreen.storyboard; path = Runner/smlmobilesalesLaunchScreen.storyboard; sourceTree = "<group>"; };
+		ED715709560B7F279E22C150 /* Pods-Runner.profile-vfpos.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-vfpos.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-vfpos.xcconfig"; sourceTree = "<group>"; };
 		EFE50804476DC7803F740649 /* vfposDebug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = vfposDebug.xcconfig; path = Flutter/vfposDebug.xcconfig; sourceTree = "<group>"; };
+		FE0AF19A490C2935C4669E9F /* Pods-Runner.debug-smlmobilesales.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-smlmobilesales.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-smlmobilesales.xcconfig"; sourceTree = "<group>"; };
 		FE79560EBE7B5BEFDE35856E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF1FDE2F47E535565827AAB7 /* vfposRelease.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = vfposRelease.xcconfig; path = Flutter/vfposRelease.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +109,18 @@
 				14079D3D41CBB813669EEF78 /* Pods-Runner.debug.xcconfig */,
 				34339E1146F84BF1B642C146 /* Pods-Runner.release.xcconfig */,
 				6F0C972A5EFA2500FF30576B /* Pods-Runner.profile.xcconfig */,
+				0272A264D796D95E5EC977B6 /* Pods-Runner.debug-dedepos.xcconfig */,
+				D1A0421F6B1C4D964BB5E466 /* Pods-Runner.profile-dedepos.xcconfig */,
+				4F61409CE183F8A46B992510 /* Pods-Runner.release-dedepos.xcconfig */,
+				6A35D596C5098E205F349D4F /* Pods-Runner.debug-smlsuperpos.xcconfig */,
+				BE317F356234EB1768C9221B /* Pods-Runner.profile-smlsuperpos.xcconfig */,
+				4B18065D28A5D16E2474C6D3 /* Pods-Runner.release-smlsuperpos.xcconfig */,
+				FE0AF19A490C2935C4669E9F /* Pods-Runner.debug-smlmobilesales.xcconfig */,
+				1FB57F7B1AAE8C4EDE8CF6BD /* Pods-Runner.profile-smlmobilesales.xcconfig */,
+				B5B57E2B3594AFA1FC2B0308 /* Pods-Runner.release-smlmobilesales.xcconfig */,
+				DBEBC1208E71E91555D73DA3 /* Pods-Runner.debug-vfpos.xcconfig */,
+				ED715709560B7F279E22C150 /* Pods-Runner.profile-vfpos.xcconfig */,
+				856E825661BF3A8263CBF094 /* Pods-Runner.release-vfpos.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -243,18 +255,6 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
-				E3BEE120C8402023EFB228FB /* dedeposDebug.xcconfig in Resources */,
-				B8DEBF9A7F1920E8BE95F9E2 /* dedeposProfile.xcconfig in Resources */,
-				84088B5A6566EB095D398294 /* dedeposRelease.xcconfig in Resources */,
-				FA721FA006F74F45B8D594DF /* smlsuperposDebug.xcconfig in Resources */,
-				6A3F7746B5E79ECF51551FAF /* smlsuperposProfile.xcconfig in Resources */,
-				A321CC796431ADDC58C3F24F /* smlsuperposRelease.xcconfig in Resources */,
-				8CB77B413D7401611F1C663E /* smlmobilesalesDebug.xcconfig in Resources */,
-				AEB72C96197D10198496207E /* smlmobilesalesProfile.xcconfig in Resources */,
-				F8F519844A6156E28AB6CEB2 /* smlmobilesalesRelease.xcconfig in Resources */,
-				A714249CA2E2D7756145A587 /* vfposDebug.xcconfig in Resources */,
-				314511FF0EB3F509B8C51519 /* vfposProfile.xcconfig in Resources */,
-				DE5A527CC12748032DB4A9DD /* vfposRelease.xcconfig in Resources */,
 				DDFE0D0AE6BA8FD99B9E86F5 /* dedeposLaunchScreen.storyboard in Resources */,
 				BC134B90219396E833F40727 /* smlsuperposLaunchScreen.storyboard in Resources */,
 				5C36BF3A216363E912AE2189 /* smlmobilesalesLaunchScreen.storyboard in Resources */,
@@ -727,7 +727,7 @@
 				FLUTTER_BUILD_NUMBER = 12;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1224,7 +1224,7 @@
 				FLUTTER_BUILD_NUMBER = 12;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1259,7 +1259,7 @@
 				FLUTTER_BUILD_NUMBER = 12;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1276,6 +1276,102 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		9EDE3D9D29ED958500B8F53C /* Debug-dedepos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0272A264D796D95E5EC977B6 /* Pods-Runner.debug-dedepos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Debug-dedepos";
+		};
+		9EDE3D9E29ED958500B8F53C /* Profile-dedepos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D1A0421F6B1C4D964BB5E466 /* Pods-Runner.profile-dedepos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Profile-dedepos";
+		};
+		9EDE3D9F29ED958500B8F53C /* Release-dedepos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4F61409CE183F8A46B992510 /* Pods-Runner.release-dedepos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Release-dedepos";
+		};
+		9EDE3DA029ED958500B8F53C /* Debug-smlsuperpos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6A35D596C5098E205F349D4F /* Pods-Runner.debug-smlsuperpos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Debug-smlsuperpos";
+		};
+		9EDE3DA129ED958500B8F53C /* Profile-smlsuperpos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BE317F356234EB1768C9221B /* Pods-Runner.profile-smlsuperpos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Profile-smlsuperpos";
+		};
+		9EDE3DA229ED958500B8F53C /* Release-smlsuperpos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4B18065D28A5D16E2474C6D3 /* Pods-Runner.release-smlsuperpos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Release-smlsuperpos";
+		};
+		9EDE3DA329ED958500B8F53C /* Debug-smlmobilesales */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FE0AF19A490C2935C4669E9F /* Pods-Runner.debug-smlmobilesales.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Debug-smlmobilesales";
+		};
+		9EDE3DA429ED958500B8F53C /* Profile-smlmobilesales */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1FB57F7B1AAE8C4EDE8CF6BD /* Pods-Runner.profile-smlmobilesales.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Profile-smlmobilesales";
+		};
+		9EDE3DA529ED958500B8F53C /* Release-smlmobilesales */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5B57E2B3594AFA1FC2B0308 /* Pods-Runner.release-smlmobilesales.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Release-smlmobilesales";
+		};
+		9EDE3DA629ED958500B8F53C /* Debug-vfpos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBEBC1208E71E91555D73DA3 /* Pods-Runner.debug-vfpos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Debug-vfpos";
+		};
+		9EDE3DA729ED958500B8F53C /* Profile-vfpos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = ED715709560B7F279E22C150 /* Pods-Runner.profile-vfpos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Profile-vfpos";
+		};
+		9EDE3DA829ED958500B8F53C /* Release-vfpos */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 856E825661BF3A8263CBF094 /* Pods-Runner.release-vfpos.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = Runner;
+			};
+			name = "Release-vfpos";
 		};
 		AFB814B503044662B02BB801 /* Profile-dedepos */ = {
 			isa = XCBuildConfiguration;
@@ -1520,6 +1616,18 @@
 				97C147061CF9000F007C117D /* Debug */,
 				97C147071CF9000F007C117D /* Release */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
+				9EDE3D9D29ED958500B8F53C /* Debug-dedepos */,
+				9EDE3D9E29ED958500B8F53C /* Profile-dedepos */,
+				9EDE3D9F29ED958500B8F53C /* Release-dedepos */,
+				9EDE3DA029ED958500B8F53C /* Debug-smlsuperpos */,
+				9EDE3DA129ED958500B8F53C /* Profile-smlsuperpos */,
+				9EDE3DA229ED958500B8F53C /* Release-smlsuperpos */,
+				9EDE3DA329ED958500B8F53C /* Debug-smlmobilesales */,
+				9EDE3DA429ED958500B8F53C /* Profile-smlmobilesales */,
+				9EDE3DA529ED958500B8F53C /* Release-smlmobilesales */,
+				9EDE3DA629ED958500B8F53C /* Debug-vfpos */,
+				9EDE3DA729ED958500B8F53C /* Profile-vfpos */,
+				9EDE3DA829ED958500B8F53C /* Release-vfpos */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

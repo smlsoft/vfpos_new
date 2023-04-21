@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_secondary_screen.dart';
+import 'package:dedepos/util/app_auth.dart';
 import 'package:dedepos/util/pos_client.dart';
 import 'package:dedepos/util/select_mode_screen.dart';
 import 'package:dedepos/bloc/find_employee_by_name_bloc.dart';
@@ -30,6 +31,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const LoadingScreen());
     case 'login':
       return MaterialPageRoute(builder: (_) => const Login());
+    case 'authentication':
+      return MaterialPageRoute(
+          builder: (_) => const ApplicationAuthentication());
     case 'client':
       return MaterialPageRoute(builder: (_) => const PosClient());
     case 'select_mode':
@@ -93,8 +97,8 @@ Future<void> mainApp() async {
               create: (context) => ProductCategoryBloc(categoryGuid: '')),
         ],
         child: MaterialApp(
-          onGenerateRoute: generateRoute,
-          initialRoute: 'select_mode',
+          // onGenerateRoute: generateRoute,
+          initialRoute: 'authentication',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: 'Prompt',
