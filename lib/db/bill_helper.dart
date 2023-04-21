@@ -19,9 +19,12 @@ class BillHelper {
     }
   }*/
 
-  BillObjectBoxStruct? selectByDocNumber({String docNumber = ""}) {
+  BillObjectBoxStruct? selectByDocNumber(
+      {required String docNumber, required int posScreenMode}) {
     return box
-        .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
+        .query(BillObjectBoxStruct_.doc_number
+            .equals(docNumber)
+            .and(BillObjectBoxStruct_.doc_mode.equals(posScreenMode)))
         .build()
         .findFirst();
   }
@@ -35,13 +38,19 @@ class BillHelper {
   }
 
   List<BillObjectBoxStruct> select(
-      {String where = "", int limit = 0, int offset = 0}) {
-    return (box.query()).build().find();
+      {required int posScreenMode,
+      String where = "",
+      int limit = 0,
+      int offset = 0}) {
+    return (box.query(BillObjectBoxStruct_.doc_mode.equals(posScreenMode)))
+        .build()
+        .find();
   }
 
-  List<BillObjectBoxStruct> selectOrderByDateTimeDesc() {
+  List<BillObjectBoxStruct> selectOrderByDateTimeDesc(
+      {required int posScreenMode}) {
     return (box
-            .query()
+            .query(BillObjectBoxStruct_.doc_mode.equals(posScreenMode))
             .order(BillObjectBoxStruct_.date_time, flags: Order.descending)
             .build()
           ..limit = 100)

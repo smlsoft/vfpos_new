@@ -31,7 +31,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(2, 5035133149351921342),
       name: 'BillDetailExtraObjectBoxStruct',
-      lastPropertyId: const IdUid(12, 6597758841446847175),
+      lastPropertyId: const IdUid(13, 2992093116338670712),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -93,6 +93,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(12, 6597758841446847175),
             name: 'total_amount',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 2992093116338670712),
+            name: 'doc_mode',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -100,7 +105,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 8200473711235576786),
       name: 'BillDetailObjectBoxStruct',
-      lastPropertyId: const IdUid(14, 2405522170662206015),
+      lastPropertyId: const IdUid(15, 390254661974416422),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -172,6 +177,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(14, 2405522170662206015),
             name: 'sku',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 390254661974416422),
+            name: 'doc_mode',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -179,7 +189,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(39, 3636099827172088056),
+      lastPropertyId: const IdUid(40, 3981669769998466808),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -367,6 +377,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(39, 3636099827172088056),
             name: 'cancel_description',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(40, 3981669769998466808),
+            name: 'doc_mode',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -374,7 +389,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(5, 7075751635639607639),
       name: 'BillPayObjectBoxStruct',
-      lastPropertyId: const IdUid(24, 1437739751485947506),
+      lastPropertyId: const IdUid(25, 1893061376291493828),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -481,6 +496,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(24, 1437739751485947506),
             name: 'reference_two',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(25, 1893061376291493828),
+            name: 'doc_mode',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -627,7 +647,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(28, 6877901496144380651),
+      lastPropertyId: const IdUid(29, 2896230014411146678),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -741,7 +761,12 @@ final _entities = <ModelEntity>[
             name: 'hold_number',
             type: 6,
             flags: 8,
-            indexId: const IdUid(15, 8091174755438905349))
+            indexId: const IdUid(15, 8091174755438905349)),
+        ModelProperty(
+            id: const IdUid(29, 2896230014411146678),
+            name: 'doc_mode',
+            type: 6,
+            flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -1225,67 +1250,70 @@ ModelDefinition getObjectBoxModel() {
       version: 1);
 
   final bindings = <Type, EntityDefinition>{
-    BillDetailExtraObjectBoxStruct:
-        EntityDefinition<BillDetailExtraObjectBoxStruct>(
-            model: _entities[0],
-            toOneRelations: (BillDetailExtraObjectBoxStruct object) => [],
-            toManyRelations: (BillDetailExtraObjectBoxStruct object) => {},
-            getId: (BillDetailExtraObjectBoxStruct object) => object.id,
-            setId: (BillDetailExtraObjectBoxStruct object, int id) {
-              object.id = id;
-            },
-            objectToFB:
-                (BillDetailExtraObjectBoxStruct object, fb.Builder fbb) {
-              final doc_numberOffset = fbb.writeString(object.doc_number);
-              final barcodeOffset = fbb.writeString(object.barcode);
-              final item_codeOffset = fbb.writeString(object.item_code);
-              final item_nameOffset = fbb.writeString(object.item_name);
-              final unit_codeOffset = fbb.writeString(object.unit_code);
-              final unit_nameOffset = fbb.writeString(object.unit_name);
-              fbb.startTable(13);
-              fbb.addInt64(0, object.id);
-              fbb.addOffset(1, doc_numberOffset);
-              fbb.addInt64(2, object.ref_line_number);
-              fbb.addInt64(3, object.line_number);
-              fbb.addOffset(4, barcodeOffset);
-              fbb.addOffset(5, item_codeOffset);
-              fbb.addOffset(6, item_nameOffset);
-              fbb.addOffset(7, unit_codeOffset);
-              fbb.addOffset(8, unit_nameOffset);
-              fbb.addFloat64(9, object.qty);
-              fbb.addFloat64(10, object.price);
-              fbb.addFloat64(11, object.total_amount);
-              fbb.finish(fbb.endTable());
-              return object.id;
-            },
-            objectFromFB: (Store store, ByteData fbData) {
-              final buffer = fb.BufferContext(fbData);
-              final rootOffset = buffer.derefObject(0);
+    BillDetailExtraObjectBoxStruct: EntityDefinition<
+            BillDetailExtraObjectBoxStruct>(
+        model: _entities[0],
+        toOneRelations: (BillDetailExtraObjectBoxStruct object) => [],
+        toManyRelations: (BillDetailExtraObjectBoxStruct object) => {},
+        getId: (BillDetailExtraObjectBoxStruct object) => object.id,
+        setId: (BillDetailExtraObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (BillDetailExtraObjectBoxStruct object, fb.Builder fbb) {
+          final doc_numberOffset = fbb.writeString(object.doc_number);
+          final barcodeOffset = fbb.writeString(object.barcode);
+          final item_codeOffset = fbb.writeString(object.item_code);
+          final item_nameOffset = fbb.writeString(object.item_name);
+          final unit_codeOffset = fbb.writeString(object.unit_code);
+          final unit_nameOffset = fbb.writeString(object.unit_name);
+          fbb.startTable(14);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, doc_numberOffset);
+          fbb.addInt64(2, object.ref_line_number);
+          fbb.addInt64(3, object.line_number);
+          fbb.addOffset(4, barcodeOffset);
+          fbb.addOffset(5, item_codeOffset);
+          fbb.addOffset(6, item_nameOffset);
+          fbb.addOffset(7, unit_codeOffset);
+          fbb.addOffset(8, unit_nameOffset);
+          fbb.addFloat64(9, object.qty);
+          fbb.addFloat64(10, object.price);
+          fbb.addFloat64(11, object.total_amount);
+          fbb.addInt64(12, object.doc_mode);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
 
-              final object = BillDetailExtraObjectBoxStruct(
-                  id: const fb.Int64Reader()
-                      .vTableGet(buffer, rootOffset, 4, 0),
-                  line_number: const fb.Int64Reader()
-                      .vTableGet(buffer, rootOffset, 10, 0),
-                  barcode: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 12, ''),
-                  item_code: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 14, ''),
-                  item_name: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 16, ''),
-                  unit_code: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 18, ''),
-                  unit_name: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 20, ''),
-                  qty: const fb.Float64Reader()
-                      .vTableGet(buffer, rootOffset, 22, 0),
-                  doc_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, ''),
-                  price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
-                  ref_line_number: const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
-                  total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0));
+          final object = BillDetailExtraObjectBoxStruct(
+              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
+              line_number:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+              doc_mode:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0),
+              barcode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''),
+              item_code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
+              item_name: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 16, ''),
+              unit_code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 18, ''),
+              unit_name: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 20, ''),
+              qty:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
+              doc_number: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              price:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
+              ref_line_number: const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0));
 
-              return object;
-            }),
+          return object;
+        }),
     BillDetailObjectBoxStruct: EntityDefinition<BillDetailObjectBoxStruct>(
         model: _entities[1],
         toOneRelations: (BillDetailObjectBoxStruct object) => [],
@@ -1303,7 +1331,7 @@ ModelDefinition getObjectBoxModel() {
           final unit_nameOffset = fbb.writeString(object.unit_name);
           final discount_textOffset = fbb.writeString(object.discount_text);
           final skuOffset = fbb.writeString(object.sku);
-          fbb.startTable(15);
+          fbb.startTable(16);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.line_number);
@@ -1318,6 +1346,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(11, object.discount);
           fbb.addFloat64(12, object.total_amount);
           fbb.addOffset(13, skuOffset);
+          fbb.addInt64(14, object.doc_mode);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1329,6 +1358,8 @@ ModelDefinition getObjectBoxModel() {
               id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
               line_number:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+              doc_mode:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0),
               barcode: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
               item_code: const fb.StringReader(asciiOptimization: true)
@@ -1393,7 +1424,7 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.full_vat_doc_number);
           final cancel_descriptionOffset =
               fbb.writeString(object.cancel_description);
-          fbb.startTable(40);
+          fbb.startTable(41);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -1431,6 +1462,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(36, object.full_vat_print);
           fbb.addOffset(37, full_vat_doc_numberOffset);
           fbb.addOffset(38, cancel_descriptionOffset);
+          fbb.addInt64(39, object.doc_mode);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1443,6 +1475,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               date_time: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)),
+              doc_mode:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 82, 0),
               customer_code: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
               customer_name: const fb.StringReader(asciiOptimization: true)
@@ -1455,8 +1489,7 @@ ModelDefinition getObjectBoxModel() {
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
               total_before_amount:
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0),
-              total_vat_amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0),
+              total_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0),
               total_except_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 52, 0),
               cashier_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
               cashier_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
@@ -1513,7 +1546,7 @@ ModelDefinition getObjectBoxModel() {
           final bank_referenceOffset = fbb.writeString(object.bank_reference);
           final reference_oneOffset = fbb.writeString(object.reference_one);
           final reference_twoOffset = fbb.writeString(object.reference_two);
-          fbb.startTable(25);
+          fbb.startTable(26);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.trans_flag);
@@ -1535,6 +1568,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(21, bank_referenceOffset);
           fbb.addOffset(22, reference_oneOffset);
           fbb.addOffset(23, reference_twoOffset);
+          fbb.addInt64(24, object.doc_mode);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1546,6 +1580,8 @@ ModelDefinition getObjectBoxModel() {
               id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
               doc_number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
+              doc_mode:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 52, 0),
               trans_flag:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
               bank_code: const fb.StringReader(asciiOptimization: true)
@@ -1736,7 +1772,7 @@ ModelDefinition getObjectBoxModel() {
           final unit_nameOffset = fbb.writeString(object.unit_name);
           final barcodeOffset = fbb.writeString(object.barcode);
           final discount_textOffset = fbb.writeString(object.discount_text);
-          fbb.startTable(29);
+          fbb.startTable(30);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
@@ -1759,6 +1795,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(22, barcodeOffset);
           fbb.addOffset(25, discount_textOffset);
           fbb.addInt64(27, object.hold_number);
+          fbb.addInt64(28, object.doc_mode);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1768,6 +1805,8 @@ ModelDefinition getObjectBoxModel() {
 
           final object = PosLogObjectBoxStruct(
               id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
+              doc_mode:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 60, 0),
               guid_ref: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
               guid_code_ref: const fb.StringReader(asciiOptimization: true)
@@ -1784,8 +1823,7 @@ ModelDefinition getObjectBoxModel() {
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
               success:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              qty:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
+              qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
               qty_fixed: const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0),
               price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0),
               selected: const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false),
@@ -2171,6 +2209,10 @@ class BillDetailExtraObjectBoxStruct_ {
   static final total_amount =
       QueryDoubleProperty<BillDetailExtraObjectBoxStruct>(
           _entities[0].properties[11]);
+
+  /// see [BillDetailExtraObjectBoxStruct.doc_mode]
+  static final doc_mode = QueryIntegerProperty<BillDetailExtraObjectBoxStruct>(
+      _entities[0].properties[12]);
 }
 
 /// [BillDetailObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2230,6 +2272,10 @@ class BillDetailObjectBoxStruct_ {
   /// see [BillDetailObjectBoxStruct.sku]
   static final sku = QueryStringProperty<BillDetailObjectBoxStruct>(
       _entities[1].properties[13]);
+
+  /// see [BillDetailObjectBoxStruct.doc_mode]
+  static final doc_mode = QueryIntegerProperty<BillDetailObjectBoxStruct>(
+      _entities[1].properties[14]);
 }
 
 /// [BillObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2382,6 +2428,10 @@ class BillObjectBoxStruct_ {
   /// see [BillObjectBoxStruct.cancel_description]
   static final cancel_description =
       QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[36]);
+
+  /// see [BillObjectBoxStruct.doc_mode]
+  static final doc_mode =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[37]);
 }
 
 /// [BillPayObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2469,6 +2519,10 @@ class BillPayObjectBoxStruct_ {
   /// see [BillPayObjectBoxStruct.reference_two]
   static final reference_two =
       QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[20]);
+
+  /// see [BillPayObjectBoxStruct.doc_mode]
+  static final doc_mode =
+      QueryIntegerProperty<BillPayObjectBoxStruct>(_entities[3].properties[21]);
 }
 
 /// [ConfigObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2657,6 +2711,10 @@ class PosLogObjectBoxStruct_ {
   /// see [PosLogObjectBoxStruct.hold_number]
   static final hold_number =
       QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[21]);
+
+  /// see [PosLogObjectBoxStruct.doc_mode]
+  static final doc_mode =
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[22]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.

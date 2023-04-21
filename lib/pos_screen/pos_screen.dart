@@ -45,7 +45,9 @@ import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 
 class PosScreen extends StatefulWidget {
-  const PosScreen({Key? key}) : super(key: key);
+  final global.PosScreenModeEnum posScreenMode;
+
+  const PosScreen({Key? key, required this.posScreenMode}) : super(key: key);
 
   @override
   _PosScreenState createState() => _PosScreenState();
@@ -146,6 +148,7 @@ class _PosScreenState extends State<PosScreen>
   @override
   void initState() {
     super.initState();
+    global.posScreenMode = widget.posScreenMode;
     if (global.isDesktopScreen()) {
       deviceMode = 0;
     } else if (global.isTabletScreen()) {
@@ -1758,7 +1761,7 @@ class _PosScreenState extends State<PosScreen>
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black, width: 1),
+            border: Border(top: BorderSide(color: Colors.black, width: 1)),
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
@@ -3365,7 +3368,7 @@ class _PosScreenState extends State<PosScreen>
         global.posHoldProcessResult[global.posHoldActiveNumber].saleName =
             value[1];
       });
-    });
+    }).onError((error, stackTrace) => null);
   }
 
   void holdBill() async {
@@ -4374,9 +4377,20 @@ class _PosScreenState extends State<PosScreen>
                     }
                   }
                 },
-                child: Scaffold(
-                    resizeToAvoidBottomInset: false,
-                    backgroundColor: Colors.black,
-                    body: appLayoutPos()))));
+                child:
+                    (global.posScreenMode == global.PosScreenModeEnum.posSale)
+                        ? Scaffold(
+                            resizeToAvoidBottomInset: false,
+                            backgroundColor: Colors.black,
+                            body: appLayoutPos())
+                        : Scaffold(
+                            appBar: AppBar(
+                              automaticallyImplyLeading: false,
+                              backgroundColor: Colors.red,
+                              title: Text('รับคืนสินค้า'),
+                            ),
+                            resizeToAvoidBottomInset: false,
+                            backgroundColor: Colors.black,
+                            body: appLayoutPos()))));
   }
 }

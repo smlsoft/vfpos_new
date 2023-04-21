@@ -10,6 +10,7 @@ PosLogObjectBoxStruct _$PosLogObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     PosLogObjectBoxStruct(
       id: json['id'] as int? ?? 0,
+      doc_mode: json['doc_mode'] as int? ?? 1,
       guid_ref: json['guid_ref'] as String? ?? "",
       guid_code_ref: json['guid_code_ref'] as String? ?? "",
       log_date_time: DateTime.parse(json['log_date_time'] as String),
@@ -37,6 +38,7 @@ Map<String, dynamic> _$PosLogObjectBoxStructToJson(
     <String, dynamic>{
       'id': instance.id,
       'guid_auto_fixed': instance.guid_auto_fixed,
+      'doc_mode': instance.doc_mode,
       'guid_ref': instance.guid_ref,
       'guid_code_ref': instance.guid_code_ref,
       'log_date_time': instance.log_date_time.toIso8601String(),

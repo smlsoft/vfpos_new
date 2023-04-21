@@ -175,6 +175,7 @@ PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
+PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -185,6 +186,8 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 enum SoundEnum { beep, fail, buttonTing }
 
 enum DisplayMachineEnum { customerDisplay, posTerminal }
+
+enum PosScreenModeEnum { posSale, posReturn }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -211,6 +214,17 @@ enum DeviceModeEnum {
   linuxDesktop,
   androidPhone,
   androidTablet,
+}
+
+int posScreenToInt() {
+  switch (posScreenMode) {
+    case PosScreenModeEnum.posSale:
+      return 1;
+    case PosScreenModeEnum.posReturn:
+      return 2;
+    default:
+      return 0;
+  }
 }
 
 Future<Position> determinePosition() async {
@@ -466,7 +480,8 @@ Future<String> billRunning() async {
         "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
 
     /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
-    var find = billHelper.selectByDocNumber(docNumber: result);
+    var find = billHelper.selectByDocNumber(
+        docNumber: result, posScreenMode: global.posScreenToInt());
     if (find == null) {
       success = true;
     } else {

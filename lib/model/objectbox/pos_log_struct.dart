@@ -16,6 +16,9 @@ class PosLogObjectBoxStruct {
   @Unique()
   String guid_auto_fixed = "";
 
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   /// อ้างอิงในระบบ
   String guid_ref;
 
@@ -95,6 +98,7 @@ class PosLogObjectBoxStruct {
 
   PosLogObjectBoxStruct({
     this.id = 0,
+    this.doc_mode = 1,
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,

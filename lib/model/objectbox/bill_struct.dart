@@ -14,6 +14,9 @@ class BillObjectBoxStruct {
   /// วันที่เอกสาร
   DateTime date_time;
 
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   /// รหัสลูกค้า
   String customer_code;
 
@@ -119,6 +122,7 @@ class BillObjectBoxStruct {
   BillObjectBoxStruct(
       {this.doc_number = "",
       required this.date_time,
+      this.doc_mode = 1,
       this.customer_code = "",
       this.customer_name = "",
       this.customer_telephone = "",
@@ -162,6 +166,9 @@ class BillDetailObjectBoxStruct {
   /// เลขที่เอกสาร
   String doc_number;
 
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   /// ลำดับรายการ
   int line_number;
 
@@ -201,6 +208,7 @@ class BillDetailObjectBoxStruct {
   BillDetailObjectBoxStruct(
       {this.id = 0,
       this.line_number = 0,
+      this.doc_mode = 1,
       this.barcode = "",
       this.item_code = "",
       this.item_name = "",
@@ -221,6 +229,9 @@ class BillDetailExtraObjectBoxStruct {
 
   /// เลขที่เอกสาร
   String doc_number;
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   /// ลำดับรายการ ในเอกสารอ้างอิง
   int ref_line_number;
@@ -255,6 +266,7 @@ class BillDetailExtraObjectBoxStruct {
   BillDetailExtraObjectBoxStruct(
       {this.id = 0,
       this.line_number = 0,
+      this.doc_mode = 1,
       this.barcode = "",
       this.item_code = "",
       this.item_name = "",
@@ -270,68 +282,72 @@ class BillDetailExtraObjectBoxStruct {
 @Entity()
 class BillPayObjectBoxStruct {
   int id;
-  late String doc_number;
+  String doc_number;
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
-  late int trans_flag;
+  int trans_flag;
 
   /// รหัสธนาคาร
-  late String bank_code;
+  String bank_code;
 
   /// ชื่อธนาคาร (อื่นๆ)
-  late String bank_name;
+  String bank_name;
 
   /// เลขที่บัญชี (เงินเข้า)
-  late String bank_account_no;
+  String bank_account_no;
 
   /// เลขที่บัตรเครดิต
-  late String card_number;
+  String card_number;
 
   /// รหัสอนุมัติ
-  late String approved_code;
+  String approved_code;
 
   /// วันที่โอนเงิน
-  late DateTime doc_date_time;
+  DateTime doc_date_time;
 
   /// สาขาธนาคาร
-  late String branch_number;
+  String branch_number;
 
   /// รหัสอ้างอิงธนาคาร
-  late String bank_reference;
+  String bank_reference;
 
   /// วันที่สั่งจ่ายบนเช็ค
-  late DateTime due_date;
+  DateTime due_date;
 
   /// เลขที่เช็ค
-  late String cheque_number;
+  String cheque_number;
 
   /// รหัสส่วนลด
-  late String code;
+  String code;
 
   /// รายละเอียด (เพิ่มเติม)
-  late String description;
+  String description;
 
   /// เลขคูปอง
-  late String number;
+  String number;
 
   /// อ้างอิง 1
-  late String reference_one;
+  String reference_one;
 
   /// อ้างอิง 2
-  late String reference_two;
+  String reference_two;
 
   /// รหัสกระเป๋า เจ้าของเงิน (Provider)
-  late String provider_code;
+  String provider_code;
 
   /// เจ้าของเงิน (Provider)
-  late String provider_name;
+  String provider_name;
 
   /// จำนวนเงิน
-  late double amount;
+  double amount;
 
   BillPayObjectBoxStruct({
     this.id = 0,
     this.doc_number = "",
+    this.doc_mode = 1,
     this.trans_flag = 0,
     this.bank_code = "",
     this.card_number = "",

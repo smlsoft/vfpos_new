@@ -78,8 +78,8 @@ Future<void> printBillText(String docNo) async {
     //
     await printProcess.drawLine(printer);
     //
-    BillObjectBoxStruct? bill =
-        global.billHelper.selectByDocNumber(docNumber: docNo);
+    BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
+        docNumber: docNo, posScreenMode: global.posScreenToInt());
     if (bill != null) {
       printProcess.column.clear();
       printProcess.columnWidth.clear();

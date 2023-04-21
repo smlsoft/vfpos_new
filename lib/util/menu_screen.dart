@@ -29,9 +29,9 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   int menuMode = 0; // 0=Menu,1=Select Language
-  late List<Widget> menuPosList;
-  late List<Widget> menuShiftList;
-  late List<Widget>? menuVisitList;
+  List<Widget> menuPosList = [];
+  List<Widget> menuShiftList = [];
+  List<Widget> menuVisitList = [];
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
@@ -101,17 +101,25 @@ class _MenuScreenState extends State<MenuScreen> {
           icon: Icons.point_of_sale,
           title: 'pos_screen',
           callBack: () {
+            
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosScreen(),
+                builder: (context) =>  const PosScreen(posScreenMode:global.PosScreenModeEnum.posSale),
               ),
             );
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
           title: 'รับคืนสินค้า',
-          callBack: () {}),
+          callBack: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  const PosScreen(posScreenMode:global.PosScreenModeEnum.posReturn),
+              ),
+            );
+          }),
     ];
   }
 
@@ -468,14 +476,14 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 ),
                               ),
-                              if (menuVisitList != null)
+                              if (menuVisitList.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: SizedBox(
                                     child: GridView.builder(
                                       shrinkWrap: true,
                                       physics: const BouncingScrollPhysics(),
-                                      itemCount: menuVisitList!.length,
+                                      itemCount: menuVisitList.length,
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount:
@@ -486,7 +494,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                       ),
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return menuVisitList![index];
+                                        return menuVisitList[index];
                                       },
                                     ),
                                   ),

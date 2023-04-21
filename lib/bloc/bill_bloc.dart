@@ -1,3 +1,4 @@
+import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/db/bill_detail_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,15 +33,16 @@ class BillBloc extends Bloc<BillEvent, BillState> {
 
   void billLoadStart(BillLoad event, Emitter<BillState> emit) async {
     emit(BillLoading());
-    List<BillObjectBoxStruct> bills = BillHelper().selectOrderByDateTimeDesc();
+    List<BillObjectBoxStruct> bills = BillHelper()
+        .selectOrderByDateTimeDesc(posScreenMode: global.posScreenToInt());
     emit(BillLoadSuccess(result: bills));
   }
 
   void billLoadByDocNumberStart(
       BillLoadByDocNumber event, Emitter<BillState> emit) async {
     emit(BillLoadingByDocNumber());
-    BillObjectBoxStruct? bill =
-        BillHelper().selectByDocNumber(docNumber: event.docNumber);
+    BillObjectBoxStruct? bill = BillHelper().selectByDocNumber(
+        docNumber: event.docNumber, posScreenMode: global.posScreenToInt());
     if (bill != null) {
       List<BillDetailObjectBoxStruct> billDetails =
           BillDetailHelper().selectByDocNumber(docNumber: bill.doc_number);

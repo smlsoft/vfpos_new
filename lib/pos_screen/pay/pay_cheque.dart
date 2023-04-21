@@ -81,12 +81,12 @@ class _PayChequeState extends State<PayCheque> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                title: new Text(
-                                    global.language("กรุณาเลือกธนาคาร")),
+                                title:
+                                    Text(global.language("กรุณาเลือกธนาคาร")),
                                 content: Container(
                                     width: 350,
                                     height: 300,
-                                    child: new ListView.builder(
+                                    child: ListView.builder(
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Padding(
