@@ -258,7 +258,7 @@ class _PosScreenState extends State<PosScreen>
       global.posHoldProcessResult[global.posHoldActiveNumber] =
           PosHoldProcessModel.fromJson(jsonDecode(
               await global.getFromServer(json: jsonEncode(json.toJson()))));
-      PosProcess().sumCategoryCount(
+      PosProcess().sumCategoryCount(value:
           global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
       setState(() {});
     }
@@ -855,7 +855,7 @@ class _PosScreenState extends State<PosScreen>
               product_count: 0);
       productOptions = product.options();
     }
-    posCompileProcess(holdNumber: global.posHoldActiveNumber).then((value) {
+    posCompileProcess(holdNumber: global.posHoldActiveNumber,docMode: global.posScreenToInt()).then((value) {
       if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
         findActiveLineByGuid = value.lineGuid;
       }
@@ -1488,7 +1488,7 @@ class _PosScreenState extends State<PosScreen>
             await loadProductByCategory(categoryGuidSelected);
             productOptions.clear();
             setState(() {
-              PosProcess().sumCategoryCount(global
+              PosProcess().sumCategoryCount(value:global
                   .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
             });
           },
@@ -1581,7 +1581,7 @@ class _PosScreenState extends State<PosScreen>
                 productOptions.clear();
                 loadCategory();
                 setState(() {
-                  PosProcess().sumCategoryCount(global
+                  PosProcess().sumCategoryCount(value:global
                       .posHoldProcessResult[global.posHoldActiveNumber]
                       .posProcess);
                 });
@@ -3397,8 +3397,8 @@ class _PosScreenState extends State<PosScreen>
       findActiveLineByGuid = "";
       activeLineNumber = -1;
       if (global.appMode == global.AppModeEnum.posTerminal) {
-        posCompileProcess(holdNumber: global.posHoldActiveNumber).then((_) {
-          PosProcess().sumCategoryCount(global
+        posCompileProcess(holdNumber: global.posHoldActiveNumber,docMode: global.posScreenToInt()).then((_) {
+          PosProcess().sumCategoryCount(value:global
               .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
         });
       } else {
@@ -4282,7 +4282,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   void productCategoryLoadFinish() {
-    PosProcess().sumCategoryCount(
+    PosProcess().sumCategoryCount(value:
         global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
     context.read<ProductCategoryBloc>().add(ProductCategoryLoadFinish());
   }
@@ -4299,7 +4299,7 @@ class _PosScreenState extends State<PosScreen>
                 dev.log('xxxxxx Category');
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
-                PosProcess().sumCategoryCount(global
+                PosProcess().sumCategoryCount(value:global
                     .posHoldProcessResult[global.posHoldActiveNumber]
                     .posProcess);
                 processEvent(holdNumber: global.posHoldActiveNumber);

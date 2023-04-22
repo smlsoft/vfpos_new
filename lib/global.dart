@@ -620,6 +620,7 @@ Future<void> systemProcess() async {
         device: deviceId,
         ip: "",
         holdNumberActive: 0,
+        docModeActive: 0,
         connected: true,
         isClient: false,
         isCashierTerminal: false);
@@ -849,6 +850,7 @@ Future<void> registerRemoteToTerminal() async {
           device: "XXX",
           ip: ipAddress,
           holdNumberActive: posHoldActiveNumber,
+          docModeActive: 0,
           connected: true,
           isCashierTerminal: false,
           isClient: true);
@@ -1156,6 +1158,7 @@ Future scanServerByName(String name) async {
         device: "",
         ip: ip,
         holdNumberActive: 0,
+        docModeActive: 0,
         connected: false,
         isClient: false,
         isCashierTerminal: false));

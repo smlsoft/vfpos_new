@@ -50,8 +50,10 @@ Future<void> startServer() async {
               HttpParameterModel jsonCategory =
                   HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
               int holdNumber = jsonCategory.holdNumber;
+              int docMode = jsonCategory.docMode;
               global.posHoldProcessResult[holdNumber].posProcess =
-                  await PosProcess().process(holdNumber);
+                  await PosProcess()
+                      .process(holdNumber: holdNumber, docMode: docMode);
               response.write(
                   jsonEncode(global.posHoldProcessResult[holdNumber].toJson()));
               break;
@@ -176,6 +178,7 @@ Future<void> startServer() async {
                 connected: true,
                 isCashierTerminal: isTerminal,
                 holdNumberActive: 0,
+                docModeActive: 0,
                 isClient: isClient);
             response.write(jsonEncode(resultData.toJson()));
           } else if (contentType?.mimeType == 'application/json') {
@@ -188,8 +191,9 @@ Future<void> startServer() async {
                   PosHoldProcessModel result =
                       PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
                   global.posHoldProcessResult[result.holdNumber] = result;
-                  PosProcess().sumCategoryCount(global
-                      .posHoldProcessResult[result.holdNumber].posProcess);
+                  PosProcess().sumCategoryCount(
+                      value: global
+                          .posHoldProcessResult[result.holdNumber].posProcess);
                   if (global.functionPosScreenRefresh != null) {
                     global.functionPosScreenRefresh!(result.holdNumber);
                   }
@@ -208,10 +212,14 @@ Future<void> startServer() async {
                       global.posRemoteDeviceList[index].processSuccess = false;
                     }
                   }
-                  posCompileProcess(holdNumber: jsonData.hold_number).then((_) {
-                    PosProcess().sumCategoryCount(global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess);
+                  posCompileProcess(
+                          holdNumber: jsonData.hold_number,
+                          docMode: jsonData.doc_mode)
+                      .then((_) {
+                    PosProcess().sumCategoryCount(
+                        value: global
+                            .posHoldProcessResult[global.posHoldActiveNumber]
+                            .posProcess);
                     if (global.functionPosScreenRefresh != null) {
                       global.functionPosScreenRefresh!(
                           global.posHoldActiveNumber);
@@ -220,6 +228,7 @@ Future<void> startServer() async {
                   break;
                 case "PosLogHelper.deleteByHoldNumber":
                   int holdNumber = int.parse(httpPost.data);
+                  int docMode = 0; //********* Dummy
                   final box =
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   final ids = box
@@ -228,9 +237,11 @@ Future<void> startServer() async {
                       .build()
                       .findIds();
                   box.removeMany(ids);
-                  posCompileProcess(holdNumber: holdNumber).then((_) {
+                  posCompileProcess(holdNumber: holdNumber, docMode: docMode)
+                      .then((_) {
                     PosProcess().sumCategoryCount(
-                        global.posHoldProcessResult[holdNumber].posProcess);
+                        value:
+                            global.posHoldProcessResult[holdNumber].posProcess);
                     if (global.functionPosScreenRefresh != null) {
                       global.functionPosScreenRefresh!(
                           global.posHoldActiveNumber);
@@ -313,7 +324,7 @@ Future<void> startServer() async {
                     global.posHoldProcessResult[global.posHoldActiveNumber]
                         .customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
-                    PosProcess().sumCategoryCount(global
+                    PosProcess().sumCategoryCount(value:global
                         .posHoldProcessResult[global.posHoldActiveNumber]
                         .posProcess);
                     if (global.functionPosScreenRefresh != null) {

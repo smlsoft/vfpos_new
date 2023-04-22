@@ -11,10 +11,10 @@ class PosProcess {
 
   PosProcessResultModel result = PosProcessResultModel();
 
-  void sumCategoryCount(PosProcessModel result) {
+  void sumCategoryCount({required PosProcessModel value}) {
     for (var product in global.productListByCategory) {
       product.product_count = 0;
-      for (var transDetail in result.details) {
+      for (var transDetail in value.details) {
         if (product.barcode == transDetail.barcode &&
             transDetail.is_void == false) {
           product.product_count += transDetail.qty;
@@ -85,13 +85,14 @@ class PosProcess {
     }
   }
 
-  Future<PosProcessModel> process(int holdNumber) async {
+  Future<PosProcessModel> process(
+      {required int holdNumber, required int docMode}) async {
     print("****** Process : " + DateTime.now().toString());
     double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
         .selectByHoldNumberIsVoidSuccess(
-            holdNumber: holdNumber, isVoid: 0, success: 0,docMode:global.posScreenToInt());
+            holdNumber: holdNumber, isVoid: 0, success: 0, docMode: docMode);
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {
