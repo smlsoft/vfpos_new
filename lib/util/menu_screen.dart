@@ -101,11 +101,11 @@ class _MenuScreenState extends State<MenuScreen> {
           icon: Icons.point_of_sale,
           title: 'pos_screen',
           callBack: () {
-            
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>  const PosScreen(posScreenMode:global.PosScreenModeEnum.posSale),
+                builder: (context) => const PosScreen(
+                    posScreenMode: global.PosScreenModeEnum.posSale),
               ),
             );
           }),
@@ -116,7 +116,8 @@ class _MenuScreenState extends State<MenuScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>  const PosScreen(posScreenMode:global.PosScreenModeEnum.posReturn),
+                builder: (context) => const PosScreen(
+                    posScreenMode: global.PosScreenModeEnum.posReturn),
               ),
             );
           }),
@@ -125,16 +126,15 @@ class _MenuScreenState extends State<MenuScreen> {
 
   List<Widget> menuShift() {
     return [
-      menuItem(icon: Icons.list_alt_outlined, title: 'เปิดกะ', callBack: () {}),
       menuItem(
           icon: Icons.request_quote,
-          title: 'รับเงินทอน',
+          title: 'เปิดกะ/รับเงินทอน',
           callBack: () {
             receiveMoneyDialog();
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: 'ส่งยอดขาย',
+          title: 'ปิดกะ/ส่งยอดขาย',
           callBack: () {
             Navigator.push(
               context,
@@ -143,7 +143,6 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             );
           }),
-      menuItem(icon: Icons.list_alt_outlined, title: 'ปิดกะ', callBack: () {}),
     ];
   }
 
