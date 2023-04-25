@@ -148,7 +148,7 @@ class _NumberPadState extends State<NumberPad> {
               children: <Widget>[
                 if (widget.header != "")
                   Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 10),
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -166,7 +166,7 @@ class _NumberPadState extends State<NumberPad> {
                           ),
                         ],
                       ),
-                      child: Center(
+                      child: FittedBox(
                           child: Text(widget.header,
                               style: const TextStyle(
                                   fontSize: 32, fontWeight: FontWeight.bold)))),

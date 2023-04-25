@@ -1,10 +1,8 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:presentation_displays/display.dart';

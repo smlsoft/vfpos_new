@@ -8,6 +8,7 @@ import 'package:dedepos/pos_screen/pos_screen.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
+import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
@@ -124,12 +125,18 @@ class _MenuScreenState extends State<MenuScreen> {
           icon: Icons.request_quote,
           title: 'เปิดกะ/รับเงินทอน',
           callBack: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ShiftAndMoneyScreen(),
-              ),
-            );
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                      insetPadding: const EdgeInsets.all(0),
+                      contentPadding: const EdgeInsets.all(0),
+                      backgroundColor: Colors.transparent,
+                      content: StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return shiftAndMoneyScreen();
+                      }));
+                });
           }),
       menuItem(
           icon: Icons.request_quote,
