@@ -1,7 +1,6 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/pos_screen/pos_print.dart';
 import 'package:dedepos/pos_screen/pos_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +13,7 @@ class PosCancelBillDetailScreen extends StatefulWidget {
   const PosCancelBillDetailScreen({Key? key, required this.docNumber})
       : super(key: key);
 
+  @override
   _PosCancelBillDetailScreenState createState() =>
       _PosCancelBillDetailScreenState();
 }
@@ -84,8 +84,8 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                                   ]),
                                 ],
                               ),
-                              SizedBox(height: 10),
-                              Container(
+                              const SizedBox(height: 10),
+                              SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton(
                                     child: Text(global.language("cancel_bill")),

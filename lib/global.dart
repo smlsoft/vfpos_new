@@ -1,6 +1,10 @@
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:presentation_displays/display.dart';
@@ -176,6 +180,11 @@ PosScreenNewDataStyleEnum posScreenNewDataStyle =
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
 PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
+bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
+String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
+String posSaleChannelLogoUrl = "";
+
+List<PosSaleChannelModel> posSaleChannelList = [];
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -338,25 +347,8 @@ Future<Uint8List> thaiEncode(String word) async {
   }
 }
 
-void playSoundForWindows(String waveFileName) {
-  waveFileName = 'assets/audios/$waveFileName';
-  final file = File(waveFileName).existsSync();
-
-  if (!file) {
-    print('WAV file missing.');
-  } else {
-    final pszLogonSound = waveFileName.toNativeUtf16();
-    final result = PlaySound(pszLogonSound, NULL, SND_FILENAME | SND_SYNC);
-
-    if (result != TRUE) {
-      print('Sound playback failed.');
-    }
-    free(pszLogonSound);
-  }
-}
-
 void playSound({SoundEnum sound = SoundEnum.beep, String word = ""}) async {
-  /*final audioPlayer = AudioPlayer();
+  /*audioPlayer = AudioPlayer();
   try {
     if (speechToTextVisible && word.isNotEmpty) {
       if (Platform.isAndroid || Platform.isIOS) {
@@ -429,10 +421,10 @@ List<String> wordSplit(String word) {
   String firstBreak = "ใโไเแ";
   String endBreak = "าๆฯะ";
   for (int index = 0; index < firstBreak.length; index++) {
-    word = word.replaceAll(firstBreak[index], " " + firstBreak[index]);
+    word = word.replaceAll(firstBreak[index], " ${firstBreak[index]}");
   }
   for (int index0 = 0; index0 < endBreak.length; index0++) {
-    word = word.replaceAll(endBreak[index0], endBreak[index0] + " ");
+    word = word.replaceAll(endBreak[index0], "${endBreak[index0]} ");
   }
   split = word.split(" ");
   return split;
@@ -600,7 +592,7 @@ Future<void> printQueueStartServer() async {
       dev.log('Success');
     }
   } catch (e) {
-    dev.log('failed : ' + e.toString());
+    dev.log('failed : $e');
   }
 }
 
@@ -651,13 +643,13 @@ Future<void> sendProcessToCustomerDisplay() async {
             command: "process",
             data:
                 jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
-        dev.log("sendProcessToCustomerDisplay : " + url);
+        dev.log("sendProcessToCustomerDisplay : $url");
         postToServer(
             ip: url,
             jsonData: jsonEncode(jsonData.toJson()),
             callBack: (value) {});
       } catch (e) {
-        print(e.toString() + " : " + url);
+        print("$e : $url");
       }
     }
   }
@@ -683,7 +675,7 @@ Future<void> sendProcessToRemote() async {
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
-        print(e.toString() + " : " + url);
+        print("$e : $url");
       }
     }
   }
@@ -1015,7 +1007,7 @@ Future<void> startLoading() async {
     }
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
-  for (int loop = 0; loop < 25; loop++) {
+  for (int loop = 0; loop < 50; loop++) {
     posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
   }
 
@@ -1070,7 +1062,7 @@ Future<void> postToServer(
       }, onError: (e, s) {});
     });
   } catch (e) {
-    print("sendToServer : " + e.toString());
+    print("sendToServer : $e");
   }
 }
 
@@ -1089,7 +1081,7 @@ Future<String> postToServerAndWait(
       result = utf8.decode(await value.stream.toBytes());
     }
   } catch (e) {
-    print("sendToServer : " + e.toString());
+    print("sendToServer : $e");
   }
   return result;
 }
@@ -1172,7 +1164,7 @@ Future scanServerByName(String name) async {
         if (countTread < 10) {
           countTread++;
           String url =
-              "http://${ipList[index].ip}:${targetDeviceIpPort}/scan?uuid=${const Uuid().v4()}";
+              "http://${ipList[index].ip}:$targetDeviceIpPort/scan?uuid=${const Uuid().v4()}";
           try {
             http
                 .post(Uri.parse(url))

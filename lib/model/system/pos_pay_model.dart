@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:dedepos/global.dart' as global;
 
 part 'pos_pay_model.g.dart';
 

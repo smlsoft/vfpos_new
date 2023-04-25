@@ -3,8 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
   charset_converter
   connectivity_plus
+  flutter_tts
   geolocator_windows
   network_info_plus
   objectbox_flutter_libs

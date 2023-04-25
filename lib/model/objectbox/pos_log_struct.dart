@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dedepos/global.dart' as global;
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -120,7 +119,7 @@ class PosLogObjectBoxStruct {
     this.unit_code = "",
     this.unit_name = "",
   }) {
-    this.guid_auto_fixed = Uuid().v4();
+    guid_auto_fixed = const Uuid().v4();
   }
 
   factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

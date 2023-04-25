@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get_storage/get_storage.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);

@@ -1,17 +1,10 @@
-import 'dart:developer';
 import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
 import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/widgets/numpad.dart';
-import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/services.dart';
-import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 // import 'package:last_qr_scanner/last_qr_scanner.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:cached_network_image/cached_network_image.dart';
-import '../model/json/pos_model.dart';
 
 class FindMember extends StatefulWidget {
   const FindMember({Key? key}) : super(key: key);
@@ -99,7 +92,7 @@ class _FindMemberState extends State<FindMember> with TickerProviderStateMixin {
                   ),
                 )),
             Container(
-                child: Row(children: [
+                child: Row(children: const [
               Expanded(
                 flex: 3,
                 child: Text(
@@ -109,7 +102,7 @@ class _FindMemberState extends State<FindMember> with TickerProviderStateMixin {
               Expanded(
                 flex: 3,
                 child: Text(
-                  "name" + " - " + "surname",
+                  "name - surname",
                 ),
               ),
               Expanded(
@@ -130,41 +123,41 @@ class _FindMemberState extends State<FindMember> with TickerProviderStateMixin {
                 child: SingleChildScrollView(
                     child: Column(
               children: _findByTelNameLastResult.map((value) {
-                var _index = _findByTelNameLastResult.indexOf(value);
-                var _detail = _findByTelNameLastResult[_index];
+                var index = _findByTelNameLastResult.indexOf(value);
+                var detail = _findByTelNameLastResult[index];
                 return Container(
                   child: Row(
                     children: [
-                      Expanded(flex: 3, child: Text(_detail.telephone)),
-                      Expanded(flex: 3, child: Text(_detail.name)),
-                      Expanded(flex: 6, child: Text(_detail.address)),
+                      Expanded(flex: 3, child: Text(detail.telephone)),
+                      Expanded(flex: 3, child: Text(detail.name)),
+                      Expanded(flex: 6, child: Text(detail.address)),
                       Expanded(
                         flex: 1,
                         child: Align(
                           alignment: Alignment.center,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                             ),
                             onPressed: () {
                               setState(() {
-                                global.userLoginName = _detail.name;
+                                global.userLoginName = detail.name;
                                 global.userData = MemberObjectBoxStruct(
-                                  address: _detail.address,
-                                  branchcode: _detail.branchcode,
-                                  branchtype: _detail.branchtype,
-                                  contacttype: _detail.contacttype,
-                                  name: _detail.name,
-                                  personaltype: _detail.personaltype,
-                                  surname: _detail.surname,
-                                  taxid: _detail.taxid,
-                                  telephone: _detail.telephone,
-                                  zipcode: _detail.zipcode,
+                                  address: detail.address,
+                                  branchcode: detail.branchcode,
+                                  branchtype: detail.branchtype,
+                                  contacttype: detail.contacttype,
+                                  name: detail.name,
+                                  personaltype: detail.personaltype,
+                                  surname: detail.surname,
+                                  taxid: detail.taxid,
+                                  telephone: detail.telephone,
+                                  zipcode: detail.zipcode,
                                 );
                               });
                               Navigator.pop(context);
                             },
-                            child: Icon(Icons.save),
+                            child: const Icon(Icons.save),
                           ),
                         ),
                       ),

@@ -33,9 +33,9 @@ class FindMemberByTelNameBloc
   void _findMemberByTelName(FindMemberByTelNameLoadStart event,
       Emitter<FindMemberByTelNameState> emit) async {
     emit(FindMemberByTelNameLoading());
-    List<FindMemberModel> _result = await apiFindMemberByTelName
+    List<FindMemberModel> result = await apiFindMemberByTelName
         .findMemberByTelName(event.words, event.offset, event.limit);
-    emit(FindMemberByTelNameLoadSuccess(result: _result));
+    emit(FindMemberByTelNameLoadSuccess(result: result));
   }
 
   void _findMemberByTelNameLoadFinish(FindMemberByTelNameLoadFinish event,

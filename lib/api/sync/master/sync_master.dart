@@ -60,12 +60,7 @@ Future syncProductCategory(data) async {
     // ทดสอบ รูป
     newProduct.image_url = global.getImageForTest();
 
-    print("Sync Product Category : " +
-        newData.guidfixed +
-        " " +
-        newData.names![0].name +
-        " " +
-        newData.parentguid);
+    print("Sync Product Category : ${newData.guidfixed} ${newData.names![0].name} ${newData.parentguid}");
     newProduct.names.add(newData.names![0].name);
     manyForInsert.add(newProduct);
   }
@@ -329,8 +324,7 @@ Future syncMasterData() async {
           });
         }
       });
-      print("serverProductCategory End : " +
-          ProductCategoryHelper().count().toString());
+      print("serverProductCategory End : ${ProductCategoryHelper().count()}");
     }
   }
   {
@@ -367,12 +361,7 @@ Future syncMasterData() async {
                 (dataList["new"] as List)
                     .map((newCate) => SyncProductBarcodeModel.fromJson(newCate))
                     .toList();
-            print("offset : " +
-                offset.toString() +
-                " remove : " +
-                removeList.length.toString() +
-                " insert : " +
-                newDataList.length.toString());
+            print("offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
             if (newDataList.isEmpty && removeList.isEmpty) {
               loop = false;
             } else {
@@ -385,8 +374,7 @@ Future syncMasterData() async {
         });
         offset += limit;
       }
-      print("Update syncProductBarcodeTimeName Success : " +
-          ProductBarcodeHelper().count().toString());
+      print("Update syncProductBarcodeTimeName Success : ${ProductBarcodeHelper().count()}");
       global.appStorage
           .write(global.syncProductBarcodeTimeName, getLastUpdateTime);
     }

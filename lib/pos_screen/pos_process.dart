@@ -87,7 +87,7 @@ class PosProcess {
 
   Future<PosProcessModel> process(
       {required int holdNumber, required int docMode}) async {
-    print("****** Process : " + DateTime.now().toString());
+    print("****** Process : ${DateTime.now()}");
     double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
@@ -341,13 +341,7 @@ class PosProcess {
               global.calcDiscountFormula(
                   totalAmount: totalAmount,
                   discountText: logData.discount_text);
-          print(extraTotalAmount.toString() +
-              ":" +
-              totalAmount.toString() +
-              ":" +
-              discount.toString() +
-              ":" +
-              logData.discount_text);
+          print("$extraTotalAmount:$totalAmount:$discount:${logData.discount_text}");
           processResult.details[findIndex].discount = discount;
           processCalc(findIndex);
         }
@@ -372,7 +366,7 @@ class PosProcess {
       List<PromotionProcessByModel> sumByProduct = [];
       for (var _detail in processResult.details) {
         if (_detail.is_void == false) {
-          bool _found = false;
+          bool found = false;
           for (var _product in sumByProduct) {
             if (_detail.barcode == _product.barcode) {
               // พบ Update ยอดเพิ่ม
@@ -381,48 +375,46 @@ class PosProcess {
               for (var _extra in _detail.extra) {
                 _product.extra_amount -= _extra.total_amount;
               }
-              _found = true;
+              found = true;
               break;
             }
           }
-          if (_found == false) {
+          if (found == false) {
             // ไม่พบ เพิ่มใหม่่
-            double _sumAmount = _detail.total_amount * -1;
-            double _extraAmount = 0;
+            double sumAmount = _detail.total_amount * -1;
+            double extraAmount = 0;
             for (var _extra in _detail.extra) {
-              _extraAmount -= _extra.total_amount;
+              extraAmount -= _extra.total_amount;
             }
             sumByProduct.add(PromotionProcessByModel(
                 barcode: _detail.barcode,
                 sum_qty: _detail.qty,
-                amount: _sumAmount,
-                extra_amount: _extraAmount));
+                amount: sumAmount,
+                extra_amount: extraAmount));
           }
         }
       }
       for (var sum in sumByProduct) {
         double qty = sum.sum_qty;
         var value = global.promotionTempHelper.select(
-            where: "barcode_promotion = '" +
-                sum.barcode +
-                "' order by limit_qty desc");
+            where: "barcode_promotion = '${sum.barcode}' order by limit_qty desc");
 
         for (var _promotion in value) {
           while (qty >= _promotion.limit_qty) {
             qty -= _promotion.limit_qty;
-            double _totalAmount = (_promotion.include_extra == 1)
+            double totalAmount0 = (_promotion.include_extra == 1)
                 ? ((sum.amount + sum.extra_amount) / sum.sum_qty) *
                     _promotion.limit_qty
                 : (sum.amount / sum.sum_qty) * _promotion.limit_qty;
-            double _calcDiscount = global.calcDiscountFormula(
-                totalAmount: _totalAmount,
+            double calcDiscount = global.calcDiscountFormula(
+                totalAmount: totalAmount0,
                 discountText: _promotion.discount_text);
-            processResult.total_discount_from_promotion += _calcDiscount;
+            processResult.total_discount_from_promotion += calcDiscount;
             processResult.promotion_list.add(PosProcessPromotionModel(
                 promotion_name:
-                    _promotion.name_1 + " " + _promotion.promotion_name_1,
+                    "${_promotion.name_1} ${_promotion.promotion_name_1}",
                 discount_word: _promotion.discount_text,
-                discount: _calcDiscount));
+                discount: calcDiscount));
             //print("*** " + _promotion.name_1 + " " + _promotion.promotionName_1 + " " + _qty.toString() + " " + _sum.amount.toString());
           }
         }
@@ -448,7 +440,7 @@ class PosProcess {
     processResult.total_piece = totalPiece;
     processResult.total_amount = totalAmount;
 
-    print("------ Process : " + DateTime.now().toString());
+    print("------ Process : ${DateTime.now()}");
     return processResult;
   }
 }

@@ -12,7 +12,7 @@ import 'package:dedepos/global_model.dart';
 class PayTransfer extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
-  const PayTransfer({required this.posProcess, required this.blocContext});
+  const PayTransfer({super.key, required this.posProcess, required this.blocContext});
 
   @override
   _PayTransferState createState() => _PayTransferState();
@@ -204,7 +204,6 @@ class _PayTransferState extends State<PayTransfer> {
                       global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
-                    ;
                   },
                   label: Text(
                     global.language("บันทึกเงินโอน"),

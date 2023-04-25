@@ -15,6 +15,7 @@ class PosBillVatDetailScreen extends StatefulWidget {
   const PosBillVatDetailScreen({Key? key, required this.docNumber})
       : super(key: key);
 
+  @override
   _PosBillVatDetailScreenState createState() => _PosBillVatDetailScreenState();
 }
 

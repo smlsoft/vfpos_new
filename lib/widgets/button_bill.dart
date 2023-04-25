@@ -22,7 +22,7 @@ class ButtonBill extends StatelessWidget {
           foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
         ),
         onPressed: onPressed,
-        child: Text('$label'),
+        child: Text(label),
       ),
     );
   }

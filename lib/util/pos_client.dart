@@ -59,7 +59,7 @@ class _PosClientState extends State<PosClient> {
                       scanStart = true;
                     });
                   },
-                  child: Text("Connect Terminal")),
+                  child: const Text("Connect Terminal")),
               if (scanStart)
                 LoadingAnimationWidget.staggeredDotsWave(
                   color: Colors.blue,

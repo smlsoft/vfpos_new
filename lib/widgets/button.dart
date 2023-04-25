@@ -25,9 +25,17 @@ class NumPadButton extends StatelessWidget {
         ? FittedBox(
             fit: BoxFit.fill,
             child: Icon(icon,
+                shadows: const <Shadow>[
+                  Shadow(
+                    blurRadius: 1.0,
+                    color: Colors.black,
+                    offset: Offset(2.0, 2.0),
+                  ),
+                ],
                 color: (textAndIconColor == null)
                     ? Colors.white
-                    : textAndIconColor))
+                    : textAndIconColor),
+          )
         : Text(text ?? "",
             style: TextStyle(
                 fontSize: 80,
@@ -43,19 +51,16 @@ class NumPadButton extends StatelessWidget {
                     ? Colors.white
                     : textAndIconColor)));
 
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            backgroundColor: (color == null) ? Colors.blue : color,
-            minimumSize: Size.zero,
-            padding: const EdgeInsets.only(left: 4, right: 4)),
-        onPressed: () {
-          global.playSound(sound: global.SoundEnum.buttonTing);
-          callBack.call();
-        },
-        child: FittedBox(fit: BoxFit.scaleDown, child: label),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: (color == null) ? Colors.blue : color,
+        minimumSize: Size.zero,
       ),
+      onPressed: () {
+        global.playSound(sound: global.SoundEnum.buttonTing);
+        callBack.call();
+      },
+      child: FittedBox(fit: BoxFit.scaleDown, child: label),
     );
   }
 }

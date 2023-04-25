@@ -74,7 +74,7 @@ class _PayChequeState extends State<PayCheque> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
+              SizedBox(
                   height: 90,
                   child: ElevatedButton(
                       onPressed: () {
@@ -83,7 +83,7 @@ class _PayChequeState extends State<PayCheque> {
                             builder: (BuildContext context) => AlertDialog(
                                 title:
                                     Text(global.language("กรุณาเลือกธนาคาร")),
-                                content: Container(
+                                content: SizedBox(
                                     width: 350,
                                     height: 300,
                                     child: ListView.builder(
@@ -143,7 +143,7 @@ class _PayChequeState extends State<PayCheque> {
                       ))),
               const SizedBox(width: 10),
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: chequeNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -163,16 +163,16 @@ class _PayChequeState extends State<PayCheque> {
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = chequeNumber;
-                                final RenderBox _renderBox = chequeNumberKey
+                                final RenderBox renderBox = chequeNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
-                                final Size _size = _renderBox.size;
-                                final Offset _offset =
-                                    _renderBox.localToGlobal(Offset.zero);
+                                final Size size = renderBox.size;
+                                final Offset offset =
+                                    renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
-                                    _offset.dx + (_size.width * 1.1);
+                                    offset.dx + (size.width * 1.1);
                                 global.payScreenNumberPadTop =
-                                    _offset.dy - _size.height;
+                                    offset.dy - size.height;
                                 buttonIndex = 1;
                               }
                               refreshEvent();
@@ -197,7 +197,7 @@ class _PayChequeState extends State<PayCheque> {
                           )))),
               const SizedBox(width: 10),
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: branchNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -217,16 +217,16 @@ class _PayChequeState extends State<PayCheque> {
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = branchNumber;
-                                final RenderBox _renderBox = branchNumberKey
+                                final RenderBox renderBox = branchNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
-                                final Size _size = _renderBox.size;
-                                final Offset _offset =
-                                    _renderBox.localToGlobal(Offset.zero);
+                                final Size size = renderBox.size;
+                                final Offset offset =
+                                    renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
-                                    _offset.dx + (_size.width * 1.1);
+                                    offset.dx + (size.width * 1.1);
                                 global.payScreenNumberPadTop =
-                                    _offset.dy - _size.height;
+                                    offset.dy - size.height;
                                 buttonIndex = 2;
                               }
                               refreshEvent();
@@ -256,14 +256,14 @@ class _PayChequeState extends State<PayCheque> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: dueDateKey,
                       height: 90,
                       child: ElevatedButton(
                           onPressed: () async {
                             if (bankCode.isNotEmpty) {
                               global.payScreenNumberPadIsActive = false;
-                              DateTime? _newDateTime =
+                              DateTime? newDateTime =
                                   await showRoundedDatePicker(
                                 context: context,
                                 locale: const Locale("th", "TH"),
@@ -273,7 +273,7 @@ class _PayChequeState extends State<PayCheque> {
                                 lastDate: DateTime(DateTime.now().year + 10),
                                 borderRadius: 16,
                               );
-                              dueDate = _newDateTime ?? DateTime.now();
+                              dueDate = newDateTime ?? DateTime.now();
                               refreshEvent();
                             }
                           },
@@ -300,7 +300,7 @@ class _PayChequeState extends State<PayCheque> {
                           )))),
               const SizedBox(width: 10),
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -321,16 +321,16 @@ class _PayChequeState extends State<PayCheque> {
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.number;
                                 global.payScreenNumberPadAmount = chequeAmount;
-                                final RenderBox _renderBox = amountNumberKey
+                                final RenderBox renderBox = amountNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
-                                final Size _size = _renderBox.size;
-                                final Offset _offset =
-                                    _renderBox.localToGlobal(Offset.zero);
+                                final Size size = renderBox.size;
+                                final Offset offset =
+                                    renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
-                                    _offset.dx + (_size.width * 1.1);
+                                    offset.dx + (size.width * 1.1);
                                 global.payScreenNumberPadTop =
-                                    _offset.dy - _size.height;
+                                    offset.dy - size.height;
                                 global.payScreenNumberPadAmount = chequeAmount;
                                 global.payScreenNumberPadText =
                                     (chequeAmount == 0)
@@ -378,7 +378,6 @@ class _PayChequeState extends State<PayCheque> {
                       global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
-                    ;
                   },
                   label: Text(
                     global.language("บันทึกเช็ค"),
@@ -526,9 +525,9 @@ class _PayChequeState extends State<PayCheque> {
           Container(
             child: Column(
               children: <Widget>[
-                ...global.payScreenData.cheque.map((_detail) {
-                  var _index = global.payScreenData.cheque.indexOf(_detail);
-                  return buildCreditCard(index: _index);
+                ...global.payScreenData.cheque.map((detail) {
+                  var index = global.payScreenData.cheque.indexOf(detail);
+                  return buildCreditCard(index: index);
                 }).toList()
               ],
             ),

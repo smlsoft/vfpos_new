@@ -38,7 +38,7 @@ class BillDetailExtraHelper {
 
   List<BillDetailExtraObjectBoxStruct> select(
       {String where = "", int limit = 0, int offset = 0}) {
-    if (where.isNotEmpty) where = " where " + where;
+    if (where.isNotEmpty) where = " where $where";
     return (_box.query()).build().find();
   }
 }

@@ -1,9 +1,6 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
-import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/pos_screen/pos_bill_vat_detail.dart';
-import 'package:dedepos/pos_screen/pos_print.dart';
-import 'package:dedepos/pos_screen/pos_reprint_bill_detail.dart';
 import 'package:dedepos/pos_screen/pos_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +10,7 @@ class PosBillVatScreen extends StatefulWidget {
   @override
   const PosBillVatScreen({Key? key}) : super(key: key);
 
+  @override
   _PosBillVatScreenState createState() => _PosBillVatScreenState();
 }
 

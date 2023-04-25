@@ -7,12 +7,16 @@ class NumberPad extends StatefulWidget {
   final String header;
   final Widget? title;
   final String? unitName;
+  final TextAlign textAlign;
+  final Color backgroundColor;
 
   const NumberPad(
       {Key? key,
       required this.onChange,
       this.title,
       this.unitName,
+      this.textAlign = TextAlign.right,
+      this.backgroundColor = Colors.white,
       this.header = ""})
       : super(key: key);
 
@@ -39,25 +43,140 @@ class _NumberPadState extends State<NumberPad> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> buttonList = [
+      NumPadButton(
+        text: '7',
+        callBack: () => setValue('7'),
+      ),
+      NumPadButton(
+        text: '8',
+        callBack: () => setValue('8'),
+      ),
+      NumPadButton(
+        text: '9',
+        callBack: () => setValue('9'),
+      ),
+      NumPadButton(
+        text: '4',
+        callBack: () => setValue('4'),
+      ),
+      NumPadButton(
+        text: '5',
+        callBack: () => setValue('5'),
+      ),
+      NumPadButton(
+        text: '6',
+        callBack: () => setValue('6'),
+      ),
+      NumPadButton(
+        text: '1',
+        callBack: () => setValue('1'),
+      ),
+      NumPadButton(
+        text: '2',
+        callBack: () => setValue('2'),
+      ),
+      NumPadButton(
+        text: '3',
+        callBack: () => setValue('3'),
+      ),
+      NumPadButton(
+        text: '0',
+        callBack: () => setValue('0'),
+      ),
+      NumPadButton(
+        text: '.',
+        callBack: () => setValue('.'),
+      ),
+      NumPadButton(
+        icon: Icons.backspace,
+        callBack: () => backspace(numberStr),
+      ),
+      NumPadButton(
+        text: global.language('cancel'),
+        callBack: () {
+          Navigator.pop(context);
+        },
+      ),
+      NumPadButton(
+        text: global.language('clear'),
+        callBack: () {
+          setState(() {
+            numberStr = '';
+          });
+        },
+      ),
+      NumPadButton(
+        text: global.language('confirm'),
+        callBack: () {
+          Navigator.pop(context);
+          if (widget.unitName != null) {
+            widget.onChange!(numberStr, widget.unitName);
+          } else {
+            widget.onChange!(numberStr);
+          }
+        },
+      )
+    ];
+
+    List<Widget> numPadColumnList = [];
+    int itemCount = 0;
+    for (int columnIndex = 0; columnIndex < 5; columnIndex++) {
+      List<Widget> numPadRowList = [];
+      for (int rowIndex = 0; rowIndex < 3; rowIndex++) {
+        if (rowIndex != 0) {
+          numPadRowList.add(const SizedBox(width: 4));
+        }
+        numPadRowList.add(Expanded(child: buttonList[itemCount]));
+        itemCount++;
+      }
+      numPadColumnList.add(const SizedBox(height: 4));
+      numPadColumnList.add(
+        Expanded(
+            child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: numPadRowList,
+        )),
+      );
+    }
+
     return Scaffold(
-        body: SizedBox(
+        body: Container(
+            color: widget.backgroundColor,
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: <Widget>[
                 if (widget.header != "")
-                  Text(widget.header,
-                      style: const TextStyle(
-                          fontSize: 32, fontWeight: FontWeight.bold)),
-                if (widget.title != null)
                   Container(
-                      padding: const EdgeInsets.only(
-                          left: 4, right: 4, top: 10, bottom: 10),
-                      child: widget.title),
+                      padding: const EdgeInsets.all(4),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                          child: Text(widget.header,
+                              style: const TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.bold)))),
+                if (widget.title != null) Container(child: widget.title),
                 Container(
-                    margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
+                    margin: const EdgeInsets.only(bottom: 4),
                     padding: const EdgeInsets.all(4),
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
@@ -68,151 +187,15 @@ class _NumberPadState extends State<NumberPad> {
                           ),
                         ],
                         border: Border.all(color: Colors.blueAccent)),
-                    child:
-                        Text(numberStr, style: const TextStyle(fontSize: 32))),
+                    child: Text(
+                        global.moneyFormat
+                            .format(double.tryParse(numberStr) ?? 0.0),
+                        textAlign: widget.textAlign,
+                        style: const TextStyle(
+                            fontSize: 32, fontWeight: FontWeight.bold))),
                 Expanded(
-                  child: Column(
-                    children: [
-                      Expanded(
-                          child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '7',
-                                callBack: () => setValue('7'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '8',
-                                callBack: () => setValue('8'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '9',
-                                callBack: () => setValue('9'),
-                              )),
-                        ],
-                      )),
-                      Expanded(
-                          child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '4',
-                                callBack: () => setValue('4'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '5',
-                                callBack: () => setValue('5'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '6',
-                                callBack: () => setValue('6'),
-                              )),
-                        ],
-                      )),
-                      Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '1',
-                                callBack: () => setValue('1'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '2',
-                                callBack: () => setValue('2'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '3',
-                                callBack: () => setValue('3'),
-                              )),
-                        ],
-                      )),
-                      Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '0',
-                                callBack: () => setValue('0'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: '.',
-                                callBack: () => setValue('.'),
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                icon: Icons.backspace,
-                                callBack: () => backspace(numberStr),
-                              )),
-                        ],
-                      )),
-                      Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: global.language('cancel'),
-                                callBack: () {
-                                  Navigator.pop(context);
-                                },
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: global.language('clear'),
-                                callBack: () {
-                                  setState(() {
-                                    numberStr = '';
-                                  });
-                                },
-                              )),
-                          Expanded(
-                              flex: 1,
-                              child: NumPadButton(
-                                text: global.language('confirm'),
-                                callBack: () {
-                                  Navigator.pop(context);
-                                  if (widget.unitName != null) {
-                                    widget.onChange!(
-                                        numberStr, widget.unitName);
-                                  } else {
-                                    widget.onChange!(numberStr);
-                                  }
-                                },
-                              )),
-                        ],
-                      )),
-                    ],
-                  ),
-                )
+                  child: Column(children: numPadColumnList),
+                ),
               ],
             )));
   }

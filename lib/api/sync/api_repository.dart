@@ -144,7 +144,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -165,7 +165,7 @@ class ApiRepository {
 
     try {
       final response = await client
-          .get('/master-sync?lastUpdate=${time}&page=${page}&limit=${limit}');
+          .get('/master-sync?lastUpdate=$time&page=$page&limit=$limit');
       try {
         final rawData = json.decode(response.toString());
 
@@ -174,7 +174,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -195,7 +195,7 @@ class ApiRepository {
 
     try {
       final response = await client.get(
-          '/inventory/fetchupdate?lastUpdate=${time}&page=${page}&limit=${perPage}');
+          '/inventory/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -204,7 +204,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -225,7 +225,7 @@ class ApiRepository {
 
     try {
       final response = await client.get(
-          '/category/fetchupdate?lastUpdate=${time}&page=${page}&limit=${limit}');
+          '/category/fetchupdate?lastUpdate=$time&page=$page&limit=$limit');
       try {
         final rawData = json.decode(response.toString());
 
@@ -234,7 +234,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -255,7 +255,7 @@ class ApiRepository {
 
     try {
       final response = await client.get(
-          '/member/fetchupdate?lastUpdate=${time}&page=${page}&limit=${perPage}');
+          '/member/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -264,7 +264,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -285,7 +285,7 @@ class ApiRepository {
 
     try {
       final response = await client.get(
-          '/restaurant/printer/fetchupdate?lastUpdate=${time}&page=${page}&limit=${perPage}');
+          '/restaurant/printer/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -294,7 +294,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -315,7 +315,7 @@ class ApiRepository {
 
     try {
       final response = await client.get(
-          '/restaurant/table/fetchupdate?lastUpdate=${time}&page=${page}&limit=${perPage}');
+          '/restaurant/table/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -324,7 +324,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -345,7 +345,7 @@ class ApiRepository {
 
     try {
       final response = await client.get(
-          '/restaurant/zone/fetchupdate?lastUpdate=${time}&page=${page}&limit=${perPage}');
+          '/restaurant/zone/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -354,7 +354,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -378,7 +378,7 @@ class ApiRepository {
 
     try {
       final response = await client
-          .get('/category?page=${page}&limit=${perPage}&q=${search}');
+          .get('/category?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
@@ -408,7 +408,7 @@ class ApiRepository {
 
     try {
       final response = await client
-          .get('/inventory?page=${page}&limit=${perPage}&q=${search}');
+          .get('/inventory?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
@@ -417,7 +417,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -436,7 +436,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      final response = await client.get('/inventory/${id}');
+      final response = await client.get('/inventory/$id');
       try {
         final rawData = json.decode(response.toString());
 
@@ -445,7 +445,7 @@ class ApiRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -469,7 +469,7 @@ class ApiRepository {
 
     try {
       final response = await client
-          .get('/employee?page=${page}&limit=${perPage}&q=${search}');
+          .get('/employee?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 

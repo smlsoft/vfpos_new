@@ -34,7 +34,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
         emit(InventoryLoadSuccess(
             newItem: newItemBarcode, removeItem: removeItemBarcode, page: result.page));
       } else {
-        emit(InventoryLoadFailed(message: 'Inventory Not Found'));
+        emit(const InventoryLoadFailed(message: 'Inventory Not Found'));
       }
     } catch (e) {
       emit(InventoryLoadFailed(message: e.toString()));
@@ -53,7 +53,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
         print(inventory);
         emit(InventorySearchLoadSuccess(inventory: inventory));
       } else {
-        emit(InventorySearchLoadFailed(message: 'Product Not Found'));
+        emit(const InventorySearchLoadFailed(message: 'Product Not Found'));
       }
     } catch (e) {
       emit(InventorySearchLoadFailed(message: e.toString()));

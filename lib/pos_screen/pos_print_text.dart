@@ -533,11 +533,11 @@ Future<void> printBillText(String docNo) async {
       if (payDetails.isNotEmpty) {
         for (int payType in [1, 2, 3, 4, 5]) {
           bool headPrinted = false;
-          for (int _i = 0; _i < payDetails.length; _i++) {
-            if (payDetails[_i].trans_flag == payType) {
+          for (int i = 0; i < payDetails.length; i++) {
+            if (payDetails[i].trans_flag == payType) {
               if (headPrinted == false) {
                 String header = "";
-                switch (payDetails[_i].trans_flag) {
+                switch (payDetails[i].trans_flag) {
                   case 1:
                     header = global.language("credit_card");
                     break;
@@ -563,30 +563,30 @@ Future<void> printBillText(String docNo) async {
                 headPrinted = true;
               }
               String detailText = "";
-              switch (payDetails[_i].trans_flag) {
+              switch (payDetails[i].trans_flag) {
                 case 1:
                   detailText =
-                      "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name} : ${payDetails[_i].card_number}";
+                      "${payDetails[i].bank_code} : ${payDetails[i].bank_name} : ${payDetails[i].card_number}";
                   break;
                 case 2:
                   detailText =
-                      "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name}";
-                  if (payDetails[_i].bank_account_no.isNotEmpty) {
-                    detailText += " : ${payDetails[_i].bank_account_no}";
+                      "${payDetails[i].bank_code} : ${payDetails[i].bank_name}";
+                  if (payDetails[i].bank_account_no.isNotEmpty) {
+                    detailText += " : ${payDetails[i].bank_account_no}";
                   }
                   break;
                 case 3:
                   detailText =
-                      "${payDetails[_i].bank_code} : ${payDetails[_i].bank_name} : ${payDetails[_i].approved_code} : ${payDetails[_i].cheque_number}";
+                      "${payDetails[i].bank_code} : ${payDetails[i].bank_name} : ${payDetails[i].approved_code} : ${payDetails[i].cheque_number}";
                   break;
                 case 4:
                   detailText =
-                      "${payDetails[_i].number} : ${payDetails[_i].description}";
+                      "${payDetails[i].number} : ${payDetails[i].description}";
                   break;
                 case 5:
-                  detailText = payDetails[_i].provider_name;
-                  if (payDetails[_i].description.isNotEmpty) {
-                    detailText += " ${payDetails[_i].description}";
+                  detailText = payDetails[i].provider_name;
+                  if (payDetails[i].description.isNotEmpty) {
+                    detailText += " ${payDetails[i].description}";
                   }
                   break;
               }
@@ -596,7 +596,7 @@ Future<void> printBillText(String docNo) async {
               printProcess.column.clear();
               printProcess.column.add(PrintColumn(text: detailText));
               printProcess.column.add(PrintColumn(
-                  text: global.moneyFormat.format(payDetails[_i].amount),
+                  text: global.moneyFormat.format(payDetails[i].amount),
                   align: PrintColumnAlign.right));
               await printProcess.lineFeed(printer, const PosStyles());
             }
@@ -709,10 +709,7 @@ Future<void> printBillText(String docNo) async {
       printer.disconnect();
       print("Printer Connect Sucess.");
     } else {
-      print("Printer Connect fail." +
-          global.printerCashierIpAddress +
-          ":" +
-          global.printerCashierIpPort.toString());
+      print("Printer Connect fail.${global.printerCashierIpAddress}:${global.printerCashierIpPort}");
     }
   }
 }

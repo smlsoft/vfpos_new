@@ -239,7 +239,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
               },
               child: informationMedia,
             )),
-            Text('Information'),
+            const Text('Information'),
           ],
         ));
   }

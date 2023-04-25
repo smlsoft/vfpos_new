@@ -36,7 +36,7 @@ Future syncEmployee(List<ItemRemoveModel> removeList,
       profile_picture: newData.profilepicture,
     );
 
-    print("Sync Employee : " + newData.code + " " + newData.name);
+    print("Sync Employee : ${newData.code} ${newData.name}");
     manyForInsert.add(newEmployee);
   }
   if (removeMany.isNotEmpty) {
@@ -78,12 +78,7 @@ Future<void> syncEmployeeCompare(
           List<SyncEmployeeModel> newDataList = (dataList["new"] as List)
               .map((newCate) => SyncEmployeeModel.fromJson(newCate))
               .toList();
-          print("offset : " +
-              offset.toString() +
-              " remove : " +
-              removeList.length.toString() +
-              " insert : " +
-              newDataList.length.toString());
+          print("offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
@@ -97,7 +92,7 @@ Future<void> syncEmployeeCompare(
       offset += limit;
     }
     print(
-        "Update SyncEmployee Success : " + EmployeeHelper().count().toString());
+        "Update SyncEmployee Success : ${EmployeeHelper().count()}");
     global.appStorage.write(global.syncEmployeeTimeName, getLastUpdateTime);
   }
 }

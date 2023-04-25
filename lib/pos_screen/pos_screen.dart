@@ -2,6 +2,7 @@ import 'package:dedepos/pos_screen/pos_bill_vat.dart';
 import 'package:dedepos/pos_screen/pos_cancel_bill.dart';
 import 'package:dedepos/pos_screen/pos_product_weight.dart';
 import 'package:dedepos/pos_screen/pos_reprint_bill.dart';
+import 'package:dedepos/pos_screen/pos_sale_channel.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/global_model.dart';
@@ -148,6 +149,7 @@ class _PosScreenState extends State<PosScreen>
   @override
   void initState() {
     super.initState();
+    restartClearData();
     global.posScreenMode = widget.posScreenMode;
     if (global.isDesktopScreen()) {
       deviceMode = 0;
@@ -258,8 +260,9 @@ class _PosScreenState extends State<PosScreen>
       global.posHoldProcessResult[global.posHoldActiveNumber] =
           PosHoldProcessModel.fromJson(jsonDecode(
               await global.getFromServer(json: jsonEncode(json.toJson()))));
-      PosProcess().sumCategoryCount(value:
-          global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+      PosProcess().sumCategoryCount(
+          value: global
+              .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
       setState(() {});
     }
   }
@@ -855,7 +858,10 @@ class _PosScreenState extends State<PosScreen>
               product_count: 0);
       productOptions = product.options();
     }
-    posCompileProcess(holdNumber: global.posHoldActiveNumber,docMode: global.posScreenToInt()).then((value) {
+    posCompileProcess(
+            holdNumber: global.posHoldActiveNumber,
+            docMode: global.posScreenToInt())
+        .then((value) {
       if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
         findActiveLineByGuid = value.lineGuid;
       }
@@ -1250,8 +1256,7 @@ class _PosScreenState extends State<PosScreen>
         (MediaQuery.of(context).size.width / menuMinWidth).toStringAsFixed(0));
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        print(
-            constraints.maxWidth.toString() + " : " + menuMinWidth.toString());
+        print("${constraints.maxWidth} : $menuMinWidth");
         if (constraints.maxWidth > menuMinWidth) {
           widgetPerLine = int.parse(
               (constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
@@ -1488,8 +1493,9 @@ class _PosScreenState extends State<PosScreen>
             await loadProductByCategory(categoryGuidSelected);
             productOptions.clear();
             setState(() {
-              PosProcess().sumCategoryCount(value:global
-                  .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+              PosProcess().sumCategoryCount(
+                  value: global.posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess);
             });
           },
           child: Stack(
@@ -1581,9 +1587,10 @@ class _PosScreenState extends State<PosScreen>
                 productOptions.clear();
                 loadCategory();
                 setState(() {
-                  PosProcess().sumCategoryCount(value:global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess);
+                  PosProcess().sumCategoryCount(
+                      value: global
+                          .posHoldProcessResult[global.posHoldActiveNumber]
+                          .posProcess);
                 });
               },
               child: const Center(
@@ -1770,7 +1777,8 @@ class _PosScreenState extends State<PosScreen>
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.black, width: 1)),
+            border:
+                const Border(top: BorderSide(color: Colors.black, width: 1)),
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
@@ -2565,7 +2573,7 @@ class _PosScreenState extends State<PosScreen>
         context,
         MaterialPageRoute(
             builder: (context) => PosProductWeightScreen(
-                  name: "หมู : " + barcode,
+                  name: "หมู : $barcode",
                   imageUrl: imageUrl,
                 )));
     return (result == null) ? 0 : result;
@@ -2690,6 +2698,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   void restartClearData() {
+    global.posSaleChannelCode = "XXX";
     findActiveLineByGuid = "";
     activeLineNumber = -1;
     textInput = "";
@@ -2752,95 +2761,116 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Widget commandWidget() {
-    return Column(children: [
-      IntrinsicHeight(
-          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        commandButton(
-          label: global.language("hold_bill"),
-          onPressed: () {
-            holdBill();
-          },
-        ),
-        const SizedBox(
-          width: 4,
-        ),
-        commandButton(
-          label: global.language('open_cash_drawer'),
-          onPressed: () {
-            openCashDrawer();
-          },
-        ),
-        const SizedBox(
-          width: 4,
-        ),
-        commandButton(
-          label: global.language('select_employee'),
-          onPressed: () {
-            findEmployee();
-          },
-        ),
-        const SizedBox(
-          width: 4,
-        ),
-        commandButton(
-            label: global.language('restart'),
+    List<Widget> commands = [
+      if (global.posUseSaleType)
+        if (global.posSaleChannelList.isNotEmpty)
+          commandButton(
+            label: global.language("sale_channel"),
             onPressed: () {
-              restart();
-            }),
-      ])),
-      const SizedBox(
-        height: 4,
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PosSaleChannelScreen(),
+                ),
+              ).then((value) => setState(() {}));
+            },
+          ),
+      commandButton(
+        label: global.language("hold_bill"),
+        onPressed: () {
+          holdBill();
+        },
       ),
-      IntrinsicHeight(
-          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        commandButton(
-            label: global.language('reprint_bill'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PosReprintBillScreen(),
-                ),
-              );
-            }),
-        const SizedBox(
-          width: 4,
-        ),
-        commandButton(
-            label: global.language('full_bill_vat'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PosBillVatScreen(),
-                ),
-              );
-            }),
-        const SizedBox(
-          width: 4,
-        ),
-        commandButton(
-            label: global.language('cancel_bill'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const PosCancelBillScreen(),
-                ),
-              );
-            }),
-        const SizedBox(
-          width: 4,
-        ),
-        commandButton(
-          label: global.language('main_screen'),
-          //icon: Icons.web,
+      commandButton(
+        label: global.language('open_cash_drawer'),
+        onPressed: () {
+          openCashDrawer();
+        },
+      ),
+      commandButton(
+        label: global.language('select_employee'),
+        onPressed: () {
+          findEmployee();
+        },
+      ),
+      commandButton(
+          label: global.language('restart'),
           onPressed: () {
-            Navigator.pop(context);
-          },
-        )
-      ]))
-    ]);
+            restart();
+          }),
+      commandButton(
+          label: global.language('reprint_bill'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PosReprintBillScreen(),
+              ),
+            );
+          }),
+      commandButton(
+          label: global.language('full_bill_vat'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PosBillVatScreen(),
+              ),
+            );
+          }),
+      commandButton(
+          label: global.language('cancel_bill'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PosCancelBillScreen(),
+              ),
+            );
+          }),
+      commandButton(
+        label: global.language('main_screen'),
+        //icon: Icons.web,
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      )
+    ];
+
+    return LayoutBuilder(builder: (context, constraints) {
+      int rowNumber = 1;
+      if (constraints.maxWidth < 500) rowNumber = 2;
+      if (constraints.maxWidth < 200) rowNumber = 3;
+      List<Widget> columns = [];
+      int itemCount = 0;
+      int itemPerRow = (commands.length / rowNumber).ceil();
+      for (int rowIndex = 0; rowIndex < rowNumber; rowIndex++) {
+        List<Widget> rows = [];
+        for (int columnIndex = 0; columnIndex < itemPerRow; columnIndex++) {
+          if (itemCount < commands.length) {
+            if (columnIndex != 0) {
+              rows.add(const SizedBox(
+                width: 4,
+              ));
+            }
+            rows.add(commands[itemCount]);
+            itemCount++;
+          }
+        }
+        if (rowIndex != 0) {
+          columns.add(const SizedBox(
+            height: 4,
+          ));
+        }
+        columns.add(IntrinsicHeight(
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: rows)));
+      }
+      return Column(
+        children: columns,
+      );
+    });
   }
 
   Widget transScreenScanBarcodeQrCode() {
@@ -3069,18 +3099,17 @@ class _PosScreenState extends State<PosScreen>
                                     child: Row(
                                       children: [
                                         ElevatedButton(
-                                          child:
-                                              Text(global.language("cancel")),
                                           style: ElevatedButton.styleFrom(
                                               backgroundColor:
                                                   Colors.amber.shade600),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
+                                          child:
+                                              Text(global.language("cancel")),
                                         ),
                                         const Spacer(),
                                         ElevatedButton(
-                                          child: Text(global.language("save")),
                                           style: ElevatedButton.styleFrom(
                                               backgroundColor:
                                                   Colors.green.shade600),
@@ -3109,6 +3138,7 @@ class _PosScreenState extends State<PosScreen>
                                                     "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}",
                                                 type: "success");
                                           },
+                                          child: Text(global.language("save")),
                                         ),
                                       ],
                                     ),
@@ -3125,7 +3155,7 @@ class _PosScreenState extends State<PosScreen>
                                   Align(
                                     alignment: Alignment.topCenter,
                                     child: Column(children: [
-                                      Container(
+                                      SizedBox(
                                           height: 60,
                                           child: Row(
                                               mainAxisAlignment:
@@ -3163,7 +3193,7 @@ class _PosScreenState extends State<PosScreen>
                                                       callBack: () => {},
                                                     )),
                                               ])),
-                                      Container(
+                                      SizedBox(
                                           height: 60,
                                           child: Row(
                                               mainAxisAlignment:
@@ -3201,7 +3231,7 @@ class _PosScreenState extends State<PosScreen>
                                                       callBack: () => {},
                                                     )),
                                               ])),
-                                      Container(
+                                      SizedBox(
                                           height: 60,
                                           child: Row(
                                               mainAxisAlignment:
@@ -3240,7 +3270,7 @@ class _PosScreenState extends State<PosScreen>
                                                           {clearText()},
                                                     )),
                                               ])),
-                                      Container(
+                                      SizedBox(
                                           height: 60,
                                           child: Row(
                                               mainAxisAlignment:
@@ -3397,9 +3427,13 @@ class _PosScreenState extends State<PosScreen>
       findActiveLineByGuid = "";
       activeLineNumber = -1;
       if (global.appMode == global.AppModeEnum.posTerminal) {
-        posCompileProcess(holdNumber: global.posHoldActiveNumber,docMode: global.posScreenToInt()).then((_) {
-          PosProcess().sumCategoryCount(value:global
-              .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+        posCompileProcess(
+                holdNumber: global.posHoldActiveNumber,
+                docMode: global.posScreenToInt())
+            .then((_) {
+          PosProcess().sumCategoryCount(
+              value: global
+                  .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
         });
       } else {
         await getProcessFromTerminal();
@@ -3801,7 +3835,7 @@ class _PosScreenState extends State<PosScreen>
                     Expanded(
                         child: Row(children: [
                       Text(
-                        '${global.language('ลูกค้า')} :',
+                        '${global.language('customer')} :',
                         style:
                             const TextStyle(fontSize: 20, color: Colors.black),
                       ),
@@ -4282,8 +4316,9 @@ class _PosScreenState extends State<PosScreen>
   }
 
   void productCategoryLoadFinish() {
-    PosProcess().sumCategoryCount(value:
-        global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+    PosProcess().sumCategoryCount(
+        value:
+            global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
     context.read<ProductCategoryBloc>().add(ProductCategoryLoadFinish());
   }
 
@@ -4299,9 +4334,10 @@ class _PosScreenState extends State<PosScreen>
                 dev.log('xxxxxx Category');
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
-                PosProcess().sumCategoryCount(value:global
-                    .posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess);
+                PosProcess().sumCategoryCount(
+                    value: global
+                        .posHoldProcessResult[global.posHoldActiveNumber]
+                        .posProcess);
                 processEvent(holdNumber: global.posHoldActiveNumber);
                 productCategoryLoadFinish();
               }
@@ -4395,6 +4431,27 @@ class _PosScreenState extends State<PosScreen>
                           : Colors.red,
                       title: Row(
                         children: [
+                          if (global.posSaleChannelCode != "XXX")
+                            Container(
+                                height: 40,
+                                padding: const EdgeInsets.only(right: 10),
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.black,
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.all(10),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const PosSaleChannelScreen(),
+                                        ),
+                                      ).then((value) => setState(() {}));
+                                    },
+                                    child: Image.network(
+                                        global.posSaleChannelLogoUrl))),
                           Text(
                               (global.posScreenMode ==
                                       global.PosScreenModeEnum.posSale)

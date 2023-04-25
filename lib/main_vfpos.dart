@@ -4,5 +4,5 @@ import 'flavors.dart';
 
 void main() {
   F.appFlavor = Flavor.VFPOS;
-  runApp(App());
+  runApp(const App());
 }

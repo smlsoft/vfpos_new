@@ -2,20 +2,17 @@ import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'pay_widget.dart';
-import 'package:pattern_formatter/pattern_formatter.dart';
-import 'package:dedepos/model/system/pos_pay_model.dart';
 
 class PayDiscountWidget extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
 
   const PayDiscountWidget(
-      {required this.posProcess, required this.blocContext});
+      {super.key, required this.posProcess, required this.blocContext});
 
+  @override
   _PayDiscountWidgetState createState() => _PayDiscountWidgetState();
 }
 
@@ -140,7 +137,7 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                   child: NumPadButton(
                 text: '.',
                 callBack: () => {
-                  if (_textInputFormula.indexOf('.') == -1)
+                  if (!_textInputFormula.contains('.'))
                     textInputAdd((_textInputFormula.isNotEmpty) ? "." : "0.")
                 },
               )),
@@ -164,18 +161,29 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(left: 4, right: 4, bottom: 8),
+        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 8),
         child: Column(
           children: [
             Padding(
-                padding: EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
+                padding: const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
                 child: Container(
                   height: 120,
                   width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                            offset: const Offset(0, 2),
+                            color: Colors.blueGrey.shade200,
+                            spreadRadius: 4,
+                            blurRadius: 4)
+                      ]),
+                  padding: const EdgeInsets.only(right: 15),
                   child: Stack(
                     children: [
                       Padding(
-                          padding: EdgeInsets.only(left: 4),
+                          padding: const EdgeInsets.only(left: 4),
                           child: Align(
                               alignment: Alignment.topLeft,
                               child: Text(
@@ -207,27 +215,27 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                       ),
                     ],
                   ),
+                )),
+            Padding(
+                padding: const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
+                child: Container(
+                  height: 120,
+                  width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color: Colors.white70,
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                             color: Colors.blueGrey.shade200,
                             spreadRadius: 4,
                             blurRadius: 4)
                       ]),
                   padding: const EdgeInsets.only(right: 15),
-                )),
-            Padding(
-                padding: EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
-                child: Container(
-                  height: 120,
-                  width: MediaQuery.of(context).size.width,
                   child: Stack(
                     children: [
                       Padding(
-                          padding: EdgeInsets.only(left: 4),
+                          padding: const EdgeInsets.only(left: 4),
                           child: Align(
                               alignment: Alignment.topLeft,
                               child: Text(global.language('discount'),
@@ -259,24 +267,13 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                       ),
                     ],
                   ),
-                  decoration: BoxDecoration(
-                      color: Colors.white70,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                            offset: Offset(0, 2),
-                            color: Colors.blueGrey.shade200,
-                            spreadRadius: 4,
-                            blurRadius: 4)
-                      ]),
-                  padding: const EdgeInsets.only(right: 15),
                 )),
             Expanded(
               child: Column(
                 children: [
                   Expanded(
                       child: Padding(
-                          padding: EdgeInsets.only(bottom: 4),
+                          padding: const EdgeInsets.only(bottom: 4),
                           child: numberPad())),
                 ],
               ),

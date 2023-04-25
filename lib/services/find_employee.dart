@@ -25,10 +25,6 @@ class _FindEmployeeState extends State<FindEmployee>
     context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadStart(''));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   Widget findByText() {
     return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(

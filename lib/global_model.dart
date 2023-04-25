@@ -205,3 +205,12 @@ class InformationModel {
   InformationModel(
       {required this.mode, required delaySecond, required this.sourceUrl});
 }
+
+class PosSaleChannelModel {
+  String code;
+  String name;
+  String logoUrl;
+
+  PosSaleChannelModel(
+      {required this.code, required this.name, this.logoUrl = ""});
+}
