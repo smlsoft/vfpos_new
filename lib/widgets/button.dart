@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 class NumPadButton extends StatelessWidget {
   final String? text;
   final IconData? icon;
-  final bool haveBorder;
   final Function callBack;
   final Color? color;
   final Color? textAndIconColor;
+  final double margin;
 
   const NumPadButton(
       {Key? key,
       this.text,
       this.icon,
-      this.haveBorder = true,
       required this.callBack,
       this.color,
+      this.margin = 0,
       this.textAndIconColor})
       : super(key: key);
 
@@ -50,8 +50,7 @@ class NumPadButton extends StatelessWidget {
                 color: ((textAndIconColor == null)
                     ? Colors.white
                     : textAndIconColor)));
-
-    return ElevatedButton(
+    ElevatedButton button = ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: (color == null) ? Colors.blue : color,
         minimumSize: Size.zero,
@@ -62,6 +61,12 @@ class NumPadButton extends StatelessWidget {
       },
       child: FittedBox(fit: BoxFit.scaleDown, child: label),
     );
+    return (margin == 0)
+        ? button
+        : Padding(
+            padding: EdgeInsets.all(margin),
+            child: button,
+          );
   }
 }
 

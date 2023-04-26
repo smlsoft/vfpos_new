@@ -88,6 +88,7 @@ class PosNumPadState extends State<PosNumPad> {
                                 0, 3), // changes position of shadow
                           ),
                         ],
+                        borderRadius: BorderRadius.circular(4),
                         color: Colors.grey.shade100,
                         border: Border.all(color: Colors.blueAccent)),
                     child: Text(number,
@@ -103,24 +104,28 @@ class PosNumPadState extends State<PosNumPad> {
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '7',
                                 callBack: () => addValue('7'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '8',
                                 callBack: () => addValue('8'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '9',
                                 callBack: () => addValue('9'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 color: Colors.orange,
                                 text: 'X',
                                 callBack: () => addValue('X'),
@@ -134,24 +139,28 @@ class PosNumPadState extends State<PosNumPad> {
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '4',
                                 callBack: () => addValue('4'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '5',
                                 callBack: () => addValue('5'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '6',
                                 callBack: () => addValue('6'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 color: Colors.orange,
                                 icon: Icons.backspace,
                                 callBack: () => backspace(),
@@ -166,24 +175,28 @@ class PosNumPadState extends State<PosNumPad> {
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '1',
                                 callBack: () => addValue('1'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '2',
                                 callBack: () => addValue('2'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '3',
                                 callBack: () => addValue('3'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 color: Colors.orange,
                                 text: 'C',
                                 callBack: () => clear(),
@@ -198,18 +211,21 @@ class PosNumPadState extends State<PosNumPad> {
                           Expanded(
                               flex: 2,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '0',
                                 callBack: () => addValue('0'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 text: '.',
                                 callBack: () => addValue('.'),
                               )),
                           Expanded(
                               flex: 1,
                               child: NumPadButton(
+                                margin: 2,
                                 color: Colors.orange,
                                 icon: Icons.check,
                                 callBack: () {

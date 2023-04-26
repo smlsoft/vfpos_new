@@ -41,21 +41,25 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '7',
                 callBack: () => {textInputAdd("7")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '8',
                 callBack: () => {textInputAdd("8")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '9',
                 callBack: () => {textInputAdd("9")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '%',
                 callBack: () => {textInputAdd("%")},
               )),
@@ -68,21 +72,25 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '4',
                 callBack: () => {textInputAdd("4")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '5',
                 callBack: () => {textInputAdd("5")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '6',
                 callBack: () => {textInputAdd("6")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: ',',
                 callBack: () => {textInputAdd(",")},
               )),
@@ -95,21 +103,25 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '1',
                 callBack: () => {textInputAdd("1")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '2',
                 callBack: () => {textInputAdd("2")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '3',
                 callBack: () => {textInputAdd("3")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 textAndIconColor: Colors.black,
                 icon: Icons.backspace,
                 color: Colors.red.shade200,
@@ -130,11 +142,13 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '0',
                 callBack: () => {textInputAdd("0")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '.',
                 callBack: () => {
                   if (!_textInputFormula.contains('.'))
@@ -143,6 +157,7 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
               )),
               Expanded(
                 child: NumPadButton(
+                  margin: 2,
                   text: 'C',
                   color: Colors.grey.shade400,
                   callBack: () {
@@ -165,7 +180,8 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
         child: Column(
           children: [
             Padding(
-                padding: const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
+                padding:
+                    const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
                 child: Container(
                   height: 120,
                   width: MediaQuery.of(context).size.width,
@@ -217,7 +233,8 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                   ),
                 )),
             Padding(
-                padding: const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
+                padding:
+                    const EdgeInsets.only(left: 4, right: 4, bottom: 8, top: 4),
                 child: Container(
                   height: 120,
                   width: MediaQuery.of(context).size.width,

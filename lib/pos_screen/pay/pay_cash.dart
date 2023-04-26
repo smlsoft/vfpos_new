@@ -48,16 +48,19 @@ class PayCashWidgetState extends State<PayCashWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '7',
                 callBack: () => {textInputAdd("7")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '8',
                 callBack: () => {textInputAdd("8")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '9',
                 callBack: () => {textInputAdd("9")},
               )),
@@ -71,15 +74,18 @@ class PayCashWidgetState extends State<PayCashWidget> {
               Expanded(
                   child: NumPadButton(
                 text: '4',
+                margin: 2,
                 callBack: () => {textInputAdd("4")},
               )),
               Expanded(
                   child: NumPadButton(
                 text: '5',
+                margin: 2,
                 callBack: () => {textInputAdd("5")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '6',
                 callBack: () => {textInputAdd("6")},
               )),
@@ -92,16 +98,19 @@ class PayCashWidgetState extends State<PayCashWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '1',
                 callBack: () => {textInputAdd("1")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '2',
                 callBack: () => {textInputAdd("2")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '3',
                 callBack: () => {textInputAdd("3")},
               )),
@@ -114,11 +123,13 @@ class PayCashWidgetState extends State<PayCashWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '0',
                 callBack: () => {textInputAdd("0")},
               )),
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 text: '.',
                 callBack: () => {
                   if (!global.payScreenData.cash_amount_text.contains('.'))
@@ -137,6 +148,7 @@ class PayCashWidgetState extends State<PayCashWidget> {
             children: <Widget>[
               Expanded(
                   child: NumPadButton(
+                margin: 2,
                 textAndIconColor: Colors.black,
                 icon: Icons.backspace,
                 color: Colors.red.shade200,
@@ -153,6 +165,7 @@ class PayCashWidgetState extends State<PayCashWidget> {
               )),
               Expanded(
                 child: NumPadButton(
+                  margin: 2,
                   text: 'C',
                   color: Colors.grey.shade400,
                   callBack: () {

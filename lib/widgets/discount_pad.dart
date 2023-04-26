@@ -69,18 +69,21 @@ class _DiscountPadState extends State<DiscountPad> {
                 Expanded(
                     flex: 1,
                     child: NumPadButton(
+                      margin: 2,
                       text: '7',
                       callBack: () => setValue('7'),
                     )),
                 Expanded(
                     flex: 1,
                     child: NumPadButton(
+                      margin: 2,
                       text: '8',
                       callBack: () => setValue('8'),
                     )),
                 Expanded(
                     flex: 1,
                     child: NumPadButton(
+                      margin: 2,
                       text: '9',
                       callBack: () => setValue('9'),
                     )),
@@ -95,18 +98,21 @@ class _DiscountPadState extends State<DiscountPad> {
                   flex: 1,
                   child: NumPadButton(
                     text: '4',
+                    margin: 2,
                     callBack: () => setValue('4'),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
                     text: '5',
+                    margin: 2,
                     callBack: () => setValue('5'),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
                     text: '6',
+                    margin: 2,
                     callBack: () => setValue('6'),
                   )),
             ],
@@ -119,18 +125,21 @@ class _DiscountPadState extends State<DiscountPad> {
                   flex: 1,
                   child: NumPadButton(
                     text: '1',
+                    margin: 2,
                     callBack: () => setValue('1'),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
                     text: '2',
+                    margin: 2,
                     callBack: () => setValue('2'),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
                     text: '3',
+                    margin: 2,
                     callBack: () => setValue('3'),
                   )),
             ],
@@ -143,17 +152,20 @@ class _DiscountPadState extends State<DiscountPad> {
                   flex: 1,
                   child: NumPadButton(
                     text: '0',
+                    margin: 2,
                     callBack: () => setValue('0'),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     text: '.',
                     callBack: () => setValue('.'),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     icon: Icons.backspace,
                     callBack: () => backspace(number),
                   )),
@@ -166,12 +178,14 @@ class _DiscountPadState extends State<DiscountPad> {
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     text: ',',
                     callBack: () => setValue(','),
                   )),
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     text: '%',
                     callBack: () => setValue('%'),
                   )),
@@ -184,6 +198,7 @@ class _DiscountPadState extends State<DiscountPad> {
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     text: global.language('cancel'),
                     callBack: () {
                       Navigator.pop(context);
@@ -192,6 +207,7 @@ class _DiscountPadState extends State<DiscountPad> {
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     text: global.language('clear'),
                     callBack: () {
                       setState(() {
@@ -202,6 +218,7 @@ class _DiscountPadState extends State<DiscountPad> {
               Expanded(
                   flex: 1,
                   child: NumPadButton(
+                    margin: 2,
                     text: global.language('confirm'),
                     callBack: () {
                       Navigator.pop(context);

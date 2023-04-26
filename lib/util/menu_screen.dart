@@ -119,41 +119,48 @@ class _MenuScreenState extends State<MenuScreen> {
     ];
   }
 
+  void showDialogShiftAndMoney(int mode) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              insetPadding: const EdgeInsets.all(0),
+              contentPadding: const EdgeInsets.all(0),
+              backgroundColor: Colors.transparent,
+              content: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return shiftAndMoneyScreen(mode: mode);
+              }));
+        });
+  }
+
   List<Widget> menuShift() {
     return [
       menuItem(
           icon: Icons.request_quote,
           title: 'เปิดกะ/รับเงินทอน',
           callBack: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                      insetPadding: const EdgeInsets.all(0),
-                      contentPadding: const EdgeInsets.all(0),
-                      backgroundColor: Colors.transparent,
-                      content: StatefulBuilder(builder:
-                          (BuildContext context, StateSetter setState) {
-                        return shiftAndMoneyScreen();
-                      }));
-                });
+            showDialogShiftAndMoney(0);
           }),
       menuItem(
           icon: Icons.request_quote,
           title: 'รับเงินทอนเพิ่ม',
           callBack: () {
-            receiveMoneyDialog();
+            showDialogShiftAndMoney(2);
           }),
       menuItem(
           icon: Icons.request_quote,
           title: 'นำเงินออก',
           callBack: () {
-            receiveMoneyDialog();
+            showDialogShiftAndMoney(3);
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
           title: 'ปิดกะ/ส่งเงิน',
-          callBack: () {}),
+          callBack: () {
+            showDialogShiftAndMoney(1);
+          }),
     ];
   }
 

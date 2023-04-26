@@ -2408,26 +2408,31 @@ class _PosScreenState extends State<PosScreen>
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: <Widget>[
                               Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    text: '7',
-                                    callBack: () => {textInputAdd("7")},
-                                  )),
+                                flex: 2,
+                                child: NumPadButton(
+                                  margin: 2,
+                                  text: '7',
+                                  callBack: () => {textInputAdd("7")},
+                                ),
+                              ),
                               Expanded(
                                   flex: 2,
                                   child: NumPadButton(
+                                    margin: 2,
                                     text: '8',
                                     callBack: () => {textInputAdd("8")},
                                   )),
                               Expanded(
                                   flex: 2,
                                   child: NumPadButton(
+                                    margin: 2,
                                     text: '9',
                                     callBack: () => {textInputAdd("9")},
                                   )),
                               Expanded(
                                   flex: 2,
                                   child: NumPadButton(
+                                    margin: 2,
                                     icon: Icons.backspace,
                                     textAndIconColor: Colors.black,
                                     callBack: () => {
@@ -2449,24 +2454,28 @@ class _PosScreenState extends State<PosScreen>
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '4',
                                   callBack: () => {textInputAdd("4")},
                                 )),
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '5',
                                   callBack: () => {textInputAdd("5")},
                                 )),
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '6',
                                   callBack: () => {textInputAdd("6")},
                                 )),
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   icon: Icons.add,
                                   textAndIconColor: Colors.black,
                                   callBack: () => {textInputAdd("+")},
@@ -2479,24 +2488,28 @@ class _PosScreenState extends State<PosScreen>
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '1',
                                   callBack: () => {textInputAdd("1")},
                                 )),
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '2',
                                   callBack: () => {textInputAdd("2")},
                                 )),
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '3',
                                   callBack: () => {textInputAdd("3")},
                                 )),
                             Expanded(
                                 flex: 2,
                                 child: NumPadButton(
+                                  margin: 2,
                                   text: '?',
                                   callBack: () => {},
                                 )),
@@ -2508,18 +2521,21 @@ class _PosScreenState extends State<PosScreen>
                               Expanded(
                                   flex: 2,
                                   child: NumPadButton(
+                                    margin: 2,
                                     text: '.',
                                     callBack: () => {textInputAdd(".")},
                                   )),
                               Expanded(
                                   flex: 2,
                                   child: NumPadButton(
+                                    margin: 2,
                                     text: '0',
                                     callBack: () => {textInputAdd("0")},
                                   )),
                               Expanded(
                                   flex: 4,
                                   child: NumPadButton(
+                                    margin: 2,
                                     text: 'C',
                                     color: Colors.red[100],
                                     callBack: () => {
@@ -2538,12 +2554,14 @@ class _PosScreenState extends State<PosScreen>
                                   flex: 2,
                                   child: NumPadButton(
                                     text: 'D',
+                                    margin: 2,
                                     color: Colors.cyan[100],
                                     callBack: () => {textInputAdd("D")},
                                   )),
                               Expanded(
                                   flex: 2,
                                   child: NumPadButton(
+                                    margin: 2,
                                     text: '%',
                                     color: Colors.cyan[100],
                                     callBack: () => {textInputAdd("%")},
@@ -2552,6 +2570,7 @@ class _PosScreenState extends State<PosScreen>
                                   flex: 2,
                                   child: NumPadButton(
                                     text: 'P',
+                                    margin: 2,
                                     color: Colors.green[100],
                                     callBack: () => {textInputAdd("P")},
                                   )),
@@ -3166,6 +3185,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '7',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("7")
                                                       },
@@ -3174,6 +3194,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '8',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("8")
                                                       },
@@ -3182,6 +3203,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '9',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("9")
                                                       },
@@ -3190,6 +3212,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: 'x',
+                                                      margin: 2,
                                                       callBack: () => {},
                                                     )),
                                               ])),
@@ -3204,6 +3227,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '4',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("4")
                                                       },
@@ -3212,6 +3236,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '5',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("5")
                                                       },
@@ -3220,6 +3245,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '6',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("6")
                                                       },
@@ -3228,6 +3254,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '+',
+                                                      margin: 2,
                                                       callBack: () => {},
                                                     )),
                                               ])),
@@ -3242,6 +3269,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '1',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("1")
                                                       },
@@ -3250,6 +3278,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '2',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("2")
                                                       },
@@ -3258,6 +3287,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '3',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("3")
                                                       },
@@ -3266,6 +3296,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: 'C',
+                                                      margin: 2,
                                                       callBack: () =>
                                                           {clearText()},
                                                     )),
@@ -3281,6 +3312,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '0',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged("0")
                                                       },
@@ -3289,6 +3321,7 @@ class _PosScreenState extends State<PosScreen>
                                                     flex: 2,
                                                     child: NumPadButton(
                                                       text: '.',
+                                                      margin: 2,
                                                       callBack: () => {
                                                         textInputChanged(".")
                                                       },
@@ -3296,6 +3329,7 @@ class _PosScreenState extends State<PosScreen>
                                                 Expanded(
                                                     flex: 2,
                                                     child: NumPadButton(
+                                                      margin: 2,
                                                       icon: Icons.backspace,
                                                       callBack: () =>
                                                           {backSpace()},
@@ -3303,6 +3337,7 @@ class _PosScreenState extends State<PosScreen>
                                                 Expanded(
                                                     flex: 2,
                                                     child: NumPadButton(
+                                                      margin: 2,
                                                       icon: Icons.expand,
                                                       callBack: () => {},
                                                     )),
@@ -4439,7 +4474,7 @@ class _PosScreenState extends State<PosScreen>
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.black,
                                       backgroundColor: Colors.white,
-                                      padding: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.all(5),
                                     ),
                                     onPressed: () {
                                       Navigator.push(
@@ -4464,7 +4499,7 @@ class _PosScreenState extends State<PosScreen>
                                     Shadow(
                                       blurRadius: 10.0,
                                       color: Colors.black54,
-                                      offset: Offset(5.0, 5.0),
+                                      offset: Offset(2.0, 2.0),
                                     ),
                                   ])),
                           const Spacer(),
@@ -4476,7 +4511,7 @@ class _PosScreenState extends State<PosScreen>
                                     Shadow(
                                       blurRadius: 10.0,
                                       color: Colors.black54,
-                                      offset: Offset(5.0, 5.0),
+                                      offset: Offset(2.0, 2.0),
                                     ),
                                   ])),
                         ],
