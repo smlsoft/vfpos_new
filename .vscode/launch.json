@@ -2,6 +2,16 @@
     "version": "0.2.0",
     "configurations": [        
         {
+            "name": "Browser",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome",
+            "args": [
+                "--flavor",
+                "dedepos"
+            ]
+        },
+        {
             "name": "Windows",
             "request": "launch",
             "type": "dart",
