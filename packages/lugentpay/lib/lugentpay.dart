@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:decimal/decimal.dart';
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:lugentpayment/inquirypaymentresponse.dart';
 import 'package:lugentpayment/qrpaymentrequest.dart';
 import 'package:lugentpayment/qrpaymentresponse.dart';
