@@ -12,6 +12,16 @@
             ]
         },
         {
+            "name": "vfpos - device connect",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_vfpos.dart",
+            "args": [
+                "--flavor",
+                "vfpos"
+            ]
+        },
+        {
             "name": "MP40 Android Tabet",
             "request": "launch",
             "type": "dart",
@@ -26,7 +36,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
-            "deviceId": "emulator-5554",
+            // "deviceId": "emulator-5554",
             "args": [
                 "--flavor",
                 "dedepos"
