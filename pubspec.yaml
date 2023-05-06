@@ -78,7 +78,6 @@ dependencies:
   network_info_plus: ^3.0.3
   network_tools: ^3.0.0+3
   esc_pos_utils: ^1.1.0
-  msix: ^3.7.0
   flutter_flavorizr: ^2.1.5
   presentation_displays: ^0.2.3
   video_player: ^2.6.1
@@ -98,6 +97,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.1
   build_runner: ^2.3.3
+  msix: ^3.7.0
 
 flutter_icons:
   android: "launcher_icon"
@@ -151,6 +151,17 @@ flavorizr:
         bundleId: "com.smlsoft.dedepos"
       windows:
         packageId: "com.smlsoft.dedepos"
+        # customConfig:
+        #   msix_config:
+        #     display_name: DEDEPOS
+        #     publisher_display_name: SMLSoft
+        #     publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27 
+        #     identity_name: 	SMLSoft.DEDEPOS
+        #     msix_version: 1.0.0.0
+        #     logo_path: .\assets\dede-pos-icon.png
+        #     capabilities: internetClient, location, microphone, webcam
+        #     # certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
+        #     # certificate_password: sml19682511
       macos:
         bundleId: "com.smlsoft.dedepos"
 
@@ -187,6 +198,35 @@ flavorizr:
         bundleId: "com.smlsoft.vfpos"
       windows:
         packageId: "com.smlsoft.vfpos"
+        # customConfig:
+        #   msix_config:
+        #     display_name: VFPOS
+        #     publisher_display_name: SMLSoft
+        #     identity_name: com.smlsoft.vfpos
+        #     msix_version: 1.0.0.0
+        #     logo_path: .\assets\vf-pos-icon.png
+        #     capabilities: internetClient, location, microphone, webcam
+        #     certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
+        #     certificate_password: sml19682511
       macos:
         bundleId: "com.smlsoft.vfpos"
+msix_config:
+  # # DEDE POS Store Config
+  # display_name: DEDEPOS
+  # publisher_display_name: SMLSoft
+  # publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27 
+  # identity_name: 	SMLSoft.DEDEPOS
+  # msix_version: 1.0.0.0
+  # logo_path: .\assets\dede-pos-icon.png
+  # capabilities: internetClient, location, microphone, webcam
+  # store: true
 
+  # DEDE POS Dev Install Config
+  display_name: DEDEPOS
+  publisher_display_name: SMLSoft
+  publisher: smlsoft
+  identity_name: 	com.smlsoft.dedepos
+  language: en-us
+  capabilities: internetClient, location, microphone, webcam
+  certificate_path: C:\source\flutter-test-key\CERTIFICATE.pfx
+  certificate_password: sml19682511
