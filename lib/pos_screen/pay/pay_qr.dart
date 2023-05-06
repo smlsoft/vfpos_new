@@ -1,21 +1,13 @@
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
-import 'package:dedepos/model/objectbox/bank_struct.dart';
-import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pay/pay_qr_screen.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
-import 'package:dedepos/services/menu_button.dart';
 import 'package:dedepos/widgets/button.dart';
-import 'package:dedepos/widgets/roundmenu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'pay_widget.dart';
-import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 
 class PayQrWidget extends StatefulWidget {
@@ -83,7 +75,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                   )),
               Expanded(
                   flex: 1,
-                  child: Container(
+                  child: SizedBox(
                       key: widgetKey,
                       width: double.infinity,
                       child: ElevatedButton(
@@ -99,16 +91,16 @@ class PayQrWidgetState extends State<PayQrWidget> {
                             FocusScope.of(context).unfocus();
                             global.payScreenNumberPadWidget =
                                 PayScreenNumberPadWidgetEnum.number;
-                            final RenderBox _renderBox =
+                            final RenderBox renderBox =
                                 widgetKey.currentContext?.findRenderObject()
                                     as RenderBox;
-                            final Size _size = _renderBox.size;
-                            final Offset _offset =
-                                _renderBox.localToGlobal(Offset.zero);
+                            final Size size = renderBox.size;
+                            final Offset offset =
+                                renderBox.localToGlobal(Offset.zero);
                             global.payScreenNumberPadLeft =
-                                _offset.dx + (_size.width * 1.1);
+                                offset.dx + (size.width * 1.1);
                             global.payScreenNumberPadTop =
-                                _offset.dy - _size.height;
+                                offset.dy - size.height;
                             global.payScreenNumberPadAmount = _amount;
                             global.payScreenNumberPadText = (_amount == 0)
                                 ? ""

@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:dedepos/app/app.dart';
-import 'package:dedepos/core/service_locator.dart';
-import 'package:dedepos/flavors.dart';
+import 'app.dart';
+import 'flavors.dart';
+import 'main_app.dart';
 
 void main() {
   F.appFlavor = Flavor.VFPOS;
-  setUpServiceLocator();
-  runApp(App());
-  // bootstrap(() => App());
+  mainApp();
 }

@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:ui';
 import 'package:dedepos/model/json/language_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 

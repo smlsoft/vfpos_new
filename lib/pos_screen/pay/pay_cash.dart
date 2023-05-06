@@ -9,6 +9,7 @@ class PayCashWidget extends StatefulWidget {
 
   const PayCashWidget({super.key, required this.blocContext});
 
+  @override
   PayCashWidgetState createState() => PayCashWidgetState();
 }
 

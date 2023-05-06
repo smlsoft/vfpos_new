@@ -66,7 +66,7 @@ Future syncBank(
       names: packNameValues,
     );
 
-    print("Sync Bank : " + newData.code + " " + newData.names.toString());
+    print("Sync Bank : ${newData.code} ${newData.names}");
     manyForInsert.add(newBank);
   }
   if (removeMany.isNotEmpty) {
@@ -103,12 +103,7 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
           List<SyncBankModel> newDataList = (dataList["new"] as List)
               .map((newCate) => SyncBankModel.fromJson(newCate))
               .toList();
-          print("offset : " +
-              offset.toString() +
-              " remove : " +
-              removeList.length.toString() +
-              " insert : " +
-              newDataList.length.toString());
+          print("offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
@@ -121,7 +116,7 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
       });
       offset += limit;
     }
-    print("Update SyncBank Success : " + BankHelper().count().toString());
+    print("Update SyncBank Success : ${BankHelper().count()}");
     global.appStorage.write(global.syncBankTimeName, getLastUpdateTime);
     global.createLogoImageFromBankProvider();
   }

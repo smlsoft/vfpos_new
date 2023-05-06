@@ -1,17 +1,13 @@
-import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
-import 'package:decimal/intl.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
-import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:flutter/material.dart';
 import 'package:lugentpayment/lugentpay.dart';
 import 'package:lugentpayment/qrpaymentresponse.dart';
 import 'package:promptpay/promptpay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:countdown_progress_indicator/countdown_progress_indicator.dart';
-import 'package:dedepos/model/system/payment_mode.dart';
 
 class PayQrScreen extends StatefulWidget {
   final PaymentProviderModel provider;
@@ -157,7 +153,7 @@ class _PayQrScreenState extends State<PayQrScreen>
       SizedBox(
           height: 100,
           child: Image.asset(
-            ("assets/images/qrpay/" + widget.provider.paymentcode + ".png")
+            ("assets/images/qrpay/${widget.provider.paymentcode}.png")
                 .toLowerCase(),
           )),
       Text(widget.provider.names[0].name,
@@ -196,22 +192,18 @@ class _PayQrScreenState extends State<PayQrScreen>
           child: FittedBox(
               fit: BoxFit.fitWidth,
               child: Text(
-                global.language('จำนวนเงิน') +
-                    ' : ' +
-                    global.moneyFormat.format(widget.amount) +
-                    ' ' +
-                    global.language('money_symbol'),
-                style: TextStyle(fontWeight: FontWeight.bold),
+                '${global.language('จำนวนเงิน')} : ${global.moneyFormat.format(widget.amount)} ${global.language('money_symbol')}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ))),
-      SizedBox(height: 8),
-      Container(
+      const SizedBox(height: 8),
+      const SizedBox(
           width: double.infinity,
           child: FittedBox(
             fit: BoxFit.fitWidth,
             child: Text('นาย จตุรพรชัย รัตนปัญญา'),
           )),
-      SizedBox(height: 8),
-      Container(
+      const SizedBox(height: 8),
+      SizedBox(
           width: double.infinity,
           child: Row(children: [
             Expanded(
@@ -223,7 +215,7 @@ class _PayQrScreenState extends State<PayQrScreen>
                 },
                 label: Text(
                   global.language("cancel"),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -231,7 +223,7 @@ class _PayQrScreenState extends State<PayQrScreen>
                 ),
               ),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Expanded(
               flex: 1,
               child: ElevatedButton.icon(
@@ -241,7 +233,7 @@ class _PayQrScreenState extends State<PayQrScreen>
                 },
                 label: Text(
                   global.language("save"),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

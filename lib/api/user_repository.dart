@@ -18,7 +18,7 @@ class UserRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -31,7 +31,7 @@ class UserRepository {
       if (ex.type == DioErrorType.connectTimeout) {
         throw Exception('Connection Timeout');
       } else if (ex.type == DioErrorType.receiveTimeout) {
-        throw Exception('unable to connect to the server : ' + errorMessage);
+        throw Exception('unable to connect to the server : $errorMessage');
       } else if (ex.type == DioErrorType.other) {
         throw Exception(ex.message);
       } else if (ex.type == DioErrorType.response) {
@@ -44,7 +44,7 @@ class UserRepository {
   }
 
   Future<ApiResponse> getShopList() async {
-    Dio client = await Client().init();
+    Dio client = Client().init();
 
     try {
       final response = await client.get('/list-shop');
@@ -56,7 +56,7 @@ class UserRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
@@ -85,7 +85,7 @@ class UserRepository {
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
           print(errorMessage);
-          throw new Exception('${rawData['code']}: ${rawData['message']}');
+          throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);

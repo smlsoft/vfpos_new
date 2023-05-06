@@ -25,6 +25,7 @@ class SyncDeviceModel {
   bool isCashierTerminal;
   bool isClient;
   int holdNumberActive;
+  int docModeActive;
   bool processSuccess;
 
   SyncDeviceModel(
@@ -34,6 +35,7 @@ class SyncDeviceModel {
       required this.isCashierTerminal,
       required this.isClient,
       required this.holdNumberActive,
+      required this.docModeActive,
       this.processSuccess = true});
 
   factory SyncDeviceModel.fromJson(Map<String, dynamic> json) =>

@@ -1,7 +1,4 @@
-import 'package:sunmi_printer_plus/enums.dart';
-import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'dart:async';
-import 'dart:io';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/util/network.dart';
@@ -9,18 +6,10 @@ import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dedepos/api/sync/sync_bill.dart';
-import 'package:dedepos/model/json/print_queue_model.dart';
-import 'package:dedepos/model/json/receive_money_model.dart';
-import 'package:dedepos/pos_screen/pos_screen.dart';
-import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_usb_printer/flutter_usb_printer.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:uuid/uuid.dart';
 
 class PrinterConfigScreen extends StatefulWidget {
   const PrinterConfigScreen({Key? key}) : super(key: key);

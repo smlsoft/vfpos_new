@@ -104,17 +104,15 @@ class PromptPay {
         _formatAmount(amount);
     var isAlreadyAddAmount = false;
     var newQRData = data.fold("", (String qrData, element) {
-      if (element != null && element.typeID == amountID) {
+      if (element.typeID == amountID) {
         isAlreadyAddAmount = true;
         return qrData + amountData;
       }
 
-      if (element != null) {
-        return qrData +
-            element.typeID +
-            element.length.toString().padLeft(2, '0') +
-            element.data;
-      }
+      return qrData +
+          element.typeID +
+          element.length.toString().padLeft(2, '0') +
+          element.data;
 
       return qrData;
     });

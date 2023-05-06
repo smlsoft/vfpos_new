@@ -48,15 +48,15 @@ Future<void> printBillImage(String docNo) async {
           ),
           20.0,
           paint);
-      TextSpan span = new TextSpan(
-          style: new TextStyle(color: Colors.black, fontSize: 24),
-          text: loop.toString() + " สวัสดีประศทไย");
-      TextPainter tp = new TextPainter(
+      TextSpan span = TextSpan(
+          style: const TextStyle(color: Colors.black, fontSize: 24),
+          text: "$loop สวัสดีประศทไย");
+      TextPainter tp = TextPainter(
           text: span,
           textAlign: TextAlign.left,
           textDirection: TextDirection.ltr);
       tp.layout();
-      tp.paint(canvas, new Offset(5.0, maxHeight.toDouble()));
+      tp.paint(canvas, Offset(5.0, maxHeight.toDouble()));
 
       maxHeight += logo.height;
     }
@@ -78,7 +78,7 @@ Future<void> printBillImage(String docNo) async {
         var xximage = im.copyCrop(
             ximage, 0, i * printMaxHeight, ximage.width, printMaxHeight);
         printer.imageRaster(xximage);
-        sleep(Duration(milliseconds: 1000));
+        sleep(const Duration(milliseconds: 1000));
       } catch (e) {
         print(e);
       }

@@ -1,24 +1,16 @@
-import 'dart:convert';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 
 class PayCoupon extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
-  const PayCoupon({required this.posProcess, required this.blocContext});
+  const PayCoupon({super.key, required this.posProcess, required this.blocContext});
 
   @override
   _PayCouponState createState() => _PayCouponState();
@@ -26,8 +18,8 @@ class PayCoupon extends StatefulWidget {
 
 class _PayCouponState extends State<PayCoupon> {
   final _descriptionController = TextEditingController();
-  GlobalKey _couponNumberKey = GlobalKey();
-  GlobalKey _amountNumberKey = GlobalKey();
+  final GlobalKey _couponNumberKey = GlobalKey();
+  final GlobalKey _amountNumberKey = GlobalKey();
   String _couponNumber = "";
   double _couponAmount = 0;
   int _buttonIndex = 0;
@@ -68,7 +60,7 @@ class _PayCouponState extends State<PayCoupon> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: _couponNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -87,16 +79,16 @@ class _PayCouponState extends State<PayCoupon> {
                               global.payScreenNumberPadWidget =
                                   PayScreenNumberPadWidgetEnum.text;
                               global.payScreenNumberPadText = _couponNumber;
-                              final RenderBox _renderBox = _couponNumberKey
+                              final RenderBox renderBox = _couponNumberKey
                                   .currentContext
                                   ?.findRenderObject() as RenderBox;
-                              final Size _size = _renderBox.size;
-                              final Offset _offset =
-                                  _renderBox.localToGlobal(Offset.zero);
+                              final Size size = renderBox.size;
+                              final Offset offset =
+                                  renderBox.localToGlobal(Offset.zero);
                               global.payScreenNumberPadLeft =
-                                  _offset.dx + (_size.width * 1.1);
+                                  offset.dx + (size.width * 1.1);
                               global.payScreenNumberPadTop =
-                                  _offset.dy - _size.height;
+                                  offset.dy - size.height;
                               _buttonIndex = 1;
                             }
                             refreshEvent();
@@ -108,19 +100,19 @@ class _PayCouponState extends State<PayCoupon> {
                                       alignment: Alignment.center,
                                       child: Text(
                                         _couponNumber,
-                                        style: TextStyle(fontSize: 32),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('เลขที่คูปอง'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
                           )))),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: _amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -140,16 +132,16 @@ class _PayCouponState extends State<PayCoupon> {
                               global.payScreenNumberPadWidget =
                                   PayScreenNumberPadWidgetEnum.number;
                               global.payScreenNumberPadAmount = _couponAmount;
-                              final RenderBox _renderBox = _amountNumberKey
+                              final RenderBox renderBox = _amountNumberKey
                                   .currentContext
                                   ?.findRenderObject() as RenderBox;
-                              final Size _size = _renderBox.size;
-                              final Offset _offset =
-                                  _renderBox.localToGlobal(Offset.zero);
+                              final Size size = renderBox.size;
+                              final Offset offset =
+                                  renderBox.localToGlobal(Offset.zero);
                               global.payScreenNumberPadLeft =
-                                  _offset.dx + (_size.width * 1.1);
+                                  offset.dx + (size.width * 1.1);
                               global.payScreenNumberPadTop =
-                                  _offset.dy - _size.height;
+                                  offset.dy - size.height;
                               global.payScreenNumberPadAmount = _couponAmount;
                               global.payScreenNumberPadText =
                                   (_couponAmount == 0)
@@ -169,12 +161,12 @@ class _PayCouponState extends State<PayCoupon> {
                                       child: Text(
                                         global.moneyFormat
                                             .format(_couponAmount),
-                                        style: TextStyle(fontSize: 32),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('จำนวนเงิน'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
@@ -185,7 +177,7 @@ class _PayCouponState extends State<PayCoupon> {
           TextField(
             controller: _descriptionController,
             decoration: InputDecoration(
-              border: UnderlineInputBorder(),
+              border: const UnderlineInputBorder(),
               labelText: global.language('รายละเอียด'),
             ),
           ),
@@ -203,11 +195,10 @@ class _PayCouponState extends State<PayCoupon> {
                       global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
-                    ;
                   },
                   label: Text(
                     global.language("บันทึกคูปอง"),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -216,7 +207,7 @@ class _PayCouponState extends State<PayCoupon> {
                   style: ElevatedButton.styleFrom(
                     elevation: 8,
                     backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
@@ -244,7 +235,7 @@ class _PayCouponState extends State<PayCoupon> {
                   _buildDetailsBlock(
                       label: global.language("เลขที่คูปอง"),
                       value: global.payScreenData.coupon[index].number),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   _buildDetailsBlock(
                       label: global.language("รายละเอียด"),
                       value: global.payScreenData.coupon[index].description),
@@ -263,7 +254,7 @@ class _PayCouponState extends State<PayCoupon> {
                 ),
               ),
               trailing: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
                     size: 30.0,
                     color: Colors.redAccent,
@@ -273,7 +264,7 @@ class _PayCouponState extends State<PayCoupon> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text("ต้องการยกเลิกรายการนี้จริงหรือไม่"),
+                            content: const Text("ต้องการยกเลิกรายการนี้จริงหรือไม่"),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -337,9 +328,9 @@ class _PayCouponState extends State<PayCoupon> {
           Container(
             child: Column(
               children: <Widget>[
-                ...global.payScreenData.coupon.map((_detail) {
-                  var _index = global.payScreenData.coupon.indexOf(_detail);
-                  return _buildCreditCard(index: _index);
+                ...global.payScreenData.coupon.map((detail) {
+                  var index = global.payScreenData.coupon.indexOf(detail);
+                  return _buildCreditCard(index: index);
                 }).toList()
               ],
             ),

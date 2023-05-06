@@ -1,6 +1,4 @@
-import 'dart:async';
 import '../model/json/product_bundle_model.dart';
-import 'package:dedepos/global.dart' as global;
 
 class ProductBundleHelper {
   int insert(ProductBundleModel productBundle) {
@@ -9,7 +7,7 @@ class ProductBundleHelper {
 
   List<ProductBundleModel> select(
       {required String where, int limit = 0, int offset = 0}) {
-    if (where.isNotEmpty) where = " where " + where;
+    if (where.isNotEmpty) where = " where $where";
     return [];
   }
 

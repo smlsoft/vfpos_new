@@ -1,4 +1,3 @@
-import 'package:dedepos/model/json/language_model.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 

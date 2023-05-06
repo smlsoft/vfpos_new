@@ -1,3 +1,6 @@
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
@@ -173,6 +176,12 @@ PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
+PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
+bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
+String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
+String posSaleChannelLogoUrl = "";
+
+List<PosSaleChannelModel> posSaleChannelList = [];
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -183,6 +192,8 @@ enum PosVersionEnum { pos, restaurant, vfpos }
 enum SoundEnum { beep, fail, buttonTing }
 
 enum DisplayMachineEnum { customerDisplay, posTerminal }
+
+enum PosScreenModeEnum { posSale, posReturn }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -209,6 +220,17 @@ enum DeviceModeEnum {
   linuxDesktop,
   androidPhone,
   androidTablet,
+}
+
+int posScreenToInt() {
+  switch (posScreenMode) {
+    case PosScreenModeEnum.posSale:
+      return 1;
+    case PosScreenModeEnum.posReturn:
+      return 2;
+    default:
+      return 0;
+  }
 }
 
 Future<Position> determinePosition() async {
@@ -322,25 +344,8 @@ Future<Uint8List> thaiEncode(String word) async {
   }
 }
 
-void playSoundForWindows(String waveFileName) {
-  waveFileName = 'assets/audios/$waveFileName';
-  final file = File(waveFileName).existsSync();
-
-  if (!file) {
-    print('WAV file missing.');
-  } else {
-    final pszLogonSound = waveFileName.toNativeUtf16();
-    final result = PlaySound(pszLogonSound, NULL, SND_FILENAME | SND_SYNC);
-
-    if (result != TRUE) {
-      print('Sound playback failed.');
-    }
-    free(pszLogonSound);
-  }
-}
-
 void playSound({SoundEnum sound = SoundEnum.beep, String word = ""}) async {
-  /*final audioPlayer = AudioPlayer();
+  /*audioPlayer = AudioPlayer();
   try {
     if (speechToTextVisible && word.isNotEmpty) {
       if (Platform.isAndroid || Platform.isIOS) {
@@ -413,10 +418,10 @@ List<String> wordSplit(String word) {
   String firstBreak = "ใโไเแ";
   String endBreak = "าๆฯะ";
   for (int index = 0; index < firstBreak.length; index++) {
-    word = word.replaceAll(firstBreak[index], " " + firstBreak[index]);
+    word = word.replaceAll(firstBreak[index], " ${firstBreak[index]}");
   }
   for (int index0 = 0; index0 < endBreak.length; index0++) {
-    word = word.replaceAll(endBreak[index0], endBreak[index0] + " ");
+    word = word.replaceAll(endBreak[index0], "${endBreak[index0]} ");
   }
   split = word.split(" ");
   return split;
@@ -464,8 +469,9 @@ Future<String> billRunning() async {
         "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
 
     /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
-    var find = billHelper.selectByDocNumber(docNumber: result);
-    if (find.isEmpty) {
+    var find = billHelper.selectByDocNumber(
+        docNumber: result, posScreenMode: global.posScreenToInt());
+    if (find == null) {
       success = true;
     } else {
       configHelper.update(ConfigObjectBoxStruct(
@@ -583,12 +589,17 @@ Future<void> printQueueStartServer() async {
       dev.log('Success');
     }
   } catch (e) {
-    dev.log('failed : ' + e.toString());
+    dev.log('failed : $e');
   }
 }
 
-String dateTimeFormat(DateTime dateTime) {
-  return DateFormat('dd/MM/yyyy kk:mm').format(dateTime);
+String dateTimeFormat(DateTime dateTime, {bool showTime = true}) {
+  var formatter = DateFormat.yMMMMEEEEd('th_TH');
+  if (showTime) {
+    return "${formatter.formatInBuddhistCalendarThai(dateTime)} - ${DateFormat.Hm().format(dateTime)}";
+  } else {
+    return formatter.formatInBuddhistCalendarThai(dateTime);
+  }
 }
 
 Future<void> systemProcess() async {
@@ -598,6 +609,7 @@ Future<void> systemProcess() async {
         device: deviceId,
         ip: "",
         holdNumberActive: 0,
+        docModeActive: 0,
         connected: true,
         isClient: false,
         isCashierTerminal: false);
@@ -628,13 +640,13 @@ Future<void> sendProcessToCustomerDisplay() async {
             command: "process",
             data:
                 jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
-        dev.log("sendProcessToCustomerDisplay : " + url);
+        dev.log("sendProcessToCustomerDisplay : $url");
         postToServer(
             ip: url,
             jsonData: jsonEncode(jsonData.toJson()),
             callBack: (value) {});
       } catch (e) {
-        print(e.toString() + " : " + url);
+        print("$e : $url");
       }
     }
   }
@@ -660,7 +672,7 @@ Future<void> sendProcessToRemote() async {
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
-        print(e.toString() + " : " + url);
+        print("$e : $url");
       }
     }
   }
@@ -827,6 +839,7 @@ Future<void> registerRemoteToTerminal() async {
           device: "XXX",
           ip: ipAddress,
           holdNumberActive: posHoldActiveNumber,
+          docModeActive: 0,
           connected: true,
           isCashierTerminal: false,
           isClient: true);
@@ -991,7 +1004,7 @@ Future<void> startLoading() async {
     }
   });
   // สร้าง Process Result ตามจำนวน Hold บิล
-  for (int loop = 0; loop < 25; loop++) {
+  for (int loop = 0; loop < 50; loop++) {
     posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
   }
 
@@ -1046,7 +1059,7 @@ Future<void> postToServer(
       }, onError: (e, s) {});
     });
   } catch (e) {
-    print("sendToServer : " + e.toString());
+    print("sendToServer : $e");
   }
 }
 
@@ -1065,7 +1078,7 @@ Future<String> postToServerAndWait(
       result = utf8.decode(await value.stream.toBytes());
     }
   } catch (e) {
-    print("sendToServer : " + e.toString());
+    print("sendToServer : $e");
   }
   return result;
 }
@@ -1134,6 +1147,7 @@ Future scanServerByName(String name) async {
         device: "",
         ip: ip,
         holdNumberActive: 0,
+        docModeActive: 0,
         connected: false,
         isClient: false,
         isCashierTerminal: false));
@@ -1147,7 +1161,7 @@ Future scanServerByName(String name) async {
         if (countTread < 10) {
           countTread++;
           String url =
-              "http://${ipList[index].ip}:${targetDeviceIpPort}/scan?uuid=${const Uuid().v4()}";
+              "http://${ipList[index].ip}:$targetDeviceIpPort/scan?uuid=${const Uuid().v4()}";
           try {
             http
                 .post(Uri.parse(url))

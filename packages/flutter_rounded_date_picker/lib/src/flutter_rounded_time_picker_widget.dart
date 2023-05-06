@@ -8,7 +8,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_rounded_date_picker/src/flutter_rounded_button_action.dart';
 import 'package:flutter_rounded_date_picker/src/material_rounded_date_picker_style.dart';
 
@@ -83,7 +82,6 @@ class _TimePickerHeaderFragment {
   const _TimePickerHeaderFragment({
     required this.layoutId,
     required this.widget,
-    this.startMargin = 0.0,
   });
 
   /// Identifier used by the custom layout to refer to the widget.
@@ -98,7 +96,7 @@ class _TimePickerHeaderFragment {
   /// This value contributes to the total horizontal width of all fragments
   /// appearing on the same line, unless it is the first fragment on the line,
   /// in which case this value is ignored.
-  final double startMargin;
+  final double startMargin = 0;
 }
 
 /// An unbreakable part of the time picker header.
@@ -209,8 +207,8 @@ class _DayPeriodControl extends StatelessWidget {
     final Color activeColor = fragmentContext.activeColor;
     final Color inactiveColor = fragmentContext.inactiveColor;
     final bool amSelected = selectedTime.period == DayPeriod.am;
-    final TextStyle amStyle = headerTextTheme.subtitle1!.copyWith(color: amSelected ? activeColor : inactiveColor);
-    final TextStyle pmStyle = headerTextTheme.subtitle1!.copyWith(color: !amSelected ? activeColor : inactiveColor);
+    final TextStyle amStyle = headerTextTheme.titleMedium!.copyWith(color: amSelected ? activeColor : inactiveColor);
+    final TextStyle pmStyle = headerTextTheme.titleMedium!.copyWith(color: !amSelected ? activeColor : inactiveColor);
     final bool layoutPortrait = orientation == Orientation.portrait;
 
     final Widget amButton = ConstrainedBox(
@@ -708,10 +706,10 @@ class _TimePickerHeader extends StatelessWidget {
     // screen shots of the time picker in the spec.
     switch (orientation) {
       case Orientation.landscape:
-        return headerTextTheme.headline3!.copyWith(fontSize: 50.0);
+        return headerTextTheme.displaySmall!.copyWith(fontSize: 50.0);
       case Orientation.portrait:
       default:
-        return headerTextTheme.headline2!.copyWith(fontSize: 60.0);
+        return headerTextTheme.displayMedium!.copyWith(fontSize: 60.0);
     }
   }
 
@@ -745,7 +743,7 @@ class _TimePickerHeader extends StatelessWidget {
         break;
       case Brightness.dark:
       default:
-        backgroundColor = themeData.backgroundColor;
+        backgroundColor = themeData.colorScheme.background;
         break;
     }
 
@@ -1266,7 +1264,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
   ];
 
   _TappableLabel _buildTappableLabel(TextTheme textTheme, int value, String label, VoidCallback onTap) {
-    final TextStyle? style = textTheme.subtitle1;
+    final TextStyle? style = textTheme.titleMedium;
     // TODO(abarth): Handle textScaleFactor.
     // https://github.com/flutter/flutter/issues/5939
     return _TappableLabel(
@@ -1353,7 +1351,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
         break;
       case Brightness.dark:
       default:
-        backgroundColor = themeData.backgroundColor;
+        backgroundColor = themeData.colorScheme.background;
         break;
     }
 
@@ -1401,7 +1399,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
           secondaryOuterLabels: secondaryOuterLabels,
           secondaryInnerLabels: secondaryInnerLabels,
           backgroundColor: backgroundColor,
-          accentColor: themeData.accentColor,
+          accentColor: themeData.colorScheme.secondary,
           theta: _theta.value,
           activeRing: _activeRing,
           textDirection: Directionality.of(context),

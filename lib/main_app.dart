@@ -19,7 +19,9 @@ import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 import 'package:dedepos/bloc/server_bloc.dart';
 import 'package:dedepos/api/network/server.dart' as server;
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:presentation_displays/display.dart';
+import 'package:intl/intl.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -51,6 +53,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = "th";
+  initializeDateFormatting();
   if (Platform.isAndroid) {
     // Position position = await global.determinePosition();
   }
@@ -74,6 +78,28 @@ Future<void> mainApp() async {
   }
 
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
+    global.posSaleChannelList
+        .add(PosSaleChannelModel(code: 'XXX', name: 'ขายหน้าร้าน'));
+    global.posSaleChannelList.add(PosSaleChannelModel(
+        code: 'GRAP',
+        name: 'Grap',
+        logoUrl:
+            "https://seeklogo.com/images/G/grab-logo-7020E74857-seeklogo.com.png"));
+    global.posSaleChannelList.add(PosSaleChannelModel(
+        code: 'PANDA',
+        name: 'Food Panda',
+        logoUrl:
+            "https://promocodes.my/wp-content/uploads/2022/06/foodpanda-logo-1-350x350.png"));
+    global.posSaleChannelList.add(PosSaleChannelModel(
+        code: 'LINEMAN',
+        name: 'LINE MAN',
+        logoUrl:
+            "https://mallika.co.th/wp-content/uploads/2022/05/Logo-Lineman-c.png"));
+    global.posSaleChannelList.add(PosSaleChannelModel(
+        code: 'LALAMOVE',
+        name: 'LALA MOVE',
+        logoUrl:
+            "https://www.americanexpress.com/content/dam/amex/hk/shared/Offer-hub/GCS-2021-060-Lalamove-logo_470-x-350_EN02_150dpi.jpg"));
     await global.startLoading();
     // (await global.getDeviceId() == 'ABABA0AA-F156-4FF2-8AB0-DD25B7348819');
     server.startServer();
@@ -97,12 +123,12 @@ Future<void> mainApp() async {
               create: (context) => ProductCategoryBloc(categoryGuid: '')),
         ],
         child: MaterialApp(
-          // onGenerateRoute: generateRoute,
-          initialRoute: 'authentication',
+          onGenerateRoute: generateRoute,
+          initialRoute: 'login',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            fontFamily: 'Prompt',
-          ),
+              // fontFamily: 'Prompt',
+              ),
         ),
       ),
     );

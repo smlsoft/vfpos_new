@@ -1,11 +1,6 @@
 import 'dart:developer' as dev;
-import 'package:dedepos/api/network/server.dart';
-import 'package:http/http.dart' as http;
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';
-import 'package:dedepos/api/network/server.dart' as network;
-import 'package:uuid/uuid.dart';
-import 'package:uuid/uuid_util.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/global_model.dart';
@@ -13,37 +8,18 @@ import 'package:dedepos/pos_screen/pay/pay_cash.dart';
 import 'package:dedepos/pos_screen/pay/pay_coupon.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:dedepos/pos_screen/pos_print.dart';
-import 'package:dedepos/pos_screen/pos_screen.dart';
-import 'package:dedepos/widgets/roundpaymenu.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:dedepos/pos_screen/pos_process.dart';
 import 'package:dedepos/widgets/button.dart';
-import 'package:dedepos/widgets/numpad.dart';
 import 'dart:async';
-import 'dart:io';
-import 'package:dedepos/model/system/pos_pay_model.dart';
-import 'package:dedepos/model/json/pos_model.dart';
-import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/services.dart';
-import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
-import 'package:dedepos/services/pos_button.dart';
-import 'package:dedepos/services/result_display.dart';
-import 'package:dedepos/services/menu_button.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/api/rest_api.dart';
-import 'package:dedepos/widgets/numpad.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
-import 'package:flutter_svg/svg.dart';
 import 'pay_credit_card.dart';
 import 'pay_transfer.dart';
 import 'pay_discount.dart';
 import 'pay_cheque.dart';
 import 'pay_qr.dart';
 import 'pay_widget.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import '../pos_util.dart' as posUtil;
 
 class PayScreen extends StatefulWidget {
@@ -69,16 +45,11 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    if (global.posVersion == global.PosVersionEnum.pos ||
-        global.posVersion == global.PosVersionEnum.restaurant) {
-      tabBarMenuController = TabController(length: 7, vsync: this);
-    } else {
-      tabBarMenuController = TabController(length: 5, vsync: this);
-    }
+    tabBarMenuController = TabController(length: 8, vsync: this);
     tabBarMenuController.addListener(() {
       setState(() {
         global.payScreenNumberPadIsActive = false;
-        dev.log("Selected Index: " + tabBarMenuController.index.toString());
+        dev.log("Selected Index: ${tabBarMenuController.index}");
       });
     });
     sendPayScreenCommandToCustomerDisplay();
@@ -424,7 +395,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                       ),
                       Expanded(
                         child: Text(
-                          '${global.moneyFormat.format(sumTotalPayAmount)} ${moneySymbol}',
+                          '${global.moneyFormat.format(sumTotalPayAmount)} $moneySymbol',
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: fontSize,
@@ -1038,20 +1009,23 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       tabViewList.add(
           PayTransfer(posProcess: widget.posProcess, blocContext: blocContext));
     }
-    if (global.posVersion == global.PosVersionEnum.pos ||
-        global.posVersion == global.PosVersionEnum.restaurant) {
-      {
-        tabBarList
-            .add(Text(global.language('cheque'), textAlign: TextAlign.center));
-        tabViewList.add(
-            PayCheque(posProcess: widget.posProcess, blocContext: blocContext));
-      }
-      {
-        tabBarList
-            .add(Text(global.language('coupon'), textAlign: TextAlign.center));
-        tabViewList.add(
-            PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
-      }
+    {
+      tabBarList
+          .add(Text(global.language('cheque'), textAlign: TextAlign.center));
+      tabViewList.add(
+          PayCheque(posProcess: widget.posProcess, blocContext: blocContext));
+    }
+    {
+      tabBarList
+          .add(Text(global.language('coupon'), textAlign: TextAlign.center));
+      tabViewList.add(
+          PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
+    }
+    {
+      tabBarList
+          .add(Text(global.language('credit'), textAlign: TextAlign.center));
+      tabViewList.add(
+          PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
     }
 
     return Container(

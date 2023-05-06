@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "2:5035133149351921342",
-      "lastPropertyId": "12:6597758841446847175",
+      "lastPropertyId": "13:2992093116338670712",
       "name": "BillDetailExtraObjectBoxStruct",
       "properties": [
         {
@@ -68,13 +68,18 @@
           "id": "12:6597758841446847175",
           "name": "total_amount",
           "type": 8
+        },
+        {
+          "id": "13:2992093116338670712",
+          "name": "doc_mode",
+          "type": 6
         }
       ],
       "relations": []
     },
     {
       "id": "3:8200473711235576786",
-      "lastPropertyId": "14:2405522170662206015",
+      "lastPropertyId": "15:390254661974416422",
       "name": "BillDetailObjectBoxStruct",
       "properties": [
         {
@@ -147,13 +152,18 @@
           "id": "14:2405522170662206015",
           "name": "sku",
           "type": 9
+        },
+        {
+          "id": "15:390254661974416422",
+          "name": "doc_mode",
+          "type": 6
         }
       ],
       "relations": []
     },
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "36:7609151361712366329",
+      "lastPropertyId": "40:3981669769998466808",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -328,13 +338,33 @@
           "id": "36:7609151361712366329",
           "name": "cancel_reason",
           "type": 9
+        },
+        {
+          "id": "37:8474776430041044704",
+          "name": "full_vat_print",
+          "type": 1
+        },
+        {
+          "id": "38:8789896164240400860",
+          "name": "full_vat_doc_number",
+          "type": 9
+        },
+        {
+          "id": "39:3636099827172088056",
+          "name": "cancel_description",
+          "type": 9
+        },
+        {
+          "id": "40:3981669769998466808",
+          "name": "doc_mode",
+          "type": 6
         }
       ],
       "relations": []
     },
     {
       "id": "5:7075751635639607639",
-      "lastPropertyId": "21:277199354269320237",
+      "lastPropertyId": "25:1893061376291493828",
       "name": "BillPayObjectBoxStruct",
       "properties": [
         {
@@ -389,11 +419,6 @@
           "type": 9
         },
         {
-          "id": "11:841489037907652157",
-          "name": "bank_referance",
-          "type": 9
-        },
-        {
           "id": "12:1426124240551915374",
           "name": "due_date",
           "type": 10
@@ -419,16 +444,6 @@
           "type": 9
         },
         {
-          "id": "17:4413991455408555318",
-          "name": "referance_one",
-          "type": 9
-        },
-        {
-          "id": "18:7039389348481784033",
-          "name": "referance_two",
-          "type": 9
-        },
-        {
           "id": "19:3279654424233188732",
           "name": "provider_code",
           "type": 9
@@ -442,6 +457,26 @@
           "id": "21:277199354269320237",
           "name": "amount",
           "type": 8
+        },
+        {
+          "id": "22:1449855984252910006",
+          "name": "bank_reference",
+          "type": 9
+        },
+        {
+          "id": "23:3130475303615156068",
+          "name": "reference_one",
+          "type": 9
+        },
+        {
+          "id": "24:1437739751485947506",
+          "name": "reference_two",
+          "type": 9
+        },
+        {
+          "id": "25:1893061376291493828",
+          "name": "doc_mode",
+          "type": 6
         }
       ],
       "relations": []
@@ -472,7 +507,7 @@
     },
     {
       "id": "7:4224485752852947885",
-      "lastPropertyId": "11:8456321410964577236",
+      "lastPropertyId": "13:41430858726130000",
       "name": "EmployeeObjectBoxStruct",
       "properties": [
         {
@@ -487,11 +522,6 @@
           "type": 9
         },
         {
-          "id": "5:8775532156783442612",
-          "name": "profilepicture",
-          "type": 9
-        },
-        {
           "id": "6:9035778007223633655",
           "name": "name",
           "type": 9
@@ -502,16 +532,21 @@
           "type": 9
         },
         {
-          "id": "8:4465527186603950335",
-          "name": "isenabled",
-          "type": 1
-        },
-        {
           "id": "11:8456321410964577236",
           "name": "guidfixed",
           "type": 9,
           "flags": 2080,
           "indexId": "20:36068555653443755"
+        },
+        {
+          "id": "12:5475877218215317066",
+          "name": "is_enabled",
+          "type": 1
+        },
+        {
+          "id": "13:41430858726130000",
+          "name": "profile_picture",
+          "type": 9
         }
       ],
       "relations": []
@@ -589,7 +624,7 @@
     },
     {
       "id": "9:5736757595189524590",
-      "lastPropertyId": "28:6877901496144380651",
+      "lastPropertyId": "29:2896230014411146678",
       "name": "PosLogObjectBoxStruct",
       "properties": [
         {
@@ -706,6 +741,11 @@
           "type": 6,
           "flags": 8,
           "indexId": "15:8091174755438905349"
+        },
+        {
+          "id": "29:2896230014411146678",
+          "name": "doc_mode",
+          "type": 6
         }
       ],
       "relations": []
@@ -1166,7 +1206,12 @@
     4959334329666701118,
     1061488025613655637,
     4892252268093927252,
-    7012798260610235098
+    7012798260610235098,
+    841489037907652157,
+    4413991455408555318,
+    7039389348481784033,
+    8775532156783442612,
+    4465527186603950335
   ],
   "retiredRelationUids": [],
   "version": 1

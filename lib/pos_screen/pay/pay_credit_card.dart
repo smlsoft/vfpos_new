@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/db/bank_helper.dart';
@@ -6,10 +5,8 @@ import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/pos_screen/pay/pay_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pattern_formatter/pattern_formatter.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
 
@@ -73,23 +70,23 @@ class _PayCreditCardState extends State<PayCreditCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
+              SizedBox(
                   height: 90,
                   child: ElevatedButton(
                       onPressed: () {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                title: new Text(
+                                title: Text(
                                     global.language("select_card_type")),
-                                content: Container(
+                                content: SizedBox(
                                     width: 350,
                                     height: 300,
-                                    child: new ListView.builder(
+                                    child: ListView.builder(
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Padding(
-                                            padding: EdgeInsets.only(
+                                            padding: const EdgeInsets.only(
                                                 top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
@@ -101,7 +98,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                                         .findLogoImageFromCreditCardProvider(
                                                             bankDataList[index]
                                                                 .code))),
-                                                SizedBox(width: 10),
+                                                const SizedBox(width: 10),
                                                 Text(bankDataList[index]
                                                     .names[0])
                                               ]),
@@ -135,14 +132,14 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                       : Container())),
                           Text(
                             global.language('bank'),
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
                         ],
                       ))),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: cardNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -162,16 +159,16 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = cardNumber;
-                                final RenderBox _renderBox = cardNumberKey
+                                final RenderBox renderBox = cardNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
-                                final Size _size = _renderBox.size;
-                                final Offset _offset =
-                                    _renderBox.localToGlobal(Offset.zero);
+                                final Size size = renderBox.size;
+                                final Offset offset =
+                                    renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
-                                    _offset.dx + (_size.width * 1.1);
+                                    offset.dx + (size.width * 1.1);
                                 global.payScreenNumberPadTop =
-                                    _offset.dy - _size.height;
+                                    offset.dy - size.height;
                                 _buttonIndex = 1;
                               }
                               refreshEvent();
@@ -184,24 +181,24 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                       alignment: Alignment.center,
                                       child: Text(
                                         cardNumber,
-                                        style: TextStyle(fontSize: 32),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('card_number'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
                           )))),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: approveNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -221,16 +218,16 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.text;
                                 global.payScreenNumberPadText = approveNumber;
-                                final RenderBox _renderBox = approveNumberKey
+                                final RenderBox renderBox = approveNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
-                                final Size _size = _renderBox.size;
-                                final Offset _offset =
-                                    _renderBox.localToGlobal(Offset.zero);
+                                final Size size = renderBox.size;
+                                final Offset offset =
+                                    renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
-                                    _offset.dx + (_size.width * 1.5);
+                                    offset.dx + (size.width * 1.5);
                                 global.payScreenNumberPadTop =
-                                    _offset.dy - _size.height;
+                                    offset.dy - size.height;
                                 _buttonIndex = 2;
                               }
                               refreshEvent();
@@ -243,19 +240,19 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                       alignment: Alignment.center,
                                       child: Text(
                                         approveNumber,
-                                        style: TextStyle(fontSize: 32),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('authorization_code'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
                           )))),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
-                  child: Container(
+                  child: SizedBox(
                       key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
@@ -276,16 +273,16 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                 global.payScreenNumberPadWidget =
                                     PayScreenNumberPadWidgetEnum.number;
                                 global.payScreenNumberPadAmount = cardAmount;
-                                final RenderBox _renderBox = amountNumberKey
+                                final RenderBox renderBox = amountNumberKey
                                     .currentContext
                                     ?.findRenderObject() as RenderBox;
-                                final Size _size = _renderBox.size;
-                                final Offset _offset =
-                                    _renderBox.localToGlobal(Offset.zero);
+                                final Size size = renderBox.size;
+                                final Offset offset =
+                                    renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
-                                    _offset.dx + (_size.width * 1.1);
+                                    offset.dx + (size.width * 1.1);
                                 global.payScreenNumberPadTop =
-                                    _offset.dy - _size.height;
+                                    offset.dy - size.height;
                                 global.payScreenNumberPadAmount = cardAmount;
                                 global.payScreenNumberPadText =
                                     (cardAmount == 0)
@@ -305,12 +302,12 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                       alignment: Alignment.center,
                                       child: Text(
                                         global.moneyFormat.format(cardAmount),
-                                        style: TextStyle(fontSize: 32),
+                                        style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
                                 global.language('amount'),
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
                             ],
@@ -333,11 +330,10 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
-                    ;
                   },
                   label: Text(
                     global.language("credit_card_save"),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -346,7 +342,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                   style: ElevatedButton.styleFrom(
                     elevation: 8,
                     backgroundColor: Colors.green,
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
               ),
@@ -371,15 +367,15 @@ class _PayCreditCardState extends State<PayCreditCard> {
             child: ListTile(
               title: Row(
                 children: [
-                  Container(
+                  SizedBox(
                       width: 100,
                       height: 50,
                       child: Image.asset(
                           global.findLogoImageFromCreditCardProvider(global
                               .payScreenData.credit_card[index].bank_code))),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
-                    global.language('card_number') + '  : ',
+                    '${global.language('card_number')}  : ',
                     style: TextStyle(
                         color: Colors.grey.shade700,
                         fontWeight: FontWeight.bold,
@@ -414,7 +410,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                 ),
               ),
               trailing: IconButton(
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.delete,
                     size: 30.0,
                     color: Colors.redAccent,
@@ -488,10 +484,10 @@ class _PayCreditCardState extends State<PayCreditCard> {
             cardDetail(),
             Column(
               children: <Widget>[
-                ...global.payScreenData.credit_card.map((_detail) {
-                  var _index =
-                      global.payScreenData.credit_card.indexOf(_detail);
-                  return _buildCreditCard(index: _index);
+                ...global.payScreenData.credit_card.map((detail) {
+                  var index =
+                      global.payScreenData.credit_card.indexOf(detail);
+                  return _buildCreditCard(index: index);
                 }).toList()
               ],
             ),

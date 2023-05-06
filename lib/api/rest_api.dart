@@ -47,75 +47,71 @@ class RestApiFindItemByCodeNameBarcode {
 class RestApiFindMemberByTelName {
   Future<List<FindMemberModel>> findMemberByTelName(
       String word, int offset, int limit) async {
-    String _fieldName = "telephone,name";
-    List<String> _fieldNameList = _fieldName.split(",");
-    List<FindMemberModel> _result = [];
+    String fieldName = "telephone,name";
+    List<String> fieldNameList = fieldName.split(",");
+    List<FindMemberModel> result = [];
     if (word.trim().isNotEmpty) {
-      MemberHelper _memberHelper = MemberHelper();
+      MemberHelper memberHelper = MemberHelper();
 
-      StringBuffer _where = StringBuffer();
+      StringBuffer where = StringBuffer();
 
-      List<String> _wordBreak = global.wordSplit(word);
-      for (int _fieldIndex = 0;
-          _fieldIndex < _fieldNameList.length;
-          _fieldIndex++) {
-        if (_where.isNotEmpty) {
-          _where.write(" or ");
+      List<String> wordBreak = global.wordSplit(word);
+      for (int fieldIndex = 0;
+          fieldIndex < fieldNameList.length;
+          fieldIndex++) {
+        if (where.isNotEmpty) {
+          where.write(" or ");
         }
-        StringBuffer _whereField = StringBuffer();
-        for (int _wordIndex = 0; _wordIndex < _wordBreak.length; _wordIndex++) {
-          if (_whereField.isNotEmpty) {
-            _whereField.write(" and ");
+        StringBuffer whereField = StringBuffer();
+        for (int wordIndex = 0; wordIndex < wordBreak.length; wordIndex++) {
+          if (whereField.isNotEmpty) {
+            whereField.write(" and ");
           }
-          _whereField.write(" " +
-              _fieldNameList[_fieldIndex] +
-              " like '%" +
-              _wordBreak[_wordIndex] +
-              "%'");
+          whereField.write(" ${fieldNameList[fieldIndex]} like '%${wordBreak[wordIndex]}%'");
         }
-        _where.write(" (" + _whereField.toString() + ") ");
+        where.write(" ($whereField) ");
       }
-      List<MemberObjectBoxStruct> _select =
-          await _memberHelper.select(where: _where.toString());
-      for (int _index = 0; _index < _select.length; _index++) {
-        MemberObjectBoxStruct _source = _select[_index];
-        _result.add(
+      List<MemberObjectBoxStruct> select =
+          memberHelper.select(where: where.toString());
+      for (int index = 0; index < select.length; index++) {
+        MemberObjectBoxStruct source = select[index];
+        result.add(
           FindMemberModel(
-            address: _source.address,
-            branchcode: _source.branchcode,
-            branchtype: _source.branchtype,
-            contacttype: _source.contacttype,
-            name: _source.name,
-            personaltype: _source.personaltype,
-            surname: _source.surname,
-            taxid: _source.taxid,
-            telephone: _source.telephone,
-            zipcode: _source.zipcode,
+            address: source.address,
+            branchcode: source.branchcode,
+            branchtype: source.branchtype,
+            contacttype: source.contacttype,
+            name: source.name,
+            personaltype: source.personaltype,
+            surname: source.surname,
+            taxid: source.taxid,
+            telephone: source.telephone,
+            zipcode: source.zipcode,
           ),
         );
       }
     }
-    return _result;
+    return result;
   }
 }
 
 class RestApiFindEmployeeByWord {
   Future<List<FindEmployeeModel>> findEmployeeByWord(String word) async {
-    List<FindEmployeeModel> _result = [];
-    EmployeeHelper _employeeHelper = EmployeeHelper();
-    List<EmployeeObjectBoxStruct> _select =
-        await _employeeHelper.select(word: word);
-    for (int _index = 0; _index < _select.length; _index++) {
-      EmployeeObjectBoxStruct _source = _select[_index];
-      _result.add(
+    List<FindEmployeeModel> result = [];
+    EmployeeHelper employeeHelper = EmployeeHelper();
+    List<EmployeeObjectBoxStruct> select =
+        employeeHelper.select(word: word);
+    for (int index = 0; index < select.length; index++) {
+      EmployeeObjectBoxStruct source = select[index];
+      result.add(
         FindEmployeeModel(
-            name: _source.name,
-            code: _source.code,
+            name: source.name,
+            code: source.code,
             roles: "" /* _source.roles.toString()*/,
-            profilepicture: _source.profilepicture,
-            username: _source.name),
+            profile_picture: source.profile_picture,
+            username: source.name),
       );
     }
-    return _result;
+    return result;
   }
 }

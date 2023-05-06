@@ -14,9 +14,9 @@ class FindEmployee extends StatefulWidget {
 
 class _FindEmployeeState extends State<FindEmployee>
     with TickerProviderStateMixin {
-  final _debouncer = global.Debounce(500);
-  final List<FindEmployeeModel> _findResult = [];
-  final TextEditingController _textFindByTextController =
+  final debouncer = global.Debounce(500);
+  final List<FindEmployeeModel> findResult = [];
+  final TextEditingController textFindByTextController =
       TextEditingController();
 
   @override
@@ -25,16 +25,12 @@ class _FindEmployeeState extends State<FindEmployee>
     context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadStart(''));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   Widget findByText() {
     return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(
         builder: (context, state) {
       if (state is FindEmployeeByNameLoadSuccess) {
-        _findResult.addAll(state.result);
+        findResult.addAll(state.result);
         context
             .read<FindEmployeeByNameBloc>()
             .add(FindEmployeeByNameLoadFinish());
@@ -53,21 +49,21 @@ class _FindEmployeeState extends State<FindEmployee>
                 padding: const EdgeInsets.all(8),
                 width: double.infinity,
                 child: TextField(
-                    controller: _textFindByTextController,
+                    controller: textFindByTextController,
                     onChanged: (string) {
-                      _debouncer.run(() {
-                        _findResult.clear();
+                      debouncer.run(() {
+                        findResult.clear();
                         context.read<FindEmployeeByNameBloc>().add(
                             FindEmployeeByNameLoadStart(
-                                _textFindByTextController.text));
+                                textFindByTextController.text));
                       });
                     },
                     decoration: InputDecoration(
                       hintText: "ข้อความบางส่วน (ชื่อ)",
                       suffixIcon: IconButton(
                         onPressed: () => setState(() {
-                          _findResult.clear();
-                          _textFindByTextController.clear();
+                          findResult.clear();
+                          textFindByTextController.clear();
                         }),
                         icon: const Icon(Icons.clear),
                       ),
@@ -84,7 +80,7 @@ class _FindEmployeeState extends State<FindEmployee>
             childAspectRatio: 3 / 2,
             crossAxisSpacing: 20,
             mainAxisSpacing: 20),
-        itemCount: _findResult.length,
+        itemCount: findResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return employeeButton(index);
         });
@@ -98,7 +94,7 @@ class _FindEmployeeState extends State<FindEmployee>
           child: ElevatedButton(
         onPressed: () async {
           Navigator.pop(
-              context, [_findResult[index].code, _findResult[index].name]);
+              context, [findResult[index].code, findResult[index].name]);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -110,14 +106,17 @@ class _FindEmployeeState extends State<FindEmployee>
                   border: Border.all(color: Colors.blueAccent),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: CachedNetworkImage(
-                  width: 100,
-                  height: 80,
-                  imageUrl: _findResult[index].profilepicture,
-                  fit: BoxFit.fill,
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                )),
-            Text((_findResult[index].name),
+                child: (findResult[index].profile_picture.trim().isEmpty)
+                    ? Container()
+                    : CachedNetworkImage(
+                        width: 100,
+                        height: 80,
+                        imageUrl: findResult[index].profile_picture,
+                        fit: BoxFit.fill,
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      )),
+            Text((findResult[index].name),
                 style: const TextStyle(
                     color: Colors.white,
                     shadows: [

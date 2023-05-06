@@ -1,4 +1,5 @@
-import 'package:dedepos/global.dart' as global;
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -13,6 +14,9 @@ class PosLogObjectBoxStruct {
   /// GUID Log
   @Unique()
   String guid_auto_fixed = "";
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   /// อ้างอิงในระบบ
   String guid_ref;
@@ -93,6 +97,7 @@ class PosLogObjectBoxStruct {
 
   PosLogObjectBoxStruct({
     this.id = 0,
+    this.doc_mode = 1,
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,
@@ -114,7 +119,7 @@ class PosLogObjectBoxStruct {
     this.unit_code = "",
     this.unit_name = "",
   }) {
-    this.guid_auto_fixed = Uuid().v4();
+    guid_auto_fixed = const Uuid().v4();
   }
 
   factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

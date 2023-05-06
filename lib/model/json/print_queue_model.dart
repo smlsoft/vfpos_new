@@ -18,7 +18,7 @@ class PrintQueueModel {
       required this.doc_number,
       this.line_number = 0,
       required this.printer_code})
-      : this.guid = Uuid().v4();
+      : guid = const Uuid().v4();
   factory PrintQueueModel.fromJson(Map<String, dynamic> json) =>
       _$PrintQueueModelFromJson(json);
   Map<String, dynamic> toJson() => _$PrintQueueModelToJson(this);

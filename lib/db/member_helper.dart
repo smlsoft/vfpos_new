@@ -25,20 +25,20 @@ class MemberHelper {
 
   List<MemberObjectBoxStruct> select(
       {String where = "", int limit = 0, int offset = 0}) {
-    if (where.isNotEmpty) where = " where " + where;
+    if (where.isNotEmpty) where = " where $where";
     return (_box.query()).build().find();
   }
 
   bool deleteByGuidFixed(String guidfixed) {
-    bool _result = false;
-    final _find = _box
+    bool result = false;
+    final find = _box
         .query(MemberObjectBoxStruct_.guidfixed.equals(guidfixed))
         .build()
         .findFirst();
-    if (_find != null) {
-      _result = _box.remove(_find.id);
+    if (find != null) {
+      result = _box.remove(find.id);
     }
-    return _result;
+    return result;
   }
 
   /*Future<int> deleteIn(String guidfixed) async {

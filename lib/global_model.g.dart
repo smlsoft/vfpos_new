@@ -117,6 +117,7 @@ HttpParameterModel _$HttpParameterModelFromJson(Map<String, dynamic> json) =>
       barcode: json['barcode'] as String? ?? "",
       jsonData: json['jsonData'] as String? ?? "",
       holdNumber: json['holdNumber'] as int? ?? 0,
+      docMode: json['docMode'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$HttpParameterModelToJson(HttpParameterModel instance) =>
@@ -126,4 +127,5 @@ Map<String, dynamic> _$HttpParameterModelToJson(HttpParameterModel instance) =>
       'barcode': instance.barcode,
       'jsonData': instance.jsonData,
       'holdNumber': instance.holdNumber,
+      'docMode': instance.docMode,
     };

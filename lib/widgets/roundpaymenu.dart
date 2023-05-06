@@ -19,32 +19,32 @@ class RoundPayMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size _size = MediaQuery.of(context).size;
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
       width: double.infinity,
       child: TextButton(
         onPressed: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.only(right: 10),
-                width: 40,
-                child: SvgPicture.asset(
-                  'assets/icons/pay_screen/$img',
-                  height: (_size.height / 100) * 4,
-                  allowDrawingOutsideViewBox: true,
-                )),
-            Text(
-              label,
-              style: TextStyle(color: Colors.white, fontSize: 15),
-            )
-          ],
-        ),
         style: TextButton.styleFrom(
           backgroundColor: actived == 0
               ? global.posTheme.secondary
               : global.posTheme.background,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+                padding: const EdgeInsets.only(right: 10),
+                width: 40,
+                child: SvgPicture.asset(
+                  'assets/icons/pay_screen/$img',
+                  height: (size.height / 100) * 4,
+                  allowDrawingOutsideViewBox: true,
+                )),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white, fontSize: 15),
+            )
+          ],
         ),
       ),
     );

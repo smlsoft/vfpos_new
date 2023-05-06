@@ -83,7 +83,7 @@ class ApiInterceptors extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     String authorization = global.appStorage.read("token") ?? '';
     if (authorization.isNotEmpty) {
-      options.headers['Authorization'] = "Bearer " + authorization;
+      options.headers['Authorization'] = "Bearer $authorization";
     }
 
     super.onRequest(options, handler);

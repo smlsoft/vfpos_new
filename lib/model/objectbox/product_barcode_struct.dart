@@ -1,11 +1,9 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'product_barcode_struct.g.dart';
 

@@ -14,6 +14,9 @@ class BillObjectBoxStruct {
   /// วันที่เอกสาร
   DateTime date_time;
 
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   /// รหัสลูกค้า
   String customer_code;
 
@@ -38,8 +41,10 @@ class BillObjectBoxStruct {
   /// ยอดรวมสินค้ายกเว้น vat
   double total_except_amount;
 
-  /// พนักงานขาย
+  /// รหัสพนักงานขาย
   String sale_code;
+
+  /// ชื่อพนักงานขาย
   String sale_name;
 
   /// สถานะการ Sync (true = Sync แล้ว, false = ยังไม่ Sync)
@@ -50,6 +55,9 @@ class BillObjectBoxStruct {
 
   /// วันที่ยกเลิก
   String cancel_date_time;
+
+  /// เหตุผลที่ยกเลิก
+  String cancel_description;
 
   /// พนักงานที่ยกเลิก
   String cancel_user_code;
@@ -90,6 +98,12 @@ class BillObjectBoxStruct {
   /// ชำระเงินโดย Coupon
   double sum_coupon;
 
+  /// พิมพ์ใบกำกับภาษีแบบเต็มแล้ว
+  bool full_vat_print;
+
+  /// เลขที่ใบกำกับภาษีแบบเต็ม
+  String full_vat_doc_number;
+
   /// ชื่อลูกค้าใบกำกับภาษีแบบเต็ม
   String full_vat_name;
 
@@ -106,34 +120,38 @@ class BillObjectBoxStruct {
   List<String> print_copy_bill_date_time;
 
   BillObjectBoxStruct(
-      {required this.doc_number,
+      {this.doc_number = "",
       required this.date_time,
-      required this.customer_code,
-      required this.customer_name,
-      required this.customer_telephone,
-      required this.vat_rate,
-      required this.total_amount,
-      required this.total_before_amount,
-      required this.total_vat_amount,
-      required this.total_except_amount,
-      required this.cashier_code,
-      required this.cashier_name,
-      required this.sale_code,
-      required this.sale_name,
-      required this.is_sync,
-      required this.discount_formula,
-      required this.pay_cash_amount,
-      required this.sum_discount,
-      required this.sum_qr_code,
-      required this.sum_credit_card,
-      required this.sum_money_transfer,
-      required this.sum_coupon,
-      required this.sum_cheque,
+      this.doc_mode = 1,
+      this.customer_code = "",
+      this.customer_name = "",
+      this.customer_telephone = "",
+      this.vat_rate = 0.0,
+      this.total_amount = 0.0,
+      this.total_before_amount = 0.0,
+      this.total_vat_amount = 0.0,
+      this.total_except_amount = 0.0,
+      this.cashier_code = "",
+      this.cashier_name = "",
+      this.sale_code = "",
+      this.sale_name = "",
+      this.is_sync = false,
+      this.discount_formula = "",
+      this.pay_cash_amount = 0.0,
+      this.sum_discount = 0.0,
+      this.sum_qr_code = 0.0,
+      this.sum_credit_card = 0.0,
+      this.sum_money_transfer = 0.0,
+      this.sum_coupon = 0.0,
+      this.sum_cheque = 0.0,
       this.is_cancel = false,
       this.cancel_date_time = "",
       this.cancel_user_code = "",
       this.cancel_user_name = "",
       this.cancel_reason = "",
+      this.cancel_description = "",
+      this.full_vat_print = false,
+      this.full_vat_doc_number = "",
       this.full_vat_name = "",
       this.full_vat_address = "",
       this.full_vat_tax_id = "",
@@ -147,6 +165,9 @@ class BillDetailObjectBoxStruct {
 
   /// เลขที่เอกสาร
   String doc_number;
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   /// ลำดับรายการ
   int line_number;
@@ -187,6 +208,7 @@ class BillDetailObjectBoxStruct {
   BillDetailObjectBoxStruct(
       {this.id = 0,
       this.line_number = 0,
+      this.doc_mode = 1,
       this.barcode = "",
       this.item_code = "",
       this.item_name = "",
@@ -207,6 +229,9 @@ class BillDetailExtraObjectBoxStruct {
 
   /// เลขที่เอกสาร
   String doc_number;
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   /// ลำดับรายการ ในเอกสารอ้างอิง
   int ref_line_number;
@@ -241,6 +266,7 @@ class BillDetailExtraObjectBoxStruct {
   BillDetailExtraObjectBoxStruct(
       {this.id = 0,
       this.line_number = 0,
+      this.doc_mode = 1,
       this.barcode = "",
       this.item_code = "",
       this.item_name = "",
@@ -256,68 +282,72 @@ class BillDetailExtraObjectBoxStruct {
 @Entity()
 class BillPayObjectBoxStruct {
   int id;
-  late String doc_number;
+  String doc_number;
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
-  late int trans_flag;
+  int trans_flag;
 
   /// รหัสธนาคาร
-  late String bank_code;
+  String bank_code;
 
   /// ชื่อธนาคาร (อื่นๆ)
-  late String bank_name;
+  String bank_name;
 
   /// เลขที่บัญชี (เงินเข้า)
-  late String bank_account_no;
+  String bank_account_no;
 
   /// เลขที่บัตรเครดิต
-  late String card_number;
+  String card_number;
 
   /// รหัสอนุมัติ
-  late String approved_code;
+  String approved_code;
 
   /// วันที่โอนเงิน
-  late DateTime doc_date_time;
+  DateTime doc_date_time;
 
   /// สาขาธนาคาร
-  late String branch_number;
+  String branch_number;
 
   /// รหัสอ้างอิงธนาคาร
-  late String bank_referance;
+  String bank_reference;
 
   /// วันที่สั่งจ่ายบนเช็ค
-  late DateTime due_date;
+  DateTime due_date;
 
   /// เลขที่เช็ค
-  late String cheque_number;
+  String cheque_number;
 
   /// รหัสส่วนลด
-  late String code;
+  String code;
 
   /// รายละเอียด (เพิ่มเติม)
-  late String description;
+  String description;
 
   /// เลขคูปอง
-  late String number;
+  String number;
 
   /// อ้างอิง 1
-  late String referance_one;
+  String reference_one;
 
   /// อ้างอิง 2
-  late String referance_two;
+  String reference_two;
 
   /// รหัสกระเป๋า เจ้าของเงิน (Provider)
-  late String provider_code;
+  String provider_code;
 
   /// เจ้าของเงิน (Provider)
-  late String provider_name;
+  String provider_name;
 
   /// จำนวนเงิน
-  late double amount;
+  double amount;
 
   BillPayObjectBoxStruct({
     this.id = 0,
     this.doc_number = "",
+    this.doc_mode = 1,
     this.trans_flag = 0,
     this.bank_code = "",
     this.card_number = "",
@@ -325,13 +355,13 @@ class BillPayObjectBoxStruct {
     this.bank_name = "",
     this.bank_account_no = "",
     this.branch_number = "",
-    this.bank_referance = "",
+    this.bank_reference = "",
     this.cheque_number = "",
     this.code = "",
     this.description = "",
     this.number = "",
-    this.referance_one = "",
-    this.referance_two = "",
+    this.reference_one = "",
+    this.reference_two = "",
     this.provider_code = "",
     this.provider_name = "",
     this.amount = 0,

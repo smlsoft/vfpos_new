@@ -3,7 +3,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_process.dart';
 
 Future<PosProcessResultModel> posCompileProcess(
-    {required int holdNumber}) async {
+    {required int holdNumber, required int docMode}) async {
   PosProcessResultModel processResult = PosProcessResultModel();
 
   print("posCompileProcess()");
@@ -11,9 +11,9 @@ Future<PosProcessResultModel> posCompileProcess(
     // คำนวณของ Terminal หลัก
     PosProcess posProcess = PosProcess();
     global.posHoldProcessResult[holdNumber].posProcess =
-        await posProcess.process(holdNumber);
+        await posProcess.process(holdNumber:holdNumber,docMode: docMode);
     posProcess
-        .sumCategoryCount(global.posHoldProcessResult[holdNumber].posProcess);
+        .sumCategoryCount(value:global.posHoldProcessResult[holdNumber].posProcess);
     processResult = posProcess.result;
   }
   {
@@ -21,11 +21,12 @@ Future<PosProcessResultModel> posCompileProcess(
     for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
       if (global.posRemoteDeviceList[index].processSuccess == false) {
         int getHoldNumber = global.posRemoteDeviceList[index].holdNumberActive;
+        int getDocMode = global.posRemoteDeviceList[index].docModeActive;
         if (holdNumber != getHoldNumber) {
           PosProcess posProcess = PosProcess();
           global.posHoldProcessResult[getHoldNumber].posProcess =
-              await posProcess.process(getHoldNumber);
-          posProcess.sumCategoryCount(
+              await posProcess.process(holdNumber: getHoldNumber,docMode: getDocMode);
+          posProcess.sumCategoryCount(value:
               global.posHoldProcessResult[getHoldNumber].posProcess);
         }
         global.posRemoteDeviceList[index].processSuccess = true;

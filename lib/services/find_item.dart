@@ -94,28 +94,28 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                     icon: const Icon(Icons.clear),
                   ),
                 )),
-            Row(children: [
-              const Expanded(
-                  flex: 3, child: Text("barcode" + "/" + "item_code")),
-              const Expanded(flex: 6, child: Text("item_name")),
-              const Expanded(flex: 2, child: Text("unit_name")),
-              const Expanded(
+            Row(children: const [
+              Expanded(
+                  flex: 3, child: Text("barcode/item_code")),
+              Expanded(flex: 6, child: Text("item_name")),
+              Expanded(flex: 2, child: Text("unit_name")),
+              Expanded(
                   flex: 2,
                   child: Align(
                       alignment: Alignment.centerRight, child: Text("price"))),
-              const Expanded(
+              Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("minus"))),
-              const Expanded(
+              Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("qty"))),
-              const Expanded(
+              Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("plus"))),
-              const Expanded(
+              Expanded(
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text("save")))
@@ -124,21 +124,21 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                 child: SingleChildScrollView(
                     child: Column(
               children: _findByCodeNameLastResult.map((value) {
-                var _index = _findByCodeNameLastResult.indexOf(value);
-                var _detail = _findByCodeNameLastResult[_index];
+                var index = _findByCodeNameLastResult.indexOf(value);
+                var detail = _findByCodeNameLastResult[index];
                 return Container(
                     child: Row(children: [
                   Expanded(
                       flex: 3,
-                      child: Text(_detail.barcode + "/" + _detail.item_code)),
-                  Expanded(flex: 6, child: Text(_detail.item_names[0])),
-                  Expanded(flex: 2, child: Text(_detail.unit_names[0])),
+                      child: Text("${detail.barcode}/${detail.item_code}")),
+                  Expanded(flex: 6, child: Text(detail.item_names[0])),
+                  Expanded(flex: 2, child: Text(detail.unit_names[0])),
                   Expanded(
                       flex: 2,
                       child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                              global.moneyFormat.format(_detail.prices[0])))),
+                              global.moneyFormat.format(detail.prices[0])))),
                   Expanded(
                       flex: 1,
                       child: Align(
@@ -149,8 +149,9 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                               ),
                               onPressed: () {
                                 setState(() {
-                                  if (_detail.qty > 0.0)
-                                    _detail.qty = _detail.qty - 1.0;
+                                  if (detail.qty > 0.0) {
+                                    detail.qty = detail.qty - 1.0;
+                                  }
                                 });
                               },
                               child: const Icon(Icons.remove)))),
@@ -172,21 +173,21 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                           content: SizedBox(
                                               height: 240,
                                               child: NumberPad(
-                                                  title: Text(_detail
+                                                  title: Text(detail
                                                           .item_names[0] +
                                                       ' ' +
                                                       "qty" +
                                                       ' ' +
                                                       global.moneyFormat
-                                                          .format(_detail.qty) +
+                                                          .format(detail.qty) +
                                                       ' ' +
-                                                      _detail.unit_names[0]),
+                                                      detail.unit_names[0]),
                                                   onChange: (qty) => {
                                                         if (qty.isNotEmpty &&
                                                             double.parse(qty) >
                                                                 0)
                                                           {
-                                                            _detail.qty =
+                                                            detail.qty =
                                                                 double.parse(
                                                                     qty),
                                                           }
@@ -197,7 +198,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                 setState(() {});
                               },
                               child: Text(
-                                  global.qtyShortFormat.format(_detail.qty))))),
+                                  global.qtyShortFormat.format(detail.qty))))),
                   Expanded(
                       flex: 1,
                       child: Align(
@@ -208,7 +209,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                               ),
                               onPressed: () {
                                 setState(() {
-                                  _detail.qty = _detail.qty + 1.0;
+                                  detail.qty = detail.qty + 1.0;
                                 });
                               },
                               child: const Icon(Icons.add)))),
@@ -225,14 +226,14 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                     context,
                                     SelectItemConditionModel(
                                         command: 1,
-                                        qty: _detail.qty,
-                                        prices: _detail.prices,
+                                        qty: detail.qty,
+                                        prices: detail.prices,
                                         data: BarcodeModel(
-                                            barcode: _detail.barcode,
-                                            item_code: _detail.item_code,
-                                            item_name: _detail.item_names[0],
-                                            unit_code: _detail.unit_code,
-                                            unit_name: _detail.unit_names[0])));
+                                            barcode: detail.barcode,
+                                            item_code: detail.item_code,
+                                            item_name: detail.item_names[0],
+                                            unit_code: detail.unit_code,
+                                            unit_name: detail.unit_names[0])));
                               },
                               child: const Icon(Icons.save))))
                 ]));

@@ -2,23 +2,18 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/flavors.dart';
-import 'package:dedepos/model/json/print_queue_model.dart';
-import 'package:dedepos/model/json/receive_money_model.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
-import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:dedepos/services/printer_config.dart';
-import 'package:dedepos/util/network.dart';
+import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
+import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:uuid/uuid.dart';
-import 'package:dedepos/util/network.dart' as network;
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -29,9 +24,9 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   int menuMode = 0; // 0=Menu,1=Select Language
-  late List<Widget> menuPosList;
-  late List<Widget> menuShiftList;
-  late List<Widget>? menuVisitList;
+  List<Widget> menuPosList = [];
+  List<Widget> menuShiftList = [];
+  List<Widget> menuVisitList = [];
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
@@ -104,38 +99,61 @@ class _MenuScreenState extends State<MenuScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosScreen(),
+                builder: (context) => const PosScreen(
+                    posScreenMode: global.PosScreenModeEnum.posSale),
               ),
             );
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
           title: 'รับคืนสินค้า',
-          callBack: () {}),
+          callBack: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PosScreen(
+                    posScreenMode: global.PosScreenModeEnum.posReturn),
+              ),
+            );
+          }),
     ];
   }
 
   List<Widget> menuShift() {
     return [
-      menuItem(icon: Icons.list_alt_outlined, title: 'เปิดกะ', callBack: () {}),
       menuItem(
           icon: Icons.request_quote,
-          title: 'รับเงินทอน',
+          title: 'เปิดกะ/รับเงินทอน',
+          callBack: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                      insetPadding: const EdgeInsets.all(0),
+                      contentPadding: const EdgeInsets.all(0),
+                      backgroundColor: Colors.transparent,
+                      content: StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return shiftAndMoneyScreen();
+                      }));
+                });
+          }),
+      menuItem(
+          icon: Icons.request_quote,
+          title: 'รับเงินทอนเพิ่ม',
+          callBack: () {
+            receiveMoneyDialog();
+          }),
+      menuItem(
+          icon: Icons.request_quote,
+          title: 'นำเงินออก',
           callBack: () {
             receiveMoneyDialog();
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: 'ส่งยอดขาย',
-          callBack: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Container() /*SendMoney()*/,
-              ),
-            );
-          }),
-      menuItem(icon: Icons.list_alt_outlined, title: 'ปิดกะ', callBack: () {}),
+          title: 'ปิดกะ/ส่งเงิน',
+          callBack: () {}),
     ];
   }
 
@@ -468,14 +486,14 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 ),
                               ),
-                              if (menuVisitList != null)
+                              if (menuVisitList.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: SizedBox(
                                     child: GridView.builder(
                                       shrinkWrap: true,
                                       physics: const BouncingScrollPhysics(),
-                                      itemCount: menuVisitList!.length,
+                                      itemCount: menuVisitList.length,
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount:
@@ -486,7 +504,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                       ),
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return menuVisitList![index];
+                                        return menuVisitList[index];
                                       },
                                     ),
                                   ),
@@ -649,9 +667,9 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  receiveMoneyDialog() {
+  void receiveMoneyDialog() {
     receiveAmount.text = "";
-    empCode.text = global.userLoginCode;
+    empCode.text = global.userLoginCode + "/" + global.userLoginName;
     showDialog(
         barrierLabel: "",
         barrierDismissible: false,
@@ -757,19 +775,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                             Navigator.of(context).pop();
 
                                             global.playSound(
-                                                word: "รับเงินทอน จำนวน " +
-                                                    receiveAmount.text +
-                                                    " " +
-                                                    global.language(
-                                                        "money_symbol"));
+                                                word:
+                                                    "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
 
                                             showMsgDialog(
                                                 header: "บันทึกสำเร็จ",
-                                                msg: "รับเงินทอน จำนวน " +
-                                                    receiveAmount.text +
-                                                    " " +
-                                                    global.language(
-                                                        "money_symbol"),
+                                                msg:
+                                                    "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}",
                                                 type: "success");
                                           },
                                           child: const Text("บันทึก"),

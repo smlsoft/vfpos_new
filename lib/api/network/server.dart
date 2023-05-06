@@ -50,8 +50,10 @@ Future<void> startServer() async {
               HttpParameterModel jsonCategory =
                   HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
               int holdNumber = jsonCategory.holdNumber;
+              int docMode = jsonCategory.docMode;
               global.posHoldProcessResult[holdNumber].posProcess =
-                  await PosProcess().process(holdNumber);
+                  await PosProcess()
+                      .process(holdNumber: holdNumber, docMode: docMode);
               response.write(
                   jsonEncode(global.posHoldProcessResult[holdNumber].toJson()));
               break;
@@ -109,47 +111,6 @@ Future<void> startServer() async {
               response
                   .write(jsonEncode(result.map((e) => e.toJson()).toList()));
               break;
-            case "selectByParentCategoryGuidOrderByXorder":
-              HttpParameterModel jsonCategory =
-                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-              String parentGuid = jsonCategory.parentGuid;
-              final box =
-                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-              final result = (box.query(ProductCategoryObjectBoxStruct_
-                      .parent_guid_fixed
-                      .equals(parentGuid))
-                    ..order(ProductCategoryObjectBoxStruct_.xorder))
-                  .build()
-                  .find();
-              response
-                  .write(jsonEncode(result.map((e) => e.toJson()).toList()));
-              break;
-            case "selectByCategoryGuidFindFirst":
-              HttpParameterModel jsonCategory =
-                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-              String guid = jsonCategory.guid;
-              final box =
-                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-              ProductCategoryObjectBoxStruct? result = box
-                  .query(
-                      ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
-                  .build()
-                  .findFirst();
-              response.write(jsonEncode(result?.toJson()));
-              break;
-            case "selectByCategoryGuidFindFirst":
-              HttpParameterModel jsonCategory =
-                  HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-              String guid = jsonCategory.guid;
-              final box =
-                  global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
-              ProductCategoryObjectBoxStruct? result = box
-                  .query(
-                      ProductCategoryObjectBoxStruct_.guid_fixed.equals(guid))
-                  .build()
-                  .findFirst();
-              response.write(jsonEncode(result?.toJson()));
-              break;
             case "selectByCategoryGuidFindFirst":
               HttpParameterModel jsonCategory =
                   HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
@@ -176,6 +137,7 @@ Future<void> startServer() async {
                 connected: true,
                 isCashierTerminal: isTerminal,
                 holdNumberActive: 0,
+                docModeActive: 0,
                 isClient: isClient);
             response.write(jsonEncode(resultData.toJson()));
           } else if (contentType?.mimeType == 'application/json') {
@@ -188,8 +150,9 @@ Future<void> startServer() async {
                   PosHoldProcessModel result =
                       PosHoldProcessModel.fromJson(jsonDecode(httpPost.data));
                   global.posHoldProcessResult[result.holdNumber] = result;
-                  PosProcess().sumCategoryCount(global
-                      .posHoldProcessResult[result.holdNumber].posProcess);
+                  PosProcess().sumCategoryCount(
+                      value: global
+                          .posHoldProcessResult[result.holdNumber].posProcess);
                   if (global.functionPosScreenRefresh != null) {
                     global.functionPosScreenRefresh!(result.holdNumber);
                   }
@@ -208,10 +171,14 @@ Future<void> startServer() async {
                       global.posRemoteDeviceList[index].processSuccess = false;
                     }
                   }
-                  posCompileProcess(holdNumber: jsonData.hold_number).then((_) {
-                    PosProcess().sumCategoryCount(global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess);
+                  posCompileProcess(
+                          holdNumber: jsonData.hold_number,
+                          docMode: jsonData.doc_mode)
+                      .then((_) {
+                    PosProcess().sumCategoryCount(
+                        value: global
+                            .posHoldProcessResult[global.posHoldActiveNumber]
+                            .posProcess);
                     if (global.functionPosScreenRefresh != null) {
                       global.functionPosScreenRefresh!(
                           global.posHoldActiveNumber);
@@ -220,6 +187,7 @@ Future<void> startServer() async {
                   break;
                 case "PosLogHelper.deleteByHoldNumber":
                   int holdNumber = int.parse(httpPost.data);
+                  int docMode = 0; //********* Dummy
                   final box =
                       global.objectBoxStore.box<PosLogObjectBoxStruct>();
                   final ids = box
@@ -228,9 +196,11 @@ Future<void> startServer() async {
                       .build()
                       .findIds();
                   box.removeMany(ids);
-                  posCompileProcess(holdNumber: holdNumber).then((_) {
+                  posCompileProcess(holdNumber: holdNumber, docMode: docMode)
+                      .then((_) {
                     PosProcess().sumCategoryCount(
-                        global.posHoldProcessResult[holdNumber].posProcess);
+                        value:
+                            global.posHoldProcessResult[holdNumber].posProcess);
                     if (global.functionPosScreenRefresh != null) {
                       global.functionPosScreenRefresh!(
                           global.posHoldActiveNumber);
@@ -261,17 +231,10 @@ Future<void> startServer() async {
                         posClientDevice.ip;
                     global.posRemoteDeviceList[indexFound].holdNumberActive =
                         posClientDevice.holdNumberActive;
-                    print("register_remote_device : " +
-                        posClientDevice.ip +
-                        ",hold_number : " +
-                        global.posRemoteDeviceList[indexFound].holdNumberActive
-                            .toString());
+                    print("register_remote_device : ${posClientDevice.ip},hold_number : ${global.posRemoteDeviceList[indexFound].holdNumberActive}");
                   } else {
                     global.posRemoteDeviceList.add(posClientDevice);
-                    print("register_remote_device : " +
-                        posClientDevice.device +
-                        " : " +
-                        global.posRemoteDeviceList.length.toString());
+                    print("register_remote_device : ${posClientDevice.device} : ${global.posRemoteDeviceList.length}");
                   }
                   break;
                 case "register_customer_display_device":
@@ -287,10 +250,7 @@ Future<void> startServer() async {
                   }
                   if (!found) {
                     global.customerDisplayDeviceList.add(customerDisplayDevice);
-                    print("register_customer_display_device : " +
-                        customerDisplayDevice.device +
-                        " : " +
-                        global.customerDisplayDeviceList.length.toString());
+                    print("register_customer_display_device : ${customerDisplayDevice.device} : ${global.customerDisplayDeviceList.length}");
                   }
                   break;
                 case "change_customer_by_phone":
@@ -313,7 +273,7 @@ Future<void> startServer() async {
                     global.posHoldProcessResult[global.posHoldActiveNumber]
                         .customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
-                    PosProcess().sumCategoryCount(global
+                    PosProcess().sumCategoryCount(value:global
                         .posHoldProcessResult[global.posHoldActiveNumber]
                         .posProcess);
                     if (global.functionPosScreenRefresh != null) {
