@@ -64,7 +64,6 @@ late BuildContext globalContext;
 void posProcessRefresh = () {};
 String ipAddress = "";
 List<String> errorMessage = [];
-AuthService appAuth = AuthService();
 List<InformationModel> informationList = <InformationModel>[];
 bool initSuccess = false;
 late List<LanguageSystemCodeModel> languageSystemCode;

@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.2.1+11
 
 environment:
-  sdk: ">=2.18.4 <3.0.0"
+  sdk: ">=2.19.6 <3.0.0"
 
 dependencies:
   flutter:
@@ -64,7 +64,6 @@ dependencies:
   flutter_usb_printer: ^0.1.0+1
   objectbox: ^2.0.0
   json_annotation: ^4.8.0
-  json_serializable: ^6.6.1
   objectbox_generator: ^2.0.0
   objectbox_flutter_libs: ^2.0.0
   archive: ^3.3.2
@@ -78,7 +77,6 @@ dependencies:
   network_info_plus: ^3.0.3
   network_tools: ^3.0.0+3
   esc_pos_utils: ^1.1.0
-  msix: ^3.7.0
   flutter_flavorizr: ^2.1.5
   presentation_displays: ^0.2.3
   video_player: ^2.6.1
@@ -89,6 +87,10 @@ dependencies:
   ffi: ^2.0.1
   uuid: ^3.0.7
   bloc: ^8.1.1
+  get_it: ^7.2.0
+  freezed_annotation: ^2.2.0
+  auto_route: ^6.3.0
+  dartz: ^0.10.1
   
 dev_dependencies:
   flutter_driver:
@@ -98,6 +100,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.1
   build_runner: ^2.3.3
+  freezed: ^2.3.2
+  json_serializable: ^6.6.1
+  auto_route_generator: ^6.2.0
+  msix: ^3.7.0
 
 flutter_icons:
   android: "launcher_icon"
@@ -111,6 +117,7 @@ flutter:
     - assets/audios/
     - assets/images/
     - assets/images/qrpay/
+    - assets/icons/
     - assets/flags/
     - assets/fonts/
      
@@ -133,6 +140,7 @@ flavorizr:
     dev:
       app:
         name: "DEDE POS"
+        icon: "assets/app_logo.png"
       android:
         applicationId: "com.smlsoft.dedepos"
       ios:
@@ -145,18 +153,31 @@ flavorizr:
     dedepos:
       app:
         name: "DEDE POS"
+        icon: "assets/app_logo.png"
       android:
         applicationId: "com.smlsoft.dedepos"
       ios:
         bundleId: "com.smlsoft.dedepos"
       windows:
         packageId: "com.smlsoft.dedepos"
+        # customConfig:
+        #   msix_config:
+        #     display_name: DEDEPOS
+        #     publisher_display_name: SMLSoft
+        #     publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27 
+        #     identity_name: 	SMLSoft.DEDEPOS
+        #     msix_version: 1.0.0.0
+        #     logo_path: .\assets\dede-pos-icon.png
+        #     capabilities: internetClient, location, microphone, webcam
+        #     # certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
+        #     # certificate_password: sml19682511
       macos:
         bundleId: "com.smlsoft.dedepos"
 
     smlsuperpos:
       app:
         name: "SML Super POS"
+        icon: "assets/app_logo.png"
       android:
         applicationId: "com.smlsoft.smlsuperpos"
       ios:
@@ -169,6 +190,7 @@ flavorizr:
     smlmobilesales:
       app:
         name: "SML Mobile Sales"
+        icon: "assets/app_logo.png"
       android:
         applicationId: "com.smlsoft.smlmobilesales"
       ios:
@@ -181,12 +203,42 @@ flavorizr:
     vfpos:
       app:
         name: "Village Fund POS"
+        icon: "assets/vf-pos-logo.png"
       android:
         applicationId: "com.smlsoft.vfpos"
       ios:
         bundleId: "com.smlsoft.vfpos"
       windows:
         packageId: "com.smlsoft.vfpos"
+        # customConfig:
+        #   msix_config:
+        #     display_name: VFPOS
+        #     publisher_display_name: SMLSoft
+        #     identity_name: com.smlsoft.vfpos
+        #     msix_version: 1.0.0.0
+        #     logo_path: .\assets\vf-pos-icon.png
+        #     capabilities: internetClient, location, microphone, webcam
+        #     certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
+        #     certificate_password: sml19682511
       macos:
         bundleId: "com.smlsoft.vfpos"
+msix_config:
+  # # DEDE POS Store Config
+  # display_name: DEDEPOS
+  # publisher_display_name: SMLSoft
+  # publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27 
+  # identity_name: 	SMLSoft.DEDEPOS
+  # msix_version: 1.0.0.0
+  # logo_path: .\assets\dede-pos-icon.png
+  # capabilities: internetClient, location, microphone, webcam
+  # store: true
 
+  # DEDE POS Dev Install Config
+  display_name: DEDEPOS
+  publisher_display_name: SMLSoft
+  publisher: smlsoft
+  identity_name: 	com.smlsoft.dedepos
+  language: en-us
+  capabilities: internetClient, location, microphone, webcam
+  certificate_path: C:\source\flutter-test-key\CERTIFICATE.pfx
+  certificate_password: sml19682511

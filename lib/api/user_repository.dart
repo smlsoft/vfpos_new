@@ -28,11 +28,11 @@ class UserRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      if (ex.type == DioErrorType.connectionTimeout) {
+      if (ex.type == DioErrorType.sendTimeout) {
         throw Exception('Connection Timeout');
       } else if (ex.type == DioErrorType.receiveTimeout) {
         throw Exception('unable to connect to the server : $errorMessage');
-      } else if (ex.type == DioErrorType.connectionError) {
+      } else if (ex.type == DioErrorType.unknown) {
         throw Exception(ex.message);
       } else if (ex.type == DioErrorType.badResponse) {
         print(ex.response?.statusCode);
