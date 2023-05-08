@@ -48,3 +48,23 @@ flutter pub run msix:create
 
 
 ```
+
+
+## Launch Config
+```
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "vfpos",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_vfpos.dart",
+            "args": [
+                "--flavor",
+                "vfpos",
+            ]
+        },
+    ]
+}
+```
