@@ -28,13 +28,13 @@ class UserRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      if (ex.type == DioErrorType.connectTimeout) {
+      if (ex.type == DioErrorType.sendTimeout) {
         throw Exception('Connection Timeout');
       } else if (ex.type == DioErrorType.receiveTimeout) {
         throw Exception('unable to connect to the server : $errorMessage');
-      } else if (ex.type == DioErrorType.other) {
+      } else if (ex.type == DioErrorType.unknown) {
         throw Exception(ex.message);
-      } else if (ex.type == DioErrorType.response) {
+      } else if (ex.type == DioErrorType.badResponse) {
         print(ex.response?.statusCode);
         throw Exception('User Not Found');
       } else {

@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
 import 'package:dedepos/features/splash/domain/usecase/check_user_login_status.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {
@@ -14,25 +16,33 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  void initState() async {
+  void initState() {
     super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      serviceLocator<CheckUserLoginStatus>()
+          .checkIfUserLoggedIn()
+          .then((isUserLoggedIn) {
+        if (isUserLoggedIn) {
+          serviceLocator<CheckUserLoginStatus>()
+              .checkIfUserSelectedShop()
+              .then((userSelectedShop) {
+            if (userSelectedShop != null) {
+              context.read<SelectShopBloc>().add(
+                  SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
 
-    Future.delayed(
-      const Duration(seconds: 4),
-      () {
-        serviceLocator<CheckUserLoginStatus>()
-            .checkIfUserLoggedIn()
-            .then((isUserLoggedIn) {
-          print(" after delay");
-          context.router.pushAndPopUntil(
-            isUserLoggedIn
-                ? const DashboardRoute()
-                : const AuthenticationRoute(),
-            predicate: (_) => false,
-          );
-        });
-      },
-    );
+              context.router.pushAndPopUntil(DashboardRoute(),
+                  predicate: (route) => false);
+            } else {
+              context.router.pushAndPopUntil(const SelectShopRoute(),
+                  predicate: (route) => false);
+            }
+          });
+        } else {
+          context.router.pushAndPopUntil(const AuthenticationRoute(),
+              predicate: (route) => false);
+        }
+      });
+    });
   }
 
   @override

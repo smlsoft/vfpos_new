@@ -21,10 +21,10 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SplashScreen(),
       );
     },
-    AuthenticationRoute.name: (routeData) {
+    SelectShopRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const AuthenticationScreen(),
+        child: const SelectShopScreen(),
       );
     },
     DashboardRoute.name: (routeData) {
@@ -33,10 +33,10 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DashboardScreen(),
       );
     },
-    ListShopRoute.name: (routeData) {
+    AuthenticationRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const ListShopPage(),
+        child: const AuthenticationPage(),
       );
     },
   };
@@ -57,15 +57,15 @@ class SplashRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [AuthenticationScreen]
-class AuthenticationRoute extends PageRouteInfo<void> {
-  const AuthenticationRoute({List<PageRouteInfo>? children})
+/// [SelectShopScreen]
+class SelectShopRoute extends PageRouteInfo<void> {
+  const SelectShopRoute({List<PageRouteInfo>? children})
       : super(
-          AuthenticationRoute.name,
+          SelectShopRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'AuthenticationRoute';
+  static const String name = 'SelectShopRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -85,15 +85,15 @@ class DashboardRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ListShopPage]
-class ListShopRoute extends PageRouteInfo<void> {
-  const ListShopRoute({List<PageRouteInfo>? children})
+/// [AuthenticationPage]
+class AuthenticationRoute extends PageRouteInfo<void> {
+  const AuthenticationRoute({List<PageRouteInfo>? children})
       : super(
-          ListShopRoute.name,
+          AuthenticationRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'ListShopRoute';
+  static const String name = 'AuthenticationRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

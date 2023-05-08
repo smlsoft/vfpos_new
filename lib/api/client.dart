@@ -13,8 +13,8 @@ class Client {
         endPointService[endPointService.length - 1] == "/" ? "" : "/";
 
     dio.options.baseUrl = endPointService;
-    dio.options.connectTimeout = 20000; //20s
-    dio.options.receiveTimeout = 30000; //5s
+    dio.options.connectTimeout = Duration(seconds: 20); //20s
+    dio.options.receiveTimeout = Duration(seconds: 30); //5s
 
     return dio;
   }
