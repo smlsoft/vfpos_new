@@ -23,6 +23,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:intl/intl.dart';
 
+import 'bootstrap.dart';
+
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
@@ -53,6 +55,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeApp();
+
   Intl.defaultLocale = "th";
   initializeDateFormatting();
   if (Platform.isAndroid) {

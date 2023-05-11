@@ -3,7 +3,7 @@ import 'package:dedepos/app/app.dart';
 import 'package:flutter/material.dart';
 
 class ItemMenuDashboard extends StatelessWidget {
-  final Function callBack;
+  final VoidCallback callBack;
   final IconData icon;
   final String title;
   final Color color;

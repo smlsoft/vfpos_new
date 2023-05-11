@@ -1,10 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dedepos/app/app.dart';
+import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';
+import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dedepos/global.dart' as global;
 
 @RoutePage()
 class DashboardScreen extends StatefulWidget {
@@ -37,7 +38,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       child: ItemMenuDashboard(
                         icon: Icons.point_of_sale,
                         title: 'POS',
-                        callBack: () {},
+                        callBack: () {
+                          context.router.push(const POSLoginRoute());
+                        },
                       ),
                     ),
                   ),

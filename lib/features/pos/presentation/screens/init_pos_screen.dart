@@ -1,29 +1,26 @@
 import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/api/sync/master/sync_master.dart';
+import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-class LoadingScreen extends StatefulWidget {
-  const LoadingScreen({Key? key}) : super(key: key);
+@RoutePage()
+class InitPOSScreen extends StatefulWidget {
+  const InitPOSScreen({super.key});
 
   @override
-  _LoadingScreenState createState() => _LoadingScreenState();
+  State<InitPOSScreen> createState() => _InitPOSScreenState();
 }
 
-class _LoadingScreenState extends State<LoadingScreen> {
+class _InitPOSScreenState extends State<InitPOSScreen> {
   Timer? timerSwitchToMenu;
 
   void init() async {
-    /*await global.appStorage.remove(global.syncPrinterTimeName);
-    await global.appStorage.remove(global.syncCategoryTimeName);
-    await global.appStorage.remove(global.syncInventoryTimeName);
-    await global.appStorage.remove(global.syncMemberTimeName);
-    await global.appStorage.remove(global.syncEmployeeTimeName);
-    await global.appStorage.remove(global.syncTableTimeName);
-    await global.appStorage.remove(global.syncTableZoneTimeName);
-    await global.appStorage.remove(global.syncDeviceTimeName);*/
+// set global value
+    // await global.startLoading();
 
     if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
@@ -33,7 +30,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
       timerSwitchToMenu =
           Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
-          Navigator.of(context).pushReplacementNamed('menu');
+          // Navigator.of(context).pushReplacementNamed('menu');
+
+          // context.router.pushAndPopUntil(
+          //     PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
+          //     predicate: (_) => false);
+
+          context.router.replace(
+              PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
+
+          // timerSwitchToMenu?.cancel();
+          // context.router.replace(
+          //     PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
         }
         setState(() {});
       });

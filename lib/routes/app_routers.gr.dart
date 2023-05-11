@@ -33,10 +33,32 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const DashboardScreen(),
       );
     },
+    POSLoginRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const POSLoginScreen(),
+      );
+    },
+    InitPOSRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const InitPOSScreen(),
+      );
+    },
     AuthenticationRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const AuthenticationPage(),
+      );
+    },
+    PosRoute.name: (routeData) {
+      final args = routeData.argsAs<PosRouteArgs>();
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: PosScreen(
+          key: args.key,
+          posScreenMode: args.posScreenMode,
+        ),
       );
     },
   };
@@ -85,6 +107,34 @@ class DashboardRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [POSLoginScreen]
+class POSLoginRoute extends PageRouteInfo<void> {
+  const POSLoginRoute({List<PageRouteInfo>? children})
+      : super(
+          POSLoginRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'POSLoginRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [InitPOSScreen]
+class InitPOSRoute extends PageRouteInfo<void> {
+  const InitPOSRoute({List<PageRouteInfo>? children})
+      : super(
+          InitPOSRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'InitPOSRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [AuthenticationPage]
 class AuthenticationRoute extends PageRouteInfo<void> {
   const AuthenticationRoute({List<PageRouteInfo>? children})
@@ -96,4 +146,41 @@ class AuthenticationRoute extends PageRouteInfo<void> {
   static const String name = 'AuthenticationRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [PosScreen]
+class PosRoute extends PageRouteInfo<PosRouteArgs> {
+  PosRoute({
+    Key? key,
+    required PosScreenModeEnum posScreenMode,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PosRoute.name,
+          args: PosRouteArgs(
+            key: key,
+            posScreenMode: posScreenMode,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'PosRoute';
+
+  static const PageInfo<PosRouteArgs> page = PageInfo<PosRouteArgs>(name);
+}
+
+class PosRouteArgs {
+  const PosRouteArgs({
+    this.key,
+    required this.posScreenMode,
+  });
+
+  final Key? key;
+
+  final PosScreenModeEnum posScreenMode;
+
+  @override
+  String toString() {
+    return 'PosRouteArgs{key: $key, posScreenMode: $posScreenMode}';
+  }
 }

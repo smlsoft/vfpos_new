@@ -10,4 +10,7 @@ class AuthenticationEvent with _$AuthenticationEvent {
   const factory AuthenticationEvent.authenticated({required User user}) =
       AuthenticatedEvent;
   const factory AuthenticationEvent.unAuthenticated() = UserLogoutEvent;
+
+  const factory AuthenticationEvent.onAuthenticatedRefresh(
+      {required User user}) = AuthenticatedRefreshEvent;
 }

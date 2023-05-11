@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/pos_screen/pos_bill_vat.dart';
 import 'package:dedepos/pos_screen/pos_cancel_bill.dart';
 import 'package:dedepos/pos_screen/pos_product_weight.dart';
@@ -45,6 +46,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 
+@RoutePage()
 class PosScreen extends StatefulWidget {
   final global.PosScreenModeEnum posScreenMode;
 
