@@ -11,7 +11,7 @@ class PosCancelBillScreen extends StatefulWidget {
   const PosCancelBillScreen({Key? key}) : super(key: key);
 
   @override
-  _PosCancelBillScreenState createState() => _PosCancelBillScreenState();
+  State<PosCancelBillScreen> createState() => _PosCancelBillScreenState();
 }
 
 class _PosCancelBillScreenState extends State<PosCancelBillScreen> {

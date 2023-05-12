@@ -15,7 +15,7 @@ class PosReprintBillDetailScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PosReprintBillDetailScreenState createState() =>
+  State<PosReprintBillDetailScreen> createState() =>
       _PosReprintBillDetailScreenState();
 }
 

@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 
 Future<void> connectivity() async {
   final connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult == ConnectivityResult.mobile) {
-    print("I am connected to a mobile network.");
+    serviceLocator<Log>().debug("I am connected to a mobile network.");
   } else if (connectivityResult == ConnectivityResult.wifi) {
-    print("I am connected to a wifi network.");
+    serviceLocator<Log>().debug("I am connected to a wifi network.");
   }
 }
 

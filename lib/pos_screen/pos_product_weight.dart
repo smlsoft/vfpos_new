@@ -13,7 +13,7 @@ class PosProductWeightScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PosProductWeightScreenState createState() => _PosProductWeightScreenState();
+  State<PosProductWeightScreen> createState() => _PosProductWeightScreenState();
 }
 
 class _PosProductWeightScreenState extends State<PosProductWeightScreen> {

@@ -1,5 +1,6 @@
 import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
+import 'package:dedepos/core/core.dart';
 import 'package:dedepos/db/pos_log_helper.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
@@ -231,10 +232,12 @@ Future<void> startServer() async {
                         posClientDevice.ip;
                     global.posRemoteDeviceList[indexFound].holdNumberActive =
                         posClientDevice.holdNumberActive;
-                    print("register_remote_device : ${posClientDevice.ip},hold_number : ${global.posRemoteDeviceList[indexFound].holdNumberActive}");
+                    serviceLocator<Log>().debug(
+                        "register_remote_device : ${posClientDevice.ip},hold_number : ${global.posRemoteDeviceList[indexFound].holdNumberActive}");
                   } else {
                     global.posRemoteDeviceList.add(posClientDevice);
-                    print("register_remote_device : ${posClientDevice.device} : ${global.posRemoteDeviceList.length}");
+                    serviceLocator<Log>().debug(
+                        "register_remote_device : ${posClientDevice.device} : ${global.posRemoteDeviceList.length}");
                   }
                   break;
                 case "register_customer_display_device":
@@ -250,7 +253,8 @@ Future<void> startServer() async {
                   }
                   if (!found) {
                     global.customerDisplayDeviceList.add(customerDisplayDevice);
-                    print("register_customer_display_device : ${customerDisplayDevice.device} : ${global.customerDisplayDeviceList.length}");
+                    serviceLocator<Log>().debug(
+                        "register_customer_display_device : ${customerDisplayDevice.device} : ${global.customerDisplayDeviceList.length}");
                   }
                   break;
                 case "change_customer_by_phone":
@@ -273,15 +277,16 @@ Future<void> startServer() async {
                     global.posHoldProcessResult[global.posHoldActiveNumber]
                         .customerPhone = customerPhone;
                     // ประมวลผลหน้าจอขายใหม่
-                    PosProcess().sumCategoryCount(value:global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess);
+                    PosProcess().sumCategoryCount(
+                        value: global
+                            .posHoldProcessResult[global.posHoldActiveNumber]
+                            .posProcess);
                     if (global.functionPosScreenRefresh != null) {
                       global.functionPosScreenRefresh!(
                           global.posHoldActiveNumber);
                     }
                   } catch (e) {
-                    print(e);
+                    serviceLocator<Log>().error(e);
                   }
                   break;
                 /*case "get_table_group":

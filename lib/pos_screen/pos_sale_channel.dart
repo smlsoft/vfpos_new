@@ -5,7 +5,7 @@ class PosSaleChannelScreen extends StatefulWidget {
   const PosSaleChannelScreen({super.key});
 
   @override
-  _PosSaleChannelScreenState createState() => _PosSaleChannelScreenState();
+  State<PosSaleChannelScreen> createState() => _PosSaleChannelScreenState();
 }
 
 class _PosSaleChannelScreenState extends State<PosSaleChannelScreen> {

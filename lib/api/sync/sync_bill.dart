@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/api/sync/model/api_bill_model.dart';
 import 'package:dedepos/api/user_repository.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
 
@@ -143,7 +145,7 @@ Future syncBillData() async {
       pay_money_transfers: payTransfers,
     );
     String json = jsonEncode(apiBill.toJson());
-    print(json);
+    serviceLocator<Log>().debug(json);
   }
 }
 
@@ -162,15 +164,15 @@ Future syncBillProcess() async {
             if (result.success) {
               global.apiConnected = true;
               global.appStorage.write("token", result.data["token"]);
-              print("Login Succerss");
+              serviceLocator<Log>().debug("Login Success");
               ApiResponse selectShop =
                   await userRepository.selectShop(global.apiShopID);
               if (selectShop.success) {
-                print("Select Shop Sucess");
+                serviceLocator<Log>().debug("Select Shop Success");
               }
             }
           }).catchError((e) {
-            print(e);
+            serviceLocator<Log>().error(e);
           }).whenComplete(() async {
             global.loginProcess = false;
             await syncBillData();

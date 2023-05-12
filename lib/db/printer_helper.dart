@@ -6,7 +6,7 @@ class PrinterHelper {
   final box = global.objectBoxStore.box<PrinterObjectBoxStruct>();
 
   List<PrinterObjectBoxStruct> selectAll() {
-    return box.getAll();        
+    return box.getAll();
   }
 
   int insert(PrinterObjectBoxStruct value) {
@@ -31,12 +31,11 @@ class PrinterHelper {
 
   void deleteByGuidFixedMany(List<String> guidfixed) {
     Condition<PrinterObjectBoxStruct>? ids;
-    for (var _guid in guidfixed) {
+    for (var guid in guidfixed) {
       if (ids == null) {
-        ids = PrinterObjectBoxStruct_.guid_fixed.equals(_guid);
+        ids = PrinterObjectBoxStruct_.guid_fixed.equals(guid);
       } else {
-        ids =
-            ids.or(PrinterObjectBoxStruct_.guid_fixed.equals(_guid));
+        ids = ids.or(PrinterObjectBoxStruct_.guid_fixed.equals(guid));
       }
     }
     if (ids != null) {

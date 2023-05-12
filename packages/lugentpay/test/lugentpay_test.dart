@@ -1,7 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lugentpayment/lugentpay.dart';
-import 'package:lugentpayment/qrpaymentresponse.dart';
+import 'package:lugentpayment/qrpayment_response.dart';
 import 'dart:convert';
 
 void main() {

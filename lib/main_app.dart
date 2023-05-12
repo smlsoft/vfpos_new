@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:dedepos/bloc/bill_bloc.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_secondary_screen.dart';
 import 'package:dedepos/util/app_auth.dart';
@@ -70,7 +72,7 @@ Future<void> mainApp() async {
       if (displays.length > 1) {
         global.isInternalCustomerDisplayConnected = true;
         global.internalCustomerDisplay = displays[1];
-        print("internalCustomerDisplay");
+        serviceLocator<Log>().debug("internalCustomerDisplay");
       }
     }
   }
@@ -85,8 +87,8 @@ Future<void> mainApp() async {
     global.posSaleChannelList
         .add(PosSaleChannelModel(code: 'XXX', name: 'ขายหน้าร้าน'));
     global.posSaleChannelList.add(PosSaleChannelModel(
-        code: 'GRAP',
-        name: 'Grap',
+        code: 'GRAB',
+        name: 'Grab',
         logoUrl:
             "https://seeklogo.com/images/G/grab-logo-7020E74857-seeklogo.com.png"));
     global.posSaleChannelList.add(PosSaleChannelModel(

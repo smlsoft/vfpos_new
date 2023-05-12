@@ -1,8 +1,8 @@
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/widgets/numpad.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:win32/win32.dart';
 
 /// Mode (0=เปิดกะ+เงินทอน, 1=ปิดกะ+ส่งเงิน, 2=เติมเงินทอน, 3=นำเงินออก)
 Widget shiftAndMoneyScreen({required int mode}) {
@@ -28,7 +28,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
   return Container(
       width: 300,
       height: 500,
-      padding: EdgeInsets.all(1),
+      padding: const EdgeInsets.all(1),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
@@ -107,7 +107,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
                       TextField(
                         controller: remarkTextEditingController,
                         style: textStyle,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: 'หมายเหตุ',
                         ),
@@ -117,7 +117,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
                         child: NumberPad(
                             header: "จำนวนเงิน",
                             onChange: (value) {
-                              print(value);
+                              serviceLocator<Log>().debug(value);
                             })),
                   ],
                 )))

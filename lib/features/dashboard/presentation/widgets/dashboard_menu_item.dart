@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/app/app.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +40,7 @@ class ItemMenuDashboard extends StatelessWidget {
               size: 48,
               color: iconColor, // const Color(0xFFF56045),
             ),
-            SizedBox(
+            const SizedBox(
               height: 16,
             ),
             Text(

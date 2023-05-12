@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/auth.dart';
@@ -45,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
               context.read<SelectShopBloc>().add(
                   SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
 
-              context.router.pushAndPopUntil(DashboardRoute(),
+              context.router.pushAndPopUntil(const DashboardRoute(),
                   predicate: (route) => false);
             } else {
               context.router.pushAndPopUntil(const SelectShopRoute(),

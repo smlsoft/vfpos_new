@@ -1,3 +1,4 @@
+import 'package:dedepos/core/core.dart';
 import 'package:dedepos/services/print_process.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
@@ -172,10 +173,11 @@ Future<void> printBillText(String docNo) async {
           global.posTicket.qty = false;
         }
         printProcess.columnWidth.clear();
-        double descColumnWidth = widthCharDescription.toDouble();
-        if (detail.price == detail.total_amount) {
-          descColumnWidth += widthCharPrice;
-        }
+        // double descColumnWidth = widthCharDescription.toDouble();
+        // if (detail.price == detail.total_amount) {
+        //   descColumnWidth += widthCharPrice;
+        // }
+
         printProcess.columnWidth.add(widthCharDescription.toDouble());
         if (global.posTicket.qty) {
           printProcess.columnWidth.add(widthCharQty.toDouble());
@@ -257,7 +259,7 @@ Future<void> printBillText(String docNo) async {
       _print.columnWidth.add(1);
       _print.column.clear();
       _print.column
-          .add(PrintColumn(text: "pos".tr(gender: "discount_and_promoiton")));
+          .add(PrintColumn(text: "pos".tr(gender: "discount_and_promotion")));
       await _print.lineFeed(printer, PosStyles(bold: true));
       //
       _print.columnWidth.clear();
@@ -296,7 +298,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.columnWidth.add(8);
         printProcess.column.clear();
         printProcess.column.add(PrintColumn(
-            text: global.language("total_after_discount_and_promoiton")));
+            text: global.language("total_after_discount_and_promotion")));
         printProcess.column.add(PrintColumn(
             text: global.moneyFormat.format(bill.total_amount),
             align: PrintColumnAlign.right));
@@ -322,60 +324,60 @@ Future<void> printBillText(String docNo) async {
     List<PayCouponStruct> couponList = []; // คูปอง
     List<PayWalletStruct> walletList = []; // Wallet
     if (_billPayDetail.length > 0) {
-      for (var _billpayObj in _billPayDetail) {
-        if (_billpayObj.trans_flag == 0) {
-          __cashAmount = _billpayObj.amount;
-        } else if (_billpayObj.trans_flag == 1) {
+      for (var _billPayObj in _billPayDetail) {
+        if (_billPayObj.trans_flag == 0) {
+          __cashAmount = _billPayObj.amount;
+        } else if (_billPayObj.trans_flag == 1) {
           PayCreditCardStruct creditCardObj = PayCreditCardStruct(
-              bank_code: _billpayObj.bank_code,
-              card_number: _billpayObj.card_number,
-              approved_code: _billpayObj.approved_code,
-              amount: _billpayObj.amount); // บัตรเครดิต
+              bank_code: _billPayObj.bank_code,
+              card_number: _billPayObj.card_number,
+              approved_code: _billPayObj.approved_code,
+              amount: _billPayObj.amount); // บัตรเครดิต
           creditCardList.add(creditCardObj);
-        } else if (_billpayObj.trans_flag == 2) {
+        } else if (_billPayObj.trans_flag == 2) {
           PayTransferStruct transferObj = PayTransferStruct(
-              date_time: _billpayObj.doc_date_time,
-              bank_code: _billpayObj.bank_code,
-              bank_name: _billpayObj.bank_name,
-              branch_name: _billpayObj.branch_name,
-              bank_referance: _billpayObj.bank_referance,
-              amount: _billpayObj.amount);
+              date_time: _billPayObj.doc_date_time,
+              bank_code: _billPayObj.bank_code,
+              bank_name: _billPayObj.bank_name,
+              branch_name: _billPayObj.branch_name,
+              bank_reference: _billPayObj.bank_reference,
+              amount: _billPayObj.amount);
           transferList.add(transferObj);
-        } else if (_billpayObj.trans_flag == 3) {
+        } else if (_billPayObj.trans_flag == 3) {
           PayChequeStruct chequeObj = PayChequeStruct(
-              date_time: _billpayObj.doc_date_time,
-              due_date: _billpayObj.due_date,
-              bank_code: _billpayObj.bank_code,
-              bank_name: _billpayObj.bank_name,
-              branch_name: _billpayObj.branch_name,
-              cheque_number: _billpayObj.cheque_number,
-              amount: _billpayObj.amount);
+              date_time: _billPayObj.doc_date_time,
+              due_date: _billPayObj.due_date,
+              bank_code: _billPayObj.bank_code,
+              bank_name: _billPayObj.bank_name,
+              branch_name: _billPayObj.branch_name,
+              cheque_number: _billPayObj.cheque_number,
+              amount: _billPayObj.amount);
           chequeList.add(chequeObj);
-        } else if (_billpayObj.trans_flag == 4) {
+        } else if (_billPayObj.trans_flag == 4) {
           PayDiscountStruct discountObj = PayDiscountStruct(
-              code: _billpayObj.code,
-              description: _billpayObj.description,
-              formula: _billpayObj.formula,
-              amount: _billpayObj.amount);
+              code: _billPayObj.code,
+              description: _billPayObj.description,
+              formula: _billPayObj.formula,
+              amount: _billPayObj.amount);
           discountList.add(discountObj);
-        } else if (_billpayObj.trans_flag == 5) {
+        } else if (_billPayObj.trans_flag == 5) {
           PayCouponStruct couponObj = PayCouponStruct(
-              code: _billpayObj.code,
-              description: _billpayObj.description,
-              number: _billpayObj.number,
-              amount: _billpayObj.amount);
+              code: _billPayObj.code,
+              description: _billPayObj.description,
+              number: _billPayObj.number,
+              amount: _billPayObj.amount);
           couponList.add(couponObj);
-        } else if (_billpayObj.trans_flag == 6) {
+        } else if (_billPayObj.trans_flag == 6) {
           PayWalletStruct walletObj = PayWalletStruct(
-              coin_type: _billpayObj.coin_type,
-              bank_code: _billpayObj.bank_code,
-              bank_referance: _billpayObj.bank_referance,
-              referance_one: _billpayObj.referance_one,
-              referance_two: _billpayObj.referance_two,
-              transactionID: _billpayObj.transaction_id,
-              provider_code: _billpayObj.provider_code,
-              description: _billpayObj.description,
-              amount: _billpayObj.amount);
+              coin_type: _billPayObj.coin_type,
+              bank_code: _billPayObj.bank_code,
+              bank_reference: _billPayObj.bank_reference,
+              reference_one: _billPayObj.reference_one,
+              reference_two: _billPayObj.reference_two,
+              transactionID: _billPayObj.transaction_id,
+              provider_code: _billPayObj.provider_code,
+              description: _billPayObj.description,
+              amount: _billPayObj.amount);
           walletList.add(walletObj);
         }
       }
@@ -414,7 +416,7 @@ Future<void> printBillText(String docNo) async {
         _print.columnWidth.add(25);
         _print.columnWidth.add(8);
         _print.column.clear();
-        _print.column.add(PrintColumn(text: _payTransferObj.bank_referance));
+        _print.column.add(PrintColumn(text: _payTransferObj.bank_reference));
         _print.column.add(PrintColumn(
             text: global.moneyFormat.format(_payTransferObj.amount),
             align: PrintColumnAlign.right));
@@ -656,12 +658,12 @@ Future<void> printBillText(String docNo) async {
         await printProcess.lineFeed(printer, const PosStyles(bold: true));
         await printProcess.drawLine(printer);
       } else {
-        double diffAmountplus = sumTotalPayAmount - bill.total_amount;
+        double diffAmountPlus = sumTotalPayAmount - bill.total_amount;
         printProcess.column.clear();
         printProcess.column
             .add(PrintColumn(text: global.language("total_diff")));
         printProcess.column.add(PrintColumn(
-            text: global.moneyFormat.format(diffAmountplus),
+            text: global.moneyFormat.format(diffAmountPlus),
             align: PrintColumnAlign.right));
         await printProcess.lineFeed(printer, const PosStyles(bold: true));
         await printProcess.drawLine(printer);
@@ -669,15 +671,15 @@ Future<void> printBillText(String docNo) async {
 
       //printer.feed(2);
       {
-        /// ส่วนของการพิมพ์ส QRCODE (Promotpay)
-        /*String _qrcodePromptpay =
+        /// ส่วนของการพิมพ์ส QRCODE (PromptPay)
+        /*String _qrcodePromptPay =
           PromptPay.generateQRData("0899223131", amount: _bill.total_amount);
-      printer.qrcode(_qrcodePromptpay, size: QRSize.Size8);
+      printer.qrcode(_qrcodePromptPay, size: QRSize.Size8);
       _print.columnWidth.clear();
       _print.columnWidth.add(1);
       _print.column.clear();
       _print.column.add(PrintColumn(
-          text: "Promptpay : 0899223131 : นายจตุรพรชัย รัตนปัญญา",
+          text: "PromptPay : 0899223131 : นายจตุรพรชัย รัตนปัญญา",
           align: PrintColumnAlign.center));
       await _print.lineFeed(printer, PosStyles(bold: true));
       await _print.drawLine(printer);*/
@@ -707,9 +709,10 @@ Future<void> printBillText(String docNo) async {
       }
       printer.cut();
       printer.disconnect();
-      print("Printer Connect Sucess.");
+      serviceLocator<Log>().debug("Printer Connect Success.");
     } else {
-      print("Printer Connect fail.${global.printerCashierIpAddress}:${global.printerCashierIpPort}");
+      serviceLocator<Log>().error(
+          "Printer Connect fail.${global.printerCashierIpAddress}:${global.printerCashierIpPort}");
     }
   }
 }

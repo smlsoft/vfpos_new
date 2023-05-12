@@ -3,11 +3,11 @@ import 'package:decimal/decimal.dart';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
-import 'package:lugentpayment/inquirypaymentresponse.dart';
-import 'package:lugentpayment/qrpaymentrequest.dart';
-import 'package:lugentpayment/qrpaymentresponse.dart';
+import 'package:lugentpayment/inquiry_payment_response.dart';
+import 'package:lugentpayment/qrpayment_request.dart';
+import 'package:lugentpayment/qrpayment_response.dart';
 
-import 'inquirypaymentrequest.dart';
+import 'inquiry_payment_request.dart';
 
 class LugentPay {
   LugentPay(

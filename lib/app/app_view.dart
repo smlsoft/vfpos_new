@@ -1,6 +1,5 @@
 import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/bloc/bloc.dart';
-import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/features/authentication/presentation/bloc/authentication_bloc.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
 import 'package:dedepos/routes/app_routers.dart';

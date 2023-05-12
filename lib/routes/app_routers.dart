@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/features/authentication/presentation/screens/authentication_screen.dart';
 import 'package:dedepos/pos_screen/pos_screen.dart';
-import 'package:dedepos/util/loading_screen.dart';
 
 import 'package:dedepos/features/pos/pos.dart';
 import 'package:dedepos/features/splash/presentation/splash_screen.dart';
@@ -14,8 +13,7 @@ part 'app_routers.gr.dart';
 
 @AutoRouterConfig()
 class AppRouter extends _$AppRouter {
-  @override
-  RouteType get routerType => RouteType.material();
+  RouteType get routerType => const RouteType.material();
 
   @override
   List<AutoRoute> get routes => [

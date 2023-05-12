@@ -1,3 +1,7 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
@@ -87,7 +91,7 @@ class PosProcess {
 
   Future<PosProcessModel> process(
       {required int holdNumber, required int docMode}) async {
-    print("****** Process : ${DateTime.now()}");
+    serviceLocator<Log>().trace("****** Process : ${DateTime.now()}");
     double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
@@ -341,7 +345,8 @@ class PosProcess {
               global.calcDiscountFormula(
                   totalAmount: totalAmount,
                   discountText: logData.discount_text);
-          print("$extraTotalAmount:$totalAmount:$discount:${logData.discount_text}");
+          serviceLocator<Log>().trace(
+              "$extraTotalAmount:$totalAmount:$discount:${logData.discount_text}");
           processResult.details[findIndex].discount = discount;
           processCalc(findIndex);
         }
@@ -397,7 +402,8 @@ class PosProcess {
       for (var sum in sumByProduct) {
         double qty = sum.sum_qty;
         var value = global.promotionTempHelper.select(
-            where: "barcode_promotion = '${sum.barcode}' order by limit_qty desc");
+            where:
+                "barcode_promotion = '${sum.barcode}' order by limit_qty desc");
 
         for (var _promotion in value) {
           while (qty >= _promotion.limit_qty) {
@@ -440,7 +446,7 @@ class PosProcess {
     processResult.total_piece = totalPiece;
     processResult.total_amount = totalAmount;
 
-    print("------ Process : ${DateTime.now()}");
+    serviceLocator<Log>().trace("------ Process : ${DateTime.now()}");
     return processResult;
   }
 }

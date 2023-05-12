@@ -11,7 +11,7 @@ class PosReprintBillScreen extends StatefulWidget {
   const PosReprintBillScreen({Key? key}) : super(key: key);
 
   @override
-  _PosReprintBillScreenState createState() => _PosReprintBillScreenState();
+  State<PosReprintBillScreen> createState() => _PosReprintBillScreenState();
 }
 
 class _PosReprintBillScreenState extends State<PosReprintBillScreen> {

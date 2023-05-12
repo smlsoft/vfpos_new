@@ -11,7 +11,7 @@ class FindItem extends StatefulWidget {
   const FindItem({Key? key}) : super(key: key);
 
   @override
-  _FindItemState createState() => _FindItemState();
+  State<FindItem> createState() => _FindItemState();
 }
 
 class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
@@ -94,8 +94,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                     icon: const Icon(Icons.clear),
                   ),
                 )),
-            Container(
-                child: Row(children: const [
+            const Row(children: [
               Expanded(flex: 3, child: Text('barcode' "/" 'item_code')),
               Expanded(flex: 6, child: Text('item_name')),
               Expanded(flex: 2, child: Text('unit_name')),
@@ -119,15 +118,14 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                   flex: 1,
                   child:
                       Align(alignment: Alignment.center, child: Text('save')))
-            ])),
+            ]),
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(
               children: _findByCodeNameLastResult.map((value) {
                 var index = _findByCodeNameLastResult.indexOf(value);
                 var detail = _findByCodeNameLastResult[index];
-                return Container(
-                    child: Row(children: [
+                return Row(children: [
                   Expanded(
                       flex: 3,
                       child: Text("${detail.barcode}/${detail.item_code}")),
@@ -171,9 +169,8 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                           content: SizedBox(
                                               height: 240,
                                               child: NumberPad(
-                                                  title: Text('${detail
-                                                          .item_names[0]} qty ${global.moneyFormat
-                                                          .format(detail.qty)} ${detail.unit_names[0]}'),
+                                                  title: Text(
+                                                      '${detail.item_names[0]} qty ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}'),
                                                   onChange: (qty) => {
                                                         if (qty.isNotEmpty &&
                                                             double.parse(qty) >
@@ -228,7 +225,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                             unit_name: detail.unit_names[0])));
                               },
                               child: const Icon(Icons.save))))
-                ]));
+                ]);
               }).toList(),
             )))
           ]));

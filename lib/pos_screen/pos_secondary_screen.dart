@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/pos_screen/screen_util.dart';
@@ -252,7 +254,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
         home: Scaffold(
             body: SecondaryDisplay(
                 callback: (argument) {
-                  print("ZZZZZZZZZZZZZZZZZ : " + argument);
+                  serviceLocator<Log>().trace("ZZZZZZZZZZZZZZZZZ : $argument");
                   setState(() {
                     processResult = PosHoldProcessModel.fromJson(
                         jsonDecode(argument) as Map<String, dynamic>);

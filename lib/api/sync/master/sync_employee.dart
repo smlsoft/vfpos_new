@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:dedepos/api/sync/api_repository.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/api/sync/model/sync_employee_model.dart';
 import 'package:dedepos/api/sync/model/item_remove_model.dart';
@@ -19,7 +21,7 @@ Future syncEmployee(List<ItemRemoveModel> removeList,
       global.syncTimeIntervalSecond = 1;
       removeMany.add(removeData.guidfixed);
     } catch (e) {
-      print(e);
+      serviceLocator<Log>().error(e);
     }
   }
   // Insert
@@ -36,7 +38,8 @@ Future syncEmployee(List<ItemRemoveModel> removeList,
       profile_picture: newData.profilepicture,
     );
 
-    print("Sync Employee : ${newData.code} ${newData.name}");
+    serviceLocator<Log>()
+        .trace("Sync Employee : ${newData.code} ${newData.name}");
     manyForInsert.add(newEmployee);
   }
   if (removeMany.isNotEmpty) {
@@ -61,7 +64,7 @@ Future<void> syncEmployeeCompare(
       DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "employee");
   if (lastUpdateTime != getLastUpdateTime) {
-    print("syncEmployee Start");
+    serviceLocator<Log>().trace("syncEmployee Start");
     var loop = true;
     var offset = 0;
     var limit = 10000;
@@ -78,21 +81,23 @@ Future<void> syncEmployeeCompare(
           List<SyncEmployeeModel> newDataList = (dataList["new"] as List)
               .map((newCate) => SyncEmployeeModel.fromJson(newCate))
               .toList();
-          print("offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
+          serviceLocator<Log>().trace(
+              "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncEmployee(removeList, newDataList);
           }
         } else {
-          print("************************************************* Error");
+          serviceLocator<Log>()
+              .error("************************************************* Error");
           loop = false;
         }
       });
       offset += limit;
     }
-    print(
-        "Update SyncEmployee Success : ${EmployeeHelper().count()}");
+    serviceLocator<Log>()
+        .trace("Update SyncEmployee Success : ${EmployeeHelper().count()}");
     global.appStorage.write(global.syncEmployeeTimeName, getLastUpdateTime);
   }
 }

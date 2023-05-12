@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 class FindPriceModel {
   final int price_type; // 1=Barcode,2=Unit Code
   final String unit_code;

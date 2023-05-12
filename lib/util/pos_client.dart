@@ -7,7 +7,7 @@ class PosClient extends StatefulWidget {
   const PosClient({Key? key}) : super(key: key);
 
   @override
-  _PosClientState createState() => _PosClientState();
+  State<PosClient> createState() => _PosClientState();
 }
 
 class _PosClientState extends State<PosClient> {
@@ -45,8 +45,7 @@ class _PosClientState extends State<PosClient> {
       home: SafeArea(
         child: Scaffold(
             resizeToAvoidBottomInset: false,
-            body: Container(
-                child: Column(children: [
+            body: Column(children: [
               TextField(
                 controller: posTerminalCodeController,
               ),
@@ -65,7 +64,7 @@ class _PosClientState extends State<PosClient> {
                   color: Colors.blue,
                   size: 200,
                 ),
-            ]))),
+            ])),
       ),
     );
   }

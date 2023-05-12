@@ -1,6 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:objectbox/objectbox.dart';
@@ -93,7 +95,7 @@ class ProductBarcodeObjectBoxStruct {
           .map<ProductOptionModel>((e) => ProductOptionModel.fromJson(e))
           .toList();
     } catch (e) {
-      print(e);
+      serviceLocator<Log>().error(e);
       return [];
     }
   }

@@ -5,7 +5,7 @@ class SelectModeScreen extends StatefulWidget {
   const SelectModeScreen({Key? key}) : super(key: key);
 
   @override
-  _SelectModeScreenState createState() => _SelectModeScreenState();
+  State<SelectModeScreen> createState() => _SelectModeScreenState();
 }
 
 class _SelectModeScreenState extends State<SelectModeScreen> {

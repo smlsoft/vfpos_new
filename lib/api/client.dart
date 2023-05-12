@@ -13,8 +13,8 @@ class Client {
         endPointService[endPointService.length - 1] == "/" ? "" : "/";
 
     dio.options.baseUrl = endPointService;
-    dio.options.connectTimeout = Duration(seconds: 20); //20s
-    dio.options.receiveTimeout = Duration(seconds: 30); //5s
+    dio.options.connectTimeout = const Duration(seconds: 20); //20s
+    dio.options.receiveTimeout = const Duration(seconds: 30); //5s
 
     return dio;
   }
@@ -25,8 +25,8 @@ class ApiResponse<T> {
   late final bool error;
   // ignore: unnecessary_question_mark
   late final dynamic? data;
-  late final message;
-  late final code;
+  late final String? message;
+  late final int? code;
   final Pages? page;
 
   ApiResponse({

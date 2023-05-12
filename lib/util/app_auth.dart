@@ -1,9 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-
 import '../widgets/clipper.dart';
 
 class ApplicationAuthentication extends StatefulWidget {
@@ -16,7 +12,7 @@ class ApplicationAuthentication extends StatefulWidget {
 
 class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
   final heightOfAppBar = 56.0;
-  bool _isLoading = false;
+  // bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +44,11 @@ class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
             clipper: VFPosLoginShapeClipper(),
             child: Container(
               height: heightOfScreen,
-              decoration: BoxDecoration(color: const Color(0xFF007BFF)),
+              decoration: const BoxDecoration(color: Color(0xFF007BFF)),
             ),
           ),
         ),
-        Container(
-            child: Center(
+        Center(
           child: SizedBox(
             width: 500,
             child: Card(
@@ -123,7 +118,7 @@ class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      Text('or'),
+                      const Text('or'),
                       const SizedBox(height: 16.0),
                       ElevatedButton.icon(
                           icon:
@@ -136,14 +131,14 @@ class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
                                   vertical: 16.0), // set button padding here
                             ),
                           ),
-                          label: Text('Google'))
+                          label: const Text('Google'))
                     ],
                   ),
                 ),
               ),
             ),
           ),
-        )),
+        ),
       ],
     ));
   }

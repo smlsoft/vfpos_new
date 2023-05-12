@@ -17,5 +17,5 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 }
 
 Future<void> initializeApp() async {
-  await GetStorage.init();
+  await GetStorage.init('AppStorage');
 }

@@ -16,7 +16,7 @@ class PosBillVatDetailScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PosBillVatDetailScreenState createState() => _PosBillVatDetailScreenState();
+  State<PosBillVatDetailScreen> createState() => _PosBillVatDetailScreenState();
 }
 
 class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {

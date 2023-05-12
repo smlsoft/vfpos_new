@@ -1,10 +1,9 @@
-
 import 'package:decimal/decimal.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:flutter/material.dart';
 import 'package:lugentpayment/lugentpay.dart';
-import 'package:lugentpayment/qrpaymentresponse.dart';
+import 'package:lugentpayment/qrpayment_response.dart';
 import 'package:promptpay/promptpay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:countdown_progress_indicator/countdown_progress_indicator.dart';
@@ -22,7 +21,7 @@ class PayQrScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PayQrScreenState createState() => _PayQrScreenState();
+  State<PayQrScreen> createState() => _PayQrScreenState();
 }
 
 class _PayQrScreenState extends State<PayQrScreen>
@@ -32,7 +31,7 @@ class _PayQrScreenState extends State<PayQrScreen>
   String qrCodePayDataString = "";
 
   Future<QRPaymentResponse> qrLugentPromptPay() async {
-    // Prompay ลูเจ้นท์ ไทย
+    // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
     QRPaymentResponse qrPayment =
         await lugentPay.CreateThaiQRPaymentTransaction(
@@ -44,7 +43,7 @@ class _PayQrScreenState extends State<PayQrScreen>
   }
 
   Future<QRPaymentResponse> qrLugentAliPay() async {
-    // Prompay ลูเจ้นท์ ไทย
+    // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
     QRPaymentResponse qrPayment = await lugentPay.CreateAliPayTransaction(
         lugentPay.CreateReferenceWithUnixTime("SMLINV"),
@@ -55,7 +54,7 @@ class _PayQrScreenState extends State<PayQrScreen>
   }
 
   Future<QRPaymentResponse> qrLugentTrueMoney() async {
-    // Prompay ลูเจ้นท์ ไทย
+    // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
     QRPaymentResponse qrPayment = await lugentPay.CreateTrueMoneyTransaction(
         "ค่าอาหาร",
@@ -69,7 +68,7 @@ class _PayQrScreenState extends State<PayQrScreen>
   }
 
   Future<QRPaymentResponse> qrLugentLinePay() async {
-    // Prompay ลูเจ้นท์ ไทย
+    // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
     QRPaymentResponse qrPayment = await lugentPay.CreateLinePayTransaction(
         lugentPay.CreateReferenceWithUnixTime("SMLINV"),
@@ -84,12 +83,12 @@ class _PayQrScreenState extends State<PayQrScreen>
     super.initState();
     switch (widget.provider.wallettype) {
       case 101:
-        // Prompay ทั่วไป
+        // Promptpay ทั่วไป
         qrCodePayDataString = PromptPay.generateQRData(promptPayDataWithAmount,
             amount: widget.amount.toDouble());
         break;
       case 201:
-        // Prompay ลูเจ้นท์ ไทย
+        // Promptpay ลูเจ้นท์ ไทย
         WidgetsBinding.instance.addPostFrameCallback((_) {
           qrLugentPromptPay().then((qrPayment) {
             setState(() {

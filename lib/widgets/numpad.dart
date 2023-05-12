@@ -21,7 +21,7 @@ class NumberPad extends StatefulWidget {
       : super(key: key);
 
   @override
-  _NumberPadState createState() => _NumberPadState();
+  State<NumberPad> createState() => _NumberPadState();
 }
 
 class _NumberPadState extends State<NumberPad> {

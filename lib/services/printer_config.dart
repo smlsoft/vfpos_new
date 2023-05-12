@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/util/network.dart';
@@ -15,7 +17,7 @@ class PrinterConfigScreen extends StatefulWidget {
   const PrinterConfigScreen({Key? key}) : super(key: key);
 
   @override
-  _PrinterConfigScreenState createState() => _PrinterConfigScreenState();
+  State<PrinterConfigScreen> createState() => _PrinterConfigScreenState();
 }
 
 class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
@@ -81,13 +83,13 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
     printerList.clear();
     printerList.add(PrinterDeviceModel(
       deviceName: "SUNMI Printer",
-      connectType: global.PrinterCashierConnectEnum.sumi1,
+      connectType: global.PrinterCashierConnectEnum.sunmi1,
     ));
     setState(() {});
     List<Map<String, dynamic>> results = [];
     results = await FlutterUsbPrinter.getUSBDeviceList();
 
-    print(" length: ${results.length}");
+    serviceLocator<Log>().trace(" length: ${results.length}");
     for (var printer in results) {
       printerList.add(PrinterDeviceModel(
         productName: printer["productName"],
@@ -169,7 +171,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
         printer.disconnect();
       }
     } catch (e) {
-      print(e);
+      serviceLocator<Log>().error(e);
     }
   }
 
@@ -180,7 +182,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       int productId = int.tryParse(usbProductIdController.text) ?? 0;
       returned = (await flutterUsbPrinter.connect(vendorId, productId))!;
     } on PlatformException {
-      print('Failed to get platform version.');
+      serviceLocator<Log>().error('Failed to get platform version.');
     }
     if (returned) {
       setState(() {
@@ -266,7 +268,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                         "$connectName : ${printerList[index].manufacturer}";
                   }
                   if (printerList[index].connectType ==
-                      global.PrinterCashierConnectEnum.sumi1) {
+                      global.PrinterCashierConnectEnum.sunmi1) {
                     connectName = "SUNMI Thermal Printer";
                     printerText = connectName;
                   }
@@ -297,7 +299,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                                 case global.PrinterCashierConnectEnum.serial:
                                   printerConnectType = 4;
                                   break;
-                                case global.PrinterCashierConnectEnum.sumi1:
+                                case global.PrinterCashierConnectEnum.sunmi1:
                                   printerConnectType = 100;
                                   break;
                                 case global.PrinterCashierConnectEnum.none:

@@ -1,11 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/global.dart' as global;
 
 @RoutePage()
 class DashboardScreen extends StatefulWidget {
@@ -22,7 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TopBarShop(height: 250),
+            const TopBarShop(height: 250),
             // Center(
             //   child: Text('xxxxxxxx'),
             // ),

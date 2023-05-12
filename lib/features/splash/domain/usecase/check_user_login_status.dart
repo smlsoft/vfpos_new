@@ -1,5 +1,4 @@
 import 'package:dedepos/core/core.dart';
-import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/services/services.dart';
 

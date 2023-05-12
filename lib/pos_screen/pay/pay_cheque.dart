@@ -19,7 +19,7 @@ class PayCheque extends StatefulWidget {
       {super.key, required this.posProcess, required this.blocContext});
 
   @override
-  _PayChequeState createState() => _PayChequeState();
+  State<PayCheque> createState() => _PayChequeState();
 }
 
 class _PayChequeState extends State<PayCheque> {
@@ -522,15 +522,13 @@ class _PayChequeState extends State<PayCheque> {
       child: Column(
         children: <Widget>[
           cardDetail(),
-          Container(
-            child: Column(
-              children: <Widget>[
-                ...global.payScreenData.cheque.map((detail) {
-                  var index = global.payScreenData.cheque.indexOf(detail);
-                  return buildCreditCard(index: index);
-                }).toList()
-              ],
-            ),
+          Column(
+            children: <Widget>[
+              ...global.payScreenData.cheque.map((detail) {
+                var index = global.payScreenData.cheque.indexOf(detail);
+                return buildCreditCard(index: index);
+              }).toList()
+            ],
           ),
         ],
       ),

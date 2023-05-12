@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/global_model.dart' as globalModel;
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/global_model.dart' as global_model;
 import 'package:dio/dio.dart';
 
 // GET {{host}}/master-sync/list?lastupdate=2010-01-02T15:04&module=productunit&limit=1&offset=0&action=new
 class ApiRepository {
-  Future<List<globalModel.SyncMasterStatusModel>> serverMasterStatus() async {
+  Future<List<global_model.SyncMasterStatusModel>> serverMasterStatus() async {
     Dio client = Client().init();
 
     try {
@@ -14,7 +16,7 @@ class ApiRepository {
       try {
         final Map<dynamic, dynamic> rawData = json.decode(response.toString());
         return rawData.entries
-            .map((e) => globalModel.SyncMasterStatusModel()
+            .map((e) => global_model.SyncMasterStatusModel()
               ..tableName = e.key
               ..lastUpdate = e.value)
             .toList();
@@ -49,6 +51,7 @@ class ApiRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -75,6 +78,7 @@ class ApiRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -101,6 +105,7 @@ class ApiRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -127,6 +132,7 @@ class ApiRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -143,18 +149,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().debug(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(ex);
       throw Exception(errorMessage);
     }
   }
@@ -173,18 +179,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -203,18 +209,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -233,18 +239,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -263,18 +269,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -293,18 +299,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -323,18 +329,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -353,18 +359,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -377,27 +383,27 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      final response = await client
-          .get('/category?page=$page&limit=$perPage&q=$search');
+      final response =
+          await client.get('/category?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
-        print(rawData);
+        serviceLocator<Log>().trace(rawData);
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -407,27 +413,27 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      final response = await client
-          .get('/inventory?page=$page&limit=$perPage&q=$search');
+      final response =
+          await client.get('/inventory?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
-        print(rawData);
+        serviceLocator<Log>().trace(rawData);
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -440,22 +446,22 @@ class ApiRepository {
       try {
         final rawData = json.decode(response.toString());
 
-        print(rawData);
+        serviceLocator<Log>().trace(rawData);
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -468,8 +474,8 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      final response = await client
-          .get('/employee?page=$page&limit=$perPage&q=$search');
+      final response =
+          await client.get('/employee?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
@@ -477,18 +483,18 @@ class ApiRepository {
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }

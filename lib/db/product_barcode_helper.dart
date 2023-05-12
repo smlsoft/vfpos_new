@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -161,7 +163,7 @@ class ProductBarcodeHelper {
     Condition<ProductBarcodeObjectBoxStruct>? conditionName;
 
     List<String> wordBreak = global.wordSplit(word);
-    print(wordBreak);
+    serviceLocator<Log>().debug(wordBreak);
     for (int wordIndex = 0; wordIndex < wordBreak.length; wordIndex++) {
       if (wordIndex == 0) {
         conditionCode = ProductBarcodeObjectBoxStruct_.item_code

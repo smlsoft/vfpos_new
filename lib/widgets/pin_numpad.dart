@@ -14,7 +14,7 @@ class PinNumberPad extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PinNumberPadState createState() => _PinNumberPadState();
+  State<PinNumberPad> createState() => _PinNumberPadState();
 }
 
 class _PinNumberPadState extends State<PinNumberPad> {

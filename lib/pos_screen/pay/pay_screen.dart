@@ -1,4 +1,8 @@
+// ignore_for_file: library_prefixes
+
 import 'dart:developer' as dev;
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';
 import 'package:dedepos/api/sync/sync_bill.dart';
@@ -31,7 +35,7 @@ class PayScreen extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PayScreenState createState() => _PayScreenState();
+  State<PayScreen> createState() => _PayScreenState();
 }
 
 class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
@@ -334,7 +338,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             // ปิดหน้าจอ pay และ Clear ข้อมูล เริ่มขายใหม่
             Navigator.pop(context, true);
           } catch (e) {
-            print(e);
+            serviceLocator<Log>().error(e);
           }
         });
         return Center(

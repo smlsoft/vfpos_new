@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/domain/entity/user.dart';

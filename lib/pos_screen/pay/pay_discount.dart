@@ -13,7 +13,7 @@ class PayDiscountWidget extends StatefulWidget {
       {super.key, required this.posProcess, required this.blocContext});
 
   @override
-  _PayDiscountWidgetState createState() => _PayDiscountWidgetState();
+  State<PayDiscountWidget> createState() => _PayDiscountWidgetState();
 }
 
 class _PayDiscountWidgetState extends State<PayDiscountWidget> {

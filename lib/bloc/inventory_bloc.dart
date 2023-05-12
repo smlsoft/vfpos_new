@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/api/sync/api_repository.dart';
@@ -22,17 +24,21 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
           perPage: event.perPage, page: event.page, time: event.time);
 
       if (result.success) {
-        List<SyncProductBarcodeModel> newItemBarcode = (result.data["new"] as List)
-            .map((newItem) => SyncProductBarcodeModel.fromJson(newItem))
-            .toList();
+        List<SyncProductBarcodeModel> newItemBarcode =
+            (result.data["new"] as List)
+                .map((newItem) => SyncProductBarcodeModel.fromJson(newItem))
+                .toList();
         List<SyncProductBarcodeModel> removeItemBarcode = (result.data["remove"]
                 as List)
             .map((removeItem) => SyncProductBarcodeModel.fromJson(removeItem))
             .toList();
-        print(newItemBarcode);
-        print(removeItemBarcode);
+        serviceLocator<Log>().debug(newItemBarcode);
+        serviceLocator<Log>().debug(removeItemBarcode);
+
         emit(InventoryLoadSuccess(
-            newItem: newItemBarcode, removeItem: removeItemBarcode, page: result.page));
+            newItem: newItemBarcode,
+            removeItem: removeItemBarcode,
+            page: result.page));
       } else {
         emit(const InventoryLoadFailed(message: 'Inventory Not Found'));
       }
@@ -50,7 +56,7 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       if (result.success) {
         SyncProductBarcodeModel inventory =
             SyncProductBarcodeModel.fromJson(result.data);
-        print(inventory);
+        serviceLocator<Log>().debug(inventory);
         emit(InventorySearchLoadSuccess(inventory: inventory));
       } else {
         emit(const InventorySearchLoadFailed(message: 'Product Not Found'));

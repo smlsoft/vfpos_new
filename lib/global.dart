@@ -1,6 +1,6 @@
-import 'dart:ffi';
-import 'package:ffi/ffi.dart';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,8 +9,6 @@ import 'package:presentation_displays/display.dart';
 import 'package:presentation_displays/displays_manager.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
-import 'package:ffi/ffi.dart';
-import 'package:win32/win32.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:dedepos/api/network/sync_model.dart';
@@ -19,7 +17,6 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
-import 'package:dedepos/util/app_auth.dart';
 import 'package:dedepos/db/bill_detail_extra_helper.dart';
 import 'package:dedepos/db/bill_detail_helper.dart';
 import 'package:dedepos/db/bill_pay_helper.dart';
@@ -139,8 +136,7 @@ AppModeEnum appMode = AppModeEnum.posTerminal;
 bool apiConnected = false;
 String apiUserName = "maxkorn";
 String apiUserPassword = "maxkorn";
-String apiShopID =
-    "2Eh6e3pfWvXTp0yV3CyFEhKPjdI"; // "27dcEdktOoaSBYFmnN6G6ett4Jb";
+String apiShopID = "2Eh6e3pfWvXTp0yV3CyFEhKPjdI";
 bool syncRefreshProductCategory = true;
 bool syncRefreshProductBarcode = true;
 bool syncRefreshPrinter = true;
@@ -155,7 +151,6 @@ String syncBankTimeName = "lastSyncBank";
 String syncTableTimeName = "lastSyncTable";
 String syncTableZoneTimeName = "lastSyncTableZone";
 String syncDeviceTimeName = "lastSyncDevice";
-// String apiShopCode = "290P2Puyksvx04jlsavRTZhTyvg";
 bool isOnline = false;
 MemberObjectBoxStruct? userData;
 PaymentModel? paymentData;
@@ -185,7 +180,7 @@ List<PosSaleChannelModel> posSaleChannelList = [];
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sumi1 }
+enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sunmi1 }
 
 enum PosVersionEnum { pos, restaurant, vfpos }
 
@@ -624,7 +619,7 @@ Future<void> systemProcess() async {
                   SyncDeviceModel.fromJson(jsonDecode(value));
               customerDisplayDeviceList[index].connected = getInfo.connected;
             } catch (e) {
-              print(e);
+              serviceLocator<Log>().error(e);
             }
           }
         });
@@ -646,14 +641,14 @@ Future<void> sendProcessToCustomerDisplay() async {
             jsonData: jsonEncode(jsonData.toJson()),
             callBack: (value) {});
       } catch (e) {
-        print("$e : $url");
+        serviceLocator<Log>().error("$e : $url");
       }
     }
   }
   if (Platform.isAndroid &&
       displayMachine == DisplayMachineEnum.posTerminal &&
       isInternalCustomerDisplayConnected == true) {
-    // Send to Sunmi จอสอง
+    // Send to จอสอง
     displayManager.transferDataToPresentation(
         jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
   }
@@ -672,7 +667,7 @@ Future<void> sendProcessToRemote() async {
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
-        print("$e : $url");
+        serviceLocator<Log>().error("$e : $url");
       }
     }
   }
@@ -976,7 +971,7 @@ Future<void> startLoading() async {
         directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
   }
   int xxx = ProductBarcodeHelper().count();
-  print("ProductBarcodeHelper().count() $xxx");
+  serviceLocator<Log>().debug("ProductBarcodeHelper().count() $xxx");
   //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
   //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
   {
@@ -1059,7 +1054,7 @@ Future<void> postToServer(
       }, onError: (e, s) {});
     });
   } catch (e) {
-    print("sendToServer : $e");
+    serviceLocator<Log>().error("sendToServer : $e");
   }
 }
 
@@ -1078,7 +1073,7 @@ Future<String> postToServerAndWait(
       result = utf8.decode(await value.stream.toBytes());
     }
   } catch (e) {
-    print("sendToServer : $e");
+    serviceLocator<Log>().error("sendToServer : $e");
   }
   return result;
 }
@@ -1096,7 +1091,7 @@ void openCashDrawer() async {
       printer.disconnect();
     }
   } catch (e) {
-    print(e);
+    serviceLocator<Log>().error(e);
   }
 }
 
@@ -1170,7 +1165,8 @@ Future scanServerByName(String name) async {
               countTread--;
               if (result.statusCode == 200) {
                 if (result.body.isNotEmpty) {
-                  print("Connected to ${ipList[index].ip}");
+                  serviceLocator<Log>()
+                      .debug("Connected to ${ipList[index].ip}");
                   SyncDeviceModel server =
                       SyncDeviceModel.fromJson(jsonDecode(result.body));
                   if (server.device == name && server.isCashierTerminal) {
@@ -1231,12 +1227,13 @@ void testPrinterConnect() async {
         printer.is_ready = true;
         socket.destroy();
       } catch (e) {
-        stderr.writeln(e.toString());
+        serviceLocator<Log>().error(e.toString());
         printer.is_ready = false;
         errorMessage.add(
             "${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
       }
     }
   }
-  stderr.writeln('Test Printer Connect Stop');
+
+  serviceLocator<Log>().debug('Test Printer Connect Stop');
 }

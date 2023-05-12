@@ -5,7 +5,7 @@ class PosHoldBill extends StatefulWidget {
   const PosHoldBill({Key? key}) : super(key: key);
 
   @override
-  _PosHoldBillState createState() => _PosHoldBillState();
+  State<PosHoldBill> createState() => _PosHoldBillState();
 }
 
 class _PosHoldBillState extends State<PosHoldBill>

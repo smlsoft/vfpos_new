@@ -10,7 +10,7 @@ class FindMember extends StatefulWidget {
   const FindMember({Key? key}) : super(key: key);
 
   @override
-  _FindMemberState createState() => _FindMemberState();
+  State<FindMember> createState() => _FindMemberState();
 }
 
 class _FindMemberState extends State<FindMember> with TickerProviderStateMixin {
@@ -91,8 +91,7 @@ class _FindMemberState extends State<FindMember> with TickerProviderStateMixin {
                     icon: const Icon(Icons.clear),
                   ),
                 )),
-            Container(
-                child: Row(children: const [
+            const Row(children: [
               Expanded(
                 flex: 3,
                 child: Text(
@@ -118,51 +117,49 @@ class _FindMemberState extends State<FindMember> with TickerProviderStateMixin {
                   ),
                 ),
               )
-            ])),
+            ]),
             Expanded(
                 child: SingleChildScrollView(
                     child: Column(
               children: _findByTelNameLastResult.map((value) {
                 var index = _findByTelNameLastResult.indexOf(value);
                 var detail = _findByTelNameLastResult[index];
-                return Container(
-                  child: Row(
-                    children: [
-                      Expanded(flex: 3, child: Text(detail.telephone)),
-                      Expanded(flex: 3, child: Text(detail.name)),
-                      Expanded(flex: 6, child: Text(detail.address)),
-                      Expanded(
-                        flex: 1,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(2),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                global.userLoginName = detail.name;
-                                global.userData = MemberObjectBoxStruct(
-                                  address: detail.address,
-                                  branchcode: detail.branchcode,
-                                  branchtype: detail.branchtype,
-                                  contacttype: detail.contacttype,
-                                  name: detail.name,
-                                  personaltype: detail.personaltype,
-                                  surname: detail.surname,
-                                  taxid: detail.taxid,
-                                  telephone: detail.telephone,
-                                  zipcode: detail.zipcode,
-                                );
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: const Icon(Icons.save),
+                return Row(
+                  children: [
+                    Expanded(flex: 3, child: Text(detail.telephone)),
+                    Expanded(flex: 3, child: Text(detail.name)),
+                    Expanded(flex: 6, child: Text(detail.address)),
+                    Expanded(
+                      flex: 1,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(2),
                           ),
+                          onPressed: () {
+                            setState(() {
+                              global.userLoginName = detail.name;
+                              global.userData = MemberObjectBoxStruct(
+                                address: detail.address,
+                                branchcode: detail.branchcode,
+                                branchtype: detail.branchtype,
+                                contacttype: detail.contacttype,
+                                name: detail.name,
+                                personaltype: detail.personaltype,
+                                surname: detail.surname,
+                                taxid: detail.taxid,
+                                telephone: detail.telephone,
+                                zipcode: detail.zipcode,
+                              );
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(Icons.save),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 );
               }).toList(),
             )))

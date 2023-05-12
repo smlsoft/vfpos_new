@@ -42,7 +42,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                   if (state is AuthenticationLoadedState) {
                     context.router.push(const SelectShopRoute());
                   } else if (state is AuthenticationAuthenticatedState) {
-                    context.router.push(DashboardRoute());
+                    context.router.push(const DashboardRoute());
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -140,7 +140,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             AuthenticationEvent.onLoginWithUserPasswordTapped(
                 userName: userName, password: password));
       },
-      icon: Icon(Icons.person),
+      icon: const Icon(Icons.person),
       label: const Text('Login'),
       style: Styles.successButtonStyle(),
     );
@@ -152,7 +152,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         // on click
         context.read<AuthenticationBloc>().add(const LoginWithGoogleEvent());
       },
-      icon: Icon(Icons.mail_outline),
+      icon: const Icon(Icons.mail_outline),
       label: const Text('Login with Google'),
       style: Styles.successButtonStyle(),
     );
@@ -164,26 +164,28 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         // on click
         // context.router.push(const AuthenticationWithUserPasswordRoute());
       },
-      icon: Icon(Icons.mail_outline),
+      icon: const Icon(Icons.mail_outline),
       label: const Text('Login with User/Password'),
       style: Styles.successButtonStyle(),
     );
   }
 
   Widget loginSeparatorLine() {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.only(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[horizontalLine(), Text(" OR "), horizontalLine()],
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          horizontalLine(),
+          const Text(" OR "),
+          horizontalLine()
+        ],
       ),
     );
   }
 
   Widget horizontalLine() => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
           width: 100,
           height: 1.0,

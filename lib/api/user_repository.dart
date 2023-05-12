@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
+
 import 'client.dart';
 import 'package:dio/dio.dart';
 
@@ -13,17 +16,17 @@ class UserRepository {
         final result = json.decode(response.toString());
         final rawData = {"success": result["success"], "data": result};
 
-        print(rawData);
+        serviceLocator<Log>().trace(rawData);
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
@@ -35,7 +38,7 @@ class UserRepository {
       } else if (ex.type == DioErrorType.unknown) {
         throw Exception(ex.message);
       } else if (ex.type == DioErrorType.badResponse) {
-        print(ex.response?.statusCode);
+        serviceLocator<Log>().error(ex.response?.statusCode);
         throw Exception('User Not Found');
       } else {
         throw Exception(errorMessage);
@@ -51,22 +54,22 @@ class UserRepository {
       try {
         final rawData = json.decode(response.toString());
 
-        print(rawData);
+        serviceLocator<Log>().debug(rawData);
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().debug(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -80,22 +83,22 @@ class UserRepository {
       try {
         final rawData = json.decode(response.toString());
 
-        print(rawData);
+        serviceLocator<Log>().debug(rawData);
 
         if (rawData['error'] != null) {
           String errorMessage = '${rawData['code']}: ${rawData['message']}';
-          print(errorMessage);
+          serviceLocator<Log>().error(errorMessage);
           throw Exception('${rawData['code']}: ${rawData['message']}');
         }
 
         return ApiResponse.fromMap(rawData);
       } catch (ex) {
-        print(ex);
+        serviceLocator<Log>().error(ex);
         throw Exception(ex);
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
-      print(errorMessage);
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }

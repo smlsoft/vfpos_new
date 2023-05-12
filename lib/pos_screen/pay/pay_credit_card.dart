@@ -1,4 +1,3 @@
-
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
@@ -18,7 +17,7 @@ class PayCreditCard extends StatefulWidget {
       {super.key, required this.posProcess, required this.blocContext});
 
   @override
-  _PayCreditCardState createState() => _PayCreditCardState();
+  State<PayCreditCard> createState() => _PayCreditCardState();
 }
 
 class _PayCreditCardState extends State<PayCreditCard> {
@@ -77,8 +76,8 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                title: Text(
-                                    global.language("select_card_type")),
+                                title:
+                                    Text(global.language("select_card_type")),
                                 content: SizedBox(
                                     width: 350,
                                     height: 300,
@@ -485,8 +484,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
             Column(
               children: <Widget>[
                 ...global.payScreenData.credit_card.map((detail) {
-                  var index =
-                      global.payScreenData.credit_card.indexOf(detail);
+                  var index = global.payScreenData.credit_card.indexOf(detail);
                   return _buildCreditCard(index: index);
                 }).toList()
               ],

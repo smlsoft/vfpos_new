@@ -10,10 +10,11 @@ import 'package:dedepos/global_model.dart';
 class PayCoupon extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
-  const PayCoupon({super.key, required this.posProcess, required this.blocContext});
+  const PayCoupon(
+      {super.key, required this.posProcess, required this.blocContext});
 
   @override
-  _PayCouponState createState() => _PayCouponState();
+  State<PayCoupon> createState() => _PayCouponState();
 }
 
 class _PayCouponState extends State<PayCoupon> {
@@ -264,7 +265,8 @@ class _PayCouponState extends State<PayCoupon> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: const Text("ต้องการยกเลิกรายการนี้จริงหรือไม่"),
+                            content:
+                                const Text("ต้องการยกเลิกรายการนี้จริงหรือไม่"),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -325,15 +327,13 @@ class _PayCouponState extends State<PayCoupon> {
       child: Column(
         children: <Widget>[
           cardDetail(),
-          Container(
-            child: Column(
-              children: <Widget>[
-                ...global.payScreenData.coupon.map((detail) {
-                  var index = global.payScreenData.coupon.indexOf(detail);
-                  return _buildCreditCard(index: index);
-                }).toList()
-              ],
-            ),
+          Column(
+            children: <Widget>[
+              ...global.payScreenData.coupon.map((detail) {
+                var index = global.payScreenData.coupon.indexOf(detail);
+                return _buildCreditCard(index: index);
+              }).toList()
+            ],
           ),
         ],
       ),

@@ -5,6 +5,8 @@ import 'package:dedepos/api/sync/api_repository.dart';
 import 'package:dedepos/api/sync/master/sync_bank.dart';
 import 'package:dedepos/api/sync/master/sync_employee.dart';
 import 'package:dedepos/api/user_repository.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/db/product_category_helper.dart';
@@ -34,7 +36,7 @@ Future syncProductCategory(data) async {
       removeMany.add(removeData.guidfixed);
       global.syncRefreshProductCategory = true;
     } catch (e) {
-      print(e);
+      serviceLocator<Log>().debug(e);
     }
   }
   // Insert
@@ -60,7 +62,7 @@ Future syncProductCategory(data) async {
     // ทดสอบ รูป
     newProduct.image_url = global.getImageForTest();
 
-    print(
+    serviceLocator<Log>().debug(
         "Sync Product Category : ${newData.guidfixed} ${newData.names![0].name} ${newData.parentguid}");
     newProduct.names.add(newData.names![0].name);
     manyForInsert.add(newProduct);
@@ -104,7 +106,7 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
       manyForDelete.add(removeData.guidfixed);
       global.syncRefreshProductBarcode = true;
     } catch (e) {
-      print(e);
+      serviceLocator<Log>().error(e);
     }
   }
   // Insert
@@ -248,7 +250,7 @@ Future syncPrinter(data) async {
       manyForDelete.add(removeData.guidfixed);
       global.syncRefreshPrinter = true;
     } catch (e) {
-      print(e);
+      serviceLocator<Log>().error(e);
     }
   }
   // Insert
@@ -313,7 +315,7 @@ Future syncMasterData() async {
     var getLastUpdateTime =
         global.syncFindLastUpdate(masterStatus, "productcategory");
     if (lastUpdateTime != getLastUpdateTime) {
-      print("serverProductCategory Start");
+      serviceLocator<Log>().debug("serverProductCategory Start");
       await apiRepository
           .serverProductCategory(
               offset: 0, limit: 1000, lastupdate: lastUpdateTime)
@@ -326,7 +328,8 @@ Future syncMasterData() async {
           });
         }
       });
-      print("serverProductCategory End : ${ProductCategoryHelper().count()}");
+      serviceLocator<Log>().debug(
+          "serverProductCategory End : ${ProductCategoryHelper().count()}");
     }
   }
   {
@@ -342,7 +345,7 @@ Future syncMasterData() async {
     var getLastUpdateTime =
         global.syncFindLastUpdate(masterStatus, "productbarcode");
     if (lastUpdateTime != getLastUpdateTime) {
-      print("serverProductBarcode Start");
+      serviceLocator<Log>().debug("serverProductBarcode Start");
       // Test
       // lastUpdateTime = global.syncDateBegin;
       //
@@ -363,7 +366,7 @@ Future syncMasterData() async {
                 (dataList["new"] as List)
                     .map((newCate) => SyncProductBarcodeModel.fromJson(newCate))
                     .toList();
-            print(
+            serviceLocator<Log>().debug(
                 "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
             if (newDataList.isEmpty && removeList.isEmpty) {
               loop = false;
@@ -371,13 +374,14 @@ Future syncMasterData() async {
               syncProductBarcode(removeList, newDataList);
             }
           } else {
-            print("************************************************* Error");
+            serviceLocator<Log>().debug(
+                "************************************************* Error");
             loop = false;
           }
         });
         offset += limit;
       }
-      print(
+      serviceLocator<Log>().debug(
           "Update syncProductBarcodeTimeName Success : ${ProductBarcodeHelper().count()}");
       global.appStorage
           .write(global.syncProductBarcodeTimeName, getLastUpdateTime);
@@ -404,16 +408,16 @@ Future syncMasterProcess() async {
             if (result.success) {
               global.apiConnected = true;
               global.appStorage.write("token", result.data["token"]);
-              print("Login Success");
+              serviceLocator<Log>().debug("Login Success");
               ApiResponse selectShop =
                   await userRepository.selectShop(global.apiShopID);
               if (selectShop.success) {
-                print("Select Shop Success");
+                serviceLocator<Log>().debug("Select Shop Success");
                 global.loginSuccess = true;
               }
             }
           }).catchError((e) {
-            print(e);
+            serviceLocator<Log>().error(e);
           }).whenComplete(() async {
             global.loginProcess = false;
           });

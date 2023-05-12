@@ -88,7 +88,7 @@ class PromptPay {
     data.add(checksumID);
     data.add(checksumLength);
 
-    var checksum = _getCrc16XMODEM()
+    var checksum = _getCrc16XOR()
         .convert(utf8.encode(data.join()))
         .toRadixString(16)
         .toUpperCase();
@@ -113,8 +113,6 @@ class PromptPay {
           element.typeID +
           element.length.toString().padLeft(2, '0') +
           element.data;
-
-      return qrData;
     });
 
     if (!isAlreadyAddAmount) {
@@ -124,7 +122,7 @@ class PromptPay {
     newQRData = newQRData + checksumID + checksumLength;
 
     return newQRData +
-        _getCrc16XMODEM()
+        _getCrc16XOR()
             .convert(utf8.encode(newQRData))
             .toRadixString(16)
             .toUpperCase();
@@ -161,7 +159,7 @@ class PromptPay {
 
     final qrDataWithOutChecksum = qrData.substring(0, qrData.length - 4);
     final checksum = qrData.substring(qrData.length - 4, qrData.length);
-    final newChecksum = _getCrc16XMODEM()
+    final newChecksum = _getCrc16XOR()
         .convert(utf8.encode(qrDataWithOutChecksum))
         .toRadixString(16)
         .toUpperCase();
@@ -206,8 +204,8 @@ class PromptPay {
     return amount.toStringAsFixed(2);
   }
 
-  static ParametricCrc _getCrc16XMODEM() {
-    // width=16 poly=0x1021 init=0x0000 refin=false refout=false xorout=0x0000 check=0x31c3 residue=0x0000 name="CRC-16/XMODEM"
+  static ParametricCrc _getCrc16XOR() {
+    // width=16 poly=0x1021 init=0x0000 refin=false refout=false xorout=0x0000 check=0x31c3 residue=0x0000 name="CRC-16/XOR"
     return new ParametricCrc(16, 0x1021, 0xFFFF, 0x0000,
         inputReflected: false, outputReflected: false);
   }

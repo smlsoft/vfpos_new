@@ -9,7 +9,7 @@ class POSLoginScreen extends StatefulWidget {
   const POSLoginScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginState createState() => _LoginState();
+  State<POSLoginScreen> createState() => _LoginState();
 }
 
 class _LoginState extends State<POSLoginScreen> {

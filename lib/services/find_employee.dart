@@ -9,7 +9,7 @@ class FindEmployee extends StatefulWidget {
   const FindEmployee({Key? key}) : super(key: key);
 
   @override
-  _FindEmployeeState createState() => _FindEmployeeState();
+  State<FindEmployee> createState() => _FindEmployeeState();
 }
 
 class _FindEmployeeState extends State<FindEmployee>
@@ -24,7 +24,6 @@ class _FindEmployeeState extends State<FindEmployee>
     super.initState();
     context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadStart(''));
   }
-
 
   Widget findByText() {
     return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(

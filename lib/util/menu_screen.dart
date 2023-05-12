@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
@@ -8,18 +10,16 @@ import 'package:dedepos/pos_screen/pos_screen.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
-import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:uuid/uuid.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
 
   @override
-  _MenuScreenState createState() => _MenuScreenState();
+  State<MenuScreen> createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends State<MenuScreen> {
@@ -47,7 +47,7 @@ class _MenuScreenState extends State<MenuScreen> {
     return [
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: 'กำหนดพิกัด GPRS',
+          title: 'กำหนดพิกัด GPS',
           callBack: () {}),
       menuItem(
           icon: Icons.list_alt_outlined,
@@ -267,7 +267,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     posLoginDialog();
                   },
                   child: (global.userLoginCode.isEmpty)
-                      ? Row(children: const [
+                      ? const Row(children: [
                           Icon(
                             Icons.key,
                           ),
@@ -676,7 +676,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void receiveMoneyDialog() {
     receiveAmount.text = "";
-    empCode.text = global.userLoginCode + "/" + global.userLoginName;
+    empCode.text = '${global.userLoginCode}/${global.userLoginName}';
     showDialog(
         barrierLabel: "",
         barrierDismissible: false,
@@ -756,8 +756,8 @@ class _MenuScreenState extends State<MenuScreen> {
                                               backgroundColor:
                                                   Colors.green.shade600),
                                           onPressed: () async {
-                                            String docNumber =
-                                                const Uuid().v4();
+                                            // String docNumber =
+                                            //     const Uuid().v4();
                                             /*ReceiveMoneyHelper
                                                 _receiveMoneyHelper =
                                                 ReceiveMoneyHelper();
@@ -978,6 +978,6 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   void processEvent() async {
-    print("processEvent()");
+    serviceLocator<Log>().debug('processEvent()');
   }
 }

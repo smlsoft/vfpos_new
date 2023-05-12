@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/pos_screen/pos_bill_vat.dart';
 import 'package:dedepos/pos_screen/pos_cancel_bill.dart';
 import 'package:dedepos/pos_screen/pos_product_weight.dart';
@@ -53,7 +55,7 @@ class PosScreen extends StatefulWidget {
   const PosScreen({Key? key, required this.posScreenMode}) : super(key: key);
 
   @override
-  _PosScreenState createState() => _PosScreenState();
+  State<PosScreen> createState() => _PosScreenState();
 }
 
 class _PosScreenState extends State<PosScreen>
@@ -214,7 +216,7 @@ class _PosScreenState extends State<PosScreen>
     global.functionPosScreenRefresh = refresh;
     Timer(const Duration(seconds: 1), () async {
       await getProcessFromTerminal();
-      // Sunmi จอแสดงผล
+      // จอแสดงผล POS
       if (Platform.isAndroid) {
         if (global.isInternalCustomerDisplayConnected) {
           global.displayManager
@@ -270,6 +272,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   void loadCategory() {
+    // ignore: unused_local_variable
     String categoryGuid = (global.productCategoryCodeSelected.isEmpty)
         ? ""
         : global
@@ -1258,7 +1261,7 @@ class _PosScreenState extends State<PosScreen>
         (MediaQuery.of(context).size.width / menuMinWidth).toStringAsFixed(0));
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        print("${constraints.maxWidth} : $menuMinWidth");
+        serviceLocator<Log>().debug("${constraints.maxWidth} : $menuMinWidth");
         if (constraints.maxWidth > menuMinWidth) {
           widgetPerLine = int.parse(
               (constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
@@ -1833,10 +1836,10 @@ class _PosScreenState extends State<PosScreen>
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
-      String description = "";
-      Widget rowSpace = const SizedBox(
-        width: 4,
-      );
+      // String description = "";
+      // Widget rowSpace = const SizedBox(
+      //   width: 4,
+      // );
 
       return Row(
         children: [
@@ -2047,8 +2050,13 @@ class _PosScreenState extends State<PosScreen>
                   global.posHoldProcessResult[global.posHoldActiveNumber]
                       .posProcess.select_promotion_temp_list
                       .clear();
-                  print(global.posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess.details[index].barcode);
+
+                  serviceLocator<Log>().debug(global
+                      .posHoldProcessResult[global.posHoldActiveNumber]
+                      .posProcess
+                      .details[index]
+                      .barcode);
+
                   product = await ProductBarcodeHelper().selectByBarcodeFirst(
                           global
                               .posHoldProcessResult[global.posHoldActiveNumber]
@@ -3418,7 +3426,7 @@ class _PosScreenState extends State<PosScreen>
             commandCode: value.command,
             barcode: value.data.barcode,
             qty: value.qty.toString(),
-            price: value.priceOrPersent);
+            price: value.priceOrPercent);
       }
     });
     barcodeScanActive = true;
@@ -4362,13 +4370,14 @@ class _PosScreenState extends State<PosScreen>
   @override
   Widget build(BuildContext context) {
     global.globalContext = context;
-    print("Build : ${DateTime.now()}");
+    serviceLocator<Log>().debug("Build : ${DateTime.now()}");
+
     return MultiBlocListener(
         listeners: [
           BlocListener<ProductCategoryBloc, ProductCategoryState>(
             listener: (context, state) async {
               if (state is ProductCategoryLoadSuccess) {
-                dev.log('xxxxxx Category');
+                serviceLocator<Log>().debug('xxxxxx Category');
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
                 PosProcess().sumCategoryCount(
@@ -4442,11 +4451,13 @@ class _PosScreenState extends State<PosScreen>
                       posNumPadGlobalKey.currentState!.clear();
                     }
                   }
-                  print('------------------------ Scan Barcode : $barcode');
+                  serviceLocator<Log>().debug(
+                      '------------------------ Scan Barcode : $barcode');
                   if (global.posNumPadProductWeightGlobalKey.currentState !=
                       null) {
                     // เปิดหน้าจอน้ำหนัก
-                    print('------------------------ Pass Barcode : $barcode');
+                    serviceLocator<Log>().debug(
+                        '------------------------ Pass Barcode : $barcode');
                     global.posNumPadProductWeightGlobalKey.currentState!
                         .passValue(barcode);
                   } else {
