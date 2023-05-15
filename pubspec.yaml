@@ -159,7 +159,7 @@ flavorizr:
     dedepos:
       app:
         name: "DEDE POS"
-        icon: "assets/app_logo.png"
+        icon: "assets/icons/dede-pos-icon.png"
       android:
         applicationId: "com.smlsoft.dedepos"
       ios:

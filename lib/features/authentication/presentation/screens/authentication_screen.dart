@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/app/app.dart';
 import 'package:dedepos/features/authentication/presentation/bloc/authentication_bloc.dart';
+import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,7 +30,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       Center(
           child: SizedBox(
         width: 500,
-        height: 500,
+        height: 600,
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -80,7 +81,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       const SizedBox(height: 16.0),
                       buttonLoginWithGoogle(),
                       const SizedBox(height: 16.0),
-                      buttonLoginWithOther(),
+                      buttonLoginWithApple(),
                     ],
                   );
                 },
@@ -93,8 +94,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Widget logo() {
+    if (F.appFlavor == Flavor.VFPOS) {
+      return Image.asset(
+        'assets/icons/vf-pos-icon.png', // path to your image asset
+        height: 150.0,
+      );
+    }
+
     return Image.asset(
-      'assets/icons/vf-pos-icon.png', // path to your image asset
+      'assets/icons/dede-pos-icon.png', // path to your image asset
       height: 150.0,
     );
   }
@@ -166,6 +174,18 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       },
       icon: const Icon(Icons.mail_outline),
       label: const Text('Login with User/Password'),
+      style: Styles.successButtonStyle(),
+    );
+  }
+
+  Widget buttonLoginWithApple() {
+    return ElevatedButton.icon(
+      onPressed: () {
+        // on click
+        // context.router.push(const AuthenticationWithUserPasswordRoute());
+      },
+      icon: const Icon(Icons.mail_outline),
+      label: const Text('Login with Apple'),
       style: Styles.successButtonStyle(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/core/core.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,14 @@ class _LoginState extends State<POSLoginScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 2), () async {
+    Future.delayed(const Duration(seconds: 2), () {
       global.loginSuccess = true;
 
-      await global.startLoading();
+      global.startLoading().then((_) {
+        serviceLocator<Log>().debug("Loading Success");
+        context.router.push(const InitPOSRoute());
+      });
 
-      context.router.push(const InitPOSRoute());
       // Navigator.of(context).pushReplacementNamed('loading');
     });
   }

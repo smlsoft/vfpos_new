@@ -856,7 +856,7 @@ Future<void> registerRemoteToTerminal() async {
 
 Future<void> startLoading() async {
   {
-    dev.log("startLoading");
+    serviceLocator<Log>().debug("Start Loading... POS Screen ");
     loadConfig();
     // Payment
     qrPaymentProviderList.add(PaymentProviderModel(
