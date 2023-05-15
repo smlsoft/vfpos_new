@@ -1,7 +1,7 @@
 // ignore_for_file: library_prefixes
 
 import 'dart:developer' as dev;
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';

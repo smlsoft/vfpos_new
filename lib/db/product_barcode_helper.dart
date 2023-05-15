@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';

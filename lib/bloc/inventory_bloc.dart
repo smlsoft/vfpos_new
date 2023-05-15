@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dedepos/api/client.dart';

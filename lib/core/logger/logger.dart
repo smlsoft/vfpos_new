@@ -10,7 +10,18 @@ abstract class Log {
 }
 
 class LogImpl implements Log {
-  Logger logger = Logger();
+  Logger logger = Logger(
+    printer: PrettyPrinter(
+      stackTraceBeginIndex: 1,
+      methodCount: 2, // number of method calls to be displayed
+      errorMethodCount: 8, // number of method calls if stacktrace is provided
+      lineLength: 120, // width of the output
+      colors: false, // Colorful log messages
+      printEmojis: false, // Print an emoji for each log message
+      printTime: false, // Should each log print contain a timestamp\
+      noBoxingByDefault: true,
+    ),
+  );
 
   @override
   void trace(dynamic message, {dynamic error, StackTrace? stackTrace}) {

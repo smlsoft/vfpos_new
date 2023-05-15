@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dedepos/bloc/bill_bloc.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/pos_screen/pos_secondary_screen.dart';

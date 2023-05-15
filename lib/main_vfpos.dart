@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:dedepos/bootstrap.dart';
 
 void main() async {
-  Logger.level = Level.info;
+  Logger.level = Level.verbose;
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
   initializeDateFormatting();

@@ -1,5 +1,5 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/pos_screen/pos_num_pad.dart';

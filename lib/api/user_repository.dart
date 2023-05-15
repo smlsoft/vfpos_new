@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 
 import 'client.dart';

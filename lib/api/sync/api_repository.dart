@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart' as global_model;
 import 'package:dio/dio.dart';

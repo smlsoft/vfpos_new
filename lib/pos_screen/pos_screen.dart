@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/pos_screen/pos_bill_vat.dart';
 import 'package:dedepos/pos_screen/pos_cancel_bill.dart';

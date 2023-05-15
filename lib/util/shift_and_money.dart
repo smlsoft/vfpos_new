@@ -1,4 +1,4 @@
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';

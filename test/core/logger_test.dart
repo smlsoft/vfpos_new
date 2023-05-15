@@ -10,37 +10,37 @@ void main() {
 
   test('test trace log', () {
     final logger = serviceLocator<Log>();
-    logger.trace('trace #1', error: 'error trace title');
+    logger.trace('trace message', error: 'error trace');
     expect(true, true);
   });
 
   test('test debug log', () {
     final logger = serviceLocator<Log>();
-    logger.debug('test debug Log', error: 'debug error message');
+    logger.debug('debug message', error: 'debug error');
     expect(true, true);
   });
 
   test('test info log', () {
     final logger = serviceLocator<Log>();
-    logger.info('test info log', error: 'info error');
+    logger.info('info log message', error: 'info error title');
     expect(true, true);
   });
 
   test('test warn log', () {
     final logger = serviceLocator<Log>();
-    logger.warn('test warning log', error: 'warning');
+    logger.warn('warning log message', error: 'warning title');
     expect(true, true);
   });
 
   test('test error log', () {
     final logger = serviceLocator<Log>();
-    logger.error('test error log', error: 'test error log');
+    logger.error('error log message', error: 'test error log');
     expect(true, true);
   });
 
   test('test danger failure log', () {
     final logger = serviceLocator<Log>();
-    logger.dangerFailure('test danger failure log', error: 'title');
+    logger.dangerFailure('wtf log message', error: 'title');
     expect(true, true);
   });
 }

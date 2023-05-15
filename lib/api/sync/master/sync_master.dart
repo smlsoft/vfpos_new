@@ -5,7 +5,7 @@ import 'package:dedepos/api/sync/api_repository.dart';
 import 'package:dedepos/api/sync/master/sync_bank.dart';
 import 'package:dedepos/api/sync/master/sync_employee.dart';
 import 'package:dedepos/api/user_repository.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';

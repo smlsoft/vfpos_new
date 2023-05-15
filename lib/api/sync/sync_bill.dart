@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/api/sync/model/api_bill_model.dart';
 import 'package:dedepos/api/user_repository.dart';
-import 'package:dedepos/core/logger.dart';
+import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
