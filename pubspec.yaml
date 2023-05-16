@@ -145,7 +145,7 @@ flavorizr:
   flavors:
     dev:
       app:
-        name: "DEDE POS"
+        name: "DEDE POS DEV"
         icon: "assets/app_logo.png"
       android:
         applicationId: "com.smlsoft.dedepos"
@@ -211,11 +211,11 @@ flavorizr:
         name: "Village Fund POS"
         icon: "assets/vf-pos-logo.png"
       android:
-        applicationId: "com.smlsoft.vfpos"
+        applicationId: "org.villagefundth.vfpos"
       ios:
-        bundleId: "com.smlsoft.vfpos"
+        bundleId: "org.villagefundth.vfpos"
       windows:
-        packageId: "com.smlsoft.vfpos"
+        packageId: "org.villagefundth.vfpos"
         # customConfig:
         #   msix_config:
         #     display_name: VFPOS
@@ -227,7 +227,7 @@ flavorizr:
         #     certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
         #     certificate_password: sml19682511
       macos:
-        bundleId: "com.smlsoft.vfpos"
+        bundleId: "org.villagefundth.vfpos"
 msix_config:
   # # DEDE POS Store Config
   # display_name: DEDEPOS

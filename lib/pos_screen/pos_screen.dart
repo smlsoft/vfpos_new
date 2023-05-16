@@ -6,6 +6,7 @@ import 'package:dedepos/pos_screen/pos_cancel_bill.dart';
 import 'package:dedepos/pos_screen/pos_product_weight.dart';
 import 'package:dedepos/pos_screen/pos_reprint_bill.dart';
 import 'package:dedepos/pos_screen/pos_sale_channel.dart';
+import 'package:dedepos/routes/app_routers.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/global_model.dart';
@@ -2861,7 +2862,9 @@ class _PosScreenState extends State<PosScreen>
         label: global.language('main_screen'),
         //icon: Icons.web,
         onPressed: () {
-          Navigator.pop(context);
+          // Navigator.pop(context);
+          context.router.pushAndPopUntil(const DashboardRoute(),
+              predicate: (route) => false);
         },
       )
     ];

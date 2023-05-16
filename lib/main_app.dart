@@ -57,6 +57,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await setUpServiceLocator();
   await initializeApp();
 
   Intl.defaultLocale = "th";

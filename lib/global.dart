@@ -953,8 +953,8 @@ Future<void> startLoading() async {
     final isExists = await objectBoxDirectory.exists();
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
-      dev.log("ObjectBox Data : $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // dev.log("ObjectBox Data : $isExists");
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
@@ -968,7 +968,9 @@ Future<void> startLoading() async {
     }
 
     objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
+        directory: objectBoxDirectory.path,
+        queriesCaseSensitiveDefault: false,
+        macosApplicationGroup: 'objectbox.demo');
   }
   int xxx = ProductBarcodeHelper().count();
   serviceLocator<Log>().debug("ProductBarcodeHelper().count() $xxx");

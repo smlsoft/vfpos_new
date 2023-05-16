@@ -40,6 +40,13 @@ flutter build windows --flavor dedepos -t lib/main_dedepos.dart
 
 flutter pub run msix:create --publisher "CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27" --display-name "DEDE POS" --identity-name "SMLSoft.DEDEPOS" --version "1.0.0.0" --capabilities "internetClient, location, microphone, webcam" --logo-path ".\assets\dede-pos-icon.png" --publisher-display-name "SMLSoft" 
 
+## Flavor 
+
+### Gen ios icons
+```
+flutter pub run flutter_flavorizr -p ios:icons  
+```
+
 ## Build VF POS Command
 ```
 flutter run --flavor vfpos -t lib/main_vfpos.dart
@@ -49,6 +56,20 @@ flutter pub run msix:create
 
 ```
 
+```dart
+void main() async {
+  F.appFlavor = Flavor.DEDEPOS;
+  WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = "th";
+  initializeDateFormatting();
+  await setUpServiceLocator();
+  // await GetStorage.init('AppStorage');
+  await initializeApp();
+  //runApp(const App());
+  runApp(App());
+}
+
+```
 
 ## Launch Config
 ```
@@ -67,4 +88,53 @@ flutter pub run msix:create
         },
     ]
 }
+```
+
+
+## Change Target Platform macOS, ios
+
+credit `https://stackoverflow.com/questions/63973136/the-ios-deployment-target-iphoneos-deployment-target-is-set-to-8-0-in-flutter`
+
+
+IOS
+
+```cli
+☁  dedepos_new [main] ⚡  flutter pub run flutter_flavorizr -p ios:xcconfig,ios:buildTargets,ios:schema,ios:dummyAssets,ios:icons,ios:plist,ios:launchScreen 
+
+```
+platform :ios, '13.6'
+
+...
+...
+...
+
+post_install do |installer|
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.6'
+      end
+    end
+  end
+end
+```
+
+MACOS
+
+```
+platform :macos, '11.5'
+
+...
+...
+...
+
+post_install do |installer|
+  installer.generated_projects.each do |project|
+    project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '11.5'
+      end
+    end
+  end
+end
 ```
