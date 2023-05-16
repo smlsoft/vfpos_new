@@ -1,7 +1,7 @@
 name: dedepos
 description: dede pos project.
 
-publish_to: 'none' 
+publish_to: "none"
 
 version: 1.2.1+11
 
@@ -47,7 +47,6 @@ dependencies:
   shared_preferences: ^2.1.0
   split_view: ^3.2.1
   visibility_detector: ^0.4.0+2
-  qr_flutter: ^4.0.0
   countdown_progress_indicator: ^0.1.2
   decimal: ^2.3.2
   promptpay:
@@ -94,7 +93,8 @@ dependencies:
   mocktail: ^0.3.0
   collection: ^1.17.1
   logger: ^1.3.0
-  
+  qr_flutter: ^4.1.0
+
 dev_dependencies:
   flutter_driver:
     sdk: flutter
@@ -126,7 +126,7 @@ flutter:
     - assets/icons/
     - assets/flags/
     - assets/fonts/
-     
+
   fonts:
     - family: prompt
       fonts:
@@ -170,7 +170,7 @@ flavorizr:
         #   msix_config:
         #     display_name: DEDEPOS
         #     publisher_display_name: SMLSoft
-        #     publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27 
+        #     publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27
         #     identity_name: 	SMLSoft.DEDEPOS
         #     msix_version: 1.0.0.0
         #     logo_path: .\assets\dede-pos-icon.png
@@ -232,7 +232,7 @@ msix_config:
   # # DEDE POS Store Config
   # display_name: DEDEPOS
   # publisher_display_name: SMLSoft
-  # publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27 
+  # publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27
   # identity_name: 	SMLSoft.DEDEPOS
   # msix_version: 1.0.0.0
   # logo_path: .\assets\dede-pos-icon.png
@@ -243,7 +243,7 @@ msix_config:
   display_name: DEDEPOS
   publisher_display_name: SMLSoft
   publisher: smlsoft
-  identity_name: 	com.smlsoft.dedepos
+  identity_name: com.smlsoft.dedepos
   language: en-us
   capabilities: internetClient, location, microphone, webcam
   certificate_path: C:\source\flutter-test-key\CERTIFICATE.pfx
