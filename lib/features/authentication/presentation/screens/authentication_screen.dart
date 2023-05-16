@@ -96,7 +96,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Widget logo() {
     if (F.appFlavor == Flavor.VFPOS) {
       return Image.asset(
-        'assets/icons/vf-pos-icon.png', // path to your image asset
+        'assets/icons/vf-pos-logo.png', // path to your image asset
         height: 150.0,
       );
     }

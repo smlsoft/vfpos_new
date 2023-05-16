@@ -1,23 +1,20 @@
-import 'package:dedepos/app/app.dart';
+import 'package:dedepos/bootstrap.dart';
+import 'package:dedepos/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:logger/logger.dart';
-// import 'app.dart';
-import 'core/core.dart';
-import 'flavors.dart';
 import 'package:intl/intl.dart';
-import 'package:dedepos/bootstrap.dart';
+
+import 'app/app_view.dart';
+import 'flavors.dart';
 
 void main() async {
-  Logger.level = Level.verbose;
+  F.appFlavor = Flavor.VFPOS;
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
   initializeDateFormatting();
   await setUpServiceLocator();
   // await GetStorage.init('AppStorage');
   await initializeApp();
-
-  F.appFlavor = Flavor.VFPOS;
-
+  //runApp(const App());
   runApp(App());
 }

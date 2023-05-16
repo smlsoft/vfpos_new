@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 enum Flavor {
   DEV,
   DEDEPOS,
@@ -16,7 +14,7 @@ class F {
   static String get title {
     switch (appFlavor) {
       case Flavor.DEV:
-        return 'DEDE POS';
+        return 'DEDE POS DEV';
       case Flavor.DEDEPOS:
         return 'DEDE POS';
       case Flavor.SMLSUPERPOS:
@@ -29,4 +27,5 @@ class F {
         return 'title';
     }
   }
+
 }

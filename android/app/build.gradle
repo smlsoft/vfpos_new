@@ -40,7 +40,7 @@ android {
         dev {
             dimension "flavor-type"
             applicationId "com.smlsoft.dedepos"
-            resValue "string", "app_name", "DEDE POS"
+            resValue "string", "app_name", "DEDE POS DEV"
         }
         dedepos {
             dimension "flavor-type"
@@ -59,7 +59,7 @@ android {
         }
         vfpos {
             dimension "flavor-type"
-            applicationId "com.smlsoft.vfpos"
+            applicationId "org.villagefundth.vfpos"
             resValue "string", "app_name", "Village Fund POS"
         }
     }
