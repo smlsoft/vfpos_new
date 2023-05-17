@@ -31,28 +31,31 @@ class ItemMenuDashboard extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              icon,
-              size: 48,
-              color: iconColor, // const Color(0xFFF56045),
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              // overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.black87,
+        child: Container(
+          height: 130,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                icon,
+                size: 48,
+                color: iconColor, // const Color(0xFFF56045),
               ),
-            )
-          ],
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                // overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black87,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

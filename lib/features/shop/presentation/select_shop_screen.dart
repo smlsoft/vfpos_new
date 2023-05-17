@@ -127,17 +127,20 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
   }
 
   Widget cardItem(ShopUser data) {
-    return Card(
-        elevation: 3,
-        child: ListTile(
-            onTap: (() {
-              context
-                  .read<SelectShopBloc>()
-                  .add(ShopSelectSubmit(shop: data.toShop));
-            }),
-            title: Text(
-              data.name,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            )));
+    return SingleChildScrollView(
+      child: Card(
+          elevation: 3,
+          child: ListTile(
+              onTap: (() {
+                context
+                    .read<SelectShopBloc>()
+                    .add(ShopSelectSubmit(shop: data.toShop));
+              }),
+              title: Text(
+                data.name,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ))),
+    );
   }
 }

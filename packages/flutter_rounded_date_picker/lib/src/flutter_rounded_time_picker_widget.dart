@@ -45,7 +45,7 @@ enum _TimePickerHeaderId {
 }
 
 /// Provides properties for rendering time picker header fragments.
-@immutable
+// @immutable
 class _TimePickerFragmentContext {
   const _TimePickerFragmentContext({
     required this.headerTextTheme,
