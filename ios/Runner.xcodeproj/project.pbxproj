@@ -1448,6 +1448,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BDC48C69A44B969BF00B06C2 /* Pods-Runner.debug-dev.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1457,6 +1458,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C3BBF24F1081BC77EA2E21FF /* Pods-Runner.profile-dev.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1466,6 +1468,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 768EEC44C550416DFB601FD0 /* Pods-Runner.release-dev.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1475,6 +1478,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0272A264D796D95E5EC977B6 /* Pods-Runner.debug-dedepos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1484,6 +1488,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D1A0421F6B1C4D964BB5E466 /* Pods-Runner.profile-dedepos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1493,6 +1498,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4F61409CE183F8A46B992510 /* Pods-Runner.release-dedepos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1502,6 +1508,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6A35D596C5098E205F349D4F /* Pods-Runner.debug-smlsuperpos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-smlsuperpos";
@@ -1510,6 +1517,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BE317F356234EB1768C9221B /* Pods-Runner.profile-smlsuperpos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-smlsuperpos";
@@ -1518,6 +1526,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4B18065D28A5D16E2474C6D3 /* Pods-Runner.release-smlsuperpos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-smlsuperpos";
@@ -1526,6 +1535,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FE0AF19A490C2935C4669E9F /* Pods-Runner.debug-smlmobilesales.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-smlmobilesales";
@@ -1534,6 +1544,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1FB57F7B1AAE8C4EDE8CF6BD /* Pods-Runner.profile-smlmobilesales.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-smlmobilesales";
@@ -1542,6 +1553,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B5B57E2B3594AFA1FC2B0308 /* Pods-Runner.release-smlmobilesales.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-smlmobilesales";
@@ -1550,6 +1562,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DBEBC1208E71E91555D73DA3 /* Pods-Runner.debug-vfpos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1559,6 +1572,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = ED715709560B7F279E22C150 /* Pods-Runner.profile-vfpos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};
@@ -1568,6 +1582,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 856E825661BF3A8263CBF094 /* Pods-Runner.release-vfpos.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				PRODUCT_NAME = Runner;
 			};

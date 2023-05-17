@@ -138,3 +138,63 @@ post_install do |installer|
   end
 end
 ```
+
+
+## Environment 
+
+inspire from : https://stacksecrets.com/flutter/environment-configuration-in-flutter-app
+
+### Run Command
+
+```
+flutter run --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD
+flutter run --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=STAGING
+flutter run --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=STAGING
+```
+
+
+### Run Dev
+```
+        {
+            "name": "vfpos-production",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_vfpos.dart",
+            "args": [
+                "--flavor",
+                "vfpos"
+            ]
+        },
+```
+
+### Run Staging
+```
+        {
+            "name": "vfpos-production",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_vfpos.dart",
+            "args": [
+                "--flavor",
+                "vfpos",
+                "--dart-define",
+                "ENVIRONMENT=STAGING"
+            ]
+        },
+```
+
+### Run Production
+```
+        {
+            "name": "vfpos-production",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main_vfpos.dart",
+            "args": [
+                "--flavor",
+                "vfpos",
+                "--dart-define",
+                "ENVIRONMENT=STAGING"
+            ]
+        },
+```

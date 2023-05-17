@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:dedepos/core/environment.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -18,4 +19,12 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 
 Future<void> initializeApp() async {
   await GetStorage.init('AppStorage');
+}
+
+void initializeEnvironmentConfig() {
+  const String environment = String.fromEnvironment(
+    'ENVIRONMENT',
+    defaultValue: Environment.DEV,
+  );
+  Environment().initConfig(environment);
 }

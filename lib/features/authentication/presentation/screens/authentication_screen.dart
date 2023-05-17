@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/app/app.dart';
+import 'package:dedepos/core/core.dart';
 import 'package:dedepos/features/authentication/presentation/bloc/authentication_bloc.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
@@ -41,9 +42,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
                 listener: (context, state) {
                   if (state is AuthenticationLoadedState) {
-                    context.router.push(const SelectShopRoute());
+                    //context.router.push(const SelectShopRoute());
+                    context.router.pushAndPopUntil(const SelectShopRoute(),
+                        predicate: (route) => false);
                   } else if (state is AuthenticationAuthenticatedState) {
-                    context.router.push(const DashboardRoute());
+                    context.router.pushAndPopUntil(const DashboardRoute(),
+                        predicate: (route) => false);
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -51,6 +55,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                         backgroundColor: Colors.red,
                       ),
                     );
+                  } else if (state is AuthenticationInitialState) {
+                    serviceLocator<Log>()
+                        .debug("stage change to AuthenticationInitialState");
                   }
                 },
                 builder: (context, state) {

@@ -3,6 +3,7 @@ import 'package:dedepos/app/app.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/shop/domain/entity/shop_user.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
+import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,17 +46,30 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
     //     .add(const SelectShopEvent.onSelectShopStarted());
 
     return Scaffold(
-      body: BlocListener<SelectShopBloc, SelectShopState>(
-        listener: (context, state) {
-          if (state is SelectShopSubmitSuccessState) {
-            // read state and push next state
-            // context.router.pushAndPopUntil(const DashboardRoute(),
-            //     predicate: (route) => false);
-            context
-                .read<AuthenticationBloc>()
-                .add(AuthenticationEvent.authenticated(user: user));
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<SelectShopBloc, SelectShopState>(
+              listener: (context, state) {
+            if (state is SelectShopSubmitSuccessState) {
+              // read state and push next state
+              // context.router.pushAndPopUntil(const DashboardRoute(),
+              //     predicate: (route) => false);
+              context
+                  .read<AuthenticationBloc>()
+                  .add(AuthenticationEvent.authenticated(user: user));
+            }
+          }),
+          BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) {
+            if (state is AuthenticationInitialState) {
+              context.router.pushAndPopUntil(const AuthenticationRoute(),
+                  predicate: (route) => false);
+            } else if (state is AuthenticationAuthenticatedState) {
+              context.router.pushAndPopUntil(const DashboardRoute(),
+                  predicate: (route) => false);
+            }
+          }),
+        ],
         child: Stack(
           children: [
             const BackgroundGradientWidget(),
@@ -73,13 +87,17 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
                             Container(
                               margin: const EdgeInsets.all(8),
                               child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    context
+                                        .read<AuthenticationBloc>()
+                                        .add(const UserLogoutEvent());
+                                  },
                                   child: const Text("Logout")),
                             ),
                             Container(
                               margin: const EdgeInsets.all(8),
                               child: const Text(
-                                "Select Shop ",
+                                "Back to Login",
                                 style: TextStyle(
                                     fontSize: 24, fontWeight: FontWeight.bold),
                               ),

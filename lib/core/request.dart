@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:dedepos/app/app_constant.dart';
+import 'package:dedepos/core/environment.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
@@ -18,7 +18,7 @@ class Request {
 
   void updateDioInterceptors() {
     _dio.options = BaseOptions(
-      baseUrl: AppConstant.serviceApi,
+      baseUrl: Environment().config.serviceApi,
       receiveDataWhenStatusError: true,
       validateStatus: (value) {
         return value! <= 500;

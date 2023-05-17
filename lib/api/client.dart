@@ -1,5 +1,5 @@
+import 'package:dedepos/core/environment.dart';
 import 'package:dio/dio.dart';
-import 'app_const.dart';
 import 'package:dedepos/global.dart' as global;
 
 class Client {
@@ -7,7 +7,7 @@ class Client {
     Dio dio = Dio();
     dio.interceptors.add(ApiInterceptors());
 
-    String endPointService = AppConfig.serviceApi;
+    String endPointService = Environment().config.serviceApi;
 
     endPointService +=
         endPointService[endPointService.length - 1] == "/" ? "" : "/";

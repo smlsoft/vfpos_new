@@ -20,7 +20,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is AuthenticationInitialState) {
-          context.router.push(const AuthenticationRoute());
+          context.router.pushAndPopUntil(const AuthenticationRoute(),
+              predicate: (route) => false);
         }
       },
       child: Scaffold(

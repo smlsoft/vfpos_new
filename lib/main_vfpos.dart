@@ -9,6 +9,7 @@ import 'flavors.dart';
 
 void main() async {
   F.appFlavor = Flavor.VFPOS;
+  initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
   initializeDateFormatting();
