@@ -66,7 +66,7 @@ dependencies:
   objectbox_generator: ^2.0.0
   objectbox_flutter_libs: ^2.0.0
   archive: ^3.3.2
-  connectivity_plus: ^3.0.4
+  connectivity_plus: 3.0.4
   get: ^4.6.5
   loading_animation_widget: ^1.2.0+4
   qr_code_scanner: ^1.0.1
