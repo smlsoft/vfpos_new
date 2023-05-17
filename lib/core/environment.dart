@@ -16,9 +16,11 @@ class Environment {
   static const String PROD = 'PROD';
 
   late BaseConfig config;
+  late bool isDev;
 
   initConfig(String environment) {
     config = _getConfig(environment);
+    isDev = environment == DEV;
   }
 
   BaseConfig _getConfig(String environment) {

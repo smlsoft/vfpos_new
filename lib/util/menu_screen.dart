@@ -6,7 +6,7 @@ import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/system/printer_model.dart';
-import 'package:dedepos/pos_screen/pos_screen.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
@@ -96,6 +96,13 @@ class _MenuScreenState extends State<MenuScreen> {
           icon: Icons.point_of_sale,
           title: 'pos_screen',
           callBack: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const PosScreen(
+            //         posScreenMode: global.PosScreenModeEnum.posSale),
+            //   ),
+            // );
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -221,11 +228,13 @@ class _MenuScreenState extends State<MenuScreen> {
     }
 
     try {
-      global.userLanguage = GetStorage().read("language");
+      global.userLanguage = GetStorage().read("language") ?? 'th';
     } catch (_) {
       global.userLanguage = "";
     }
-    menuMode = (global.userLanguage.isNotEmpty) ? 0 : 1;
+    menuMode = (global.userLanguage != null && global.userLanguage!.isNotEmpty)
+        ? 0
+        : 1;
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 

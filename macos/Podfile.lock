@@ -90,9 +90,9 @@ SPEC CHECKSUMS:
   network_info_plus: f4fbc7877ab7b3294500d9441dfa53cd54972d05
   ObjectBox: a7900d5335218cd437cbc080b7ccc38a5211f7b4
   objectbox_flutter_libs: f89ab4878f0f764a49077cfaa59030be69ae1d7e
-  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
+  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
   sqflite: a5789cceda41d54d23f31d6de539d65bb14100ea
   text_to_speech_macos: 83b12a215a4cdb60e089d7c9d38942e2c548b240
 

@@ -7,7 +7,7 @@ import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
-import 'package:dedepos/pos_screen/pos_process.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_process.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'dart:io';
 import 'dart:async';

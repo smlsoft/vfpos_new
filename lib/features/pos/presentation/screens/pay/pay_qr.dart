@@ -2,8 +2,8 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
-import 'package:dedepos/pos_screen/pay/pay_qr_screen.dart';
-import 'package:dedepos/pos_screen/pay/pay_util.dart';
+import 'package:dedepos/features/pos/presentation/screens/pay/pay_qr_screen.dart';
+import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
@@ -91,9 +91,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
                             FocusScope.of(context).unfocus();
                             global.payScreenNumberPadWidget =
                                 PayScreenNumberPadWidgetEnum.number;
-                            final RenderBox renderBox =
-                                widgetKey.currentContext?.findRenderObject()
-                                    as RenderBox;
+                            final RenderBox renderBox = widgetKey.currentContext
+                                ?.findRenderObject() as RenderBox;
                             final Size size = renderBox.size;
                             final Offset offset =
                                 renderBox.localToGlobal(Offset.zero);

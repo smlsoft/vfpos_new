@@ -3,7 +3,7 @@ import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/pos_screen/pos_secondary_screen.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_secondary_screen.dart';
 import 'package:dedepos/util/app_auth.dart';
 import 'package:dedepos/util/pos_client.dart';
 import 'package:dedepos/util/select_mode_screen.dart';
@@ -55,6 +55,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   }
 }
 
+/// mainApp เดิมให้ ยกเลิกใช้งาน ย้ายไปใช้ app_view
 Future<void> mainApp() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setUpServiceLocator();

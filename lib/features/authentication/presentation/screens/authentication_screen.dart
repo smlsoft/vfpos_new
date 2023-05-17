@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/app/app.dart';
 import 'package:dedepos/core/core.dart';
-import 'package:dedepos/features/authentication/presentation/bloc/authentication_bloc.dart';
+import 'package:dedepos/core/environment.dart';
+import 'package:dedepos/features/authentication/auth.dart';
+import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
+import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -46,7 +49,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     context.router.pushAndPopUntil(const SelectShopRoute(),
                         predicate: (route) => false);
                   } else if (state is AuthenticationAuthenticatedState) {
-                    context.router.pushAndPopUntil(const DashboardRoute(),
+                    context.router.pushAndPopUntil(const InitShopRoute(),
                         predicate: (route) => false);
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -92,6 +95,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       buttonLoginWithGoogle(),
                       const SizedBox(height: 16.0),
                       buttonLoginWithApple(),
+                      const SizedBox(height: 16.0),
+                      Visibility(
+                          child: buttonLoginDev(),
+                          visible: Environment().isDev),
                     ],
                   );
                 },
@@ -201,6 +208,20 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     );
   }
 
+  Widget buttonLoginDev() {
+    return ElevatedButton.icon(
+      onPressed: () {
+        // on click
+        // context.router.push(const AuthenticationWithUserPasswordRoute());
+        // add select shop event
+        loginDev();
+      },
+      icon: const Icon(Icons.mail_outline),
+      label: const Text('Login Auto'),
+      style: Styles.successButtonStyle(),
+    );
+  }
+
   Widget loginSeparatorLine() {
     return Padding(
       padding: const EdgeInsets.only(),
@@ -223,4 +244,42 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           color: Colors.black.withOpacity(0.6),
         ),
       );
+
+  void loginDev() {
+    // authen with dev user,dev password
+    serviceLocator<LoginUserRepository>()
+        .loginWithUserPassword(
+            username: AppConstant.userDev, password: AppConstant.passwordDev)
+        .then((response) async {
+      if (response.isRight()) {
+        final remoteUser = response.getOrElse(() => User());
+        await serviceLocator<UserCacheService>().saveUser(remoteUser);
+
+        // select shop
+        serviceLocator<ShopAuthenticationRepository>()
+            .selectShop(shopid: AppConstant.shopIdDev)
+            .then((selectShopResponse) async {
+          if (selectShopResponse.isRight()) {
+            context
+                .read<AuthenticationBloc>()
+                .add(AuthenticationEvent.authenticated(user: remoteUser));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Auto Login Failed."),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Auto Login Failed."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
+  }
 }

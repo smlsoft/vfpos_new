@@ -10,5 +10,6 @@ void main() {
 
   test('test environment', () {
     expect(Environment().config.serviceApi, AppConstant.serviceDevApi);
+    expect(Environment().isDev, true);
   });
 }

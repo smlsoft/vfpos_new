@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';
 import 'package:dedepos/routes/app_routers.dart';
+import 'package:dedepos/util/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -127,7 +129,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.receipt,
+                            title: 'Other Menu',
+                            callBack: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const MenuScreen()));
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                 child: Row(
                   children: [
                     Expanded(

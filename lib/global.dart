@@ -1,8 +1,9 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/core/logger/logger.dart';
+import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
-import 'package:dedepos/pos_screen/pos_num_pad.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:presentation_displays/display.dart';
@@ -113,7 +114,7 @@ double payScreenNumberPadAmount = 0;
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
     PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-String userLanguage = "";
+String? userLanguage;
 String userLoginCode = "001";
 String userLoginName = "สมชาย";
 String employeeLogin = "";
@@ -736,7 +737,7 @@ String language(String code) {
         int langComparison = languageSystemCode[middle]
             .langs[langMiddle]
             .code
-            .compareTo(userLanguage);
+            .compareTo(userLanguage ?? 'th');
 
         if (langComparison == 0) {
           result = languageSystemCode[middle].langs[langMiddle].text;
@@ -854,6 +855,13 @@ Future<void> registerRemoteToTerminal() async {
   }
 }
 
+/// Loading System
+/// - _global:loadConfig
+/// - Add qrPaymentProviderList
+/// - register DartPingIOS
+/// - setupObjectBox (core/objectbox.dart)
+/// - register sync master
+/// - สร้าง Process Result ตามจำนวน Hold บิล (global.generatePosHoldProcess)
 Future<void> startLoading() async {
   {
     serviceLocator<Log>().debug("Start Loading... POS Screen ");
@@ -943,35 +951,10 @@ Future<void> startLoading() async {
 
   DartPingIOS.register();
 
-  final appDirectory = await getApplicationDocumentsDirectory();
-  final objectBoxDirectory =
-      Directory("${appDirectory.path}/$objectBoxDatabaseName");
-  if (!objectBoxDirectory.existsSync()) {
-    await objectBoxDirectory.create(recursive: true);
-  }
-  try {
-    final isExists = await objectBoxDirectory.exists();
-    if (isExists) {
-      // ลบทิ้ง เพิ่มทดสอบใหม่
-      // dev.log("ObjectBox Data : $isExists");
-      // await objectBoxDirectory.delete(recursive: true);
-    }
-    objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
-  } catch (e) {
-    dev.log(e.toString());
-    // โครงสร้างเปลี่ยน เริ่ม Sync ใหม่ทั้งหมด
-    final isExists = await objectBoxDirectory.exists();
-    if (isExists) {
-      dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
-    }
+  // objectbox
+  // move to after login & Select shop
+  // await setupObjectBox();
 
-    objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path,
-        queriesCaseSensitiveDefault: false,
-        macosApplicationGroup: 'objectbox.demo');
-  }
   int xxx = ProductBarcodeHelper().count();
   serviceLocator<Log>().debug("ProductBarcodeHelper().count() $xxx");
   //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
@@ -1000,23 +983,19 @@ Future<void> startLoading() async {
       registerRemoteToTerminal();
     }
   });
-  // สร้าง Process Result ตามจำนวน Hold บิล
-  for (int loop = 0; loop < 50; loop++) {
-    posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
-  }
 
+  generatePosHoldProcess();
   pathApplicationDocumentsDirectory =
       (await getApplicationDocumentsDirectory()).path;
 
-  languageSystemCode =
-      (json.decode(await rootBundle.loadString('assets/language.json')) as List)
-          .map((i) => LanguageSystemCodeModel.fromJson(i))
-          .toList();
-  languageSystemCode.sort((a, b) {
-    return a.code.compareTo(b.code);
-  });
-
   initSuccess = true;
+}
+
+/// สร้าง Process Result ตามจำนวน Hold บิล
+void generatePosHoldProcess() {
+  for (int loop = 0; loop < 50; loop++) {
+    posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
+  }
 }
 
 Future<String> getFromServer({required String json}) async {

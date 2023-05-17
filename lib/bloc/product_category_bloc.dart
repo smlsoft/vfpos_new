@@ -1,5 +1,5 @@
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/pos_screen/pos_process.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_process.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/db/product_category_helper.dart';
 
@@ -34,8 +34,9 @@ class ProductCategoryBloc
     emit(ProductCategoryLoading());
     global.productCategoryList =
         await ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
-    PosProcess().sumCategoryCount(value:
-        global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+    PosProcess().sumCategoryCount(
+        value:
+            global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
     emit(ProductCategoryLoadSuccess());
   }
 

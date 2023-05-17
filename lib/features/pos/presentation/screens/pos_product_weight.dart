@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dedepos/pos_screen/pos_num_pad.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:get/utils.dart';

@@ -1,7 +1,7 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/pos_screen/pos_cancel_bill_detail.dart';
-import 'package:dedepos/pos_screen/pos_util.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_cancel_bill_detail.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;

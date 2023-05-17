@@ -1,6 +1,4 @@
 PODS:
-  - app_group_directory (1.0.0):
-    - Flutter
   - audio_session (0.0.1):
     - Flutter
   - charset_converter (0.0.1):
@@ -54,7 +52,6 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - app_group_directory (from `.symlinks/plugins/app_group_directory/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - charset_converter (from `.symlinks/plugins/charset_converter/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
@@ -84,8 +81,6 @@ SPEC REPOS:
     - ReachabilitySwift
 
 EXTERNAL SOURCES:
-  app_group_directory:
-    :path: ".symlinks/plugins/app_group_directory/ios"
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
   charset_converter:
@@ -128,7 +123,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_player_avfoundation/ios"
 
 SPEC CHECKSUMS:
-  app_group_directory: 7bf9f8f9819ead554de29da7c25fb7a680d6a9a0
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   charset_converter: 215c7b04932ec2b9ba43be96a9bc34afed3e5322
   connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
@@ -143,12 +137,12 @@ SPEC CHECKSUMS:
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   ObjectBox: a7900d5335218cd437cbc080b7ccc38a5211f7b4
   objectbox_flutter_libs: 61d74196d924fbc773da5f5757d1e9fab7b3cc78
-  path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
+  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   presentation_displays: 02a9b05f708afe31d23564988f285b4d8019ddcd
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   sunmi_printer_plus: 4ab3f09a655a47913c53ff5219323cbb04ebfbd7
   text_to_speech: 8669facdbd5b72d2939b810493defd991634f6f9

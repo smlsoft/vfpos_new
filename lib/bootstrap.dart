@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:dedepos/core/environment.dart';
+import 'package:dedepos/core/language.dart';
+import 'package:dedepos/core/objectbox.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -19,6 +21,8 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 
 Future<void> initializeApp() async {
   await GetStorage.init('AppStorage');
+  await setupObjectBox();
+  await initLanguage();
 }
 
 void initializeEnvironmentConfig() {

@@ -1,7 +1,7 @@
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/pos_screen/pos_util.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
@@ -107,11 +107,13 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                                                 TextButton(
                                                     onPressed: () {
                                                       bill.is_cancel = true;
-                                                      BillHelper()
-                                                          .updatesIsCancel(
-                                                              docNumber: bill
-                                                                  .doc_number,description : cancelDescriptionController.text,
-                                                              value: true);
+                                                      BillHelper().updatesIsCancel(
+                                                          docNumber:
+                                                              bill.doc_number,
+                                                          description:
+                                                              cancelDescriptionController
+                                                                  .text,
+                                                          value: true);
                                                       Navigator.pop(context);
                                                       Navigator.pop(context);
                                                       Navigator.pop(context);

@@ -1,5 +1,5 @@
 import 'package:dedepos/model/objectbox/bill_struct.dart';
-import 'package:dedepos/pos_screen/pay/pay_util.dart';
+import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'dart:async';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;

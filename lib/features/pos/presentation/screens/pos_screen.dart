@@ -1,19 +1,21 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
-import 'package:dedepos/pos_screen/pos_bill_vat.dart';
-import 'package:dedepos/pos_screen/pos_cancel_bill.dart';
-import 'package:dedepos/pos_screen/pos_product_weight.dart';
-import 'package:dedepos/pos_screen/pos_reprint_bill.dart';
-import 'package:dedepos/pos_screen/pos_sale_channel.dart';
+import 'package:dedepos/flavors.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_bill_vat.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_cancel_bill.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_product_weight.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_reprint_bill.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_sale_channel.dart';
 import 'package:dedepos/routes/app_routers.dart';
+import 'package:dedepos/util/menu_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
-import 'package:dedepos/pos_screen/pos_num_pad.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/utils.dart';
@@ -24,7 +26,7 @@ import 'dart:io';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/services/find_employee.dart';
 import 'package:dedepos/services/find_member.dart';
-import 'package:dedepos/pos_screen/pos_hold_bill.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_hold_bill.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:dedepos/db/product_category_helper.dart';
@@ -2863,8 +2865,18 @@ class _PosScreenState extends State<PosScreen>
         //icon: Icons.web,
         onPressed: () {
           // Navigator.pop(context);
-          context.router.pushAndPopUntil(const DashboardRoute(),
-              predicate: (route) => false);
+
+          if (F.appFlavor == Flavor.DEV) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MenuScreen(),
+              ),
+            );
+          } else {
+            context.router.pushAndPopUntil(const DashboardRoute(),
+                predicate: (route) => false);
+          }
         },
       )
     ];

@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
               context.read<SelectShopBloc>().add(
                   SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
 
-              context.router.pushAndPopUntil(const DashboardRoute(),
+              context.router.pushAndPopUntil(const InitShopRoute(),
                   predicate: (route) => false);
             } else {
               context.router.pushAndPopUntil(const SelectShopRoute(),

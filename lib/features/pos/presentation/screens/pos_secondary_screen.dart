@@ -6,7 +6,7 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
-import 'package:dedepos/pos_screen/screen_util.dart';
+import 'package:dedepos/features/pos/presentation/screens/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'package:presentation_displays/secondary_display.dart';
 import 'package:dedepos/global.dart' as global;

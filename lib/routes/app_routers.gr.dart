@@ -27,6 +27,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SelectShopScreen(),
       );
     },
+    InitShopRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const InitShopScreen(),
+      );
+    },
     DashboardRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -88,6 +94,20 @@ class SelectShopRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'SelectShopRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [InitShopScreen]
+class InitShopRoute extends PageRouteInfo<void> {
+  const InitShopRoute({List<PageRouteInfo>? children})
+      : super(
+          InitShopRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'InitShopRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

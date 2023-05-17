@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/features/authentication/presentation/screens/authentication_screen.dart';
-import 'package:dedepos/pos_screen/pos_screen.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
 
 import 'package:dedepos/features/pos/pos.dart';
 import 'package:dedepos/features/splash/presentation/splash_screen.dart';
@@ -24,6 +24,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: PosRoute.page),
         AutoRoute(page: POSLoginRoute.page),
         AutoRoute(page: InitPOSRoute.page),
+        AutoRoute(page: InitShopRoute.page),
 
         /// routes go here
       ];

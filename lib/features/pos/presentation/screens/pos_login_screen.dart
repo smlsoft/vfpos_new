@@ -23,7 +23,10 @@ class _LoginState extends State<POSLoginScreen> {
 
       global.startLoading().then((_) {
         serviceLocator<Log>().debug("Loading Success");
-        context.router.push(const InitPOSRoute());
+        // context.router.push(const InitPOSRoute());
+        context.router.pushAndPopUntil(
+            PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
+            predicate: (_) => false);
       });
 
       // Navigator.of(context).pushReplacementNamed('loading');
