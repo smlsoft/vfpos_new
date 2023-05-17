@@ -159,12 +159,12 @@ class _PayQrScreenState extends State<PayQrScreen>
           style: const TextStyle(
               fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
       if (qrCodePayDataString.isNotEmpty)
-        SizedBox(
-            width: 150,
-            height: 150,
-            child:
-                QrImage(data: qrCodePayDataString, version: QrVersions.auto)),
-      const SizedBox(height: 8),
+        // SizedBox(
+        //     width: 150,
+        //     height: 150,
+        //     child: QrImage(
+        //         data: qrCodePayDataString, versionData: QrVersions.auto)),
+        const SizedBox(height: 8),
       SizedBox(
           width: 150,
           height: 150,

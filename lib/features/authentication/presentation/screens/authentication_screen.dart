@@ -67,8 +67,11 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         logo(),
-                        const SizedBox(height: 16.0),
-                        const CircularProgressIndicator(),
+                        const SizedBox(
+                          height: 13.0,
+                          width: 200,
+                        ),
+                        Center(child: const CircularProgressIndicator()),
                       ],
                     );
                   }
@@ -139,6 +142,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
           ),
         ),
       ),
+      obscureText: true,
     );
   }
 
