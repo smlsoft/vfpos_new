@@ -58,6 +58,12 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
   Widget build(BuildContext context) {
     final userAuthenticationState =
         context.select((AuthenticationBloc bloc) => bloc.state);
+    late double textsize;
+    if (Util.isLandscape(context)) {
+      textsize = 25;
+    } else {
+      textsize = 18;
+    }
 
     if (userAuthenticationState is AuthenticationLoadedState) {
       //context.router.push(const SelectShopRoute());
@@ -89,17 +95,22 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
       ],
       child: Scaffold(
           appBar: AppBar(
-            title: Row(
-              children: [
-                Center(
-                  child: Text(
-                    'โปรดเลือกร้านค้า ',
-                  ),
-                ),
-              ],
+            backgroundColor:
+                Colors.transparent, // Set the background color to transparent
+            elevation: 0,
+            centerTitle: true,
+            title: Center(
+              child: Text(
+                'เลือกกิจการที่ต้องการทำรายการ ',
+                style: TextStyle(
+                    fontSize: textsize,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700),
+              ),
             ),
             leading: isSelectionMode
                 ? IconButton(
+                    color: Colors.black,
                     icon: const Icon(Icons.close),
                     onPressed: () {
                       setState(() {
@@ -112,6 +123,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
             actions: <Widget>[
               IconButton(
                 tooltip: "สร้างร้านค้า",
+                color: Colors.black,
                 icon: const Icon(Icons.add),
                 onPressed: () {
                   setState(() {
@@ -150,6 +162,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
               //     },
               //   ),
               IconButton(
+                color: Colors.black,
                 icon: const Icon(Icons.logout),
                 onPressed: () {
                   context
@@ -282,12 +295,12 @@ class GridBuilderState extends State<GridBuilder> {
                     child: Column(
                       children: [
                         Icon(
-                          Icons.store,
+                          Icons.store_outlined,
                           size: 100,
-                          color: Colors.blue,
+                          color: const Color(0xFFE27D01),
                         ),
                         SizedBox(
-                          height: 12,
+                          height: 4,
                         ),
                         Text(
                           data.name,
