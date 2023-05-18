@@ -3,7 +3,7 @@ description: dede pos project.
 
 publish_to: "none"
 
-version: 1.2.3+14
+version: 1.2.3+15
 
 environment:
   sdk: ">=2.19.6 <3.0.0"
@@ -212,7 +212,7 @@ flavorizr:
         icon: "assets/vf-pos-logo.png"
       android:
         applicationId: "org.villagefundth.vfpos"
-        signingConfig: // ใส่ชื่อ signingConfig ที่เราสร้างไว้ในไฟล์ android/app/build.gradle
+        # signingConfig: // ใส่ชื่อ signingConfig ที่เราสร้างไว้ในไฟล์ android/app/build.gradle
       ios:
         bundleId: "org.villagefundth.vfpos"
       windows:

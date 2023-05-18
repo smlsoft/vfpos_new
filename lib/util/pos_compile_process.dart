@@ -8,37 +8,35 @@ Future<PosProcessResultModel> posCompileProcess(
   PosProcessResultModel processResult = PosProcessResultModel();
 
   serviceLocator<Log>().debug("posCompileProcess()");
-  if (holdNumber > global.posHoldProcessResult.length) {
-    {
-      // คำนวณของ Terminal หลัก
-      PosProcess posProcess = PosProcess();
-      global.posHoldProcessResult[holdNumber].posProcess =
-          await posProcess.process(holdNumber: holdNumber, docMode: docMode);
-      posProcess.sumCategoryCount(
-          value: global.posHoldProcessResult[holdNumber].posProcess);
-      processResult = posProcess.result;
-    }
-    {
-      // คำนวณของ Client
-      for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
-        if (global.posRemoteDeviceList[index].processSuccess == false) {
-          int getHoldNumber =
-              global.posRemoteDeviceList[index].holdNumberActive;
-          int getDocMode = global.posRemoteDeviceList[index].docModeActive;
-          if (holdNumber != getHoldNumber) {
-            PosProcess posProcess = PosProcess();
-            global.posHoldProcessResult[getHoldNumber].posProcess =
-                await posProcess.process(
-                    holdNumber: getHoldNumber, docMode: getDocMode);
-            posProcess.sumCategoryCount(
-                value: global.posHoldProcessResult[getHoldNumber].posProcess);
-          }
-          global.posRemoteDeviceList[index].processSuccess = true;
+  {
+    // คำนวณของ Terminal หลัก
+    PosProcess posProcess = PosProcess();
+    global.posHoldProcessResult[holdNumber].posProcess =
+        await posProcess.process(holdNumber: holdNumber, docMode: docMode);
+    posProcess.sumCategoryCount(
+        value: global.posHoldProcessResult[holdNumber].posProcess);
+    processResult = posProcess.result;
+  }
+  {
+    // คำนวณของ Client
+    for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
+      if (global.posRemoteDeviceList[index].processSuccess == false) {
+        int getHoldNumber = global.posRemoteDeviceList[index].holdNumberActive;
+        int getDocMode = global.posRemoteDeviceList[index].docModeActive;
+        if (holdNumber != getHoldNumber) {
+          PosProcess posProcess = PosProcess();
+          global.posHoldProcessResult[getHoldNumber].posProcess =
+              await posProcess.process(
+                  holdNumber: getHoldNumber, docMode: getDocMode);
+          posProcess.sumCategoryCount(
+              value: global.posHoldProcessResult[getHoldNumber].posProcess);
         }
+        global.posRemoteDeviceList[index].processSuccess = true;
       }
     }
-    global.sendProcessToCustomerDisplay();
-    global.sendProcessToRemote();
   }
+  global.sendProcessToCustomerDisplay();
+  global.sendProcessToRemote();
+
   return processResult;
 }
