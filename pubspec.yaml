@@ -212,6 +212,7 @@ flavorizr:
         icon: "assets/vf-pos-logo.png"
       android:
         applicationId: "org.villagefundth.vfpos"
+        signingConfig: // ใส่ชื่อ signingConfig ที่เราสร้างไว้ในไฟล์ android/app/build.gradle
       ios:
         bundleId: "org.villagefundth.vfpos"
       windows:
