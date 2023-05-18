@@ -95,13 +95,10 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
       ],
       child: Scaffold(
           appBar: AppBar(
-            backgroundColor:
-                Colors.transparent, // Set the background color to transparent
-            elevation: 0,
             centerTitle: true,
             title: Center(
               child: Text(
-                'เลือกกิจการที่ต้องการทำรายการ ',
+                ' ',
                 style: TextStyle(
                     fontSize: textsize,
                     color: Colors.black,
@@ -121,17 +118,17 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
                   )
                 : const SizedBox(),
             actions: <Widget>[
-              IconButton(
-                tooltip: "สร้างร้านค้า",
-                color: Colors.black,
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    isSelectionMode = false;
-                  });
-                  initializeSelection();
-                },
-              ),
+              // IconButton(
+              //   tooltip: "สร้างร้านค้า",
+              //   color: Colors.black,
+              //   icon: const Icon(Icons.add),
+              //   onPressed: () {
+              //     setState(() {
+              //       isSelectionMode = false;
+              //     });
+              //     initializeSelection();
+              //   },
+              // ),
               // Switch(
               //   // This bool value toggles the switch.
               //   value: _isGridMode,
@@ -162,7 +159,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
               //     },
               //   ),
               IconButton(
-                color: Colors.black,
+                color: Colors.white,
                 icon: const Icon(Icons.logout),
                 onPressed: () {
                   context
@@ -190,25 +187,69 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
               //       }),
             ],
           ),
-          body: _isGridMode
-              ? GridBuilder(
-                  isSelectionMode: isSelectionMode,
-                  selectedList: _selected,
-                  onSelectionChange: (bool x) {
-                    setState(() {
-                      isSelectionMode = x;
-                    });
-                  },
-                )
-              : ListBuilder(
-                  isSelectionMode: isSelectionMode,
-                  selectedList: _selected,
-                  onSelectionChange: (bool x) {
-                    setState(() {
-                      isSelectionMode = x;
-                    });
-                  },
-                )),
+          body: Stack(
+            children: [
+              const BackgroundGradientWidget(),
+              const BackgroundClipperWidget(),
+              Center(
+                  child: SizedBox(
+                      child: Card(
+                child: Text("data"),
+              ))),
+              Center(
+                child: SizedBox(
+                  height: 600,
+                  width: 1000,
+                  child: Card(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            'เลือกกิจการที่ต้องการทำรายการ ',
+                            style: TextStyle(
+                                fontSize: textsize,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        // IconButton(
+                        //   color: Colors.black,
+                        //   icon: const Icon(Icons.logout),
+                        //   onPressed: () {
+                        //     context
+                        //         .read<AuthenticationBloc>()
+                        //         .add(const UserLogoutEvent());
+                        //   },
+                        // ),
+                        Expanded(
+                          child: _isGridMode
+                              ? GridBuilder(
+                                  isSelectionMode: isSelectionMode,
+                                  selectedList: _selected,
+                                  onSelectionChange: (bool x) {
+                                    setState(() {
+                                      isSelectionMode = x;
+                                    });
+                                  },
+                                )
+                              : ListBuilder(
+                                  isSelectionMode: isSelectionMode,
+                                  selectedList: _selected,
+                                  onSelectionChange: (bool x) {
+                                    setState(() {
+                                      isSelectionMode = x;
+                                    });
+                                  },
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )),
     );
   }
 }
@@ -245,7 +286,7 @@ class GridBuilderState extends State<GridBuilder> {
     late int Cros;
     if (Util.isLandscape(context)) {
       sizing = 0.8;
-      PD = 150;
+      PD = 20;
       Cros = 4;
     } else {
       sizing = 0.8;
@@ -256,7 +297,7 @@ class GridBuilderState extends State<GridBuilder> {
       builder: (context, state) {
         if (state is SelectShopLoadedState) {
           return Padding(
-            padding: EdgeInsets.only(left: PD, right: PD),
+            padding: EdgeInsets.only(left: PD, right: PD, top: 20),
             child: GridView.builder(
                 itemCount: state.shops.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -296,7 +337,7 @@ class GridBuilderState extends State<GridBuilder> {
                       children: [
                         Icon(
                           Icons.store_outlined,
-                          size: 100,
+                          size: 90,
                           color: const Color(0xFFE27D01),
                         ),
                         SizedBox(
