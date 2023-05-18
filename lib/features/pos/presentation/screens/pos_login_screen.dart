@@ -21,13 +21,9 @@ class _LoginState extends State<POSLoginScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       global.loginSuccess = true;
 
-      global.startLoading().then((_) {
-        serviceLocator<Log>().debug("Loading Success");
-        // context.router.push(const InitPOSRoute());
-        context.router.pushAndPopUntil(
-            PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
-            predicate: (_) => false);
-      });
+      context.router.pushAndPopUntil(
+          PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
+          predicate: (_) => false);
 
       // Navigator.of(context).pushReplacementNamed('loading');
     });

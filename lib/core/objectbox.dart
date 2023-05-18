@@ -21,6 +21,7 @@ Future<void> setupObjectBox() async {
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
   } catch (e) {
+    dev.log("App Data : $appDirectory");
     dev.log(e.toString());
     // โครงสร้างเปลี่ยน เริ่ม Sync ใหม่ทั้งหมด
     final isExists = await objectBoxDirectory.exists();
