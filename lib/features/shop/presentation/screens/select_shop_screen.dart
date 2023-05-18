@@ -15,6 +15,18 @@ class SelectShopScreen extends StatefulWidget {
   State<SelectShopScreen> createState() => _SelectShopScreenState();
 }
 
+class Util {
+  static bool isLandscape(BuildContext context) {
+    // if (MediaQuery.of(context).orientation == Orientation.portrait) {
+    //   return false;
+    // } else {
+    //   return true;
+    // }
+
+    return MediaQuery.of(context).orientation == Orientation.landscape;
+  }
+}
+
 class _SelectShopScreenState extends State<SelectShopScreen> {
   late User user;
   bool isSelectionMode = false;
@@ -215,15 +227,31 @@ class GridBuilderState extends State<GridBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    late double sizing;
+    late double PD;
+    late int Cros;
+    if (Util.isLandscape(context)) {
+      sizing = 0.8;
+      PD = 150;
+      Cros = 4;
+    } else {
+      sizing = 0.8;
+      PD = 10;
+      Cros = 2;
+    }
     return BlocBuilder<SelectShopBloc, SelectShopState>(
       builder: (context, state) {
         if (state is SelectShopLoadedState) {
           return Padding(
-            padding: const EdgeInsets.only(left: 150, right: 150),
+            padding: EdgeInsets.only(left: PD, right: PD),
             child: GridView.builder(
                 itemCount: state.shops.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: Cros,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  mainAxisExtent: 150,
+                ),
                 itemBuilder: (context, index) {
                   return InkWell(
                       onTap: () => _toggle(index),
@@ -250,12 +278,13 @@ class GridBuilderState extends State<GridBuilder> {
                 children: [
                   Center(
                       child: Padding(
-                    padding: const EdgeInsets.only(top: 60),
+                    padding: const EdgeInsets.only(top: 0),
                     child: Column(
                       children: [
                         Icon(
                           Icons.store,
                           size: 100,
+                          color: Colors.blue,
                         ),
                         SizedBox(
                           height: 12,
