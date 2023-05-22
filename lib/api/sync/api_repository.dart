@@ -25,6 +25,7 @@ class ApiRepository {
       }
     } on DioError catch (ex) {
       String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
   }

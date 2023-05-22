@@ -21,6 +21,7 @@ class ShopUser with _$ShopUser {
       _$ShopUserFromJson(json);
 
   Shop get toShop {
-    return Shop(guidfixed: shopid, name1: name, branchcode: branchcode);
+    return Shop(
+        guidfixed: shopid, name1: name, name: name, branchcode: branchcode);
   }
 }

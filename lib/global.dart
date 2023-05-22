@@ -266,6 +266,16 @@ Future<Position> determinePosition() async {
   return await Geolocator.getCurrentPosition();
 }
 
+bool isPhoneDevice() {
+  return deviceMode == DeviceModeEnum.iphone ||
+      deviceMode == DeviceModeEnum.androidPhone;
+}
+
+bool isTabletDevice() {
+  return deviceMode == DeviceModeEnum.ipad ||
+      deviceMode == DeviceModeEnum.androidTablet;
+}
+
 Future<void> getDeviceModel(BuildContext context) async {
   final deviceInfo = DeviceInfoPlugin();
   String model = '';

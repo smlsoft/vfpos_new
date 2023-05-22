@@ -28,7 +28,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(children: [
+        body: Stack(clipBehavior: Clip.antiAlias, children: [
       const BackgroundGradientWidget(),
       const BackgroundClipperWidget(),
       Center(
