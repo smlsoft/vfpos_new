@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:lugentpayment/lugentpay.dart';
 import 'package:lugentpayment/qrpayment_response.dart';
 import 'package:promptpay/promptpay.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:countdown_progress_indicator/countdown_progress_indicator.dart';
 
 class PayQrScreen extends StatefulWidget {

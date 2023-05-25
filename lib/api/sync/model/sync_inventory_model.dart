@@ -26,7 +26,7 @@ class SyncProductChoiceModel {
   List<LanguageDataModel> names;
 
   /// ราคาข้อเลือกย่อย (เพิ่ม)
-  double price;
+  String price;
 
   /// เลือกเป็นค่าเริ่มต้น (Defailt)
   bool isdefault;

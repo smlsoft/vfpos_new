@@ -32,8 +32,8 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
   bool isSelectionMode = false;
   final int listLength = 30;
   late List<bool> _selected;
-  bool _selectAll = false;
-  bool _isGridMode = true;
+  final bool _selectAll = false;
+  final bool _isGridMode = true;
 
   @override
   void initState() {
@@ -191,7 +191,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
             children: [
               const BackgroundGradientWidget(),
               const BackgroundClipperWidget(),
-              Center(
+              const Center(
                   child: SizedBox(
                       child: Card(
                 child: Text("data"),
@@ -335,12 +335,12 @@ class GridBuilderState extends State<GridBuilder> {
                     padding: const EdgeInsets.only(top: 0),
                     child: Column(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.store_outlined,
                           size: 90,
-                          color: const Color(0xFFE27D01),
+                          color: Color(0xFFE27D01),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 4,
                         ),
                         Text(

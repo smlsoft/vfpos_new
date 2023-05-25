@@ -3,18 +3,18 @@ import 'package:json_annotation/json_annotation.dart';
 part 'sync_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class SyncCustomerModel {
+class SyncCustomerDisplayModel {
   String code;
   String phone;
   String name;
 
-  SyncCustomerModel(
+  SyncCustomerDisplayModel(
       {required this.code, required this.phone, required this.name});
 
-  factory SyncCustomerModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncCustomerModelFromJson(json);
+  factory SyncCustomerDisplayModel.fromJson(Map<String, dynamic> json) =>
+      _$SyncCustomerDisplayModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SyncCustomerModelToJson(this);
+  Map<String, dynamic> toJson() => _$SyncCustomerDisplayModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)

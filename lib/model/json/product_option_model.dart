@@ -12,7 +12,7 @@ class ProductOptionModel {
   /// ประเภทข้อเลือก (0=Check Box,1=Radio Button)
   int choice_type = 0;
 
-  /// เลือกได้สูงสุด (รายการ 1=Radio Button,2=Check Box)
+  /// เลือกได้สูงสุด กรณี Check Box
   int max_select = 0;
 
   /// ชื่อข้อเลือก
@@ -60,7 +60,7 @@ class ProductChoiceModel {
   List<String> names;
 
   /// ราคาขาย (คิดเพิ่ม)
-  double price;
+  String price;
 
   /// จำนวนตัดสต๊อก (กรณีมีการตัดสต๊อก)
   double qty;

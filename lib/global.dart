@@ -1,6 +1,5 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/core/logger/logger.dart';
-import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
@@ -1198,7 +1197,6 @@ String syncFindLastUpdate(
 }
 
 void testPrinterConnect() async {
-  stderr.writeln('Test Printer Connect Start');
   if (printerList.isNotEmpty) {
     for (var printer in printerList) {
       try {
@@ -1215,6 +1213,4 @@ void testPrinterConnect() async {
       }
     }
   }
-
-  serviceLocator<Log>().debug('Test Printer Connect Stop');
 }

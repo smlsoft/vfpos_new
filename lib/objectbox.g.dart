@@ -4,7 +4,7 @@
 // With a Dart package, run `dart run build_runner build`.
 // See also https://docs.objectbox.io/getting-started#generate-objectbox-code
 
-// ignore_for_file: camel_case_types, depend_on_referenced_packages, non_constant_identifier_names
+// ignore_for_file: camel_case_types, depend_on_referenced_packages
 // coverage:ignore-file
 
 import 'dart:typed_data';
@@ -1023,7 +1023,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(15, 2127985611515005097),
       name: 'PosTicketObjectBoxStruct',
-      lastPropertyId: const IdUid(28, 478159652125428818),
+      lastPropertyId: const IdUid(29, 5185449551030321875),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1068,28 +1068,8 @@ final _entities = <ModelEntity>[
             type: 1,
             flags: 0),
         ModelProperty(
-            id: const IdUid(13, 37100495742644418),
-            name: 'lineNumber',
-            type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 7707237703001259841),
-            name: 'qty',
-            type: 1,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(16, 3164781445193601271),
             name: 'descriptionWidth',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(17, 4651088592151032410),
-            name: 'qtyWidth',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(18, 5283627247557061711),
-            name: 'priceWidth',
             type: 8,
             flags: 0),
         ModelProperty(
@@ -1242,7 +1222,12 @@ ModelDefinition getObjectBoxModel() {
         4413991455408555318,
         7039389348481784033,
         8775532156783442612,
-        4465527186603950335
+        4465527186603950335,
+        7707237703001259841,
+        4651088592151032410,
+        37100495742644418,
+        5283627247557061711,
+        5185449551030321875
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2086,7 +2071,7 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (PosTicketObjectBoxStruct object, fb.Builder fbb) {
           final guidfixedOffset = fbb.writeString(object.guidfixed);
           final ticketNameOffset = fbb.writeString(object.ticketName);
-          fbb.startTable(29);
+          fbb.startTable(30);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, ticketNameOffset);
@@ -2095,11 +2080,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(9, object.customerDetail);
           fbb.addBool(10, object.customerAddress);
           fbb.addBool(11, object.customerTaxId);
-          fbb.addBool(12, object.lineNumber);
-          fbb.addBool(13, object.qty);
           fbb.addFloat64(15, object.descriptionWidth);
-          fbb.addFloat64(16, object.qtyWidth);
-          fbb.addFloat64(17, object.priceWidth);
           fbb.addFloat64(18, object.amountWidth);
           fbb.addBool(19, object.saleDetail);
           fbb.addBool(21, object.docNoQrCode);
@@ -2140,11 +2121,7 @@ ModelDefinition getObjectBoxModel() {
               customerDetail: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
               customerAddress: const fb.BoolReader().vTableGet(buffer, rootOffset, 24, false),
               customerTaxId: const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false),
-              lineNumber: const fb.BoolReader().vTableGet(buffer, rootOffset, 28, false),
-              qty: const fb.BoolReader().vTableGet(buffer, rootOffset, 30, false),
               descriptionWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0),
-              qtyWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
-              priceWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0),
               amountWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0),
               saleDetail: const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false),
               docNoQrCode: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false))
@@ -2946,59 +2923,43 @@ class PosTicketObjectBoxStruct_ {
   static final customerTaxId = QueryBooleanProperty<PosTicketObjectBoxStruct>(
       _entities[12].properties[7]);
 
-  /// see [PosTicketObjectBoxStruct.lineNumber]
-  static final lineNumber = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[8]);
-
-  /// see [PosTicketObjectBoxStruct.qty]
-  static final qty = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[9]);
-
   /// see [PosTicketObjectBoxStruct.descriptionWidth]
   static final descriptionWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[10]);
-
-  /// see [PosTicketObjectBoxStruct.qtyWidth]
-  static final qtyWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[11]);
-
-  /// see [PosTicketObjectBoxStruct.priceWidth]
-  static final priceWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[12]);
+      _entities[12].properties[8]);
 
   /// see [PosTicketObjectBoxStruct.amountWidth]
   static final amountWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[13]);
+      _entities[12].properties[9]);
 
   /// see [PosTicketObjectBoxStruct.saleDetail]
   static final saleDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[14]);
+      _entities[12].properties[10]);
 
   /// see [PosTicketObjectBoxStruct.docNoQrCode]
   static final docNoQrCode = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[15]);
+      _entities[12].properties[11]);
 
   /// see [PosTicketObjectBoxStruct.shopName]
   static final shopName = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[16]);
+      _entities[12].properties[12]);
 
   /// see [PosTicketObjectBoxStruct.shopAddress]
   static final shopAddress = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[17]);
+      _entities[12].properties[13]);
 
   /// see [PosTicketObjectBoxStruct.shopTaxId]
   static final shopTaxId = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[18]);
+      _entities[12].properties[14]);
 
   /// see [PosTicketObjectBoxStruct.shopTel]
   static final shopTel = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[19]);
+      _entities[12].properties[15]);
 
   /// see [PosTicketObjectBoxStruct.printMode]
   static final printMode = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[20]);
+      _entities[12].properties[16]);
 
   /// see [PosTicketObjectBoxStruct.printerWidth]
   static final printerWidth = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[21]);
+      _entities[12].properties[17]);
 }

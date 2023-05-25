@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dedepos/core/core.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';

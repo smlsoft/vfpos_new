@@ -259,12 +259,13 @@ Future<void> startServer() async {
                   break;
                 case "change_customer_by_phone":
                   // รับข้อมูลหมายเลขโทรศัพท์ แล้วมาค้นหาชื่อ และประมวลผล
-                  SyncCustomerModel postCustomer =
-                      SyncCustomerModel.fromJson(jsonDecode(httpPost.data));
+                  SyncCustomerDisplayModel postCustomer =
+                      SyncCustomerDisplayModel.fromJson(
+                          jsonDecode(httpPost.data));
                   String customerCode = postCustomer.phone;
                   String customerName = "";
                   String customerPhone = postCustomer.phone;
-                  SyncCustomerModel result = SyncCustomerModel(
+                  SyncCustomerDisplayModel result = SyncCustomerDisplayModel(
                       code: customerCode,
                       phone: customerPhone,
                       name: customerName);

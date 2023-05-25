@@ -149,7 +149,7 @@ class _PosScreenState extends State<PosScreen>
       dev.log("syncRefreshProductBarcode");
       global.syncRefreshProductBarcode = false;
       await loadProductByCategory(categoryGuidSelected);
-      processEvent(holdNumber: global.posHoldActiveNumber);
+      processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
     }
   }
 
@@ -214,7 +214,7 @@ class _PosScreenState extends State<PosScreen>
       }
     });
     global.syncRefreshProductCategory = true;
-    processEvent(holdNumber: global.posHoldActiveNumber);
+    processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
     checkSync();
     global.functionPosScreenRefresh = refresh;
     Timer(const Duration(seconds: 1), () async {
@@ -619,7 +619,7 @@ class _PosScreenState extends State<PosScreen>
         global.posRemoteDeviceList[index].processSuccess = false;
       }
     }
-    processEvent(holdNumber: global.posHoldActiveNumber);
+    processEvent(barcode: barcode, holdNumber: global.posHoldActiveNumber);
   }
 
   Widget findByText() {
@@ -842,7 +842,7 @@ class _PosScreenState extends State<PosScreen>
   }
 
   Future<void> processEvent(
-      {String barcode = "", required int holdNumber}) async {
+      {required String barcode, required int holdNumber}) async {
     if (barcode.isNotEmpty) {
       product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
           ProductBarcodeObjectBoxStruct(
@@ -929,7 +929,7 @@ class _PosScreenState extends State<PosScreen>
           guid: findActiveLineByGuid,
           qty: qty,
           closeExtra: false);
-      processEvent(holdNumber: global.posHoldActiveNumber);
+      processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
     }
   }
 
@@ -970,6 +970,7 @@ class _PosScreenState extends State<PosScreen>
           count++;
         }
       }
+
       if (count < productOptions[groupIndex].max_select) {
         productOptions[groupIndex].choices[detailIndex].selected = value;
         ProductChoiceModel detail =
@@ -980,7 +981,7 @@ class _PosScreenState extends State<PosScreen>
             commandCode: 101,
             guidRef: findActiveLineByGuid,
             barcode: detail.barcode,
-            price: detail.price,
+            price: double.tryParse(detail.price) ?? 0.0,
             qty: detail.qty.toString(),
             extraCode: "",
             closeExtra: false,
@@ -988,7 +989,7 @@ class _PosScreenState extends State<PosScreen>
             codeDefault: "",
             selected: detail.selected);
         global.playSound(sound: global.SoundEnum.beep, word: detail.names[0]);
-        processEvent(holdNumber: global.posHoldActiveNumber);
+        processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
       } else {
         global.playSound(sound: global.SoundEnum.fail);
       }
@@ -1264,7 +1265,6 @@ class _PosScreenState extends State<PosScreen>
         (MediaQuery.of(context).size.width / menuMinWidth).toStringAsFixed(0));
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        serviceLocator<Log>().debug("${constraints.maxWidth} : $menuMinWidth");
         if (constraints.maxWidth > menuMinWidth) {
           widgetPerLine = int.parse(
               (constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
@@ -1328,7 +1328,8 @@ class _PosScreenState extends State<PosScreen>
                       productOptions[groupIndex].choices[detailIndex].selected;
                   await selectProductLevelExtraListCheck(
                       groupIndex, detailIndex, value);
-                  processEvent(holdNumber: global.posHoldActiveNumber);
+                  processEvent(
+                      barcode: "", holdNumber: global.posHoldActiveNumber);
                 },
                 child: Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -1365,11 +1366,12 @@ class _PosScreenState extends State<PosScreen>
                                         fontSize: 12, color: Colors.black)))
                           ],
                         )),
-                        (productOptions[groupIndex]
-                                    .choices[detailIndex]
-                                    .price ==
+                        ((double.tryParse(productOptions[groupIndex]
+                                        .choices[detailIndex]
+                                        .price) ??
+                                    0) ==
                                 0)
-                            ? const Text("")
+                            ? Container()
                             : Text(
                                 "+${productOptions[groupIndex].choices[detailIndex].price}",
                                 style: const TextStyle(
@@ -1450,7 +1452,10 @@ class _PosScreenState extends State<PosScreen>
                                           "${global.language("max")} ${productOptions[groupIndex].max_select} ${global.language("list")}",
                                           style: const TextStyle(
                                               fontSize: 10, color: Colors.red)))
-                                  : Container()
+                                  : const Flexible(
+                                      child: Text("เลือกได้หนึ่งอย่าง",
+                                          style: TextStyle(
+                                              fontSize: 10, color: Colors.red)))
                             ]),
                         selectProductLevelExtraListCheckWidget(groupIndex)
                       ])
@@ -1918,10 +1923,12 @@ class _PosScreenState extends State<PosScreen>
                         )),
           Expanded(
               flex: 2,
-              child: Text(global.moneyFormat.format(totalAmount),
-                  textAlign: TextAlign.right,
-                  style: textStyle.copyWith(
-                      fontSize: fontSize, fontWeight: FontWeight.bold))),
+              child: (totalAmount == 0)
+                  ? Container()
+                  : Text(global.moneyFormat.format(totalAmount),
+                      textAlign: TextAlign.right,
+                      style: textStyle.copyWith(
+                          fontSize: fontSize, fontWeight: FontWeight.bold))),
         ],
       );
     });
@@ -2734,7 +2741,7 @@ class _PosScreenState extends State<PosScreen>
     findActiveLineByGuid = "";
     activeLineNumber = -1;
     textInput = "";
-    processEvent(holdNumber: global.posHoldActiveNumber);
+    processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
   }
 
   void restart() {
@@ -3482,7 +3489,7 @@ class _PosScreenState extends State<PosScreen>
 
     if (result != null) {
       global.posHoldActiveNumber = result;
-      processEvent(holdNumber: global.posHoldActiveNumber);
+      processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
       global.playSound(sound: global.SoundEnum.beep);
       findActiveLineByGuid = "";
       activeLineNumber = -1;
@@ -4385,7 +4392,6 @@ class _PosScreenState extends State<PosScreen>
   @override
   Widget build(BuildContext context) {
     global.globalContext = context;
-    serviceLocator<Log>().debug("Build : ${DateTime.now()}");
 
     return MultiBlocListener(
         listeners: [
@@ -4399,7 +4405,8 @@ class _PosScreenState extends State<PosScreen>
                     value: global
                         .posHoldProcessResult[global.posHoldActiveNumber]
                         .posProcess);
-                processEvent(holdNumber: global.posHoldActiveNumber);
+                processEvent(
+                    barcode: "", holdNumber: global.posHoldActiveNumber);
                 productCategoryLoadFinish();
               }
             },

@@ -74,7 +74,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                           height: 13.0,
                           width: 200,
                         ),
-                        Center(child: const CircularProgressIndicator()),
+                        const Center(child: CircularProgressIndicator()),
                       ],
                     );
                   }
@@ -97,8 +97,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       buttonLoginWithApple(),
                       const SizedBox(height: 16.0),
                       Visibility(
-                          child: buttonLoginDev(),
-                          visible: Environment().isDev),
+                          visible: Environment().isDev,
+                          child: buttonLoginDev()),
                     ],
                   );
                 },

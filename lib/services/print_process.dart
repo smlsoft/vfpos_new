@@ -50,6 +50,7 @@ class PrintProcess {
     for (int loop = 0; loop < columnWidth.length; loop++) {
       columnPositionList.add(position);
       double calc = (length * columnWidth[loop]) / sumColumnWidth;
+      calc = calc / style.width.value;
       columnWidthList.add(calc.toInt());
       position += columnWidthList[loop];
     }
@@ -123,6 +124,16 @@ class PrintProcess {
           int thaiLength = await thaiCount(rowList[rowIndex][columnIndex].text);
           for (int loop = 0;
               loop < columnWidthList[columnIndex] - thaiLength;
+              loop++) {
+            space.write(" ");
+          }
+          rowList[rowIndex][columnIndex].text =
+              space.toString() + rowList[rowIndex][columnIndex].text;
+        } else if (column[columnIndex].align == PrintColumnAlign.center) {
+          StringBuffer space = StringBuffer();
+          int thaiLength = await thaiCount(rowList[rowIndex][columnIndex].text);
+          for (int loop = 0;
+              loop < (columnWidthList[columnIndex] - thaiLength) / 2;
               loop++) {
             space.write(" ");
           }

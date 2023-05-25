@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';

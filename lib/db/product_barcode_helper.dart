@@ -158,33 +158,25 @@ class ProductBarcodeHelper {
       required String order,
       required int limit,
       required int offset}) {
-    Condition<ProductBarcodeObjectBoxStruct>? conditionCode;
-    Condition<ProductBarcodeObjectBoxStruct>? conditionBarcode;
-    Condition<ProductBarcodeObjectBoxStruct>? conditionName;
+    Condition<ProductBarcodeObjectBoxStruct>? condition;
 
     List<String> wordBreak = global.wordSplit(word);
     serviceLocator<Log>().debug(wordBreak);
     for (int wordIndex = 0; wordIndex < wordBreak.length; wordIndex++) {
+      var currentCondition = ProductBarcodeObjectBoxStruct_.item_code
+          .contains(wordBreak[wordIndex])
+          .or(ProductBarcodeObjectBoxStruct_.barcode
+              .contains(wordBreak[wordIndex]))
+          .or(ProductBarcodeObjectBoxStruct_.name_all
+              .contains(wordBreak[wordIndex]));
+
       if (wordIndex == 0) {
-        conditionCode = ProductBarcodeObjectBoxStruct_.item_code
-            .contains(wordBreak[wordIndex]);
-        conditionBarcode = ProductBarcodeObjectBoxStruct_.barcode
-            .contains(wordBreak[wordIndex]);
-        conditionName = ProductBarcodeObjectBoxStruct_.name_all
-            .contains(wordBreak[wordIndex]);
+        condition = currentCondition;
       } else {
-        conditionCode = conditionCode?.and(ProductBarcodeObjectBoxStruct_
-            .item_code
-            .contains(wordBreak[wordIndex]));
-        conditionBarcode = conditionBarcode?.and(ProductBarcodeObjectBoxStruct_
-            .barcode
-            .contains(wordBreak[wordIndex]));
-        conditionName = conditionName?.and(ProductBarcodeObjectBoxStruct_
-            .name_all
-            .contains(wordBreak[wordIndex]));
+        condition = condition?.and(currentCondition);
       }
     }
-    var query = box.query(conditionName).build();
+    var query = box.query(condition).build();
     if (limit > 0) {
       query.offset = offset;
       query.limit = limit;
@@ -208,9 +200,9 @@ class ProductBarcodeHelper {
     return result;
   }
 
-  void deleteByBarcodeMany(List<String> barcodes) {
+  void deleteByBarcodeMany(List<String> barcodeList) {
     Condition<ProductBarcodeObjectBoxStruct>? ids;
-    for (var barcode in barcodes) {
+    for (var barcode in barcodeList) {
       if (ids == null) {
         ids = ProductBarcodeObjectBoxStruct_.barcode.equals(barcode);
       } else {

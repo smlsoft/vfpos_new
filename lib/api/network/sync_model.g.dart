@@ -6,14 +6,16 @@ part of 'sync_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SyncCustomerModel _$SyncCustomerModelFromJson(Map<String, dynamic> json) =>
-    SyncCustomerModel(
+SyncCustomerDisplayModel _$SyncCustomerDisplayModelFromJson(
+        Map<String, dynamic> json) =>
+    SyncCustomerDisplayModel(
       code: json['code'] as String,
       phone: json['phone'] as String,
       name: json['name'] as String,
     );
 
-Map<String, dynamic> _$SyncCustomerModelToJson(SyncCustomerModel instance) =>
+Map<String, dynamic> _$SyncCustomerDisplayModelToJson(
+        SyncCustomerDisplayModel instance) =>
     <String, dynamic>{
       'code': instance.code,
       'phone': instance.phone,

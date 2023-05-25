@@ -21,11 +21,7 @@ class PosTicketObjectBoxStruct {
   late bool customerDetail;
   late bool customerAddress;
   late bool customerTaxId;
-  late bool lineNumber;
-  late bool qty;
   late double descriptionWidth;
-  late double qtyWidth;
-  late double priceWidth;
   late double amountWidth;
   late bool saleDetail;
   late bool docNoQrCode;
@@ -44,12 +40,8 @@ class PosTicketObjectBoxStruct {
       this.customerDetail = true,
       this.customerAddress = true,
       this.customerTaxId = true,
-      this.lineNumber = true,
-      this.qty = false,
       this.descriptionWidth = 40,
-      this.qtyWidth = 10,
-      this.priceWidth = 12,
-      this.amountWidth = 15,
+      this.amountWidth = 12,
       this.saleDetail = true,
       this.docNoQrCode = true});
 

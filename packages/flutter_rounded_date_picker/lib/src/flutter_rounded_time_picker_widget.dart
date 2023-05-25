@@ -1531,8 +1531,7 @@ class _TimePickerDialog extends StatefulWidget {
       this.negativeBtn,
       this.positiveBtn,
       this.leftBtn,
-      this.onLeftBtn,
-      this.style})
+      this.onLeftBtn, this.style})
       : super(key: key);
 
   /// The time initially selected when the dialog is shown.

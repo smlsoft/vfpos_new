@@ -36,7 +36,7 @@ ProductChoiceModel _$ProductChoiceModelFromJson(Map<String, dynamic> json) =>
       item_unit_code: json['item_unit_code'] as String,
       names: (json['names'] as List<dynamic>).map((e) => e as String).toList(),
       guid_code: json['guid_code'] as String,
-      price: (json['price'] as num).toDouble(),
+      price: json['price'] as String,
       qty: (json['qty'] as num).toDouble(),
       selected: json['selected'] as bool,
     );

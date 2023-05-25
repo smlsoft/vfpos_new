@@ -1,7 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:dedepos/api/sync/master/sync_master.dart';
-import 'package:dedepos/core/objectbox.dart';
-import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;

@@ -29,7 +29,7 @@ SyncProductChoiceModel _$SyncProductChoiceModelFromJson(
           .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       isstock: json['isstock'] as bool,
-      price: (json['price'] as num).toDouble(),
+      price: json['price'] as String,
       qty: (json['qty'] as num).toDouble(),
       isdefault: json['isdefault'] as bool,
     );
