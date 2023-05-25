@@ -30,8 +30,15 @@ void main() async {
 flutter build ipa --flavor vfpos -t lib/main_vfpos.dart
 
 
-flutter build ipa --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD
+c
 
 
+flutter build appbundle --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=PROD
+```
+
+## Android
+
+
+```
 flutter build appbundle --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=PROD
 ```

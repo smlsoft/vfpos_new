@@ -40,7 +40,7 @@ class BackgroundClipperWidget extends StatelessWidget {
       child: ClipPath(
         clipper: VFPosLoginShapeClipper(),
         child: Container(
-          height: heightOfScreen,
+          height: 900,
           decoration: const BoxDecoration(color: AppColors.primaryColor),
         ),
       ),
