@@ -6,6 +6,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   charset_converter
   connectivity_plus
   geolocator_windows
+  network_info_plus
   objectbox_flutter_libs
   permission_handler_windows
 )
