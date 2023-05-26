@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dedepos/core/environment.dart';
 import 'package:dio/dio.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dio/io.dart';
 
 class Client {
   Dio init() {
@@ -15,7 +18,12 @@ class Client {
     dio.options.baseUrl = endPointService;
     dio.options.connectTimeout = const Duration(seconds: 20); //20s
     dio.options.receiveTimeout = const Duration(seconds: 30); //5s
-
+    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+        // ignore: body_might_complete_normally_nullable
+        (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
     return dio;
   }
 }

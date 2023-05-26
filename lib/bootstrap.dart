@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
+import 'package:dedepos/app/http_verify.dart';
 import 'package:dedepos/core/environment.dart';
 import 'package:dedepos/core/language.dart';
 import 'package:dedepos/core/objectbox.dart';
@@ -20,6 +22,7 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 }
 
 Future<void> initializeApp() async {
+  HttpOverrides.global = new MyHttpOverrides();
   await GetStorage.init('AppStorage');
   await setupObjectBox();
   await initLanguage();
