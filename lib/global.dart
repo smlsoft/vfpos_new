@@ -180,7 +180,7 @@ List<PosSaleChannelModel> posSaleChannelList = [];
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterCashierConnectEnum { none, ip, bluetooth, usb, serial, sunmi1 }
+enum PrinterCashierConnectEnum { ip, bluetooth, usb, serial, sunmi1 }
 
 enum PosVersionEnum { pos, restaurant, vfpos }
 
@@ -489,7 +489,8 @@ Future<String> billRunning() async {
 Future<bool> hasNetwork() async {
   try {
     final result = await InternetAddress.lookup('example.com');
-    return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    final returnResult = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    return returnResult;
   } on SocketException catch (_) {
     return false;
   }
@@ -821,6 +822,9 @@ void loadConfig() {
             break;
           case 3:
             printerCashierConnect = PrinterCashierConnectEnum.usb;
+            break;
+          case 100:
+            printerCashierConnect = PrinterCashierConnectEnum.sunmi1;
             break;
         }
       }

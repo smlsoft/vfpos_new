@@ -25,6 +25,7 @@ PosTicketObjectBoxStruct _$PosTicketObjectBoxStructFromJson(
       descriptionWidth: (json['descriptionWidth'] as num?)?.toDouble() ?? 40,
       amountWidth: (json['amountWidth'] as num?)?.toDouble() ?? 12,
       saleDetail: json['saleDetail'] as bool? ?? true,
+      charPerLine: json['charPerLine'] as int? ?? 48,
       docNoQrCode: json['docNoQrCode'] as bool? ?? true,
     )..id = json['id'] as int;
 
@@ -49,4 +50,5 @@ Map<String, dynamic> _$PosTicketObjectBoxStructToJson(
       'amountWidth': instance.amountWidth,
       'saleDetail': instance.saleDetail,
       'docNoQrCode': instance.docNoQrCode,
+      'charPerLine': instance.charPerLine,
     };

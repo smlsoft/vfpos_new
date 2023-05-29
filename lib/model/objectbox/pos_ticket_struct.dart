@@ -25,6 +25,7 @@ class PosTicketObjectBoxStruct {
   late double amountWidth;
   late bool saleDetail;
   late bool docNoQrCode;
+  late int charPerLine;
 
   PosTicketObjectBoxStruct(
       {this.logo = true,
@@ -43,6 +44,7 @@ class PosTicketObjectBoxStruct {
       this.descriptionWidth = 40,
       this.amountWidth = 12,
       this.saleDetail = true,
+      this.charPerLine = 48,
       this.docNoQrCode = true});
 
   factory PosTicketObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

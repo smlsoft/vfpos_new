@@ -9,6 +9,7 @@ import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dedepos/global.dart' as global;
 
 @RoutePage()
 class AuthenticationPage extends StatefulWidget {
@@ -32,12 +33,20 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       const BackgroundGradientWidget(),
       const BackgroundClipperWidget(),
       Center(
-          child: SizedBox(
-        width: 500,
-        height: 600,
-        child: Card(
-          shape: RoundedRectangleBorder(
+        child: Container(
+          width: 500,
+          height: 600,
+          decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             child: Padding(
@@ -83,19 +92,19 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       logo(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       userTextfield(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       passwordTextfield(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       buttonLogin(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       loginSeparatorLine(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       buttonLoginWithGoogle(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       buttonLoginWithApple(),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 12.0),
                       Visibility(
                           visible: Environment().isDev,
                           child: buttonLoginDev()),
@@ -106,7 +115,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             ),
           ),
         ),
-      ))
+      )
     ]));
   }
 
@@ -260,6 +269,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             .selectShop(shopid: AppConstant.shopIdDev)
             .then((selectShopResponse) async {
           if (selectShopResponse.isRight()) {
+            global.loginSuccess = true;
             context
                 .read<AuthenticationBloc>()
                 .add(AuthenticationEvent.authenticated(user: remoteUser));

@@ -1023,7 +1023,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(15, 2127985611515005097),
       name: 'PosTicketObjectBoxStruct',
-      lastPropertyId: const IdUid(29, 5185449551030321875),
+      lastPropertyId: const IdUid(30, 6211016703725845138),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1115,6 +1115,11 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(28, 478159652125428818),
             name: 'printerWidth',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(30, 6211016703725845138),
+            name: 'charPerLine',
             type: 6,
             flags: 0)
       ],
@@ -2071,7 +2076,7 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (PosTicketObjectBoxStruct object, fb.Builder fbb) {
           final guidfixedOffset = fbb.writeString(object.guidfixed);
           final ticketNameOffset = fbb.writeString(object.ticketName);
-          fbb.startTable(30);
+          fbb.startTable(31);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, ticketNameOffset);
@@ -2090,6 +2095,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(25, object.shopTel);
           fbb.addInt64(26, object.printMode);
           fbb.addInt64(27, object.printerWidth);
+          fbb.addInt64(29, object.charPerLine);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2124,6 +2130,7 @@ ModelDefinition getObjectBoxModel() {
               descriptionWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0),
               amountWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0),
               saleDetail: const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false),
+              charPerLine: const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0),
               docNoQrCode: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -2962,4 +2969,8 @@ class PosTicketObjectBoxStruct_ {
   /// see [PosTicketObjectBoxStruct.printerWidth]
   static final printerWidth = QueryIntegerProperty<PosTicketObjectBoxStruct>(
       _entities[12].properties[17]);
+
+  /// see [PosTicketObjectBoxStruct.charPerLine]
+  static final charPerLine = QueryIntegerProperty<PosTicketObjectBoxStruct>(
+      _entities[12].properties[18]);
 }

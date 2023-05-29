@@ -76,6 +76,7 @@ class LocalStrongDataModel {
 }
 
 class PrinterDeviceModel {
+  String fullName;
   String productName;
   String deviceName;
   String deviceId;
@@ -89,7 +90,8 @@ class PrinterDeviceModel {
   int paperSize;
 
   PrinterDeviceModel(
-      {this.productName = "",
+      {this.fullName = "",
+      this.productName = "",
       this.deviceName = "",
       this.deviceId = "",
       this.manufacturer = "",
@@ -98,7 +100,7 @@ class PrinterDeviceModel {
       this.ipAddress = "",
       this.ipPort = 0,
       this.paperSize = 0,
-      this.connectType = global.PrinterCashierConnectEnum.none});
+      this.connectType = global.PrinterCashierConnectEnum.ip});
 }
 
 @JsonSerializable(explicitToJson: true)

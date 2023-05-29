@@ -26,6 +26,7 @@ Future<void> initializeApp() async {
   await GetStorage.init('AppStorage');
   await setupObjectBox();
   await initLanguage();
+  
 }
 
 void initializeEnvironmentConfig() {

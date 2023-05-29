@@ -7,13 +7,13 @@ import 'package:image/image.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 
-Future<void> printBillText(String docNo) async {
+Future<void> printBillTextx(String docNo) async {
   PaperSize paper = PaperSize.mm80;
   CapabilityProfile profile = await CapabilityProfile.load();
   NetworkPrinter printer = NetworkPrinter(paper, profile);
   PosPrintResult res = await printer.connect(global.printerCashierIpAddress,
       port: global.printerCashierIpPort);
-  int charPerLine = 48;
+  int charPerLine = 47;
 
   if (res == PosPrintResult.success) {
     printer.reset();
@@ -34,7 +34,7 @@ Future<void> printBillText(String docNo) async {
       printProcess.columnWidth.add(1);
       printProcess.column
           .add(PrintColumn(text: "ร้านโซลาว", align: PrintColumnAlign.center));
-      await printProcess.lineFeed(
+      await printProcess.lineFeedText(
           printer, const PosStyles(bold: true, width: PosTextSize.size2));
     }
 
@@ -43,21 +43,21 @@ Future<void> printBillText(String docNo) async {
     printProcess.columnWidth.add(1);
     printProcess.column.add(
         PrintColumn(text: "(สำนักงานใหญ่)", align: PrintColumnAlign.center));
-    await printProcess.lineFeed(printer, const PosStyles(bold: false));
+    await printProcess.lineFeedText(printer, const PosStyles(bold: false));
 
     ///
     printProcess.columnWidth.clear();
     printProcess.columnWidth.add(1);
     printProcess.column.add(
         PrintColumn(text: "(Vat Included)", align: PrintColumnAlign.center));
-    await printProcess.lineFeed(printer, const PosStyles(bold: false));
+    await printProcess.lineFeedText(printer, const PosStyles(bold: false));
     //
     printProcess.columnWidth.clear();
     printProcess.columnWidth.add(1);
     printProcess.column.add(PrintColumn(
         text: "ใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ",
         align: PrintColumnAlign.center));
-    await printProcess.lineFeed(printer, const PosStyles(bold: true));
+    await printProcess.lineFeedText(printer, const PosStyles(bold: true));
 
     //
     if (global.posTicket.shopAddress) {
@@ -68,7 +68,7 @@ Future<void> printBillText(String docNo) async {
           text:
               "141/469 หมู่ที่ 2 ต.ต้นเปา อ.สันกำแพง จ.เชียงใหม่ 50130, อาคารซอฟท์แวร์พาร์ค ชั้น 7 ถ.แจ้งวัฒนะ ต.คลองเกลือ อ.ปากเกร็ด จ.นนทบุรี 11120",
           align: PrintColumnAlign.center));
-      await printProcess.lineFeed(printer, const PosStyles(bold: false));
+      await printProcess.lineFeedText(printer, const PosStyles(bold: false));
     }
     //
     if (global.posTicket.shopTaxId) {
@@ -78,7 +78,7 @@ Future<void> printBillText(String docNo) async {
       printProcess.column.add(PrintColumn(
           text: "เลขประจำตัวผู้เสียภาษี : 0135549000236",
           align: PrintColumnAlign.center));
-      await printProcess.lineFeed(printer, const PosStyles(bold: false));
+      await printProcess.lineFeedText(printer, const PosStyles(bold: false));
     }
     //
     if (global.posTicket.shopTel) {
@@ -87,7 +87,7 @@ Future<void> printBillText(String docNo) async {
       printProcess.columnWidth.add(1);
       printProcess.column.add(PrintColumn(
           text: "โทรศัพท์ : 0899223131", align: PrintColumnAlign.center));
-      await printProcess.lineFeed(printer, const PosStyles(bold: false));
+      await printProcess.lineFeedText(printer, const PosStyles(bold: false));
     }
     //
     printProcess.columnWidth.clear();
@@ -95,7 +95,7 @@ Future<void> printBillText(String docNo) async {
     printProcess.column.add(PrintColumn(
         text: "หมายเลขเครื่อง POS : 11231220899223131",
         align: PrintColumnAlign.center));
-    await printProcess.lineFeed(printer, const PosStyles(bold: false));
+    await printProcess.lineFeedText(printer, const PosStyles(bold: false));
     //
     BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
         docNumber: docNo, posScreenMode: global.posScreenToInt());
@@ -174,7 +174,7 @@ Future<void> printBillText(String docNo) async {
                 ? ""
                 : global.moneyFormat.format(detail.total_amount),
             align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles());
+        await printProcess.lineFeedText(printer, const PosStyles());
 
         /// สินค้าเพิ่ม (Extra)
         List<BillDetailExtraObjectBoxStruct> extras =
@@ -192,7 +192,7 @@ Future<void> printBillText(String docNo) async {
                   ? ""
                   : global.moneyFormat.format(extra.total_amount),
               align: PrintColumnAlign.right));
-          await printProcess.lineFeed(printer, const PosStyles());
+          await printProcess.lineFeedText(printer, const PosStyles());
         }
       }
 
@@ -207,7 +207,7 @@ Future<void> printBillText(String docNo) async {
       printProcess.column.add(PrintColumn(
           text: global.moneyFormat.format(bill.total_amount),
           align: PrintColumnAlign.right));
-      await printProcess.lineFeed(printer, const PosStyles(bold: true));
+      await printProcess.lineFeedText(printer, const PosStyles(bold: true));
       await printProcess.drawLine(printer);
       // พิมพ์ Promotion
       /*if (_havePromotion) {
@@ -242,7 +242,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.column.add(PrintColumn(
             text:
                 "${global.language("bill_discount_save")} ${global.moneyFormat.format(totalDiscountAndPromotion * -1)} ${global.language("money_symbol")}"));
-        await printProcess.lineFeed(
+        await printProcess.lineFeedText(
             printer,
             const PosStyles(
                 height: PosTextSize.size2, width: PosTextSize.size2));
@@ -258,7 +258,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.column.add(PrintColumn(
             text: global.moneyFormat.format(bill.total_amount),
             align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.lineFeedText(printer, const PosStyles(bold: true));
         await printProcess.drawLine(printer);
       }
       printProcess.columnWidth.clear();
@@ -266,7 +266,7 @@ Future<void> printBillText(String docNo) async {
       printProcess.column.clear();
       printProcess.column
           .add(PrintColumn(text: global.language("bill_pay_list")));
-      await printProcess.lineFeed(printer, const PosStyles(bold: true));
+      await printProcess.lineFeedText(printer, const PosStyles(bold: true));
       // ชำระเงินสด
       /*List<BillPayStruct> _billPayDetail = await global.billPayHelper.select(
       where: " doc_number = '" + docNo + "' order by trans_flag asc ",
@@ -470,7 +470,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.column.add(PrintColumn(
             text: global.moneyFormat.format(bill.pay_cash_amount),
             align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles());
+        await printProcess.lineFeedText(printer, const PosStyles());
       }
       if (bill.sum_discount > 0) {
         // รวมส่วนลด
@@ -486,7 +486,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.column.add(PrintColumn(
             text: global.moneyFormat.format(bill.sum_discount),
             align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles());
+        await printProcess.lineFeedText(printer, const PosStyles());
       }
       if (payDetails.isNotEmpty) {
         for (int payType in [1, 2, 3, 4, 5]) {
@@ -516,7 +516,7 @@ Future<void> printBillText(String docNo) async {
                 printProcess.columnWidth.add(1);
                 printProcess.column.clear();
                 printProcess.column.add(PrintColumn(text: header));
-                await printProcess.lineFeed(
+                await printProcess.lineFeedText(
                     printer, const PosStyles(bold: true));
                 headPrinted = true;
               }
@@ -556,7 +556,7 @@ Future<void> printBillText(String docNo) async {
               printProcess.column.add(PrintColumn(
                   text: global.moneyFormat.format(payDetails[i].amount),
                   align: PrintColumnAlign.right));
-              await printProcess.lineFeed(printer, const PosStyles());
+              await printProcess.lineFeedText(printer, const PosStyles());
             }
           }
         }
@@ -598,7 +598,7 @@ Future<void> printBillText(String docNo) async {
       printProcess.column.add(PrintColumn(
           text: global.moneyFormat.format(sumTotalPayAmount),
           align: PrintColumnAlign.right));
-      await printProcess.lineFeed(printer, const PosStyles(bold: true));
+      await printProcess.lineFeedText(printer, const PosStyles(bold: true));
       await printProcess.drawLine(printer);
       printProcess.columnWidth.clear();
       printProcess.columnWidth.add(25);
@@ -611,7 +611,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.column.add(PrintColumn(
             text: global.moneyFormat.format(diffAmount),
             align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.lineFeedText(printer, const PosStyles(bold: true));
         await printProcess.drawLine(printer);
       } else {
         double diffAmountPlus = sumTotalPayAmount - bill.total_amount;
@@ -621,7 +621,7 @@ Future<void> printBillText(String docNo) async {
         printProcess.column.add(PrintColumn(
             text: global.moneyFormat.format(diffAmountPlus),
             align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles(bold: true));
+        await printProcess.lineFeedText(printer, const PosStyles(bold: true));
         await printProcess.drawLine(printer);
       }
 
@@ -647,7 +647,7 @@ Future<void> printBillText(String docNo) async {
               text:
                   "${global.language("sale_code")} : ${bill.sale_name} (${bill.sale_code})",
               align: PrintColumnAlign.center));
-          await printProcess.lineFeed(printer, const PosStyles(bold: true));
+          await printProcess.lineFeedText(printer, const PosStyles(bold: true));
         }
         printProcess.column.clear();
         printProcess.columnWidth.clear();
@@ -657,7 +657,7 @@ Future<void> printBillText(String docNo) async {
         //
         printProcess.column.add(PrintColumn(
             text: "10/10/2564 16:30", align: PrintColumnAlign.right));
-        await printProcess.lineFeed(printer, const PosStyles(bold: false));
+        await printProcess.lineFeedText(printer, const PosStyles(bold: false));
         if (global.posTicket.cashierDetail && bill.cashier_code.isNotEmpty) {
           printProcess.columnWidth.clear();
           printProcess.columnWidth.add(1);
@@ -669,7 +669,8 @@ Future<void> printBillText(String docNo) async {
           printProcess.column.add(PrintColumn(
               text: "${global.language("sale")} ${bill.cashier_name}",
               align: PrintColumnAlign.right));
-          await printProcess.lineFeed(printer, const PosStyles(bold: false));
+          await printProcess.lineFeedText(
+              printer, const PosStyles(bold: false));
         }
       }
       if (global.posTicket.docNoQrCode) {
