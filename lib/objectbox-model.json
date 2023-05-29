@@ -1006,7 +1006,7 @@
     },
     {
       "id": "15:2127985611515005097",
-      "lastPropertyId": "29:5185449551030321875",
+      "lastPropertyId": "30:6211016703725845138",
       "name": "PosTicketObjectBoxStruct",
       "properties": [
         {
@@ -1100,6 +1100,11 @@
         {
           "id": "28:478159652125428818",
           "name": "printerWidth",
+          "type": 6
+        },
+        {
+          "id": "30:6211016703725845138",
+          "name": "charPerLine",
           "type": 6
         }
       ],

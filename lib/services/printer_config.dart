@@ -1,4 +1,7 @@
+import 'package:image/image.dart' as im;
 import 'dart:async';
+import 'dart:io';
+import 'package:charset_converter/charset_converter.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
@@ -11,7 +14,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_usb_printer/flutter_usb_printer.dart';
+import 'package:get/utils.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:sunmi_printer_plus/enums.dart';
+import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
+import 'dart:ui' as ui;
 
 class PrinterConfigScreen extends StatefulWidget {
   const PrinterConfigScreen({Key? key}) : super(key: key);
@@ -37,6 +44,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
   late Timer screenTimer;
   bool printBillAuto = true;
   int printerPaperSize = 2;
+  int printerSelectedIndex = -1;
 
   @override
   void initState() {
@@ -66,14 +74,15 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
         if (value == PosPrintResult.success) {
           if (printerList.any((element) => element.ipAddress == ip) == false) {
             printerList.add(PrinterDeviceModel(
+              fullName: "IP Printer : $ip",
               productName: "IP Printer",
               ipAddress: ip,
               ipPort: 9100,
               connectType: global.PrinterCashierConnectEnum.ip,
             ));
           }
+          printer.disconnect();
         }
-        printer.disconnect();
       });
     }
   }
@@ -82,6 +91,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
     printerConnectType = 0;
     printerList.clear();
     printerList.add(PrinterDeviceModel(
+      fullName: "SUNMI Printer",
       deviceName: "SUNMI Printer",
       connectType: global.PrinterCashierConnectEnum.sunmi1,
     ));
@@ -89,9 +99,10 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
     List<Map<String, dynamic>> results = [];
     results = await FlutterUsbPrinter.getUSBDeviceList();
 
-    serviceLocator<Log>().trace(" length: ${results.length}");
+    print("getDeviceList length: ${results.length}");
     for (var printer in results) {
       printerList.add(PrinterDeviceModel(
+        fullName: "USB Printer : ${printer["manufacturer"]}",
         productName: printer["productName"],
         deviceName: printer["deviceName"],
         deviceId: printer["deviceId"],
@@ -134,7 +145,60 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
     }
   }
 
-  Future<void> printTestBySunmi1() async {}
+  Future<void> printTestBySunmi1() async {
+    await SunmiPrinter.bindingPrinter();
+    await SunmiPrinter.startTransactionPrint(true);
+
+    double maxHeight = 10;
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    final backgroundPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    canvas.drawRect(
+        const Rect.fromLTWH(0.0, 0.0, 640.0, 10000.0), backgroundPaint);
+
+    for (int loop = 1; loop < 10; loop++) {
+      TextSpan span = TextSpan(
+          style: TextStyle(
+              color: Colors.black, fontSize: 24 + (loop.toDouble() * 2)),
+          text: "สวัสดีประเทศไทย " + loop.toString());
+      TextPainter tp = TextPainter(
+          text: span,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr);
+      tp.layout();
+      tp.paint(canvas, Offset(0, maxHeight.toDouble()));
+      maxHeight += tp.height;
+    }
+    final picture = recorder.endRecording();
+    final imageBuffer = picture.toImage(640, maxHeight.toInt());
+    final pngBytes = await imageBuffer
+        .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+    im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+    int printMaxHeight = 500;
+    int calcLoop = imageDecode!.height ~/ printMaxHeight;
+    for (int i = 0; i <= calcLoop; i++) {
+      try {
+        if (i != 0) {
+          sleep(const Duration(milliseconds: 100));
+        }
+        im.Image croppedImage = im.copyCrop(imageDecode, 0, i * printMaxHeight,
+            imageDecode.width, printMaxHeight);
+        List<int> croppedImageBytes = im.encodePng(croppedImage);
+        Uint8List imageCopy = Uint8List.fromList(croppedImageBytes);
+        await SunmiPrinter.printImage(imageCopy);
+      } catch (e) {
+        serviceLocator<Log>().error(e);
+      }
+    }
+    await SunmiPrinter.lineWrap(2); 
+    await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
+    await SunmiPrinter.printQRCode('https://www.dedepos.com');
+    await SunmiPrinter.submitTransactionPrint();
+    await SunmiPrinter.exitTransactionPrint(true);
+  }
 
   Future<void> printTestByIpAddress(
       {required String ipAddress, required int port}) async {
@@ -253,30 +317,18 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
               )
             : ListView.builder(
                 itemBuilder: (context, index) {
-                  String connectName = "";
-                  String printerText = "";
-                  if (printerList[index].connectType ==
-                      global.PrinterCashierConnectEnum.ip) {
-                    connectName = "IP Printer";
-                    printerText =
-                        "$connectName : ${printerList[index].ipAddress}";
-                  }
-                  if (printerList[index].connectType ==
-                      global.PrinterCashierConnectEnum.usb) {
-                    connectName = "USB Printer";
-                    printerText =
-                        "$connectName : ${printerList[index].manufacturer}";
-                  }
-                  if (printerList[index].connectType ==
-                      global.PrinterCashierConnectEnum.sunmi1) {
-                    connectName = "SUNMI Thermal Printer";
-                    printerText = connectName;
-                  }
                   return Padding(
                       padding: const EdgeInsets.all(4),
                       child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            backgroundColor: (index == printerSelectedIndex)
+                                ? Colors.orange
+                                : Colors.blue,
+                          ),
                           onPressed: () {
                             setState(() {
+                              printerSelectedIndex = index;
                               switch (printerList[index].connectType) {
                                 case global.PrinterCashierConnectEnum.usb:
                                   usbDeviceController.text =
@@ -302,8 +354,6 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                                 case global.PrinterCashierConnectEnum.sunmi1:
                                   printerConnectType = 100;
                                   break;
-                                case global.PrinterCashierConnectEnum.none:
-                                  break;
                               }
                             });
                           },
@@ -316,7 +366,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(printerText),
+                                  Text(printerList[index].fullName),
                                 ],
                               ))));
                 },
@@ -382,19 +432,28 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
   }
 
   Widget printerConnect() {
-    List<Widget> displayWidget = [];
+    List<Widget> displayPrinterConnectWidget = [];
+    if (printerSelectedIndex != -1) {
+      displayPrinterConnectWidget.add(Text(
+          "${global.language("printer_selected")} : ${printerList[printerSelectedIndex].fullName}",
+          style: const TextStyle(
+              fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold)));
+      displayPrinterConnectWidget.add(const SizedBox(
+        height: 10,
+      ));
+    }
     if (printerConnectType == 1) {
       // Usb Printer
-      displayWidget.add(printerUsbConnectWidget());
+      displayPrinterConnectWidget.add(printerUsbConnectWidget());
     }
     if (printerConnectType == 2) {
       // IP Printer
-      displayWidget.add(printerIpConnectWidget());
+      displayPrinterConnectWidget.add(printerIpConnectWidget());
     }
-    displayWidget.add(const SizedBox(
+    displayPrinterConnectWidget.add(const SizedBox(
       height: 10,
     ));
-    displayWidget.add(Row(children: [
+    displayPrinterConnectWidget.add(Row(children: [
       Text(global.language("printer_paper_size")),
       const SizedBox(width: 10),
       Radio(
@@ -417,10 +476,10 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
           }),
       const Text('80mm'),
     ]));
-    displayWidget.add(const SizedBox(
+    displayPrinterConnectWidget.add(const SizedBox(
       height: 10,
     ));
-    displayWidget.add(Row(children: [
+    displayPrinterConnectWidget.add(Row(children: [
       Checkbox(
           value: printBillAuto,
           onChanged: (value) {
@@ -431,10 +490,10 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       const SizedBox(width: 10),
       Text(global.language("printer_print_bill_auto")),
     ]));
-    displayWidget.add(const SizedBox(
+    displayPrinterConnectWidget.add(const SizedBox(
       height: 10,
     ));
-    displayWidget.add(ElevatedButton(
+    displayPrinterConnectWidget.add(ElevatedButton(
         onPressed: () {
           printTest();
           showDialog(
@@ -444,7 +503,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                     content:
                         Text(global.language("printer_connect_test_success")),
                     actions: [
-                      TextButton(
+                      ElevatedButton(
                         child: Text(global.language("success")),
                         onPressed: () async {
                           var data = LocalStrongDataModel(
@@ -467,10 +526,11 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                               .then((value) {
                             global.loadConfig();
                             Navigator.pop(context);
+                            Navigator.pop(context);
                           });
                         },
                       ),
-                      TextButton(
+                      ElevatedButton(
                         child: Text(global.language("fail")),
                         onPressed: () {
                           Navigator.pop(context);
@@ -488,26 +548,28 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
     return Container(
       padding: const EdgeInsets.only(top: 10),
       width: double.infinity,
-      child: Column(
-        children: [
-          printerListWidget(),
-          const SizedBox(
-            height: 15,
-          ),
-          Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Column(children: displayWidget)),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ),
+      child: (printerConnectType == 0)
+          ? printerListWidget()
+          : Column(
+              children: [
+                printerListWidget(),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.blue),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Column(children: displayPrinterConnectWidget)),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
     );
   }
 
@@ -527,10 +589,11 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                 onPressed: () => getDeviceList()),
           ],
         ),
-        body: Container(
+        body: SingleChildScrollView(
+            child: Container(
           padding: const EdgeInsets.all(10),
           width: double.infinity,
           child: printerConnect(),
-        ));
+        )));
   }
 }

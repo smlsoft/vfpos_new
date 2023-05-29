@@ -61,8 +61,7 @@ class PosScreen extends StatefulWidget {
   State<PosScreen> createState() => _PosScreenState();
 }
 
-class _PosScreenState extends State<PosScreen>
-    with SingleTickerProviderStateMixin {
+class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late Timer posScreenTimer;
   late Timer messageTimer;
@@ -106,6 +105,7 @@ class _PosScreenState extends State<PosScreen>
   List<Widget> widgetMessage = [];
   String widgetMessageImageUrl = "";
   late double listTextHeight = global.posScreenListHeightGet();
+  late TabController phoneTabController;
 
   /// 0=Desktop,1=Tablet,2=Phone
   int deviceMode = 0;
@@ -165,6 +165,17 @@ class _PosScreenState extends State<PosScreen>
     } else {
       deviceMode = 2;
     }
+
+    phoneTabController = TabController(length: 4, vsync: this);
+    phoneTabController.addListener(() {
+      if (!phoneTabController.indexIsChanging) {
+        if (phoneTabController.index == 2) {
+          SystemChannels.textInput.invokeMethod('TextInput.show');
+        } else {
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+        }
+      }
+    });
 
     context
         .read<ProductCategoryBloc>()
@@ -243,6 +254,7 @@ class _PosScreenState extends State<PosScreen>
     if (Platform.isAndroid) {
       if (global.isInternalCustomerDisplayConnected) {}
     }
+    phoneTabController.dispose();
   }
 
   void onSubmit(String number) {
@@ -4032,17 +4044,6 @@ class _PosScreenState extends State<PosScreen>
         child: DefaultTabController(
             length: 4,
             child: Builder(builder: (BuildContext context) {
-              final TabController tabController =
-                  DefaultTabController.of(context);
-              tabController.addListener(() {
-                if (!tabController.indexIsChanging) {
-                  if (tabController.index == 2) {
-                    SystemChannels.textInput.invokeMethod('TextInput.show');
-                  } else {
-                    SystemChannels.textInput.invokeMethod('TextInput.hide');
-                  }
-                }
-              });
               return Scaffold(
                   resizeToAvoidBottomInset: false,
                   body: Container(
@@ -4054,8 +4055,15 @@ class _PosScreenState extends State<PosScreen>
                             children: [
                               Container(
                                   color: Colors.blue,
-                                  child: const TabBar(
-                                    tabs: [
+                                  child: TabBar(
+                                    controller: phoneTabController,
+                                    indicatorColor: Colors.white,
+                                    onTap: (value) {
+                                      setState(() {
+                                        phoneTabController.index = value;
+                                      });
+                                    },
+                                    tabs: const [
                                       Tab(
                                         icon: Icon(Icons.list),
                                       ),
@@ -4082,14 +4090,18 @@ class _PosScreenState extends State<PosScreen>
                                       child: selectProductByQrCodeOrBarcode(),
                                     ),
                                   Expanded(
-                                      child: TabBarView(children: [
-                                    transScreen(mode: 0),
-                                    selectProductLevelWidget(),
-                                    findByText(),
-                                    Container()
-                                    //commandScreen(),
-                                  ])),
-                                  posLayoutBottom(),
+                                      child: TabBarView(
+                                          controller: phoneTabController,
+                                          children: [
+                                        transScreen(mode: 0),
+                                        selectProductLevelWidget(),
+                                        findByText(),
+                                        Container()
+                                        //commandScreen(),
+                                      ])),
+                                  (phoneTabController.index != 2)
+                                      ? posLayoutBottom()
+                                      : Container(),
                                 ]);
                               })),
                             ],
@@ -4494,6 +4506,7 @@ class _PosScreenState extends State<PosScreen>
                 },
                 child: Scaffold(
                     appBar: AppBar(
+                      toolbarHeight: 24,
                       automaticallyImplyLeading: false,
                       backgroundColor: (global.posScreenMode ==
                               global.PosScreenModeEnum.posSale)
@@ -4503,7 +4516,7 @@ class _PosScreenState extends State<PosScreen>
                         children: [
                           if (global.posSaleChannelCode != "XXX")
                             Container(
-                                height: 40,
+                                height: 12,
                                 padding: const EdgeInsets.only(right: 10),
                                 child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -4528,7 +4541,7 @@ class _PosScreenState extends State<PosScreen>
                                   ? 'ขายสินค้า'
                                   : 'รับคืนสินค้า',
                               style: const TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   shadows: [
                                     Shadow(
@@ -4540,7 +4553,7 @@ class _PosScreenState extends State<PosScreen>
                           const Spacer(),
                           const Text("DEDE POS",
                               style: TextStyle(
-                                  fontSize: 24,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   shadows: [
                                     Shadow(
@@ -4552,17 +4565,6 @@ class _PosScreenState extends State<PosScreen>
                         ],
                       ),
                     ),
-                    body: Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: const BoxDecoration(boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 4,
-                            spreadRadius: 1.0,
-                            offset: Offset(
-                                3.0, 3.0), // shadow direction: bottom right
-                          )
-                        ]),
-                        child: appLayoutPos())))));
+                    body: appLayoutPos()))));
   }
 }

@@ -1593,6 +1593,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  sunmi_ext_printer:
+    dependency: "direct main"
+    description:
+      name: sunmi_ext_printer
+      sha256: "8ecfa93f1cec646513c6c3e72e68acd2d8e98e6af2f5ec7d8fa54b0943a02d5c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   sunmi_printer_plus:
     dependency: "direct main"
     description:

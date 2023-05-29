@@ -16,7 +16,7 @@ Future<void> setupObjectBox() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       // dev.log("ObjectBox Data : $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
     }
     objectBoxStore = Store(getObjectBoxModel(),
         directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
