@@ -233,8 +233,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       // จอแสดงผล POS
       if (Platform.isAndroid) {
         if (global.isInternalCustomerDisplayConnected) {
-          global.displayManager
-              .showSecondaryDisplay(displayId: 1, routerName: "presentation");
+          global.displayManager.showSecondaryDisplay(
+              displayId: 1, routerName: "PosSecondaryRoute");
         }
       }
     });

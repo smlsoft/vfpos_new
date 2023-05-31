@@ -60,7 +60,7 @@ Future syncProductCategory(data) async {
       category_count: newData.childcount,
     );
     // ทดสอบ รูป
-    newProduct.image_url = global.getImageForTest();
+    //newProduct.image_url = global.getImageForTest();
 
     serviceLocator<Log>().debug(
         "Sync Product Category : ${newData.guidfixed} ${newData.names![0].name} ${newData.parentguid}");
@@ -190,7 +190,7 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
       color_select: newData.colorselect,
       color_select_hex: newData.colorselecthex,
     );
-    newBarcode.images_url = global.getImageForTest();
+    // newBarcode.images_url = global.getImageForTest();
     newBarcode.image_or_color = true;
 
     manyForInsert.add(newBarcode);

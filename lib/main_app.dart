@@ -57,9 +57,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
 /// mainApp เดิมให้ ยกเลิกใช้งาน ย้ายไปใช้ app_view
 Future<void> mainApp() async {
+  initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
-  await setUpServiceLocator();
-  await initializeApp();
 
   Intl.defaultLocale = "th";
   initializeDateFormatting();
@@ -74,13 +73,15 @@ Future<void> mainApp() async {
       if (displays.length > 1) {
         global.isInternalCustomerDisplayConnected = true;
         global.internalCustomerDisplay = displays[1];
-        serviceLocator<Log>().debug("internalCustomerDisplay");
+        // serviceLocator<Log>().debug("internalCustomerDisplay");
       }
     }
   }
 
   if (Platform.isAndroid == false || displays!.isNotEmpty) {
     global.displayMachine = global.DisplayMachineEnum.posTerminal;
+    await setUpServiceLocator();
+    await initializeApp();
   } else {
     global.displayMachine = global.DisplayMachineEnum.customerDisplay;
   }
@@ -184,10 +185,10 @@ Future<void> mainApp() async {
     ));
 
     if (Platform.isAndroid) {
-      if (global.isInternalCustomerDisplayConnected) {
-        global.displayManager
-            .showSecondaryDisplay(displayId: 1, routerName: "presentation");
-      }
+      // if (global.isInternalCustomerDisplayConnected) {
+      //   global.displayManager
+      //       .showSecondaryDisplay(displayId: 1, routerName: "presentation");
+      // }
     }
     runApp(const PosSecondaryScreen());
   }
