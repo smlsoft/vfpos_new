@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
@@ -12,6 +13,7 @@ import 'package:presentation_displays/secondary_display.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:video_player/video_player.dart';
 
+@RoutePage()
 class PosSecondaryScreen extends StatefulWidget {
   const PosSecondaryScreen({Key? key}) : super(key: key);
 
@@ -30,10 +32,12 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
   int informationCountDownSecond = 0;
   late VideoPlayerController videoController;
 
+  String value = "";
+
   @override
   void initState() {
     super.initState();
-    syncInformationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    syncInformationTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       // นับถอยหลังกลับหน้าจอ Customer Display
       if (--changeScreenDelaySecond < 0) {
         setState(() {
@@ -248,17 +252,32 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (value != "") {
+      PosHoldProcessModel processDecode = PosHoldProcessModel.fromJson(
+          jsonDecode(value) as Map<String, dynamic>);
+      processResult = processDecode;
+    }
+    // PosHoldProcessModel.fromJson(
+    //     jsonDecode(argument) as Map<String, dynamic>);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Customer Display',
         home: Scaffold(
             body: SecondaryDisplay(
                 callback: (argument) {
-                  serviceLocator<Log>().trace("ZZZZZZZZZZZZZZZZZ : $argument");
                   setState(() {
-                    processResult = PosHoldProcessModel.fromJson(
-                        jsonDecode(argument) as Map<String, dynamic>);
+                    value = argument;
                   });
+                  // serviceLocator<Log>()
+                  //     .trace("Receive Callback SecondaryDisplay");
+                  // PosHoldProcessModel processDecode =
+                  //     PosHoldProcessModel.fromJson(
+                  //         jsonDecode(argument) as Map<String, dynamic>);
+                  // setState(() {
+                  //   processResult = processDecode;
+                  //   // PosHoldProcessModel.fromJson(
+                  //   //     jsonDecode(argument) as Map<String, dynamic>);
+                  // });
                 },
                 child: Container(
                   margin: const EdgeInsets.all(0),
