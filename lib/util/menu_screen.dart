@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
@@ -15,6 +16,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 
+@RoutePage()
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
 
