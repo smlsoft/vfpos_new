@@ -31,7 +31,7 @@ class _InitShopScreenState extends State<InitShopScreen> {
           // );
 
           if (F.appFlavor == Flavor.DEDEPOS) {
-            context.router.pushAndPopUntil(const DashboardRoute(),
+            context.router.pushAndPopUntil(const MenuRoute(),
                 predicate: (route) => false);
           } else {
             context.router.pushAndPopUntil(const DashboardRoute(),
