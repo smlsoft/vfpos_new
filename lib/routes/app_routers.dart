@@ -26,7 +26,8 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: POSLoginRoute.page),
         AutoRoute(page: InitPOSRoute.page),
         AutoRoute(page: InitShopRoute.page),
-        AutoRoute(page: PosSecondaryRoute.page)
+        AutoRoute(page: PosSecondaryRoute.page),
+        AutoRoute(page: MenuPage.page)
 
         /// routes go here
       ];

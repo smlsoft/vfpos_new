@@ -75,5 +75,9 @@
     <true/>
     <key>com.apple.security.network.client</key>
     <true/>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Connect Bluetooth Device eg. Barcode Scanner, Printer</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>Connect Bluetooth Device eg. Barcode Scanner, Printer</string>
   </dict>
 </plist>
