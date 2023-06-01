@@ -41,7 +41,7 @@ class SyncMasterStatusModel {
 }
 
 @JsonSerializable(explicitToJson: true)
-class LocalStrongDataModel {
+class PrinterLocalStrongDataModel {
   int printerCashierType;
   int connectType;
   String ipAddress;
@@ -52,11 +52,10 @@ class LocalStrongDataModel {
   String manufacturer;
   String vendorId;
   String productId;
-  // 1 = 58mm, 2 = 80mm
-  int paperSize;
+  int paperSize; // 1 = 58mm, 2 = 80mm
   bool printBillAuto;
 
-  LocalStrongDataModel(
+  PrinterLocalStrongDataModel(
       {this.printerCashierType = 0,
       this.connectType = 0,
       this.ipAddress = "",
@@ -67,12 +66,12 @@ class LocalStrongDataModel {
       this.manufacturer = "",
       this.vendorId = "",
       this.productId = "",
-      this.paperSize = 0,
+      this.paperSize = 2,
       this.printBillAuto = false});
 
-  factory LocalStrongDataModel.fromJson(Map<String, dynamic> json) =>
-      _$LocalStrongDataModelFromJson(json);
-  Map<String, dynamic> toJson() => _$LocalStrongDataModelToJson(this);
+  factory PrinterLocalStrongDataModel.fromJson(Map<String, dynamic> json) =>
+      _$PrinterLocalStrongDataModelFromJson(json);
+  Map<String, dynamic> toJson() => _$PrinterLocalStrongDataModelToJson(this);
 }
 
 class PrinterDeviceModel {

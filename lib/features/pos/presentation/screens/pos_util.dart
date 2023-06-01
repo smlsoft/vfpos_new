@@ -5,15 +5,24 @@ import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/material.dart';
 
-Future<String> saveBill(
+class saveBillResultClass {
+  late String docNumber;
+  late DateTime docDate;
+}
+
+Future<saveBillResultClass> saveBill(
     {required double cashAmount,
     required String discountFormula,
     required double discountAmount}) async {
+  saveBillResultClass result = saveBillResultClass();
   String docNumber = await global.billRunning();
+  DateTime docDate = DateTime.now();
+  result.docNumber = docNumber;
+  result.docDate = docDate;
 
   // Header
   global.billHelper.insert(BillObjectBoxStruct(
-      date_time: DateTime.now(),
+      date_time: docDate,
       doc_number: docNumber,
       customer_code:
           global.posHoldProcessResult[global.posHoldActiveNumber].customerCode,
@@ -153,7 +162,7 @@ Future<String> saveBill(
   // Running เลขที่ใบเสร็จ
   global.configHelper.update(ConfigObjectBoxStruct(
       device_id: global.deviceId, last_doc_number: docNumber));
-  return docNumber;
+  return result;
 }
 
 Future<void> processPromotionTemp() async {

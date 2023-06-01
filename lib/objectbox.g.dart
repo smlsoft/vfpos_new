@@ -1116,11 +1116,6 @@ final _entities = <ModelEntity>[
             id: const IdUid(28, 478159652125428818),
             name: 'printerWidth',
             type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(30, 6211016703725845138),
-            name: 'charPerLine',
-            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1232,7 +1227,8 @@ ModelDefinition getObjectBoxModel() {
         4651088592151032410,
         37100495742644418,
         5283627247557061711,
-        5185449551030321875
+        5185449551030321875,
+        6211016703725845138
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2095,7 +2091,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(25, object.shopTel);
           fbb.addInt64(26, object.printMode);
           fbb.addInt64(27, object.printerWidth);
-          fbb.addInt64(29, object.charPerLine);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2130,7 +2125,6 @@ ModelDefinition getObjectBoxModel() {
               descriptionWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0),
               amountWidth: const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0),
               saleDetail: const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false),
-              charPerLine: const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0),
               docNoQrCode: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -2969,8 +2963,4 @@ class PosTicketObjectBoxStruct_ {
   /// see [PosTicketObjectBoxStruct.printerWidth]
   static final printerWidth = QueryIntegerProperty<PosTicketObjectBoxStruct>(
       _entities[12].properties[17]);
-
-  /// see [PosTicketObjectBoxStruct.charPerLine]
-  static final charPerLine = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[18]);
 }

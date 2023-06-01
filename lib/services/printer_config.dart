@@ -1,3 +1,4 @@
+import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 import 'package:image/image.dart' as im;
 import 'dart:async';
 import 'dart:io';
@@ -16,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_usb_printer/flutter_usb_printer.dart';
 import 'package:get/utils.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:sunmi_printer_plus/enums.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'dart:ui' as ui;
@@ -39,28 +41,50 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
   TextEditingController usbProductIdController = TextEditingController();
   TextEditingController ipAddressController = TextEditingController();
   TextEditingController portController = TextEditingController();
-  int printerConnectType = global.appLocalStrongData.connectType;
   List<PrinterDeviceModel> printerList = [];
   late Timer screenTimer;
   bool printBillAuto = true;
   int printerPaperSize = 2;
   int printerSelectedIndex = -1;
+  bool isDiscovering = false;
+
+  /// 1=USB,2=IP,3=Bluetooth,4=Windows,100=Sunmi
+  int printerConnectType = global.printerLocalStrongData.connectType;
 
   @override
   void initState() {
-    ipAddressController.text = global.printerCashierIpAddress;
-    portController.text = global.printerCashierIpPort.toString();
+    super.initState();
     getDeviceList();
     screenTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {});
     });
-    super.initState();
   }
 
   @override
   void dispose() {
     screenTimer.cancel();
     super.dispose();
+  }
+
+  Future<void> startBluetoothDiscovery() async {
+    final List<BluetoothInfo> listResult =
+        await PrintBluetoothThermal.pairedBluetooths;
+    await Future.forEach(listResult, (BluetoothInfo bluetooth) {
+      String name = bluetooth.name;
+      String mac = bluetooth.macAdress;
+      setState(() {
+        printerList.add(
+          PrinterDeviceModel(
+            fullName: "Bluetooth : $name $mac",
+            productName: "Bluetooth Printer",
+            deviceName: name,
+            deviceId: mac,
+            ipAddress: mac,
+            connectType: global.PrinterCashierConnectEnum.bluetooth,
+          ),
+        );
+      });
+    });
   }
 
   void scanNetworkPrinter() async {
@@ -73,13 +97,15 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       printer.connect(ip, port: 9100).then((value) {
         if (value == PosPrintResult.success) {
           if (printerList.any((element) => element.ipAddress == ip) == false) {
-            printerList.add(PrinterDeviceModel(
-              fullName: "IP Printer : $ip",
-              productName: "IP Printer",
-              ipAddress: ip,
-              ipPort: 9100,
-              connectType: global.PrinterCashierConnectEnum.ip,
-            ));
+            setState(() {
+              printerList.add(PrinterDeviceModel(
+                fullName: "IP Printer : $ip",
+                productName: "IP Printer",
+                ipAddress: ip,
+                ipPort: 9100,
+                connectType: global.PrinterCashierConnectEnum.ip,
+              ));
+            });
           }
           printer.disconnect();
         }
@@ -95,24 +121,49 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       deviceName: "SUNMI Printer",
       connectType: global.PrinterCashierConnectEnum.sunmi1,
     ));
-    setState(() {});
-    List<Map<String, dynamic>> results = [];
-    results = await FlutterUsbPrinter.getUSBDeviceList();
+    {
+      // Windows
+      PrinterManager.instance
+          .discovery(type: PrinterType.usb, isBle: false)
+          .listen((device) {
+        setState(() {
+          printerList.add(PrinterDeviceModel(
+            fullName: "Windows Printer : ${device.name}",
+            productName: "",
+            deviceName: device.name,
+            ipAddress: device.name,
+            deviceId: "",
+            manufacturer: "",
+            vendorId: device.vendorId.toString(),
+            productId: device.productId.toString(),
+            connectType: global.PrinterCashierConnectEnum.windows,
+          ));
+        });
+      });
+    }
+    {
+      // Usb (Android only)
+      List<Map<String, dynamic>> results = [];
+      results = await FlutterUsbPrinter.getUSBDeviceList();
 
-    print("getDeviceList length: ${results.length}");
-    for (var printer in results) {
-      printerList.add(PrinterDeviceModel(
-        fullName: "USB Printer : ${printer["manufacturer"]}",
-        productName: printer["productName"],
-        deviceName: printer["deviceName"],
-        deviceId: printer["deviceId"],
-        manufacturer: printer["manufacturer"],
-        vendorId: printer["vendorId"],
-        productId: printer["productId"],
-        connectType: global.PrinterCashierConnectEnum.usb,
-      ));
+      print("getDeviceList length: ${results.length}");
+      for (var printer in results) {
+        setState(() {
+          printerList.add(PrinterDeviceModel(
+            fullName: "USB Printer : ${printer["manufacturer"]}",
+            productName: printer["productName"],
+            deviceName: printer["deviceName"],
+            deviceId: printer["deviceId"],
+            manufacturer: printer["manufacturer"],
+            vendorId: printer["vendorId"],
+            productId: printer["productId"],
+            connectType: global.PrinterCashierConnectEnum.usb,
+          ));
+        });
+      }
     }
     scanNetworkPrinter();
+    startBluetoothDiscovery();
   }
 
   void connect(int vendorId, int productId) async {
@@ -139,13 +190,77 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
             ipAddress: ipAddressController.text,
             port: int.parse(portController.text));
         break;
+      case 3:
+        printTestByBluetooth();
+        break;
+      case 4:
+        printTestByWindows();
+        break;
       case 100:
-        printTestBySunmi1();
+        printTestByImageBrandSunmi1();
         break;
     }
   }
 
-  Future<void> printTestBySunmi1() async {
+  void printTestByBluetooth() async {
+    String mac = printerList[printerSelectedIndex].ipAddress;
+    await PrintBluetoothThermal.connect(macPrinterAddress: mac);
+    bool connectStatus = await PrintBluetoothThermal.connectionStatus;
+    if (connectStatus) {
+      final profile = await CapabilityProfile.load();
+      final generator = Generator(PaperSize.mm80, profile);
+      List<int> xbytes = [];
+
+      double maxHeight = 10;
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      final backgroundPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRect(
+          const Rect.fromLTWH(0.0, 0.0, 640.0, 10000.0), backgroundPaint);
+
+      for (int loop = 1; loop < 10; loop++) {
+        TextSpan span = TextSpan(
+            style: TextStyle(
+                color: Colors.black, fontSize: 24 + (loop.toDouble() * 2)),
+            text: "สวัสดีประเทศไทย " + loop.toString());
+        TextPainter tp = TextPainter(
+            text: span,
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.ltr);
+        tp.layout();
+        tp.paint(canvas, Offset(0, maxHeight.toDouble()));
+        maxHeight += tp.height;
+      }
+      final picture = recorder.endRecording();
+      final imageBuffer = picture.toImage(640, maxHeight.toInt());
+      final pngBytes = await imageBuffer
+          .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+      im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+      int printMaxHeight = 500;
+      int calcLoop = imageDecode!.height ~/ printMaxHeight;
+      for (int i = 0; i <= calcLoop; i++) {
+        try {
+          if (i != 0) {
+            sleep(const Duration(milliseconds: 100));
+          }
+          im.Image croppedImage = im.copyCrop(imageDecode, 0,
+              i * printMaxHeight, imageDecode.width, printMaxHeight);
+          xbytes += generator.image(croppedImage);
+        } catch (e) {
+          serviceLocator<Log>().error(e);
+        }
+      }
+      xbytes += generator.cut();
+      await PrintBluetoothThermal.writeBytes(xbytes);
+    } else {
+      print("the printer is disconnected ($connectStatus)");
+    }
+  }
+
+  Future<void> printTestByImageBrandSunmi1() async {
     await SunmiPrinter.bindingPrinter();
     await SunmiPrinter.startTransactionPrint(true);
 
@@ -193,14 +308,14 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
         serviceLocator<Log>().error(e);
       }
     }
-    await SunmiPrinter.lineWrap(2); 
+    await SunmiPrinter.lineWrap(2);
     await SunmiPrinter.setAlignment(SunmiPrintAlign.CENTER);
     await SunmiPrinter.printQRCode('https://www.dedepos.com');
     await SunmiPrinter.submitTransactionPrint();
     await SunmiPrinter.exitTransactionPrint(true);
   }
 
-  Future<void> printTestByIpAddress(
+  void printTestByIpAddress(
       {required String ipAddress, required int port}) async {
     PaperSize paper = PaperSize.mm80;
     CapabilityProfile profile = await CapabilityProfile.load();
@@ -208,32 +323,118 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
     try {
       PosPrintResult res = await printer.connect(ipAddress, port: port);
       if (res == PosPrintResult.success) {
-        printer.printCodeTable();
-        printer.feed(3);
-        printer.emptyLines(0);
-        printer.text("--------------------------------------");
-        printer.text("Hello world");
-        printer.text("Testing ESC POS printer...");
-        printer.text("--------------------------------------");
-        printer.text("Font size: 100%",
-            styles: const PosStyles(
-                height: PosTextSize.size1, width: PosTextSize.size1));
-        printer.text("Font size: 200%",
-            styles: const PosStyles(
-                height: PosTextSize.size2, width: PosTextSize.size2));
-        printer.text("Font size: 400%",
-            styles: const PosStyles(
-                height: PosTextSize.size3, width: PosTextSize.size3));
-        printer.text("--------------------------------------");
-        printer.feed(1);
-        printer.qrcode("www.dedepos.com", size: QRSize.Size8);
+        // Image
+        double maxHeight = 10;
+        final recorder = ui.PictureRecorder();
+        final canvas = Canvas(recorder);
+        final backgroundPaint = Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.fill;
+
+        canvas.drawRect(
+            const Rect.fromLTWH(0.0, 0.0, 640.0, 10000.0), backgroundPaint);
+
+        for (int loop = 1; loop < 10; loop++) {
+          TextSpan span = TextSpan(
+              style: TextStyle(
+                  color: Colors.black, fontSize: 24 + (loop.toDouble() * 2)),
+              text: "สวัสดีประเทศไทย " + loop.toString());
+          TextPainter tp = TextPainter(
+              text: span,
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.ltr);
+          tp.layout();
+          tp.paint(canvas, Offset(0, maxHeight.toDouble()));
+          maxHeight += tp.height;
+        }
+        final picture = recorder.endRecording();
+        final imageBuffer = picture.toImage(640, maxHeight.toInt());
+        final pngBytes = await imageBuffer
+            .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+        im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+        int printMaxHeight = 500;
+        int calcLoop = imageDecode!.height ~/ printMaxHeight;
+        for (int i = 0; i <= calcLoop; i++) {
+          try {
+            im.Image croppedImage = im.copyCrop(imageDecode, 0,
+                i * printMaxHeight, imageDecode.width, printMaxHeight);
+            printer.imageRaster(croppedImage);
+          } catch (e) {
+            serviceLocator<Log>().error(e);
+          }
+        }
+        sleep(const Duration(milliseconds: 100));
         printer.feed(1);
         printer.barcode(Barcode.upcA([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4]));
         printer.feed(3);
+        sleep(const Duration(milliseconds: 100));
         printer.cut();
+        sleep(const Duration(milliseconds: 100));
         printer.drawer();
         printer.disconnect();
       }
+    } catch (e) {
+      serviceLocator<Log>().error(e);
+    }
+  }
+
+  void printTestByWindows() async {
+    String printerName = printerList[printerSelectedIndex].deviceName;
+    try {
+      print("Connecting..." + printerList[printerSelectedIndex].ipAddress);
+      await PrinterManager.instance.connect(
+          type: PrinterType.usb,
+          model: UsbPrinterInput(
+              name: printerList[printerSelectedIndex].deviceName,
+              productId: printerList[printerSelectedIndex].productId,
+              vendorId: printerList[printerSelectedIndex].vendorId));
+      final profile = await CapabilityProfile.load();
+      final generator = Generator(PaperSize.mm80, profile);
+      // Image
+      double maxHeight = 10;
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      final backgroundPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRect(
+          const Rect.fromLTWH(0.0, 0.0, 640.0, 10000.0), backgroundPaint);
+
+      for (int loop = 1; loop < 10; loop++) {
+        TextSpan span = TextSpan(
+            style: TextStyle(
+                color: Colors.black, fontSize: 24 + (loop.toDouble() * 2)),
+            text: "สวัสดีประเทศไทย " + loop.toString());
+        TextPainter tp = TextPainter(
+            text: span,
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.ltr);
+        tp.layout();
+        tp.paint(canvas, Offset(0, maxHeight.toDouble()));
+        maxHeight += tp.height;
+      }
+      final picture = recorder.endRecording();
+      final imageBuffer = picture.toImage(640, maxHeight.toInt());
+      final pngBytes = await imageBuffer
+          .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+      im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+      int printMaxHeight = 500;
+      int calcLoop = imageDecode!.height ~/ printMaxHeight;
+      var bytes = generator.reset();
+      for (int i = 0; i <= calcLoop; i++) {
+        try {
+          im.Image croppedImage = im.copyCrop(imageDecode, 0,
+              i * printMaxHeight, imageDecode.width, printMaxHeight);
+          bytes += generator.image(croppedImage);
+        } catch (e) {
+          serviceLocator<Log>().error(e);
+        }
+      }
+      bytes += generator.feed(1);
+      bytes += generator.cut();
+      bytes += generator.drawer();
+      PrinterManager.instance.send(type: PrinterType.usb, bytes: bytes);
     } catch (e) {
       serviceLocator<Log>().error(e);
     }
@@ -348,7 +549,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                                 case global.PrinterCashierConnectEnum.bluetooth:
                                   printerConnectType = 3;
                                   break;
-                                case global.PrinterCashierConnectEnum.serial:
+                                case global.PrinterCashierConnectEnum.windows:
                                   printerConnectType = 4;
                                   break;
                                 case global.PrinterCashierConnectEnum.sunmi1:
@@ -450,6 +651,13 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       // IP Printer
       displayPrinterConnectWidget.add(printerIpConnectWidget());
     }
+    if (printerConnectType == 3) {
+      // Bluetooth
+      displayPrinterConnectWidget.add(printerIpConnectWidget());
+    }
+    if (printerConnectType == 4) {
+      // Windows
+    }
     displayPrinterConnectWidget.add(const SizedBox(
       height: 10,
     ));
@@ -506,13 +714,14 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                       ElevatedButton(
                         child: Text(global.language("success")),
                         onPressed: () async {
-                          var data = LocalStrongDataModel(
+                          var data = PrinterLocalStrongDataModel(
                               printerCashierType: 0,
                               connectType: printerConnectType,
                               ipAddress: ipAddressController.text,
                               ipPort: int.tryParse(portController.text) ?? 0,
                               productName: "",
-                              deviceName: "",
+                              deviceName:
+                                  printerList[printerSelectedIndex].deviceName,
                               deviceId: "",
                               manufacturer: "",
                               vendorId: "",
@@ -521,7 +730,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                               printBillAuto: printBillAuto);
                           global.appLocalStore
                               .collection("dedepos")
-                              .doc("device")
+                              .doc("printer")
                               .set(data.toJson())
                               .then((value) {
                             global.loadConfig();

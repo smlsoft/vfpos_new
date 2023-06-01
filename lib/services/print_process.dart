@@ -25,11 +25,10 @@ class PrintColumn {
 }
 
 class PrintProcess {
-  int length;
   List<PrintColumn> column = [];
   List<double> columnWidth = [];
 
-  PrintProcess({required this.length});
+  PrintProcess();
 
   Future<int> thaiCount(String word) async {
     int result = 0;
@@ -47,7 +46,7 @@ class PrintProcess {
     return result;
   }
 
-  Future<void> lineFeedText(NetworkPrinter printer, PosStyles style) async {
+  /*Future<void> lineFeedText(NetworkPrinter printer, PosStyles style) async {
     List<List<PrintColumn>> rowList = [];
     int lastChar = 0;
     List<int> columnPositionList = [];
@@ -58,14 +57,15 @@ class PrintProcess {
     int position = 0;
     for (int loop = 0; loop < columnWidth.length; loop++) {
       columnPositionList.add(position);
-      double calc = (length * columnWidth[loop]) / sumColumnWidth;
+      double calc = (global.printerWidthByCharacter() * columnWidth[loop]) /
+          sumColumnWidth;
       calc = calc / style.width.value;
       columnWidthList.add(calc.toInt());
       position += columnWidthList[loop];
     }
     if (columnWidthList.length > 1) {
       columnWidthList[columnWidthList.length - 1] +=
-          length - columnWidthList.sum.toInt();
+          global.printerWidthByCharacter() - columnWidthList.sum.toInt();
     }
     // Build Row
     for (int loop1 = 0; loop1 < 10; loop1++) {
@@ -156,7 +156,9 @@ class PrintProcess {
       for (int lineIndex = 0; lineIndex < 10; lineIndex++) {
         for (int loopRow = 0; loopRow < 4; loopRow++) {
           List<int> lineList = [];
-          for (int loopColumn = 0; loopColumn < length; loopColumn++) {
+          for (int loopColumn = 0;
+              loopColumn < global.printerWidthByCharacter();
+              loopColumn++) {
             lineList.add((loopRow == 0) ? 32 : 0);
           }
           row.add(lineList);
@@ -169,7 +171,8 @@ class PrintProcess {
         Uint8List asciiCode = Uint8List.fromList(await global.thaiEncode(word));
         for (int index = 0; index < word.length; index++) {
           int char = asciiCode[index];
-          if (pos < length - 1 && columnLength < columnWidthList[loop]) {
+          if (pos < global.printerWidthByCharacter() - 1 &&
+              columnLength < columnWidthList[loop]) {
             if (char == 216 || char == 217) {
               row[1][pos] = char;
             } else if (char == 209 ||
@@ -190,7 +193,7 @@ class PrintProcess {
         }
       }
       List<int> packList = [];
-      for (int loop = 0; loop < length; loop++) {
+      for (int loop = 0; loop < global.printerWidthByCharacter(); loop++) {
         for (int loopRow = 0; loopRow < 4; loopRow++) {
           if (row[loopRow][loop] != 0) {
             packList.add(row[loopRow][loop]);
@@ -203,15 +206,15 @@ class PrintProcess {
       printer.textEncoded(dataPrint, styles: style);
     }
     column.clear();
-  }
+  }*/
 
-  Future<void> drawLine(NetworkPrinter printer) async {
+  /*Future<void> drawLine(NetworkPrinter printer) async {
     StringBuffer line = StringBuffer();
-    for (int loop = 0; loop < length; loop++) {
+    for (int loop = 0; loop < global.printerWidthByCharacter(); loop++) {
       line.write("-");
     }
     printer.text(line.toString());
-  }
+  }*/
 
   Future<ui.Image> lineFeedImage(PosStyles style) async {
     List<List<PrintColumn>> rowList = [];
@@ -220,7 +223,6 @@ class PrintProcess {
     int sumColumnWidth = columnWidth.sum.toInt();
     double position = 0;
     int maxHeight = 0;
-    double maxWidth = 576;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
@@ -229,18 +231,20 @@ class PrintProcess {
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, maxWidth, 10000.0), backgroundPaint);
+        Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 10000.0),
+        backgroundPaint);
 
     for (int loop = 0; loop < columnWidth.length; loop++) {
       columnPositionList.add(position);
-      double calc = (maxWidth * columnWidth[loop]) / sumColumnWidth;
+      double calc =
+          (global.printerWidthByPixel() * columnWidth[loop]) / sumColumnWidth;
       calc = calc / style.width.value;
       columnWidthList.add(calc);
       position += columnWidthList[loop];
     }
     if (columnWidthList.length > 1) {
       columnWidthList[columnWidthList.length - 1] +=
-          maxWidth - columnWidthList.sum;
+          global.printerWidthByPixel() - columnWidthList.sum;
     }
     // Build Row
     for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
@@ -335,6 +339,8 @@ class PrintProcess {
       maxHeight += rowHeight;
     }
     column.clear();
-    return await recorder.endRecording().toImage(640, maxHeight + 1);
+    return await recorder
+        .endRecording()
+        .toImage(global.printerWidthByPixel().toInt(), maxHeight + 1);
   }
 }

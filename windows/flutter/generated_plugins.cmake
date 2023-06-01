@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   charset_converter
   connectivity_plus
+  flutter_pos_printer_platform
   geolocator_windows
   network_info_plus
   objectbox_flutter_libs

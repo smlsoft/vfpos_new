@@ -97,7 +97,7 @@ bool speechToTextVisible = false;
 bool loginSuccess = false;
 GetStorage appStorage = GetStorage('AppStorage');
 Localstore appLocalStore = Localstore.instance;
-late LocalStrongDataModel appLocalStrongData;
+late PrinterLocalStrongDataModel printerLocalStrongData;
 bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
@@ -159,8 +159,6 @@ String dateFormatSync = "yyyy-MM-ddTHH:mm:ss";
 PosVersionEnum posVersion = PosVersionEnum.vfpos;
 PrinterCashierTypeEnum printerCashierType = PrinterCashierTypeEnum.thermal;
 PrinterCashierConnectEnum printerCashierConnect = PrinterCashierConnectEnum.ip;
-String printerCashierIpAddress = "";
-int printerCashierIpPort = 9100;
 bool customerDisplayDesktopMultiScreen = true;
 String targetDeviceIpAddress = "";
 int targetDeviceIpPort = 4040;
@@ -180,7 +178,7 @@ List<PosSaleChannelModel> posSaleChannelList = [];
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterCashierConnectEnum { ip, bluetooth, usb, serial, sunmi1 }
+enum PrinterCashierConnectEnum { ip, bluetooth, usb, windows, sunmi1 }
 
 enum PosVersionEnum { pos, restaurant, vfpos }
 
@@ -767,7 +765,7 @@ String language(String code) {
   }
 
   if (result.trim().isEmpty) {
-    dev.log(code);
+    // dev.log(code);
   }
   return (result.trim().isEmpty) ? code : result;
 }
@@ -787,16 +785,16 @@ void posScreenListHeightSet(double value) {
 }
 
 void loadConfig() {
-  appLocalStrongData = LocalStrongDataModel();
+  printerLocalStrongData = PrinterLocalStrongDataModel();
   try {
-    appLocalStore.collection("dedepos").doc("device").get().then((value) {
+    appLocalStore.collection("dedepos").doc("printer").get().then((value) {
       try {
-        appLocalStrongData =
-            LocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
+        printerLocalStrongData =
+            PrinterLocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
       } catch (_) {}
       {
         // ประเภทเครื่องพิมพ์ Cashier
-        switch (appLocalStrongData.printerCashierType) {
+        switch (printerLocalStrongData.printerCashierType) {
           case 0:
             printerCashierType = PrinterCashierTypeEnum.thermal;
             break;
@@ -813,24 +811,23 @@ void loadConfig() {
       }
       {
         // การเชื่อมต่อเครื่องพิมพ์ Cashier
-        switch (appLocalStrongData.connectType) {
-          case 0:
+        switch (printerLocalStrongData.connectType) {
+          case 1:
+            printerCashierConnect = PrinterCashierConnectEnum.usb;
+            break;
+          case 2:
             printerCashierConnect = PrinterCashierConnectEnum.ip;
             break;
-          case 1:
+          case 3:
             printerCashierConnect = PrinterCashierConnectEnum.bluetooth;
             break;
-          case 3:
-            printerCashierConnect = PrinterCashierConnectEnum.usb;
+          case 4:
+            printerCashierConnect = PrinterCashierConnectEnum.windows;
             break;
           case 100:
             printerCashierConnect = PrinterCashierConnectEnum.sunmi1;
             break;
         }
-      }
-      {
-        printerCashierIpAddress = appLocalStrongData.ipAddress;
-        printerCashierIpPort = appLocalStrongData.ipPort;
       }
     });
   } catch (e) {
@@ -1072,23 +1069,6 @@ Future<String> postToServerAndWait(
   return result;
 }
 
-void openCashDrawer() async {
-  PaperSize paper = PaperSize.mm80;
-  CapabilityProfile profile = await CapabilityProfile.load();
-  NetworkPrinter printer = NetworkPrinter(paper, profile);
-
-  try {
-    PosPrintResult res = await printer.connect(printerCashierIpAddress,
-        port: printerCashierIpPort);
-    if (res == PosPrintResult.success) {
-      printer.drawer();
-      printer.disconnect();
-    }
-  } catch (e) {
-    serviceLocator<Log>().error(e);
-  }
-}
-
 String getImageForTest() {
   List<String> images = [
     'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/cokecan_1024x1024@2x.png?v=1586878773',
@@ -1226,5 +1206,22 @@ void testPrinterConnect() async {
             "${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
       }
     }
+  }
+}
+
+
+int printerWidthByCharacter() {
+  if (global.printerLocalStrongData.paperSize == 1) {
+    return 32;
+  } else {
+    return 48;
+  }
+}
+
+double printerWidthByPixel() {
+  if (global.printerLocalStrongData.paperSize == 1) {
+    return 380;
+  } else {
+    return 576;
   }
 }

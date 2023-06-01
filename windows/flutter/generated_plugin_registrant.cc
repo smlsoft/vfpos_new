@@ -8,6 +8,7 @@
 
 #include <charset_converter/charset_converter_plugin.h>
 #include <connectivity_plus/connectivity_plus_windows_plugin.h>
+#include <flutter_pos_printer_platform/flutter_pos_printer_platform_plugin.h>
 #include <geolocator_windows/geolocator_windows.h>
 #include <network_info_plus/network_info_plus_windows_plugin.h>
 #include <objectbox_flutter_libs/objectbox_flutter_libs_plugin.h>
@@ -18,6 +19,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("CharsetConverterPlugin"));
   ConnectivityPlusWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
+  FlutterPosPrinterPlatformPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FlutterPosPrinterPlatformPlugin"));
   GeolocatorWindowsRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("GeolocatorWindows"));
   NetworkInfoPlusWindowsPluginRegisterWithRegistrar(

@@ -35,9 +35,9 @@ Map<String, dynamic> _$LanguageSystemCodeModelToJson(
       'langs': instance.langs.map((e) => e.toJson()).toList(),
     };
 
-LocalStrongDataModel _$LocalStrongDataModelFromJson(
+PrinterLocalStrongDataModel _$PrinterLocalStrongDataModelFromJson(
         Map<String, dynamic> json) =>
-    LocalStrongDataModel(
+    PrinterLocalStrongDataModel(
       printerCashierType: json['printerCashierType'] as int? ?? 0,
       connectType: json['connectType'] as int? ?? 0,
       ipAddress: json['ipAddress'] as String? ?? "",
@@ -52,8 +52,8 @@ LocalStrongDataModel _$LocalStrongDataModelFromJson(
       printBillAuto: json['printBillAuto'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$LocalStrongDataModelToJson(
-        LocalStrongDataModel instance) =>
+Map<String, dynamic> _$PrinterLocalStrongDataModelToJson(
+        PrinterLocalStrongDataModel instance) =>
     <String, dynamic>{
       'printerCashierType': instance.printerCashierType,
       'connectType': instance.connectType,

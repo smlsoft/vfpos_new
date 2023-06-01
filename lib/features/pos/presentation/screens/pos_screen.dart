@@ -2168,6 +2168,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       });
                     });
               },
+              icon: Icons.calculate,
               label: global.language('qty'),
             ),
             const SizedBox(
@@ -2181,7 +2182,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     closeExtra: false);
               },
               label: '+1 ${detail.unit_name}',
-              // icon: Icons.exposure_plus_1,
             ),
             const SizedBox(
               width: 2,
@@ -2214,7 +2214,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                         });
                       });
                 },
-                //icon: Icons.price_change,
+                icon: Icons.price_change,
                 label: global.language('price')),
             const SizedBox(
               width: 2,
@@ -2245,6 +2245,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                         });
                       });
                 },
+                icon: Icons.discount,
                 label: global.language('discount')),
             const SizedBox(
               width: 2,
@@ -2301,6 +2302,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       );
                     });
               },
+              icon: Icons.description,
               label: global.language('remark'),
             ),
             const SizedBox(
@@ -2343,6 +2345,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       );
                     });
               },
+              icon: Icons.delete,
               label: global.language('delete'),
             ),
           ],
@@ -2798,17 +2801,41 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     return Expanded(
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: const EdgeInsets.only(
                     left: 2, right: 2, top: 0, bottom: 0)),
             onPressed: () {
               onPressed();
             },
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.clip,
-              style: const TextStyle(fontSize: 12),
-            )));
+            child: (icon != null)
+                ? FittedBox(
+                    fit: BoxFit.fill,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            icon,
+                            size: 16,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.clip,
+                            style: const TextStyle(fontSize: 12),
+                          )
+                        ]))
+                : FittedBox(
+                    fit: BoxFit.fill,
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.clip,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  )));
   }
 
   Widget commandWidget() {
@@ -2827,29 +2854,34 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             },
           ),
       commandButton(
+        icon: FontAwesomeIcons.walkieTalkie,
         label: global.language("hold_bill"),
         onPressed: () {
           holdBill();
         },
       ),
       commandButton(
+        icon: FontAwesomeIcons.cashRegister,
         label: global.language('open_cash_drawer'),
         onPressed: () {
           openCashDrawer();
         },
       ),
       commandButton(
+        icon: FontAwesomeIcons.user,
         label: global.language('select_employee'),
         onPressed: () {
           findEmployee();
         },
       ),
       commandButton(
+          icon: Icons.restart_alt,
           label: global.language('restart'),
           onPressed: () {
             restart();
           }),
       commandButton(
+          icon: Icons.print,
           label: global.language('reprint_bill'),
           onPressed: () {
             Navigator.push(
@@ -2860,6 +2892,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             );
           }),
       commandButton(
+          icon: Icons.print,
           label: global.language('full_bill_vat'),
           onPressed: () {
             Navigator.push(
@@ -2870,6 +2903,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             );
           }),
       commandButton(
+          icon: Icons.cancel,
           label: global.language('cancel_bill'),
           onPressed: () {
             Navigator.push(
@@ -2880,8 +2914,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             );
           }),
       commandButton(
+        icon: Icons.home,
         label: global.language('main_screen'),
-        //icon: Icons.web,
         onPressed: () {
           // Navigator.pop(context);
 

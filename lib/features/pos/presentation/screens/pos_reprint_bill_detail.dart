@@ -74,7 +74,7 @@ class _PosReprintBillDetailScreenState
                                               Text(global.language("cancel"))),
                                       TextButton(
                                           onPressed: () {
-                                            printBill(bill.doc_number);
+                                            printBill(bill.date_time, bill.doc_number);
                                             BillHelper().updateRePrintBill(
                                                 bill.doc_number);
                                             Navigator.pop(context);

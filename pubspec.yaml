@@ -95,6 +95,8 @@ dependencies:
   qr_flutter: ^4.1.0
   connectivity_plus: 3.0.4
   sunmi_ext_printer: ^0.0.1
+  print_bluetooth_thermal: ^1.0.9
+  flutter_pos_printer_platform: ^1.1.0
 
 dev_dependencies:
   flutter_driver:

@@ -1,23 +1,27 @@
 import 'dart:io';
-
-import 'package:dedepos/features/pos/presentation/screens/pos_print_text.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/core/core.dart';
 import 'package:dedepos/services/print_process.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:sunmi_printer_plus/enums.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'package:image/image.dart' as im;
 import 'dart:ui' as ui;
 
-Future<void> printBill(String docNo) async {
+Future<void> printBill(DateTime docDate, String docNo) async {
   if (global.posTicket.printMode == 0) {
-    PosPrintBillClass posPrintBill = PosPrintBillClass(docNo: docNo);
-    posPrintBill.printBillText();
+    PosPrintBillClass posPrintBill =
+        PosPrintBillClass(docDate: docDate, docNo: docNo);
+    posPrintBill.printBill();
   } else {
     //printBillImage(docNo);
   }
@@ -35,7 +39,7 @@ class PosPrintBillCommandColumnModel {
 class PosPrintBillCommandModel {
   int? mode; // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
   String? text;
-  im.Image? image;
+  Uint8List? image;
   PosStyles? posStyles;
   PosTextSize? posTextSize;
   List<PosPrintBillCommandColumnModel> columns;
@@ -50,9 +54,12 @@ class PosPrintBillCommandModel {
 }
 
 class PosPrintBillClass {
+  DateTime docDate;
   String docNo;
+  double billWidth =
+      (global.printerLocalStrongData.paperSize == 1) ? 378.0 : 575.0;
 
-  PosPrintBillClass({required this.docNo});
+  PosPrintBillClass({required this.docDate, required this.docNo});
 
   Future<List<PosPrintBillCommandModel>> buildCommand() async {
     List<PosPrintBillCommandModel> commandList = [];
@@ -66,8 +73,7 @@ class PosPrintBillClass {
       // พิมพ์ Logo
       ByteData data = await rootBundle.load('assets/logo.jpg');
       Uint8List bytes = data.buffer.asUint8List();
-      im.Image? image = im.decodeImage(bytes);
-      commandList.add(PosPrintBillCommandModel(mode: 1, image: image));
+      commandList.add(PosPrintBillCommandModel(mode: 1, image: bytes));
     }
     if (global.posTicket.shopName) {
       // พิมพ์ชื่อร้าน
@@ -137,7 +143,7 @@ class PosPrintBillClass {
       //
       double sumWidth =
           global.posTicket.descriptionWidth + global.posTicket.amountWidth;
-      double calcWidth = global.posTicket.charPerLine / sumWidth;
+      double calcWidth = global.printerWidthByCharacter() / sumWidth;
       int widthCharDescription =
           (global.posTicket.descriptionWidth * calcWidth).toInt();
       int widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
@@ -280,22 +286,319 @@ class PosPrintBillClass {
       commandList.add(PosPrintBillCommandModel(mode: 9));
     } else {
       serviceLocator<Log>().error(
-          "Printer Connect fail.${global.printerCashierIpAddress}:${global.printerCashierIpPort}");
+          "Printer Connect fail.${global.printerLocalStrongData.ipAddress}:${global.printerLocalStrongData.ipPort}");
     }
     return commandList;
   }
 
-  Future<void> printBillTextByIp() async {
-    PaperSize paper = PaperSize.mm80;
+  void printBillByBluetoothImageMode() async {
+    await PrintBluetoothThermal.connect(
+        macPrinterAddress: global.printerLocalStrongData.deviceName);
+    bool connectStatus = await PrintBluetoothThermal.connectionStatus;
+    if (connectStatus) {
+      final profile = await CapabilityProfile.load();
+      final generator = Generator(
+          (global.printerLocalStrongData.paperSize == 1)
+              ? PaperSize.mm58
+              : PaperSize.mm80,
+          profile);
+      List<int> xbytes = [];
+
+      double maxHeight = 0;
+      final recorder = ui.PictureRecorder();
+      final canvas = ui.Canvas(recorder);
+      final backgroundPaint = ui.Paint()
+        ..color = const Color(0xFFFFFFFF)
+        ..style = ui.PaintingStyle.fill;
+
+      canvas.drawRect(
+          Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 20000.0),
+          backgroundPaint);
+
+      await buildCommand().then((value) async {
+        PrintProcess printProcess = PrintProcess();
+        for (var command in value) {
+          // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
+          switch (command.mode) {
+            case 0: // Reset
+              break;
+            case 1: // Logo Image
+              break;
+            case 2: // Text
+              printProcess.columnWidth.clear();
+              printProcess.column.clear();
+              for (int index = 0; index < command.columns.length; index++) {
+                printProcess.columnWidth.add(command.columns[index].width);
+                printProcess.column.add(PrintColumn(
+                    text: command.columns[index].text,
+                    align: command.columns[index].align));
+              }
+              ui.Image result = await printProcess
+                  .lineFeedImage(command.posStyles ?? const PosStyles());
+              canvas.drawImage(result, Offset(0, maxHeight), ui.Paint());
+              maxHeight += result.height.toDouble();
+              break;
+            case 3: // Line
+              //await SunmiPrinter.line(len: global.posTicket.charPerLine);
+              break;
+          }
+        }
+        final picture = recorder.endRecording();
+        final imageBuffer = picture.toImage(
+            global.printerWidthByPixel().toInt(), maxHeight.toInt());
+        final pngBytes = await imageBuffer
+            .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+        im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+        int printMaxHeight = 1000;
+        int calcLoop = imageDecode!.height ~/ printMaxHeight;
+        for (int i = 0; i <= calcLoop; i++) {
+          try {
+            if (i != 0) {
+              // sleep(const Duration(milliseconds: 100));
+            }
+            im.Image croppedImage = im.copyCrop(imageDecode, 0,
+                i * printMaxHeight, imageDecode.width, printMaxHeight);
+            xbytes += generator.imageRaster(croppedImage);
+          } catch (e) {
+            serviceLocator<Log>().error(e);
+          }
+        }
+      });
+      xbytes += generator.cut();
+      xbytes += generator.drawer();
+      await PrintBluetoothThermal.writeBytes(xbytes);
+    }
+  }
+
+  void printBillByIpImageMode() async {
+    PaperSize paper = (global.printerLocalStrongData.paperSize == 1)
+        ? PaperSize.mm58
+        : PaperSize.mm80;
     CapabilityProfile profile = await CapabilityProfile.load();
     NetworkPrinter printer = NetworkPrinter(paper, profile);
-    PosPrintResult res = await printer.connect(global.printerCashierIpAddress,
-        port: global.printerCashierIpPort);
+    PosPrintResult res = await printer.connect(
+        global.printerLocalStrongData.ipAddress,
+        port: global.printerLocalStrongData.ipPort);
+
+    if (res == PosPrintResult.success) {
+      double maxHeight = 0;
+      final recorder = ui.PictureRecorder();
+      final canvas = ui.Canvas(recorder);
+      final backgroundPaint = ui.Paint()
+        ..color = const Color(0xFFFFFFFF)
+        ..style = ui.PaintingStyle.fill;
+
+      canvas.drawRect(
+          Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 20000.0),
+          backgroundPaint);
+
+      await buildCommand().then((value) async {
+        PrintProcess printProcess = PrintProcess();
+        for (var command in value) {
+          // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
+          switch (command.mode) {
+            case 0: // Reset
+              break;
+            case 1: // Logo Image
+              break;
+            case 2: // Text
+              printProcess.columnWidth.clear();
+              printProcess.column.clear();
+              for (int index = 0; index < command.columns.length; index++) {
+                printProcess.columnWidth.add(command.columns[index].width);
+                printProcess.column.add(PrintColumn(
+                    text: command.columns[index].text,
+                    align: command.columns[index].align));
+              }
+              ui.Image result = await printProcess
+                  .lineFeedImage(command.posStyles ?? const PosStyles());
+              canvas.drawImage(result, Offset(0, maxHeight), ui.Paint());
+              maxHeight += result.height.toDouble();
+              break;
+            case 3: // Line
+              //await SunmiPrinter.line(len: global.posTicket.charPerLine);
+              break;
+          }
+        }
+        final picture = recorder.endRecording();
+        final imageBuffer = picture.toImage(
+            global.printerWidthByPixel().toInt(), maxHeight.toInt());
+        final pngBytes = await imageBuffer
+            .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+        im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+        int printMaxHeight = 100;
+        int calcLoop = imageDecode!.height ~/ printMaxHeight;
+        for (int i = 0; i <= calcLoop; i++) {
+          try {
+            if (i != 0) {
+              sleep(const Duration(milliseconds: 100));
+            }
+            im.Image croppedImage = im.copyCrop(imageDecode, 0,
+                i * printMaxHeight, imageDecode.width, printMaxHeight);
+            printer.imageRaster(croppedImage);
+          } catch (e) {
+            serviceLocator<Log>().error(e);
+          }
+        }
+      });
+      printer.cut();
+      printer.drawer();
+      printer.disconnect();
+    }
+  }
+
+  void printBillByWindowsImageMode() async {
+    try {
+      await PrinterManager.instance.connect(
+          type: PrinterType.usb,
+          model:
+              UsbPrinterInput(name: global.printerLocalStrongData.deviceName));
+      double maxHeight = 0;
+      final recorder = ui.PictureRecorder();
+      final canvas = ui.Canvas(recorder);
+      final backgroundPaint = ui.Paint()
+        ..color = const Color(0xFFFFFFFF)
+        ..style = ui.PaintingStyle.fill;
+
+      canvas.drawRect(
+          Rect.fromLTWH(0.0, 0.0, billWidth, 20000.0), backgroundPaint);
+
+      await buildCommand().then((value) async {
+        final profile = await CapabilityProfile.load();
+        final generator = Generator(
+            (global.printerLocalStrongData.paperSize == 1)
+                ? PaperSize.mm58
+                : PaperSize.mm80,
+            profile);
+        PrintProcess printProcess = PrintProcess();
+        for (var command in value) {
+          // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
+          switch (command.mode) {
+            case 0: // Reset
+              break;
+            case 1: // Logo Image
+              /*im.Image? imageLogo =
+                 ui.decodeImageFromList (command.image!.toList());
+              canvas.drawImage(
+                  imageLogo, Offset(0, maxHeight), ui.Paint());
+              maxHeight += imageLogo.height.toDouble();*/
+              break;
+            case 2: // Text
+              printProcess.columnWidth.clear();
+              printProcess.column.clear();
+              for (int index = 0; index < command.columns.length; index++) {
+                printProcess.columnWidth.add(command.columns[index].width);
+                printProcess.column.add(PrintColumn(
+                    text: command.columns[index].text,
+                    align: command.columns[index].align));
+              }
+              ui.Image result = await printProcess
+                  .lineFeedImage(command.posStyles ?? const PosStyles());
+              canvas.drawImage(result, Offset(0, maxHeight), ui.Paint());
+              maxHeight += result.height.toDouble();
+              break;
+            case 3: // Line
+              canvas.drawLine(
+                  Offset(0, maxHeight),
+                  Offset(0 + global.printerWidthByPixel(), maxHeight),
+                  ui.Paint());
+              maxHeight += 1;
+              break;
+          }
+        }
+        final picture = recorder.endRecording();
+        final imageBuffer =
+            picture.toImage(billWidth.toInt(), maxHeight.toInt());
+        final pngBytes = await imageBuffer
+            .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
+        im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
+        int printMaxHeight = 1000;
+        int calcLoop = imageDecode!.height ~/ printMaxHeight;
+        var bytes = generator.reset();
+        for (int i = 0; i <= calcLoop; i++) {
+          try {
+            if (i != 0) {
+              sleep(const Duration(milliseconds: 100));
+            }
+            im.Image croppedImage = im.copyCrop(imageDecode, 0,
+                i * printMaxHeight, imageDecode.width, printMaxHeight);
+            bytes += generator.imageRaster(croppedImage);
+          } catch (e) {
+            serviceLocator<Log>().error(e);
+          }
+        }
+        bytes += generator.cut();
+        bytes += generator.drawer();
+        PrinterManager.instance.send(type: PrinterType.usb, bytes: bytes);
+        saveImageToJpgFile(docDate, docNo, imageBuffer);
+      });
+    } catch (e) {
+      serviceLocator<Log>().error(e);
+    }
+  }
+
+  Future<void> saveImageToJpgFile(
+      DateTime docDate, String docNo, Future<ui.Image> image) async {
+    // Request storage permission.
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    try {
+      String mainPath = "posbill";
+      final directory = await getApplicationDocumentsDirectory();
+
+      // Format date as YYYYMMDD
+      final dateFormatter = DateFormat('yyyyMMdd');
+      String formattedDate = dateFormatter.format(docDate);
+
+      // Create a new directory for the main path
+      final mainDirectory = Directory('${directory.path}/$mainPath');
+      if (!await mainDirectory.exists()) {
+        await mainDirectory.create();
+      }
+
+      // Create a new directory for the date
+      final dateDirectory =
+          Directory('${directory.path}/$mainPath/$formattedDate');
+      if (!await dateDirectory.exists()) {
+        await dateDirectory.create();
+      }
+
+      // Save the image to the new directory
+      final path = '${dateDirectory.path}/$docNo.jpg';
+      print(path);
+
+      final img = await image; // Resolve the Future<ui.Image> here.
+
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      final pngBytes = byteData?.buffer.asUint8List();
+      final decodedImage = im.decodeImage(pngBytes!);
+
+      final jpg = im.encodeJpg(decodedImage!,
+          quality: 25); // Control the quality of the image.
+
+      final file = File(path);
+      await file.writeAsBytes(jpg);
+    } catch (e) {
+      print('Error saving image to file: $e');
+    }
+  }
+
+  /*Future<void> printBillByIpTextMode() async {
+    PaperSize paper = (global.printerLocalStrongData.paperSize == 1)
+        ? PaperSize.mm58
+        : PaperSize.mm80;
+    CapabilityProfile profile = await CapabilityProfile.load();
+    NetworkPrinter printer = NetworkPrinter(paper, profile);
+    PosPrintResult res = await printer.connect(
+        global.printerLocalStrongData.ipAddress,
+        port: global.printerLocalStrongData.ipPort);
 
     if (res == PosPrintResult.success) {
       await buildCommand().then((value) async {
-        PrintProcess printProcess =
-            PrintProcess(length: global.posTicket.charPerLine);
+        PrintProcess printProcess = PrintProcess();
         for (var command in value) {
           // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
           switch (command.mode) {
@@ -328,11 +631,9 @@ class PosPrintBillClass {
       });
       printer.disconnect();
     }
-  }
+  }*/
 
-  void printBillImageProcess() {}
-
-  Future<void> printBillTextBySunmi() async {
+  Future<void> printBillBySunmi() async {
     await SunmiPrinter.bindingPrinter();
     await SunmiPrinter.startTransactionPrint(true);
     double maxHeight = 0;
@@ -343,13 +644,11 @@ class PosPrintBillClass {
       ..style = ui.PaintingStyle.fill;
 
     canvas.drawRect(
-        const Rect.fromLTWH(0.0, 0.0, 640.0, 20000.0), backgroundPaint);
-
-    global.posTicket.charPerLine = 48;
+        Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 20000.0),
+        backgroundPaint);
 
     await buildCommand().then((value) async {
-      PrintProcess printProcess =
-          PrintProcess(length: global.posTicket.charPerLine);
+      PrintProcess printProcess = PrintProcess();
       for (var command in value) {
         // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
         switch (command.mode) {
@@ -377,7 +676,8 @@ class PosPrintBillClass {
         }
       }
       final picture = recorder.endRecording();
-      final imageBuffer = picture.toImage(640, maxHeight.toInt());
+      final imageBuffer = picture.toImage(
+          global.printerWidthByPixel().toInt(), maxHeight.toInt());
       final pngBytes = await imageBuffer
           .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
       im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
@@ -407,25 +707,22 @@ class PosPrintBillClass {
     await SunmiPrinter.exitTransactionPrint(true);
   }
 
-  Future<void> printBillText() async {
+  Future<void> printBill() async {
     switch (global.printerCashierConnect) {
       case global.PrinterCashierConnectEnum.ip:
-        await printBillTextByIp();
-        break;
-      case global.PrinterCashierConnectEnum.ip:
-        // TODO: Handle this case.
+        printBillByIpImageMode();
         break;
       case global.PrinterCashierConnectEnum.bluetooth:
-        // TODO: Handle this case.
+        printBillByBluetoothImageMode();
         break;
       case global.PrinterCashierConnectEnum.usb:
         // TODO: Handle this case.
         break;
-      case global.PrinterCashierConnectEnum.serial:
-        // TODO: Handle this case.
+      case global.PrinterCashierConnectEnum.windows:
+        printBillByWindowsImageMode();
         break;
       case global.PrinterCashierConnectEnum.sunmi1:
-        await printBillTextBySunmi();
+        await printBillBySunmi();
         break;
     }
   }
