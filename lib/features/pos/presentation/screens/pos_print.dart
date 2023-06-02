@@ -37,7 +37,7 @@ class PosPrintBillCommandColumnModel {
 }
 
 class PosPrintBillCommandModel {
-  int? mode; // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
+  int? mode; // 0=Reset,1=Logo Image,2=Text,3=Line
   String? text;
   Uint8List? image;
   PosStyles? posStyles;
@@ -282,8 +282,6 @@ class PosPrintBillClass {
               align: PrintColumnAlign.right),
         ]));
       }
-      // Cut
-      commandList.add(PosPrintBillCommandModel(mode: 9));
     } else {
       serviceLocator<Log>().error(
           "Printer Connect fail.${global.printerLocalStrongData.ipAddress}:${global.printerLocalStrongData.ipPort}");
@@ -302,7 +300,7 @@ class PosPrintBillClass {
               ? PaperSize.mm58
               : PaperSize.mm80,
           profile);
-      List<int> xbytes = [];
+      List<int> bytes = [];
 
       double maxHeight = 0;
       final recorder = ui.PictureRecorder();
@@ -358,15 +356,16 @@ class PosPrintBillClass {
             }
             im.Image croppedImage = im.copyCrop(imageDecode, 0,
                 i * printMaxHeight, imageDecode.width, printMaxHeight);
-            xbytes += generator.imageRaster(croppedImage);
+            bytes += generator.imageRaster(croppedImage);
           } catch (e) {
             serviceLocator<Log>().error(e);
           }
         }
+        saveImageToJpgFile(docDate, docNo, imageBuffer);
       });
-      xbytes += generator.cut();
-      xbytes += generator.drawer();
-      await PrintBluetoothThermal.writeBytes(xbytes);
+      bytes += generator.cut();
+      bytes += generator.drawer();
+      await PrintBluetoothThermal.writeBytes(bytes);
     }
   }
 
@@ -416,7 +415,12 @@ class PosPrintBillClass {
               maxHeight += result.height.toDouble();
               break;
             case 3: // Line
-              //await SunmiPrinter.line(len: global.posTicket.charPerLine);
+              canvas.drawLine(
+                  Offset(0, maxHeight),
+                  Offset(0 + global.printerWidthByPixel(), maxHeight),
+                  ui.Paint());
+              maxHeight += 1;
+
               break;
           }
         }
@@ -426,20 +430,19 @@ class PosPrintBillClass {
         final pngBytes = await imageBuffer
             .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
         im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
-        int printMaxHeight = 100;
+        int printMaxHeight = 200;
         int calcLoop = imageDecode!.height ~/ printMaxHeight;
         for (int i = 0; i <= calcLoop; i++) {
           try {
-            if (i != 0) {
-              sleep(const Duration(milliseconds: 100));
-            }
             im.Image croppedImage = im.copyCrop(imageDecode, 0,
                 i * printMaxHeight, imageDecode.width, printMaxHeight);
             printer.imageRaster(croppedImage);
+            sleep(const Duration(milliseconds: 100));
           } catch (e) {
             serviceLocator<Log>().error(e);
           }
         }
+        saveImageToJpgFile(docDate, docNo, imageBuffer);
       });
       printer.cut();
       printer.drawer();
@@ -517,9 +520,6 @@ class PosPrintBillClass {
         var bytes = generator.reset();
         for (int i = 0; i <= calcLoop; i++) {
           try {
-            if (i != 0) {
-              sleep(const Duration(milliseconds: 100));
-            }
             im.Image croppedImage = im.copyCrop(imageDecode, 0,
                 i * printMaxHeight, imageDecode.width, printMaxHeight);
             bytes += generator.imageRaster(croppedImage);

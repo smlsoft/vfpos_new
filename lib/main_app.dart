@@ -136,7 +136,7 @@ Future<void> mainApp() async {
           initialRoute: 'login',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              // fontFamily: 'Prompt',
+              fontFamily: 'Prompt',
               ),
         ),
       ),

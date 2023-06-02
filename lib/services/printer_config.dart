@@ -352,24 +352,21 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
         final pngBytes = await imageBuffer
             .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
         im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
-        int printMaxHeight = 500;
+        int printMaxHeight = 1000;
         int calcLoop = imageDecode!.height ~/ printMaxHeight;
         for (int i = 0; i <= calcLoop; i++) {
           try {
             im.Image croppedImage = im.copyCrop(imageDecode, 0,
                 i * printMaxHeight, imageDecode.width, printMaxHeight);
             printer.imageRaster(croppedImage);
+            //sleep(const Duration(milliseconds: 100));
           } catch (e) {
             serviceLocator<Log>().error(e);
           }
         }
-        sleep(const Duration(milliseconds: 100));
-        printer.feed(1);
         printer.barcode(Barcode.upcA([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 4]));
         printer.feed(3);
-        sleep(const Duration(milliseconds: 100));
         printer.cut();
-        sleep(const Duration(milliseconds: 100));
         printer.drawer();
         printer.disconnect();
       }

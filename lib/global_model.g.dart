@@ -48,7 +48,7 @@ PrinterLocalStrongDataModel _$PrinterLocalStrongDataModelFromJson(
       manufacturer: json['manufacturer'] as String? ?? "",
       vendorId: json['vendorId'] as String? ?? "",
       productId: json['productId'] as String? ?? "",
-      paperSize: json['paperSize'] as int? ?? 0,
+      paperSize: json['paperSize'] as int? ?? 2,
       printBillAuto: json['printBillAuto'] as bool? ?? false,
     );
 

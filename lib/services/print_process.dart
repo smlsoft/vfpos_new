@@ -30,7 +30,7 @@ class PrintProcess {
 
   PrintProcess();
 
-  Future<int> thaiCount(String word) async {
+  /*Future<int> thaiCount(String word) async {
     int result = 0;
     await global.thaiEncode(word).then((value) {
       Uint8List ascii = Uint8List.fromList(value);
@@ -44,7 +44,7 @@ class PrintProcess {
       }
     });
     return result;
-  }
+  }*/
 
   /*Future<void> lineFeedText(NetworkPrinter printer, PosStyles style) async {
     List<List<PrintColumn>> rowList = [];
@@ -266,30 +266,20 @@ class PrintProcess {
         String textColumn = rowList[rowIndex][columnIndex].text.trim();
         if (textColumn.isNotEmpty) {
           TextSpan span = TextSpan(
-              style: TextStyle(color: Colors.black, fontSize: 24),
+              style: TextStyle(
+                  color: Colors.black, fontSize: 24, fontFamily: 'Prompt'),
               text: textColumn);
           TextPainter tp =
               TextPainter(text: span, textDirection: ui.TextDirection.ltr);
           tp.layout();
           double textWidth = tp.width;
-          int rowAdd = 0;
-          while (textWidth > columnWidthList[columnIndex]) {
-            String text = textColumn;
-            int textLength = text.length;
-            int cut =
-                (textLength * columnWidthList[columnIndex] / textWidth).floor();
-            rowList[rowIndex + rowAdd][columnIndex].text =
-                text.substring(0, cut);
-            rowList[rowIndex + rowAdd + 1][columnIndex].text =
-                text.substring(cut);
-            textColumn = rowList[rowIndex + rowAdd + 1][columnIndex].text;
-            span = TextSpan(
-                style: TextStyle(color: Colors.black, fontSize: 24),
-                text: textColumn);
-            tp = TextPainter(text: span, textDirection: ui.TextDirection.ltr);
-            tp.layout();
-            textWidth = tp.width;
-            rowAdd++;
+          if (textWidth > columnWidthList[columnIndex]) {
+            int textLength = textColumn.length;
+            int cut = (textLength * columnWidthList[columnIndex] / textWidth)
+                    .floor() -
+                1;
+            rowList[rowIndex][columnIndex].text = textColumn.substring(0, cut);
+            rowList[rowIndex + 1][columnIndex].text = textColumn.substring(cut);
           }
         }
       }
@@ -307,6 +297,7 @@ class PrintProcess {
         }
         if (rowList[rowIndex][columnIndex].text.trim().isNotEmpty) {
           remove = false;
+          break;
         }
       }
       if (remove) {
@@ -318,7 +309,9 @@ class PrintProcess {
       for (int columnIndex = 0; columnIndex < column.length; columnIndex++) {
         String text = rowList[rowIndex][columnIndex].text;
         TextSpan span = TextSpan(
-            style: TextStyle(color: Colors.black, fontSize: 24), text: text);
+            style: TextStyle(
+                color: Colors.black, fontSize: 24, fontFamily: 'Prompt'),
+            text: text);
         TextPainter tp = TextPainter(
             text: span,
             textAlign: (column[columnIndex].align == PrintColumnAlign.right)

@@ -1209,7 +1209,6 @@ void testPrinterConnect() async {
   }
 }
 
-
 int printerWidthByCharacter() {
   if (global.printerLocalStrongData.paperSize == 1) {
     return 32;
@@ -1220,7 +1219,7 @@ int printerWidthByCharacter() {
 
 double printerWidthByPixel() {
   if (global.printerLocalStrongData.paperSize == 1) {
-    return 380;
+    return 384;
   } else {
     return 576;
   }
