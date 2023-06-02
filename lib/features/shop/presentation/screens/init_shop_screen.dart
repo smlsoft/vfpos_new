@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
@@ -28,8 +29,14 @@ class _InitShopScreenState extends State<InitShopScreen> {
           //         posScreenMode: global.PosScreenModeEnum.posSale),
           //   ),
           // );
-          context.router.pushAndPopUntil(const DashboardRoute(),
-              predicate: (route) => false);
+
+          if (F.appFlavor == Flavor.DEDEPOS) {
+            context.router.pushAndPopUntil(const MenuRoute(),
+                predicate: (route) => false);
+          } else {
+            context.router.pushAndPopUntil(const DashboardRoute(),
+                predicate: (route) => false);
+          }
         }
       });
     });

@@ -1,20 +1,26 @@
+import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/printer_helper.dart';
+import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
+import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_storage/get_storage.dart';
 
+@RoutePage()
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
 
@@ -307,6 +313,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       global.userLoginCode = "";
                       global.userLoginName = "";
                     });
+                    context
+                        .read<AuthenticationBloc>()
+                        .add(const UserLogoutEvent());
                   },
                   child: const Icon(Icons.logout)),
             ],
@@ -334,182 +343,145 @@ class _MenuScreenState extends State<MenuScreen> {
           ])),
     ]);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.blue[100],
-          appBar: AppBar(
-              centerTitle: true,
-              foregroundColor: Colors.white,
-              title: Text(
-                  "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_remote")}"),
-              actions: (menuMode == 1)
-                  ? []
-                  : [
-                      IconButton(
-                        icon: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.green, width: 2),
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
+      listener: (context, state) {
+        if (state is AuthenticationInitialState) {
+          context.router.pushAndPopUntil(const AuthenticationRoute(),
+              predicate: (route) => false);
+        }
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.blue[100],
+            appBar: AppBar(
+                centerTitle: true,
+                foregroundColor: Colors.white,
+                title: Text(
+                    "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_remote")}"),
+                actions: (menuMode == 1)
+                    ? []
+                    : [
+                        IconButton(
+                          icon: Container(
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.green, width: 2),
+                              ),
+                              child: Image.asset(
+                                  'assets/flags/${global.userLanguage}.png')),
+                          onPressed: () {
+                            setState(() {
+                              menuMode = 1;
+                            });
+                          },
+                        ),
+                        PopupMenuButton(
+                          elevation: 2,
+                          icon: const Icon(Icons.more_vert),
+                          offset: Offset(0.0, appBarHeight),
+                          onSelected: (value) {
+                            if (value == 1) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PrinterConfigScreen(),
+                                ),
+                              );
+                            }
+                          },
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(8.0),
+                              bottomRight: Radius.circular(8.0),
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0),
                             ),
-                            child: Image.asset(
-                                'assets/flags/${global.userLanguage}.png')),
-                        onPressed: () {
-                          setState(() {
-                            menuMode = 1;
-                          });
-                        },
-                      ),
-                      PopupMenuButton(
-                        elevation: 2,
-                        icon: const Icon(Icons.more_vert),
-                        offset: Offset(0.0, appBarHeight),
-                        onSelected: (value) {
-                          if (value == 1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const PrinterConfigScreen(),
-                              ),
-                            );
-                          }
-                        },
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(8.0),
-                            bottomRight: Radius.circular(8.0),
-                            topLeft: Radius.circular(8.0),
-                            topRight: Radius.circular(8.0),
                           ),
+                          itemBuilder: (ctx) => [
+                            buildPopupMenuItem(
+                              title: global.language('printer_config'),
+                              valueCode: 1,
+                              iconData: Icons.print_rounded,
+                            ),
+                            buildPopupMenuItem(
+                              title: global.language('logout'),
+                              valueCode: 9,
+                              iconData: Icons.logout,
+                            ),
+                          ],
+                        )
+                      ]),
+            resizeToAvoidBottomInset: false,
+            body: (menuMode == 1)
+                ? selectLanguage()
+                : (global.userLoginCode.isEmpty)
+                    ? Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.25),
+                                BlendMode.dstATop),
+                            image: const AssetImage('assets/images/login.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 7,
+                              offset: const Offset(
+                                  0, 3), // changes position of shadow
+                            ),
+                          ],
                         ),
-                        itemBuilder: (ctx) => [
-                          buildPopupMenuItem(
-                            title: global.language('printer_config'),
-                            valueCode: 1,
-                            iconData: Icons.print_rounded,
-                          ),
-                          buildPopupMenuItem(
-                            title: global.language('logout'),
-                            valueCode: 9,
-                            iconData: Icons.logout,
-                          ),
-                        ],
-                      )
-                    ]),
-          resizeToAvoidBottomInset: false,
-          body: (menuMode == 1)
-              ? selectLanguage()
-              : (global.userLoginCode.isEmpty)
-                  ? Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          colorFilter: ColorFilter.mode(
-                              Colors.black.withOpacity(0.25),
-                              BlendMode.dstATop),
-                          image: const AssetImage('assets/images/login.png'),
-                          fit: BoxFit.cover,
-                        ),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 7,
-                            offset: const Offset(
-                                0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      margin: const EdgeInsets.all(10),
-                      child: SizedBox(
-                          width: double.infinity,
-                          child: Center(
-                            child: Container(
-                                width: 200,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 10,
-                                      blurRadius: 7,
-                                      offset: const Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    posLoginDialog();
-                                  },
-                                  child: Text(
-                                    global.language("login"),
-                                    overflow: TextOverflow.clip,
+                        margin: const EdgeInsets.all(10),
+                        child: SizedBox(
+                            width: double.infinity,
+                            child: Center(
+                              child: Container(
+                                  width: 200,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.5),
+                                        spreadRadius: 10,
+                                        blurRadius: 7,
+                                        offset: const Offset(
+                                            0, 3), // changes position of shadow
+                                      ),
+                                    ],
                                   ),
-                                )),
-                          )))
-                  : Column(children: [
-                      infoWidget,
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  child: GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: menuPosList.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          MediaQuery.of(context).size.width ~/
-                                              150,
-                                      crossAxisSpacing: 5.0,
-                                      mainAxisSpacing: 5.0,
-                                    ),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return menuPosList[index];
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      posLoginDialog();
                                     },
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  child: GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: menuShiftList.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          MediaQuery.of(context).size.width ~/
-                                              150,
-                                      crossAxisSpacing: 5.0,
-                                      mainAxisSpacing: 5.0,
+                                    child: Text(
+                                      global.language("login"),
+                                      overflow: TextOverflow.clip,
                                     ),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return menuShiftList[index];
-                                    },
-                                  ),
-                                ),
-                              ),
-                              if (menuVisitList.isNotEmpty)
+                                  )),
+                            )))
+                    : Column(children: [
+                        infoWidget,
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: SizedBox(
                                     child: GridView.builder(
                                       shrinkWrap: true,
                                       physics: const BouncingScrollPhysics(),
-                                      itemCount: menuVisitList.length,
+                                      itemCount: menuPosList.length,
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount:
@@ -520,16 +492,63 @@ class _MenuScreenState extends State<MenuScreen> {
                                       ),
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        return menuVisitList[index];
+                                        return menuPosList[index];
                                       },
                                     ),
                                   ),
                                 ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    child: GridView.builder(
+                                      shrinkWrap: true,
+                                      physics: const BouncingScrollPhysics(),
+                                      itemCount: menuShiftList.length,
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount:
+                                            MediaQuery.of(context).size.width ~/
+                                                150,
+                                        crossAxisSpacing: 5.0,
+                                        mainAxisSpacing: 5.0,
+                                      ),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return menuShiftList[index];
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                if (menuVisitList.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      child: GridView.builder(
+                                        shrinkWrap: true,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount: menuVisitList.length,
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: MediaQuery.of(context)
+                                                  .size
+                                                  .width ~/
+                                              150,
+                                          crossAxisSpacing: 5.0,
+                                          mainAxisSpacing: 5.0,
+                                        ),
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return menuVisitList[index];
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      )
-                    ]),
+                        )
+                      ]),
+          ),
         ),
       ),
     );
