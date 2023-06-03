@@ -1764,29 +1764,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           child: Row(
             children: [
               Expanded(
-                flex: 5,
+                flex: 7,
                 child: Text(global.language("item_description"),
-                    style: textStyle.copyWith(fontSize: fontSize)),
+                    style: textStyle.copyWith(fontSize: fontSize),
+                    overflow: TextOverflow.ellipsis),
               ),
-              Expanded(
-                  flex: 1,
-                  child: Text(global.language("unit_name"),
-                      style: textStyle.copyWith(fontSize: fontSize))),
-              Expanded(
-                  flex: 1,
-                  child: Text(global.language("qty"),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
-              Expanded(
-                  flex: 1,
-                  child: Text(global.language("price"),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
               Expanded(
                   flex: 2,
                   child: Text(global.language("total"),
                       textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
+                      style: textStyle.copyWith(fontSize: fontSize),
+                      overflow: TextOverflow.ellipsis)),
             ],
           ));
     });
@@ -1810,7 +1798,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           child: Row(
             children: [
               Expanded(
-                flex: 5,
+                flex: 7,
                 child: Text(
                     "${global.language("total")} ${global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length} ${global.language("line")}",
                     style: textStyle.copyWith(fontSize: fontSize)),
@@ -1856,22 +1844,54 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
-      // String description = "";
-      // Widget rowSpace = const SizedBox(
-      //   width: 4,
-      // );
-
+      List<TextSpan> productTextSpan = [];
+      productTextSpan.add(TextSpan(text: productName, style: textStyle));
+      if (qty != 0) {
+        productTextSpan.add(TextSpan(
+            text: " ${global.moneyFormat.format(qty)} $unitName",
+            style:
+                textStyle.copyWith(fontSize: fontSize, color: Colors.green)));
+        if (price != priceOriginal) {
+          productTextSpan.add(TextSpan(
+              text: " ",
+              style:
+                  textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
+        }
+        if (price != priceOriginal) {
+          productTextSpan.add(TextSpan(
+              text: " @${global.moneyFormat.format(priceOriginal)}",
+              style: textStyle.copyWith(
+                  fontSize: fontSize,
+                  color: Colors.red,
+                  decoration: TextDecoration.lineThrough)));
+        }
+        if (price * qty != totalAmount || qty != 1 || price != priceOriginal) {
+          productTextSpan.add(TextSpan(
+              text: " ",
+              style:
+                  textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
+          productTextSpan.add(TextSpan(
+              text: " @${global.moneyFormat.format(price)}",
+              style: textStyle.copyWith(
+                fontSize: fontSize,
+                color: Colors.orange,
+              )));
+        }
+      }
+      RichText productText = RichText(
+          text: TextSpan(
+              style: textStyle.copyWith(fontSize: fontSize),
+              children: productTextSpan));
       return Row(
         children: [
           Expanded(
-              flex: 5,
+              flex: 7,
               child: Row(children: [
                 Expanded(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                      Text(productName,
-                          style: textStyle.copyWith(fontSize: fontSize)),
+                      productText,
                       if (isActive)
                         Text(barcode,
                             style:
@@ -1897,42 +1917,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             const Icon(Icons.error),
                       )))
               ])),
-          Expanded(
-              flex: 1,
-              child: Text(unitName,
-                  style: textStyle.copyWith(fontSize: fontSize))),
-          Expanded(
-              flex: 1,
-              child: (qty == 0)
-                  ? Container()
-                  : Text(global.moneyFormat.format(qty),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
-          Expanded(
-              flex: 1,
-              child: (price == 0)
-                  ? Container()
-                  : ((price == priceOriginal))
-                      ? Text(global.moneyFormat.format(price),
-                          textAlign: TextAlign.right,
-                          style: textStyle.copyWith(fontSize: fontSize))
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(global.moneyFormat.format(priceOriginal),
-                                textAlign: TextAlign.right,
-                                style: textStyle.copyWith(
-                                    fontSize: fontSize * 0.75,
-                                    color: Colors.red,
-                                    fontStyle: FontStyle.italic)),
-                            Text(global.moneyFormat.format(price),
-                                textAlign: TextAlign.right,
-                                style: textStyle.copyWith(
-                                    fontSize: fontSize,
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold))
-                          ],
-                        )),
           Expanded(
               flex: 2,
               child: (totalAmount == 0)
@@ -2357,6 +2341,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ? false
         : ((activeLineNumber == index) ? true : false);
     TextStyle textStyle = TextStyle(
+        color: Colors.black,
         fontSize: 14,
         fontWeight: (active) ? FontWeight.bold : FontWeight.normal);
 
