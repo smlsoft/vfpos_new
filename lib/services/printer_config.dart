@@ -218,8 +218,9 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
         ..color = Colors.white
         ..style = PaintingStyle.fill;
 
+      double paperPixelWidth = (printerPaperSize == 1) ? 384 : 576;
       canvas.drawRect(
-          const Rect.fromLTWH(0.0, 0.0, 640.0, 10000.0), backgroundPaint);
+          Rect.fromLTWH(0.0, 0.0, paperPixelWidth, 10000.0), backgroundPaint);
 
       for (int loop = 1; loop < 10; loop++) {
         TextSpan span = TextSpan(
@@ -235,7 +236,8 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
         maxHeight += tp.height;
       }
       final picture = recorder.endRecording();
-      final imageBuffer = picture.toImage(640, maxHeight.toInt());
+      final imageBuffer =
+          picture.toImage(paperPixelWidth.toInt(), maxHeight.toInt());
       final pngBytes = await imageBuffer
           .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
       im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
@@ -248,7 +250,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
           }
           im.Image croppedImage = im.copyCrop(imageDecode, 0,
               i * printMaxHeight, imageDecode.width, printMaxHeight);
-          xbytes += generator.image(croppedImage);
+          xbytes += generator.imageRaster(croppedImage);
         } catch (e) {
           serviceLocator<Log>().error(e);
         }
@@ -564,7 +566,10 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                                   const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(printerList[index].fullName),
+                                  Text(
+                                    printerList[index].fullName,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ],
                               ))));
                 },

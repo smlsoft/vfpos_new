@@ -16,6 +16,7 @@ import 'package:dedepos/util/loading_screen.dart';
 import 'package:dedepos/util/login.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
@@ -136,8 +137,8 @@ Future<void> mainApp() async {
           initialRoute: 'login',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              fontFamily: 'Prompt',
-              ),
+            fontFamily: 'Prompt',
+          ),
         ),
       ),
     );

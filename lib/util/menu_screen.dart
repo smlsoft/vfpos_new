@@ -242,8 +242,6 @@ class _MenuScreenState extends State<MenuScreen> {
         ? 0
         : 1;
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
-
     menuPosList = menuPos();
     menuShiftList = menuShift();
     if (F.appFlavor == Flavor.SMLMOBILESALES) {

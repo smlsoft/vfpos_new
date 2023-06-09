@@ -3,6 +3,7 @@
 import 'dart:developer' as dev;
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';
 import 'package:dedepos/api/sync/sync_bill.dart';
@@ -511,7 +512,6 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: global.posTheme.background,
                   borderRadius: const BorderRadius.only(
@@ -776,7 +776,6 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 color: global.posTheme.background,
                 borderRadius: const BorderRadius.only(
@@ -799,167 +798,153 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
               ),
             ),
             Expanded(
-                child: Column(
-              children: [
-                // ร่วมเงินทั้งสิ้น
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  // color: Colors.green,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(global.language('total_amount'), style: textStyle),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            global.moneyFormat
-                                .format(widget.posProcess.total_amount),
-                            style:
-                                textStyle.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(moneySymbol, style: textStyle),
-                    ],
-                  ),
-                ),
-                // ยอดรวมชำระทั้งสิ้น
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  // color: Colors.blue.shade200,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(global.language('total_pay_amount'),
-                          style: textStyle),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            global.moneyFormat.format(sumTotalPayAmount),
-                            style:
-                                textStyle.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(moneySymbol, style: textStyle),
-                    ],
-                  ),
-                ),
-                // ยอดคงเหลือหรือปัดเศษ
-                // if (_diffAmount != 0)
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  // color: Colors.yellowAccent,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(global.language('total_pay_amount_diff'),
-                          style: textStyle),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            global.moneyFormat.format(diffAmount),
-                            style:
-                                textStyle.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(moneySymbol, style: textStyle),
-                    ],
-                  ),
-                ),
-              ],
-            )),
-            Container(
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(4.0),
-                    bottomRight: Radius.circular(4.0),
-                  ),
-                ),
-                padding: const EdgeInsets.all(4),
-                child: Column(
-                  children: [
-                    Row(
+                child: Container(
+                    padding: const EdgeInsets.all(4),
+                    child: Column(
                       children: [
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: (global.isTabletScreen() ||
-                                      global.isDesktopScreen())
-                                  ? const Size(0, 60)
-                                  : const Size(0, 30),
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Colors.red,
-                            ),
-                            onPressed: () async {
-                              global.sendProcessToCustomerDisplay();
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              global.language("back"),
-                              style: TextStyle(
-                                fontSize: (global.isTabletScreen() ||
-                                        global.isDesktopScreen())
-                                    ? 20.0
-                                    : 12,
+                        // ร่วมเงินทั้งสิ้น
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(global.language('total_amount'),
+                                style: textStyle),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  global.moneyFormat
+                                      .format(widget.posProcess.total_amount),
+                                  style: textStyle.copyWith(
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: (global.isTabletScreen() ||
-                                  global.isDesktopScreen())
-                              ? 10
-                              : 5,
-                          height: (global.isTabletScreen() ||
-                                  global.isDesktopScreen())
-                              ? 10
-                              : 5,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: (global.isTabletScreen() ||
-                                      global.isDesktopScreen())
-                                  ? const Size(0, 60)
-                                  : const Size(0, 30),
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Colors.green,
+                            const SizedBox(
+                              width: 5,
                             ),
-                            onPressed: () async {
-                              payProcessSave();
-                            },
-                            child: Text(
-                              global.language("pay"),
-                              style: TextStyle(
-                                fontSize: (global.isTabletScreen() ||
-                                        global.isDesktopScreen())
-                                    ? 20.0
-                                    : 12,
+                            Text(moneySymbol, style: textStyle),
+                          ],
+                        ),
+                        // ยอดรวมชำระทั้งสิ้น
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(global.language('total_pay_amount'),
+                                style: textStyle),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  global.moneyFormat.format(sumTotalPayAmount),
+                                  style: textStyle.copyWith(
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
-                          ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(moneySymbol, style: textStyle),
+                          ],
+                        ),
+                        // ยอดคงเหลือหรือปัดเศษ
+                        // if (_diffAmount != 0)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(global.language('total_pay_amount_diff'),
+                                style: textStyle),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  global.moneyFormat.format(diffAmount),
+                                  style: textStyle.copyWith(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(moneySymbol, style: textStyle),
+                          ],
                         ),
                       ],
+                    ))),
+            Container(
+              padding: const EdgeInsets.all(4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () async {
+                        global.sendProcessToCustomerDisplay();
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        global.language("back"),
+                        style: TextStyle(
+                          fontSize: (global.isTabletScreen() ||
+                                  global.isDesktopScreen())
+                              ? 32.0
+                              : 12,
+                          fontWeight: FontWeight.bold,
+                          shadows: const <Shadow>[
+                            Shadow(
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 3.0,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
-                )),
+                  ),
+                  SizedBox(
+                    width: (global.isTabletScreen() || global.isDesktopScreen())
+                        ? 10
+                        : 5,
+                    height:
+                        (global.isTabletScreen() || global.isDesktopScreen())
+                            ? 10
+                            : 5,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.green,
+                      ),
+                      onPressed: () async {
+                        payProcessSave();
+                      },
+                      child: Text(
+                        global.language("pay"),
+                        style: TextStyle(
+                          fontSize: (global.isTabletScreen() ||
+                                  global.isDesktopScreen())
+                              ? 32.0
+                              : 12,
+                          fontWeight: FontWeight.bold,
+                          shadows: const <Shadow>[
+                            Shadow(
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 3.0,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       )),
@@ -976,61 +961,179 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
     }
   }
 
+  Widget commandButton(
+      {required int index,
+      required Function onPressed,
+      String label = "",
+      IconData? icon}) {
+    return Expanded(
+        child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: (index == tabBarMenuController.index)
+                    ? Colors.green
+                    : Colors.blue,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                padding: const EdgeInsets.only(
+                    left: 2, right: 2, top: 0, bottom: 0)),
+            onPressed: () {
+              onPressed();
+            },
+            child: (icon != null)
+                ? FittedBox(
+                    fit: BoxFit.fill,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            icon,
+                            size: 16,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.clip,
+                            style: const TextStyle(fontSize: 12),
+                          )
+                        ]))
+                : FittedBox(
+                    fit: BoxFit.fill,
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.clip,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  )));
+  }
+
+  Widget commandWidget() {
+    List<Widget> commands = [
+      if (global.posUseSaleType)
+        commandButton(
+          index: 0,
+          label: global.language("cash"),
+          onPressed: () {
+            tabBarMenuController.index = 0;
+          },
+        ),
+      commandButton(
+        index: 1,
+        icon: FontAwesomeIcons.walkieTalkie,
+        label: global.language("discount"),
+        onPressed: () {
+          tabBarMenuController.index = 1;
+        },
+      ),
+      commandButton(
+        index: 2,
+        icon: FontAwesomeIcons.cashRegister,
+        label: global.language('qr_code'),
+        onPressed: () {
+          tabBarMenuController.index = 2;
+        },
+      ),
+      commandButton(
+        index: 3,
+        icon: FontAwesomeIcons.user,
+        label: global.language('credit_card'),
+        onPressed: () {
+          tabBarMenuController.index = 3;
+        },
+      ),
+      commandButton(
+        index: 4,
+        icon: FontAwesomeIcons.user,
+        label: global.language('money_transfer'),
+        onPressed: () {
+          tabBarMenuController.index = 4;
+        },
+      ),
+      commandButton(
+          index: 5,
+          icon: Icons.restart_alt,
+          label: global.language('cheque'),
+          onPressed: () {
+            tabBarMenuController.index = 5;
+          }),
+      commandButton(
+          index: 6,
+          icon: Icons.print,
+          label: global.language('coupon'),
+          onPressed: () {
+            tabBarMenuController.index = 6;
+          }),
+      commandButton(
+          index: 7,
+          icon: Icons.print,
+          label: global.language('credit'),
+          onPressed: () {
+            tabBarMenuController.index = 7;
+          }),
+    ];
+
+    return LayoutBuilder(builder: (context, constraints) {
+      int rowNumber = 1;
+      if (constraints.maxWidth < 500) rowNumber = 2;
+      if (constraints.maxWidth < 200) rowNumber = 3;
+      List<Widget> columns = [];
+      int itemCount = 0;
+      int itemPerRow = (commands.length / rowNumber).ceil();
+      for (int rowIndex = 0; rowIndex < rowNumber; rowIndex++) {
+        List<Widget> rows = [];
+        for (int columnIndex = 0; columnIndex < itemPerRow; columnIndex++) {
+          if (itemCount < commands.length) {
+            if (columnIndex != 0) {
+              rows.add(const SizedBox(
+                width: 4,
+              ));
+            }
+            rows.add(commands[itemCount]);
+            itemCount++;
+          }
+        }
+        if (rowIndex != 0) {
+          columns.add(const SizedBox(
+            height: 4,
+          ));
+        }
+        columns.add(IntrinsicHeight(
+            child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: rows)));
+      }
+      return Container(
+          margin: const EdgeInsets.all(2),
+          child: Column(
+            children: columns,
+          ));
+    });
+  }
+
   Widget payDetailScreen(BuildContext blocContext) {
-    List<Widget> tabBarList = [];
     List<Widget> tabViewList = [];
-    {
-      tabBarList
-          .add(Text(global.language('cash'), textAlign: TextAlign.center));
-      tabViewList.add(PayCashWidget(
-        blocContext: blocContext,
-        key: posPayCashGlobalKey,
-      ));
-    }
-    {
-      tabBarList
-          .add(Text(global.language('discount'), textAlign: TextAlign.center));
-      tabViewList.add(PayDiscountWidget(
-          posProcess: widget.posProcess, blocContext: blocContext));
-    }
-    {
-      tabBarList
-          .add(Text(global.language('qr_code'), textAlign: TextAlign.center));
-      tabViewList.add(PayQrWidget(
-          key: posQrGlobalKey,
-          posProcess: widget.posProcess,
-          blocContext: blocContext));
-    }
-    {
-      tabBarList.add(
-          Text(global.language('credit_card'), textAlign: TextAlign.center));
-      tabViewList.add(PayCreditCard(
-          posProcess: widget.posProcess, blocContext: blocContext));
-    }
-    {
-      tabBarList.add(
-          Text(global.language('money_transfer'), textAlign: TextAlign.center));
-      tabViewList.add(
-          PayTransfer(posProcess: widget.posProcess, blocContext: blocContext));
-    }
-    {
-      tabBarList
-          .add(Text(global.language('cheque'), textAlign: TextAlign.center));
-      tabViewList.add(
-          PayCheque(posProcess: widget.posProcess, blocContext: blocContext));
-    }
-    {
-      tabBarList
-          .add(Text(global.language('coupon'), textAlign: TextAlign.center));
-      tabViewList.add(
-          PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
-    }
-    {
-      tabBarList
-          .add(Text(global.language('credit'), textAlign: TextAlign.center));
-      tabViewList.add(
-          PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
-    }
+    tabViewList.add(PayCashWidget(
+      blocContext: blocContext,
+      key: posPayCashGlobalKey,
+    ));
+    tabViewList.add(PayDiscountWidget(
+        posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayQrWidget(
+        key: posQrGlobalKey,
+        posProcess: widget.posProcess,
+        blocContext: blocContext));
+    tabViewList.add(
+        PayCreditCard(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(
+        PayTransfer(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(
+        PayCheque(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(
+        PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(
+        PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
 
     return Container(
         decoration: BoxDecoration(
@@ -1044,33 +1147,18 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
               color: Colors.blue.shade100,
               borderRadius: BorderRadius.circular(7),
             ),
-            child: DefaultTabController(
-                length: 7,
-                child: Scaffold(
-                    backgroundColor: Colors.blue.shade100,
-                    resizeToAvoidBottomInset: false,
-                    body: Column(children: [
-                      Container(
-                          height: 50,
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: ColoredBox(
-                              color: Colors.blue,
-                              child: TabBar(
-                                controller: tabBarMenuController,
-                                labelColor: Colors.black,
-                                indicatorColor: Colors.blue.shade100,
-                                indicator: BoxDecoration(
-                                    color: Colors.blue.shade300,
-                                    borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(4))),
-                                tabs: tabBarList,
-                              ))),
-                      Expanded(
-                          child: TabBarView(
+            child: Column(children: [
+              commandWidget(),
+              Expanded(
+                  child: DefaultTabController(
+                      length: 7,
+                      child: Scaffold(
+                          backgroundColor: Colors.blue.shade100,
+                          resizeToAvoidBottomInset: false,
+                          body: TabBarView(
                               controller: tabBarMenuController,
-                              children: tabViewList))
-                    ])))));
+                              children: tabViewList))))
+            ])));
   }
 
   void numberPadTextAdd(String word) {

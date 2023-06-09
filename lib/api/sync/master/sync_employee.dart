@@ -64,7 +64,6 @@ Future<void> syncEmployeeCompare(
       DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "employee");
   if (lastUpdateTime != getLastUpdateTime) {
-    serviceLocator<Log>().trace("syncEmployee Start");
     var loop = true;
     var offset = 0;
     var limit = 10000;
@@ -81,11 +80,11 @@ Future<void> syncEmployeeCompare(
           List<SyncEmployeeModel> newDataList = (dataList["new"] as List)
               .map((newCate) => SyncEmployeeModel.fromJson(newCate))
               .toList();
-          serviceLocator<Log>().trace(
-              "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
+            serviceLocator<Log>().trace(
+                "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
             syncEmployee(removeList, newDataList);
           }
         } else {
@@ -96,8 +95,6 @@ Future<void> syncEmployeeCompare(
       });
       offset += limit;
     }
-    serviceLocator<Log>()
-        .trace("Update SyncEmployee Success : ${EmployeeHelper().count()}");
     global.appStorage.write(global.syncEmployeeTimeName, getLastUpdateTime);
   }
 }

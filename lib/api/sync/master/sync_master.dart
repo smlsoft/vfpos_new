@@ -345,10 +345,6 @@ Future syncMasterData() async {
     var getLastUpdateTime =
         global.syncFindLastUpdate(masterStatus, "productbarcode");
     if (lastUpdateTime != getLastUpdateTime) {
-      serviceLocator<Log>().debug("serverProductBarcode Start");
-      // Test
-      // lastUpdateTime = global.syncDateBegin;
-      //
       var loop = true;
       var offset = 0;
       var limit = 10000;

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
@@ -156,6 +158,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
     restartClearData();
     global.posScreenMode = widget.posScreenMode;
     if (global.isDesktopScreen()) {
@@ -1490,7 +1493,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget selectProductLevelCardWidget(ProductCategoryObjectBoxStruct value,
       double boxSize, bool append, double widthHeight) {
     double round = 5;
-    return SizedBox(
+    return Container(
+        padding: const EdgeInsets.all(2),
         width: widthHeight,
         height: widthHeight,
         child: ElevatedButton(
@@ -1579,7 +1583,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     double widthHeight =
         (global.isDesktopScreen() || global.isTabletScreen()) ? 80 : 50;
     List<Widget> categorySelectedList = [];
-    //print("selectProductLevelSelectWidget");
 
     if (global.productCategoryCodeSelected.isNotEmpty) {
       categorySelectedList.add(
@@ -1636,65 +1639,72 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             ? global.productCategoryList
             : global.productCategoryChildList;
 
-    return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey.shade300,
-            width: 1,
-          ),
-          color: Colors.grey.shade300,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            (global.productCategoryCodeSelected.isEmpty)
-                ? Container()
-                : Column(children: [
-                    Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
-                        children: categorySelectedList),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ]),
-            Wrap(spacing: 5, runSpacing: 5, children: [
-              for (final value in categoryList)
-                selectProductLevelCardWidget(
-                    value, gridItemSize, true, widthHeight)
-            ])
-          ],
-        ));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        (global.productCategoryCodeSelected.isEmpty)
+            ? Container()
+            : Column(children: [
+                Container(
+                    color: Colors.white,
+                    width: double.infinity,
+                    height: 80,
+                    child: ScrollConfiguration(
+                        behavior: ScrollConfiguration.of(context).copyWith(
+                          dragDevices: {
+                            PointerDeviceKind.touch,
+                            PointerDeviceKind.mouse,
+                          },
+                        ),
+                        child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: categorySelectedList))),
+                const SizedBox(
+                  height: 10,
+                ),
+              ]),
+        Container(
+            color: Colors.white,
+            width: double.infinity,
+            height: 80,
+            child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                  },
+                ),
+                child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      for (final value in categoryList)
+                        selectProductLevelCardWidget(
+                            value, gridItemSize, true, widthHeight)
+                    ])))
+      ],
+    );
   }
 
   Widget selectProductLevelWidget() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 0, bottom: 0, right: 0, left: 0),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(2),
-        child: Column(children: [
-          Expanded(
-            child: selectProductLevelListScreenWidget(),
+    return Column(
+      children: [
+        Expanded(
+          child: selectProductLevelListScreenWidget(),
+        ),
+        if (displayDetailByBarcode && activeLineNumber > -1)
+          SizedBox(
+            height: 250,
+            width: double.infinity,
+            child: transScreen(
+                mode: 1,
+                barcode: global.posHoldProcessResult[global.posHoldActiveNumber]
+                    .posProcess.details[activeLineNumber].barcode),
           ),
-          if (displayDetailByBarcode && activeLineNumber > -1)
-            SizedBox(
-              height: 250,
-              width: double.infinity,
-              child: transScreen(
-                  mode: 1,
-                  barcode: global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess
-                      .details[activeLineNumber]
-                      .barcode),
-            ),
-          selectProductLevelSelectWidget()
-        ]),
-      ),
+        selectProductLevelSelectWidget()
+      ],
     );
   }
 
@@ -1845,7 +1855,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
       List<TextSpan> productTextSpan = [];
-      productTextSpan.add(TextSpan(text: productName, style: textStyle));
+      productTextSpan.add(TextSpan(
+          text: productName, style: textStyle.copyWith(fontSize: fontSize)));
       if (qty != 0) {
         productTextSpan.add(TextSpan(
             text: " ${global.moneyFormat.format(qty)} $unitName",
@@ -2641,7 +2652,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget totalAndPayScreen() {
     // แสดงยอดรวมทั้งสิ้น
-
     return SizedBox(
       width: double.infinity,
       child: Row(
@@ -2711,7 +2721,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             ),
           ),
           const SizedBox(
-            width: 4,
+            width: 2,
           ),
           ElevatedButton(
             onPressed: () async {
@@ -2720,7 +2730,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             child: const FaIcon(FontAwesomeIcons.creditCard),
           ),
           const SizedBox(
-            width: 4,
+            width: 2,
           ),
           ElevatedButton(
             style: OutlinedButton.styleFrom(
@@ -2949,9 +2959,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: rows)));
       }
-      return Column(
-        children: columns,
-      );
+      return Container(
+          margin: EdgeInsets.all(
+              (global.deviceMode == global.DeviceModeEnum.androidPhone)
+                  ? 2
+                  : 0),
+          child: Column(
+            children: columns,
+          ));
     });
   }
 
@@ -3794,7 +3809,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget posLayoutBottomPhone() {
     return Container(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
+        margin: EdgeInsets.all(2),
         width: double.infinity,
         child: Row(children: [
           if (Platform.isAndroid || Platform.isIOS)
@@ -3807,7 +3822,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 }),
           if (Platform.isAndroid || Platform.isIOS)
             const SizedBox(
-              width: 4,
+              width: 2,
             ),
           myButton(
               child: const FaIcon(FontAwesomeIcons.addressBook),
@@ -3815,22 +3830,22 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 desktopWidgetMode = 3;
               }),
           const SizedBox(
-            width: 4,
+            width: 2,
           ),
           posButtonShowMenu(),
           const SizedBox(
-            width: 4,
+            width: 2,
           ),
           posButtonGridItemSize(),
           const SizedBox(
-            width: 4,
+            width: 2,
           ),
           posButtonListTextHeight(),
         ]));
   }
 
   Widget posLayoutBottom() {
-    Widget menuList = Container();
+    late Widget menuList;
     switch (deviceMode) {
       case 0:
         menuList = posLayoutBottomDesktop();
@@ -3841,24 +3856,29 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 2:
         menuList = posLayoutBottomPhone();
         break;
+      default:
+        menuList = Container();
     }
     return Column(children: [
-      Container(
-          height: 50,
-          margin: const EdgeInsets.only(top: 5),
-          child: totalAndPayScreen()),
+      if (deviceMode != 2)
+        Container(
+            height: 50,
+            margin: const EdgeInsets.only(top: 5),
+            child: totalAndPayScreen()),
       if (deviceMode != 2)
         const SizedBox(
-          height: (5),
+          height: 4,
         ),
       menuList,
       if (deviceMode != 2)
         const SizedBox(
-          height: 5,
+          height: 4,
         ),
-      if (showButtonMenu)
-        Padding(
-            padding: const EdgeInsets.only(bottom: 4), child: commandWidget()),
+      if (showButtonMenu) commandWidget(),
+      if (deviceMode != 2)
+        const SizedBox(
+          height: 4,
+        ),
     ]);
   }
 
@@ -4060,72 +4080,80 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget posLayoutPhoneScreen() {
     return SafeArea(
-        child: DefaultTabController(
-            length: 4,
-            child: Builder(builder: (BuildContext context) {
-              return Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  body: Container(
-                      decoration: const BoxDecoration(color: Colors.black),
-                      child: Container(
-                          color: Colors.white,
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: [
-                              Container(
-                                  color: Colors.blue,
-                                  child: TabBar(
-                                    controller: phoneTabController,
-                                    indicatorColor: Colors.white,
-                                    onTap: (value) {
-                                      setState(() {
-                                        phoneTabController.index = value;
-                                      });
-                                    },
-                                    tabs: const [
-                                      Tab(
-                                        icon: Icon(Icons.list),
+        child: Column(children: [
+      Container(
+          height: 50,
+          margin: const EdgeInsets.all(2),
+          child: totalAndPayScreen()),
+      Expanded(
+          child: DefaultTabController(
+              length: 4,
+              child: Builder(builder: (BuildContext context) {
+                return Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    body: Container(
+                        decoration: const BoxDecoration(color: Colors.black),
+                        child: Container(
+                            color: Colors.white,
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              children: [
+                                Container(
+                                    color: Colors.blue,
+                                    child: TabBar(
+                                      controller: phoneTabController,
+                                      indicatorColor: Colors.white,
+                                      onTap: (value) {
+                                        setState(() {
+                                          phoneTabController.index = value;
+                                        });
+                                      },
+                                      tabs: const [
+                                        Tab(
+                                          icon: Icon(Icons.list),
+                                        ),
+                                        Tab(
+                                          icon: Icon(Icons.grid_view),
+                                        ),
+                                        Tab(
+                                          icon: Icon(Icons.search),
+                                        ),
+                                        Tab(
+                                          icon: Icon(Icons.menu),
+                                        ),
+                                      ],
+                                    )),
+                                Expanded(child: LayoutBuilder(builder:
+                                    (BuildContext context,
+                                        BoxConstraints constraints) {
+                                  return Column(children: [
+                                    if ((Platform.isAndroid ||
+                                            Platform.isIOS) &&
+                                        qrCodeBarcodeScannerStart)
+                                      SizedBox(
+                                        width: double.infinity,
+                                        height: 200,
+                                        child: selectProductByQrCodeOrBarcode(),
                                       ),
-                                      Tab(
-                                        icon: Icon(Icons.grid_view),
-                                      ),
-                                      Tab(
-                                        icon: Icon(Icons.search),
-                                      ),
-                                      Tab(
-                                        icon: Icon(Icons.menu),
-                                      ),
-                                    ],
-                                  )),
-                              Expanded(child: LayoutBuilder(builder:
-                                  (BuildContext context,
-                                      BoxConstraints constraints) {
-                                return Column(children: [
-                                  if ((Platform.isAndroid || Platform.isIOS) &&
-                                      qrCodeBarcodeScannerStart)
-                                    SizedBox(
-                                      width: double.infinity,
-                                      height: 200,
-                                      child: selectProductByQrCodeOrBarcode(),
-                                    ),
-                                  Expanded(
-                                      child: TabBarView(
-                                          controller: phoneTabController,
-                                          children: [
-                                        transScreen(mode: 0),
-                                        selectProductLevelWidget(),
-                                        findByText(),
-                                        Container()
-                                        //commandScreen(),
-                                      ])),
-                                  (phoneTabController.index != 2)
-                                      ? posLayoutBottom()
-                                      : Container(),
-                                ]);
-                              })),
-                            ],
-                          ))));
-            })));
+                                    Expanded(
+                                        child: TabBarView(
+                                            controller: phoneTabController,
+                                            children: [
+                                          transScreen(mode: 0),
+                                          selectProductLevelWidget(),
+                                          findByText(),
+                                          Container()
+                                          //commandScreen(),
+                                        ])),
+                                    (phoneTabController.index != 2)
+                                        ? posLayoutBottom()
+                                        : Container(),
+                                  ]);
+                                })),
+                              ],
+                            ))));
+              })))
+    ]));
   }
 
   Widget posLayoutDesktop() {
@@ -4423,7 +4451,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     global.globalContext = context;
-
     return MultiBlocListener(
         listeners: [
           BlocListener<ProductCategoryBloc, ProductCategoryState>(
@@ -4523,67 +4550,74 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     }
                   }
                 },
-                child: Scaffold(
-                    appBar: AppBar(
-                      toolbarHeight: 24,
-                      automaticallyImplyLeading: false,
-                      backgroundColor: (global.posScreenMode ==
-                              global.PosScreenModeEnum.posSale)
-                          ? Colors.blue
-                          : Colors.red,
-                      title: Row(
-                        children: [
-                          if (global.posSaleChannelCode != "XXX")
-                            Container(
-                                height: 12,
-                                padding: const EdgeInsets.only(right: 10),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.black,
-                                      backgroundColor: Colors.white,
-                                      padding: const EdgeInsets.all(5),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const PosSaleChannelScreen(),
-                                        ),
-                                      ).then((value) => setState(() {}));
-                                    },
-                                    child: Image.network(
-                                        global.posSaleChannelLogoUrl))),
-                          Text(
-                              (global.posScreenMode ==
-                                      global.PosScreenModeEnum.posSale)
-                                  ? 'ขายสินค้า'
-                                  : 'รับคืนสินค้า',
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 10.0,
-                                      color: Colors.black54,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ])),
-                          const Spacer(),
-                          const Text("DEDE POS",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 10.0,
-                                      color: Colors.black54,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ])),
-                        ],
-                      ),
+                child: AnnotatedRegion<SystemUiOverlayStyle>(
+                    value: const SystemUiOverlayStyle(
+                      systemNavigationBarColor:
+                          Colors.blue, // Set navigation bar color
+                      systemNavigationBarIconBrightness:
+                          Brightness.light, // Set navigation bar icons' color
                     ),
-                    body: appLayoutPos()))));
+                    child: Scaffold(
+                        appBar: AppBar(
+                          toolbarHeight: 24,
+                          automaticallyImplyLeading: false,
+                          backgroundColor: (global.posScreenMode ==
+                                  global.PosScreenModeEnum.posSale)
+                              ? Colors.blue
+                              : Colors.red,
+                          title: Row(
+                            children: [
+                              if (global.posSaleChannelCode != "XXX")
+                                Container(
+                                    height: 12,
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.black,
+                                          backgroundColor: Colors.white,
+                                          padding: const EdgeInsets.all(5),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const PosSaleChannelScreen(),
+                                            ),
+                                          ).then((value) => setState(() {}));
+                                        },
+                                        child: Image.network(
+                                            global.posSaleChannelLogoUrl))),
+                              Text(
+                                  (global.posScreenMode ==
+                                          global.PosScreenModeEnum.posSale)
+                                      ? 'ขายสินค้า'
+                                      : 'รับคืนสินค้า',
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 10.0,
+                                          color: Colors.black54,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ])),
+                              const Spacer(),
+                              const Text("DEDE POS",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 10.0,
+                                          color: Colors.black54,
+                                          offset: Offset(2.0, 2.0),
+                                        ),
+                                      ])),
+                            ],
+                          ),
+                        ),
+                        body: appLayoutPos())))));
   }
 }

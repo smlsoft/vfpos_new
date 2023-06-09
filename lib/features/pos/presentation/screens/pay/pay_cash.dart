@@ -197,7 +197,7 @@ class PayCashWidgetState extends State<PayCashWidget> {
               padding: const EdgeInsets.all(8.0),
               child: Text("+${value.toStringAsFixed(0)}",
                   style: const TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                       shadows: [
@@ -335,8 +335,8 @@ class PayCashWidgetState extends State<PayCashWidget> {
                         child: numberPad())),
                 Container(
                   height: 80,
-                  margin: const EdgeInsets.only(left: 4, right: 4),
-                  padding: const EdgeInsets.only(left: 4, right: 4),
+                  margin: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
+                  padding: const EdgeInsets.all(4),
                   width: double.infinity,
                   decoration: BoxDecoration(
                       color: Colors.white,

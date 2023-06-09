@@ -91,7 +91,6 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
       DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "bankmaster");
   if (lastUpdateTime != getLastUpdateTime) {
-    serviceLocator<Log>().debug("syncBank Start");
     var loop = true;
     var offset = 0;
     var limit = 10000;
@@ -106,11 +105,11 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
           List<SyncBankModel> newDataList = (dataList["new"] as List)
               .map((newCate) => SyncBankModel.fromJson(newCate))
               .toList();
-          serviceLocator<Log>().trace(
-              "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
+            serviceLocator<Log>().trace(
+                "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
             syncBank(removeList, newDataList);
           }
         } else {
@@ -121,8 +120,6 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
       });
       offset += limit;
     }
-    serviceLocator<Log>()
-        .trace("Update SyncBank Success : ${BankHelper().count()}");
     global.appStorage.write(global.syncBankTimeName, getLastUpdateTime);
     global.createLogoImageFromBankProvider();
   }
