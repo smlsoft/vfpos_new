@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/model/api_bill_model.dart';
+import 'package:dedepos/api/sync/model/trans_model.dart';
 import 'package:dedepos/api/user_repository.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
@@ -12,6 +12,72 @@ Future syncBillData() async {
   List<BillObjectBoxStruct> bills = (global.billHelper.selectSyncIsFalse());
   for (int index = 0; index < bills.length; index++) {
     BillObjectBoxStruct bill = bills[index];
+    List<TransNameInfoModel> custNames = [
+      TransNameInfoModel(
+        code: bills[index].customer_code,
+        isauto: false,
+        isdelete: false,
+        name: bills[index].customer_name,
+      )
+    ];
+
+    List<BillDetailObjectBoxStruct> billDetails =
+        (global.billDetailHelper.selectByDocNumber(docNumber: bill.doc_number));
+    List<TransDetailModel> details = [];
+    for (var detail in billDetails) {
+      details.add(TransDetailModel(
+        averagecost: 0,
+        barcode: "",
+        calcflag: 0,
+        discount: "",
+        discountamount: 0,
+        dividevalue: 0,
+        docdatetime: "",
+        docref: "",
+        docrefdatetime: "",
+        inquirytype: 0,
+        ispos: 1,
+        itemcode: "",
+        itemguid: ",",
+        itemnames: [],
+        itemtype: 0,
+        laststatus: 0,
+        linenumber: 0,
+        locationcode: "",
+        locationnames: [],
+        multiunit: false,
+        price: 0,
+        priceexcludevat: 0,
+        qty: 0,
+        remark: "",
+        shelfcode: "",
+        standvalue: 0,
+        sumamount: 0,
+        sumamountexcludevat: 0,
+        sumofcost: 0,
+        taxtype: 0,
+        tolocationcode: "",
+        tolocationnames: [],
+        totalqty: 0,
+        totalvaluevat: 0,
+        towhcode: "",
+        towhnames: [],
+        unitcode: "",
+        unitnames: [],
+        vatcal: 0,
+        vattype: 0,
+        whcode: "",
+        whnames: [],
+      ));
+    }
+    TransactionModel trans = TransactionModel(
+        cashiercode: "",
+        custcode: "",
+        custnames: custNames,
+        description: "",
+        details: details);
+
+    /*BillObjectBoxStruct bill = bills[index];
     List<ApiBillDetailStruct> apiBillDetails = [];
     List<BillDetailObjectBoxStruct> billDetails =
         (global.billDetailHelper.selectByDocNumber(docNumber: bill.doc_number));
@@ -145,7 +211,7 @@ Future syncBillData() async {
       pay_money_transfers: payTransfers,
     );
     String json = jsonEncode(apiBill.toJson());
-    serviceLocator<Log>().debug(json);
+    serviceLocator<Log>().debug(json);*/
   }
 }
 
