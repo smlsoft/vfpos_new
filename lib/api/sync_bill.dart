@@ -7,6 +7,7 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dio/dio.dart';
 import 'package:get/utils.dart';
 
 Future syncBillData() async {
@@ -34,9 +35,9 @@ Future syncBillData() async {
         discountamount: detail.discount,
         standvalue: 1,
         dividevalue: 1,
-        docdatetime: bill.date_time.toString(),
+        docdatetime: bill.date_time.toUtc().toIso8601String(),
         docref: "",
-        docrefdatetime: "",
+        docrefdatetime: null,
         inquirytype: 0,
         ispos: 1,
         itemcode: detail.item_code,
@@ -138,9 +139,9 @@ Future syncBillData() async {
         custnames: custNames,
         description: "POS",
         discountword: bill.discount_formula,
-        docdatetime: bill.date_time.toString(),
+        docdatetime: bill.date_time.toUtc().toIso8601String(),
         docno: bill.doc_number,
-        docrefdate: "",
+        docrefdate: null,
         docrefno: "",
         docreftype: 0,
         doctype: 0,
@@ -153,7 +154,7 @@ Future syncBillData() async {
         salecode: bill.sale_code,
         salename: bill.sale_name,
         status: 0,
-        taxdocdate: bill.date_time.toString(),
+        taxdocdate: bill.date_time.toUtc().toIso8601String(),
         taxdocno: bill.doc_number,
         totalaftervat: 0,
         totalamount: bill.total_amount,
@@ -168,7 +169,9 @@ Future syncBillData() async {
         vattype: 0,
         details: details,
         paymentdetail: paymentDetail);
-    String json = jsonEncode(trans.toJson());
+
+    await saveTransaction(trans);
+
     /*BillObjectBoxStruct bill = bills[index];
     List<ApiBillDetailStruct> apiBillDetails = [];
     List<BillDetailObjectBoxStruct> billDetails =
@@ -304,6 +307,35 @@ Future syncBillData() async {
     );
     String json = jsonEncode(apiBill.toJson());
     serviceLocator<Log>().debug(json);*/
+  }
+}
+
+Future<ApiResponse> saveTransaction(TransactionModel trx) async {
+  Dio client = Client().init();
+  String jsonPayload = jsonEncode(trx.toJson());
+  try {
+    final response =
+        await client.post('/transaction/sale-invoice', data: trx.toJson());
+    try {
+      final rawData = json.decode(response.toString());
+
+      //   print(rawData);
+
+      if (rawData['error'] != null) {
+        String errorMessage = '${rawData['code']}: ${rawData['message']}';
+        serviceLocator<Log>().error(errorMessage);
+        throw Exception('${rawData['code']}: ${rawData['message']}');
+      }
+
+      return ApiResponse.fromMap(rawData);
+    } catch (ex) {
+      serviceLocator<Log>().error(ex);
+      throw Exception(ex);
+    }
+  } on DioError catch (ex) {
+    String errorMessage = ex.response.toString();
+    serviceLocator<Log>().error(errorMessage);
+    throw Exception(errorMessage);
   }
 }
 

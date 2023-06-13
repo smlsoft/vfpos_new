@@ -11,7 +11,7 @@ class TransactionModel {
   String discountword;
   String docdatetime;
   String docno;
-  String docrefdate;
+  String? docrefdate;
   String docrefno;
   int docreftype;
   int doctype;
@@ -113,7 +113,7 @@ class TransDetailModel {
   double dividevalue;
   String docdatetime;
   String docref;
-  String docrefdatetime;
+  String? docrefdatetime;
   int inquirytype;
   int ispos;
   String itemcode;
