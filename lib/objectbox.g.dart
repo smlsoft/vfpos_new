@@ -1457,10 +1457,10 @@ ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
 
           final object = BillObjectBoxStruct(
-              doc_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
               date_time: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)),
+              doc_number: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
               doc_mode:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 82, 0),
               customer_code: const fb.StringReader(asciiOptimization: true)

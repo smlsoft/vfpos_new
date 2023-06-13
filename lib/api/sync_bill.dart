@@ -7,6 +7,7 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:get/utils.dart';
 
 Future syncBillData() async {
   List<BillObjectBoxStruct> bills = (global.billHelper.selectSyncIsFalse());
@@ -14,10 +15,10 @@ Future syncBillData() async {
     BillObjectBoxStruct bill = bills[index];
     List<TransNameInfoModel> custNames = [
       TransNameInfoModel(
-        code: bills[index].customer_code,
+        code: "th",
         isauto: false,
         isdelete: false,
-        name: bills[index].customer_name,
+        name: bill.customer_name,
       )
     ];
 
@@ -27,56 +28,147 @@ Future syncBillData() async {
     for (var detail in billDetails) {
       details.add(TransDetailModel(
         averagecost: 0,
-        barcode: "",
+        barcode: detail.barcode,
         calcflag: 0,
-        discount: "",
-        discountamount: 0,
-        dividevalue: 0,
-        docdatetime: "",
+        discount: detail.discount_text,
+        discountamount: detail.discount,
+        standvalue: 1,
+        dividevalue: 1,
+        docdatetime: bill.date_time.toString(),
         docref: "",
         docrefdatetime: "",
         inquirytype: 0,
         ispos: 1,
-        itemcode: "",
-        itemguid: ",",
-        itemnames: [],
+        itemcode: detail.item_code,
+        itemguid: "",
+        itemnames: [
+          TransNameInfoModel(
+            code: "th",
+            isauto: false,
+            isdelete: false,
+            name: detail.item_name,
+          )
+        ],
         itemtype: 0,
         laststatus: 0,
-        linenumber: 0,
+        linenumber: detail.line_number,
         locationcode: "",
         locationnames: [],
         multiunit: false,
-        price: 0,
+        price: detail.price,
         priceexcludevat: 0,
-        qty: 0,
+        qty: detail.qty,
         remark: "",
         shelfcode: "",
-        standvalue: 0,
         sumamount: 0,
         sumamountexcludevat: 0,
         sumofcost: 0,
         taxtype: 0,
         tolocationcode: "",
         tolocationnames: [],
-        totalqty: 0,
+        totalqty: detail.qty,
         totalvaluevat: 0,
         towhcode: "",
         towhnames: [],
-        unitcode: "",
-        unitnames: [],
+        unitcode: detail.unit_code,
+        unitnames: [
+          TransNameInfoModel(
+            code: "th",
+            isauto: false,
+            isdelete: false,
+            name: detail.unit_name,
+          )
+        ],
         vatcal: 0,
         vattype: 0,
         whcode: "",
         whnames: [],
       ));
     }
-    TransactionModel trans = TransactionModel(
-        cashiercode: "",
-        custcode: "",
-        custnames: custNames,
-        description: "",
-        details: details);
+    List<BillPayObjectBoxStruct> payDetails =
+        global.billPayHelper.selectByDocNumber(docNumber: bill.doc_number);
+    List<TransPaymentCreditCardModel> paymentCreditCards = [];
+    List<TransPaymentTransferModel> paymentTransfers = [];
+    for (var payDetail in payDetails) {
+      // 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
+      switch (payDetail.trans_flag) {
+        case 1: // 1=บัตรเครดิต
+          paymentCreditCards.add(TransPaymentCreditCardModel(
+              amount: payDetail.amount,
+              cardnumber: payDetail.card_number,
+              chargevalue: 0,
+              chargeword: "",
+              docdatetime: payDetail.doc_date_time.toString(),
+              totalnetworth: payDetail.amount));
+          break;
+        case 2: // 2=เงินโอน
+          paymentTransfers.add(TransPaymentTransferModel(
+            accountnumber: payDetail.bank_account_no,
+            amount: payDetail.amount,
+            bankcode: payDetail.bank_code,
+            banknames: [
+              TransNameInfoModel(
+                code: "th",
+                isauto: false,
+                isdelete: false,
+                name: payDetail.bank_name,
+              )
+            ],
+            docdatetime: payDetail.doc_date_time.toString(),
+          ));
+          break;
+        case 3: // 3=เช็ค
+          break;
+        case 4: // 4=คูปอง
+          break;
+        case 5: // 5=QR
+          break;
+      }
+    }
 
+    TransPaymentDetailModel paymentDetail = TransPaymentDetailModel(
+      cashamount: bill.pay_cash_amount,
+      cashamounttext: "",
+      paymentcreditcards: paymentCreditCards,
+      paymenttransfers: paymentTransfers,
+    );
+    TransactionModel trans = TransactionModel(
+        cashiercode: bill.cashier_code,
+        custcode: bill.customer_code,
+        custnames: custNames,
+        description: "POS",
+        discountword: bill.discount_formula,
+        docdatetime: bill.date_time.toString(),
+        docno: bill.doc_number,
+        docrefdate: "",
+        docrefno: "",
+        docreftype: 0,
+        doctype: 0,
+        guidref: "",
+        inquirytype: 0,
+        iscancel: bill.is_cancel,
+        ismanualamount: false,
+        ispos: true,
+        membercode: bill.customer_code,
+        salecode: bill.sale_code,
+        salename: bill.sale_name,
+        status: 0,
+        taxdocdate: bill.date_time.toString(),
+        taxdocno: bill.doc_number,
+        totalaftervat: 0,
+        totalamount: bill.total_amount,
+        totalbeforevat: bill.total_before_amount,
+        totalcost: 0,
+        totaldiscount: bill.sum_discount,
+        totalexceptvat: bill.total_except_amount,
+        totalvalue: bill.total_amount,
+        totalvatvalue: bill.total_vat_amount,
+        transflag: 0,
+        vatrate: bill.vat_rate,
+        vattype: 0,
+        details: details,
+        paymentdetail: paymentDetail);
+    String json = jsonEncode(trans.toJson());
     /*BillObjectBoxStruct bill = bills[index];
     List<ApiBillDetailStruct> apiBillDetails = [];
     List<BillDetailObjectBoxStruct> billDetails =

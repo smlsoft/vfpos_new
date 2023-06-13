@@ -120,31 +120,31 @@ class BillObjectBoxStruct {
   List<String> print_copy_bill_date_time;
 
   BillObjectBoxStruct(
-      {this.doc_number = "",
-      required this.date_time,
+      {required this.date_time, // Sync
+      this.doc_number = "", // Sync
       this.doc_mode = 1,
-      this.customer_code = "",
-      this.customer_name = "",
+      this.customer_code = "", // Sync
+      this.customer_name = "", // Sync
       this.customer_telephone = "",
-      this.vat_rate = 0.0,
-      this.total_amount = 0.0,
-      this.total_before_amount = 0.0,
-      this.total_vat_amount = 0.0,
-      this.total_except_amount = 0.0,
-      this.cashier_code = "",
-      this.cashier_name = "",
-      this.sale_code = "",
-      this.sale_name = "",
+      this.vat_rate = 0.0, // Sync
+      this.total_amount = 0.0, // Sync
+      this.total_before_amount = 0.0, // Sync
+      this.total_vat_amount = 0.0, // Sync
+      this.total_except_amount = 0.0, // Sync
+      this.cashier_code = "", // Sync
+      this.cashier_name = "", // Sync
+      this.sale_code = "", // Sync
+      this.sale_name = "", // Sync
       this.is_sync = false,
-      this.discount_formula = "",
-      this.pay_cash_amount = 0.0,
-      this.sum_discount = 0.0,
+      this.discount_formula = "", // Sync
+      this.pay_cash_amount = 0.0, // Sync
+      this.sum_discount = 0.0, // Sync
       this.sum_qr_code = 0.0,
       this.sum_credit_card = 0.0,
       this.sum_money_transfer = 0.0,
       this.sum_coupon = 0.0,
       this.sum_cheque = 0.0,
-      this.is_cancel = false,
+      this.is_cancel = false, // Sync
       this.cancel_date_time = "",
       this.cancel_user_code = "",
       this.cancel_user_name = "",
@@ -205,22 +205,23 @@ class BillDetailObjectBoxStruct {
   /// ยอดรวมมูลค่า
   double total_amount;
 
-  BillDetailObjectBoxStruct(
-      {this.id = 0,
-      this.line_number = 0,
-      this.doc_mode = 1,
-      this.barcode = "",
-      this.item_code = "",
-      this.item_name = "",
-      this.unit_code = "",
-      this.unit_name = "",
-      this.sku = "",
-      this.qty = 0,
-      this.doc_number = "",
-      this.price = 0,
-      this.discount_text = "",
-      this.discount = 0,
-      this.total_amount = 0});
+  BillDetailObjectBoxStruct({
+    this.id = 0,
+    this.line_number = 0, // Sync
+    this.doc_mode = 1,
+    this.barcode = "", // Sync
+    this.item_code = "", // Sync
+    this.item_name = "", // Sync
+    this.unit_code = "", // Sync
+    this.unit_name = "", // Sync
+    this.sku = "",
+    this.qty = 0, // Sync
+    this.doc_number = "",
+    this.price = 0, // Sync
+    this.discount_text = "", // Sync
+    this.discount = 0, // Sync
+    this.total_amount = 0,
+  });
 }
 
 @Entity()

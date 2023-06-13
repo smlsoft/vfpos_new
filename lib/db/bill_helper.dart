@@ -86,6 +86,17 @@ class BillHelper {
     }
   }
 
+  void updatesSyncSuccess({required String docNumber}) {
+    final find = box
+        .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
+        .build()
+        .findFirst();
+    if (find != null) {
+      find.is_sync = true;
+      box.put(find);
+    }
+  }
+
   void updateRePrintBill(String docNumber) {
     final find = box
         .query(BillObjectBoxStruct_.doc_number.equals(docNumber))

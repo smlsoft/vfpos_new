@@ -26,17 +26,18 @@ class TransactionModel {
   int status;
   String taxdocdate;
   String taxdocno;
-  int totalaftervat;
-  int totalamount;
-  int totalbeforevat;
-  int totalcost;
-  int totaldiscount;
-  int totalexceptvat;
-  int totalvalue;
-  int totalvatvalue;
+  double totalaftervat;
+  double totalamount;
+  double totalbeforevat;
+  double totalcost;
+  double totaldiscount;
+  double totalexceptvat;
+  double totalvalue;
+  double totalvatvalue;
   int transflag;
-  int vatrate;
+  double vatrate;
   int vattype;
+  TransPaymentDetailModel paymentdetail;
 
   TransactionModel({
     required this.cashiercode,
@@ -73,6 +74,7 @@ class TransactionModel {
     required this.transflag,
     required this.vatrate,
     required this.vattype,
+    required this.paymentdetail,
   });
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) =>
@@ -145,7 +147,6 @@ class TransDetailModel {
   int vattype;
   String whcode;
   List<TransNameInfoModel> whnames;
-  TransPaymentDetailModel paymentdetail;
 
   TransDetailModel({
     required this.averagecost,
@@ -190,7 +191,6 @@ class TransDetailModel {
     required this.vattype,
     required this.whcode,
     required this.whnames,
-    required this.paymentdetail,
   });
 
   factory TransDetailModel.fromJson(Map<String, dynamic> json) =>
@@ -204,7 +204,7 @@ class PaymentTransferModel {
   String accountNumber;
   int amount;
   String bankCode;
-  List<TransBankNameModel> bankNames;
+  List<TransNameInfoModel> bankNames;
   String docDateTime;
 
   PaymentTransferModel({
@@ -290,7 +290,7 @@ class TransPaymentTransferModel {
   String accountnumber;
   double amount;
   String bankcode;
-  List<TransBankNameModel> banknames;
+  List<TransNameInfoModel> banknames;
   String docdatetime;
 
   TransPaymentTransferModel({
@@ -305,24 +305,4 @@ class TransPaymentTransferModel {
       _$TransPaymentTransferModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransPaymentTransferModelToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class TransBankNameModel {
-  String code;
-  bool isauto;
-  bool isdelete;
-  String name;
-
-  TransBankNameModel({
-    required this.code,
-    required this.isauto,
-    required this.isdelete,
-    required this.name,
-  });
-
-  factory TransBankNameModel.fromJson(Map<String, dynamic> json) =>
-      _$TransBankNameModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$TransBankNameModelToJson(this);
 }

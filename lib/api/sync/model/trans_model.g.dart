@@ -35,17 +35,19 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
       status: json['status'] as int,
       taxdocdate: json['taxdocdate'] as String,
       taxdocno: json['taxdocno'] as String,
-      totalaftervat: json['totalaftervat'] as int,
-      totalamount: json['totalamount'] as int,
-      totalbeforevat: json['totalbeforevat'] as int,
-      totalcost: json['totalcost'] as int,
-      totaldiscount: json['totaldiscount'] as int,
-      totalexceptvat: json['totalexceptvat'] as int,
-      totalvalue: json['totalvalue'] as int,
-      totalvatvalue: json['totalvatvalue'] as int,
+      totalaftervat: (json['totalaftervat'] as num).toDouble(),
+      totalamount: (json['totalamount'] as num).toDouble(),
+      totalbeforevat: (json['totalbeforevat'] as num).toDouble(),
+      totalcost: (json['totalcost'] as num).toDouble(),
+      totaldiscount: (json['totaldiscount'] as num).toDouble(),
+      totalexceptvat: (json['totalexceptvat'] as num).toDouble(),
+      totalvalue: (json['totalvalue'] as num).toDouble(),
+      totalvatvalue: (json['totalvatvalue'] as num).toDouble(),
       transflag: json['transflag'] as int,
-      vatrate: json['vatrate'] as int,
+      vatrate: (json['vatrate'] as num).toDouble(),
       vattype: json['vattype'] as int,
+      paymentdetail: TransPaymentDetailModel.fromJson(
+          json['paymentdetail'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
@@ -84,6 +86,7 @@ Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
       'transflag': instance.transflag,
       'vatrate': instance.vatrate,
       'vattype': instance.vattype,
+      'paymentdetail': instance.paymentdetail.toJson(),
     };
 
 TransNameInfoModel _$TransNameInfoModelFromJson(Map<String, dynamic> json) =>
@@ -158,8 +161,6 @@ TransDetailModel _$TransDetailModelFromJson(Map<String, dynamic> json) =>
       whnames: (json['whnames'] as List<dynamic>)
           .map((e) => TransNameInfoModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      paymentdetail: TransPaymentDetailModel.fromJson(
-          json['paymentdetail'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TransDetailModelToJson(TransDetailModel instance) =>
@@ -207,7 +208,6 @@ Map<String, dynamic> _$TransDetailModelToJson(TransDetailModel instance) =>
       'vattype': instance.vattype,
       'whcode': instance.whcode,
       'whnames': instance.whnames.map((e) => e.toJson()).toList(),
-      'paymentdetail': instance.paymentdetail.toJson(),
     };
 
 PaymentTransferModel _$PaymentTransferModelFromJson(
@@ -217,7 +217,7 @@ PaymentTransferModel _$PaymentTransferModelFromJson(
       amount: json['amount'] as int,
       bankCode: json['bankCode'] as String,
       bankNames: (json['bankNames'] as List<dynamic>)
-          .map((e) => TransBankNameModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => TransNameInfoModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       docDateTime: json['docDateTime'] as String,
     );
@@ -305,7 +305,7 @@ TransPaymentTransferModel _$TransPaymentTransferModelFromJson(
       amount: (json['amount'] as num).toDouble(),
       bankcode: json['bankcode'] as String,
       banknames: (json['banknames'] as List<dynamic>)
-          .map((e) => TransBankNameModel.fromJson(e as Map<String, dynamic>))
+          .map((e) => TransNameInfoModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       docdatetime: json['docdatetime'] as String,
     );
@@ -318,20 +318,4 @@ Map<String, dynamic> _$TransPaymentTransferModelToJson(
       'bankcode': instance.bankcode,
       'banknames': instance.banknames.map((e) => e.toJson()).toList(),
       'docdatetime': instance.docdatetime,
-    };
-
-TransBankNameModel _$TransBankNameModelFromJson(Map<String, dynamic> json) =>
-    TransBankNameModel(
-      code: json['code'] as String,
-      isauto: json['isauto'] as bool,
-      isdelete: json['isdelete'] as bool,
-      name: json['name'] as String,
-    );
-
-Map<String, dynamic> _$TransBankNameModelToJson(TransBankNameModel instance) =>
-    <String, dynamic>{
-      'code': instance.code,
-      'isauto': instance.isauto,
-      'isdelete': instance.isdelete,
-      'name': instance.name,
     };
