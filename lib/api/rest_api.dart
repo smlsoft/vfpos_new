@@ -1,5 +1,4 @@
 import 'package:dedepos/db/employee_helper.dart';
-import 'package:dedepos/db/member_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/model/find/find_employee_model.dart';
@@ -50,47 +49,7 @@ class RestApiFindMemberByTelName {
     String fieldName = "telephone,name";
     List<String> fieldNameList = fieldName.split(",");
     List<FindMemberModel> result = [];
-    if (word.trim().isNotEmpty) {
-      MemberHelper memberHelper = MemberHelper();
-
-      StringBuffer where = StringBuffer();
-
-      List<String> wordBreak = global.wordSplit(word);
-      for (int fieldIndex = 0;
-          fieldIndex < fieldNameList.length;
-          fieldIndex++) {
-        if (where.isNotEmpty) {
-          where.write(" or ");
-        }
-        StringBuffer whereField = StringBuffer();
-        for (int wordIndex = 0; wordIndex < wordBreak.length; wordIndex++) {
-          if (whereField.isNotEmpty) {
-            whereField.write(" and ");
-          }
-          whereField.write(" ${fieldNameList[fieldIndex]} like '%${wordBreak[wordIndex]}%'");
-        }
-        where.write(" ($whereField) ");
-      }
-      List<MemberObjectBoxStruct> select =
-          memberHelper.select(where: where.toString());
-      for (int index = 0; index < select.length; index++) {
-        MemberObjectBoxStruct source = select[index];
-        result.add(
-          FindMemberModel(
-            address: source.address,
-            branchcode: source.branchcode,
-            branchtype: source.branchtype,
-            contacttype: source.contacttype,
-            name: source.name,
-            personaltype: source.personaltype,
-            surname: source.surname,
-            taxid: source.taxid,
-            telephone: source.telephone,
-            zipcode: source.zipcode,
-          ),
-        );
-      }
-    }
+    if (word.trim().isNotEmpty) {}
     return result;
   }
 }
@@ -99,8 +58,7 @@ class RestApiFindEmployeeByWord {
   Future<List<FindEmployeeModel>> findEmployeeByWord(String word) async {
     List<FindEmployeeModel> result = [];
     EmployeeHelper employeeHelper = EmployeeHelper();
-    List<EmployeeObjectBoxStruct> select =
-        employeeHelper.select(word: word);
+    List<EmployeeObjectBoxStruct> select = employeeHelper.select(word: word);
     for (int index = 0; index < select.length; index++) {
       EmployeeObjectBoxStruct source = select[index];
       result.add(

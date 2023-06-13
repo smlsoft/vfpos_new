@@ -637,7 +637,186 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     processEvent(barcode: barcode, holdNumber: global.posHoldActiveNumber);
   }
 
-  Widget findByText() {
+  Widget findMemberByText() {
+    return BlocBuilder<FindItemByCodeNameBarcodeBloc,
+        FindItemByCodeNameBarcodeState>(builder: (context, state) {
+      if (state is FindItemByCodeNameBarcodeLoadSuccess) {
+        findByCodeNameLastResult.addAll(state.result);
+        context
+            .read<FindItemByCodeNameBarcodeBloc>()
+            .add(FindItemByCodeNameBarcodeLoadFinish());
+      }
+      return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(5),
+          // decoration: BoxDecoration(
+          //   border: Border.all(
+          //       color: const Color.fromARGB(255, 51, 204, 255), width: 1),
+          //   borderRadius: BorderRadius.circular(5),
+          //   shape: BoxShape.rectangle,
+          // ),
+          child: Column(
+            children: <Widget>[
+              TextField(
+                  autofocus: true,
+                  focusNode: textFindByTextFocus,
+                  controller: textFindByTextController,
+                  onChanged: (string) {
+                    debounce.run(() {
+                      findByCodeNameLastResult.clear();
+                      context.read<FindItemByCodeNameBarcodeBloc>().add(
+                          FindItemByCodeNameBarcodeLoadStart(
+                              words: textFindByTextController.text,
+                              offset: 0,
+                              limit: 50));
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "ข้อความบางส่วน (ชื่อ,รหัส,หมายเลขโทรศัพท์)",
+                    suffixIcon: IconButton(
+                      onPressed: () => setState(() {
+                        findByCodeNameLastResult.clear();
+                        textFindByTextController.clear();
+                      }),
+                      icon: const Icon(Icons.clear),
+                    ),
+                  )),
+              Expanded(
+                  child: SingleChildScrollView(
+                      child: Column(
+                children: findByCodeNameLastResult.map((value) {
+                  var index = findByCodeNameLastResult.indexOf(value);
+                  var detail = findByCodeNameLastResult[index];
+                  return Row(children: [
+                    Expanded(
+                        flex: 5,
+                        // ignore: prefer_interpolation_to_compose_strings
+                        child: Text(detail.item_names[0] +
+                            "/" +
+                            detail.unit_names[0] +
+                            '/' +
+                            detail.item_code +
+                            "/" +
+                            detail.barcode)),
+                    Expanded(
+                        flex: 2,
+                        child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                                global.moneyFormat.format(detail.prices[0])))),
+                    Expanded(
+                        flex: 1,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(2),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (detail.qty > 0.0) detail.qty -= 1.0;
+                                  });
+                                },
+                                child: const Icon(Icons.remove)))),
+                    Expanded(
+                        flex: 1,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(2),
+                                ),
+                                onPressed: () async {
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
+                                          return AlertDialog(
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(12.0))),
+                                            contentPadding:
+                                                const EdgeInsets.all(10),
+                                            content: SizedBox(
+                                                height: 500,
+                                                child: NumberPad(
+                                                    header:
+                                                        global.language("qty"),
+                                                    title: Text(
+                                                        '${detail.item_names[0]} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}',
+                                                        style: const TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
+                                                    onChange: (qtyStr) => {
+                                                          if (qtyStr
+                                                                  .isNotEmpty &&
+                                                              double.parse(
+                                                                      qtyStr) >
+                                                                  0)
+                                                            {
+                                                              detail.qty =
+                                                                  double.parse(
+                                                                      qtyStr),
+                                                            }
+                                                        })),
+                                          );
+                                        });
+                                      });
+                                },
+                                child: Text(global.qtyShortFormat
+                                    .format(detail.qty))))),
+                    Expanded(
+                        flex: 1,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(2),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    detail.qty += 1.0;
+                                  });
+                                },
+                                child: const Icon(Icons.add)))),
+                    Expanded(
+                        flex: 2,
+                        child: Align(
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(2),
+                                ),
+                                onPressed: () async {
+                                  logInsert(
+                                      commandCode: 1,
+                                      barcode: detail.barcode,
+                                      qty: detail.qty.toString());
+                                  processEvent(
+                                      barcode: detail.barcode,
+                                      holdNumber: global.posHoldActiveNumber);
+                                  detail.qty = 1;
+                                  //Navigator.pop(context, SelectItemConditionModel(command: 1, qty: _detail.qty, price: _detail.price, data: BarcodeStruct(barcode: _detail.barcode, itemCode: _detail.itemCode, itemName: _detail.itemName, unitCode: _detail.unitCode, unitName: _detail.unitName)));
+                                },
+                                child: const Icon(Icons.save))))
+                  ]);
+                }).toList(),
+              )))
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget findProductByText() {
     return BlocBuilder<FindItemByCodeNameBarcodeBloc,
         FindItemByCodeNameBarcodeState>(builder: (context, state) {
       if (state is FindItemByCodeNameBarcodeLoadSuccess) {
@@ -3688,7 +3867,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           myButton(
               child: const FaIcon(FontAwesomeIcons.addressBook),
               onPressed: () {
-                desktopWidgetMode = 3;
+                setState(() {
+                  desktopWidgetMode = 3;
+                });
               }),
           const SizedBox(
             width: 4,
@@ -3907,7 +4088,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       controller: tabletTabController,
                       children: [
                         selectProductLevelWidget(),
-                        findByText(),
+                        findProductByText(),
                         Container(
                           width: double.infinity,
                         ),
@@ -4142,7 +4323,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                             children: [
                                           transScreen(mode: 0),
                                           selectProductLevelWidget(),
-                                          findByText(),
+                                          findProductByText(),
                                           Container()
                                           //commandScreen(),
                                         ])),
@@ -4309,7 +4490,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 )),
               ]),
             ),
-          if (desktopWidgetMode == 1) Expanded(child: findByText()),
+          if (desktopWidgetMode == 1) Expanded(child: findProductByText()),
           if (desktopWidgetMode == 2)
             Expanded(
                 child: Column(children: [
@@ -4318,6 +4499,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               ),
               selectProductLevelSelectWidget(),
             ])),
+          if (desktopWidgetMode == 3) Expanded(child: findMemberByText()),
           posLayoutBottom(),
         ],
       ),
