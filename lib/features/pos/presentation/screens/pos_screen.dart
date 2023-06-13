@@ -2641,12 +2641,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ),
       ),
     );
-    if (result != null) {
-      if (result == true) {
-        setState(() {
-          restartClearData();
-        });
-      }
+    if (result != null && result == true) {
+      PosLogHelper logHelper = PosLogHelper();
+      await logHelper.deleteByHoldNumber(
+          holdNumber: global.posHoldActiveNumber);
+      productOptions.clear();
+      findActiveLineByGuid = "";
+      restartClearData();
     }
   }
 
