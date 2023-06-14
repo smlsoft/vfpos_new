@@ -85,7 +85,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final FindItem findItemScreen = const FindItem();
   bool displayDetailByBarcode = false;
   final debounce = global.Debounce(500);
-  final List<FindItemModel> findByCodeNameLastResult = [];
+  final List<FindItemModel> findItemByCodeNameLastResult = [];
+  final List<FindMemberModel> findMemberByNameTelephoneLastResult = [];
   final TextEditingController textFindByTextController = TextEditingController();
   FocusNode? textFindByTextFocus;
   int activeLineNumber = -1;
