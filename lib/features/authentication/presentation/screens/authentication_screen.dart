@@ -230,7 +230,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       padding: const EdgeInsets.only(),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[horizontalLine(), const Text(" OR "), horizontalLine()],
+        children: <Widget>[horizontalLine(), Text(" ${global.language("or")} "), horizontalLine()],
       ),
     );
   }

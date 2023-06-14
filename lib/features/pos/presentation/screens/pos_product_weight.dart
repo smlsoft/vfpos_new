@@ -36,8 +36,11 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
               child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Expanded(child: Text("ชั่งครั้งที่ ${index + 1}")),
-                Text("${global.moneyFormat.format(weightList[index])} กรัม",
+                Expanded(
+                    child: Text(
+                        "${global.language("weighing_count")} ${index + 1}")),
+                Text(
+                    "${global.moneyFormat.format(weightList[index])} ${global.language("gram")}",
                     style: const TextStyle(
                         color: Colors.blue,
                         fontSize: 24,

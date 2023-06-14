@@ -1,7 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dedepos/api/sync_bill.dart';
+import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/printer_helper.dart';
@@ -102,7 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: 'รับคืนสินค้า',
+          title: "doc_return", // 'รับคืนสินค้า',
           callBack: () {
             Navigator.push(
               context,
@@ -133,25 +133,25 @@ class _MenuScreenState extends State<MenuScreen> {
     return [
       menuItem(
           icon: Icons.request_quote,
-          title: 'เปิดกะ/รับเงินทอน',
+          title: global.language("open_period"), // 'เปิดกะ/รับเงินทอน',
           callBack: () {
             showDialogShiftAndMoney(0);
           }),
       menuItem(
           icon: Icons.request_quote,
-          title: 'รับเงินทอนเพิ่ม',
+          title: global.language("deposit_money"), // 'รับเงินทอนเพิ่ม',
           callBack: () {
             showDialogShiftAndMoney(2);
           }),
       menuItem(
           icon: Icons.request_quote,
-          title: 'นำเงินออก',
+          title: global.language("withdraw_money"), // 'นำเงินออก',
           callBack: () {
             showDialogShiftAndMoney(3);
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: 'ปิดกะ/ส่งเงิน',
+          title: global.language("close_period"), // 'ปิดกะ/ส่งเงิน',
           callBack: () {
             showDialogShiftAndMoney(1);
           }),
@@ -704,7 +704,8 @@ class _MenuScreenState extends State<MenuScreen> {
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child: const Text("ยกเลิก"),
+                                          child:
+                                              Text(global.language("cancel")),
                                         ),
                                         const Spacer(),
                                         ElevatedButton(
@@ -739,7 +740,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
                                             showMsgDialog(header: "บันทึกสำเร็จ", msg: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}", type: "success");
                                           },
-                                          child: const Text("บันทึก"),
+                                          child: Text(global.language("save")),
                                         ),
                                       ],
                                     ),

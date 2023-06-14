@@ -266,7 +266,7 @@ class _PayCouponState extends State<PayCoupon> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             content:
-                                const Text("ต้องการยกเลิกรายการนี้จริงหรือไม่"),
+                                 Text(global.language("do_you_want_to_cancel_this_item")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),

@@ -1,4 +1,4 @@
-import 'package:dedepos/model/json/language_model.dart';
+import 'package:dedepos/global_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'sync_bank_model.g.dart';

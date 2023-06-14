@@ -3,7 +3,7 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:equatable/equatable.dart';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/api_repository.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 
 class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {

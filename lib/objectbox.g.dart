@@ -18,7 +18,6 @@ import 'model/objectbox/bank_struct.dart';
 import 'model/objectbox/bill_struct.dart';
 import 'model/objectbox/config_struct.dart';
 import 'model/objectbox/employees_struct.dart';
-import 'model/objectbox/member_struct.dart';
 import 'model/objectbox/pos_log_struct.dart';
 import 'model/objectbox/pos_ticket_struct.dart';
 import 'model/objectbox/printer_struct.dart';
@@ -575,76 +574,6 @@ final _entities = <ModelEntity>[
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
   ModelEntity(
-      id: const IdUid(8, 6112838636353604158),
-      name: 'MemberObjectBoxStruct',
-      lastPropertyId: const IdUid(12, 5159799296727879845),
-      flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 6346803462781096608),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 4371969015836101455),
-            name: 'guidfixed',
-            type: 9,
-            flags: 2080,
-            indexId: const IdUid(4, 4862384355362163351)),
-        ModelProperty(
-            id: const IdUid(3, 864477947317268223),
-            name: 'address',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 7694412760550714080),
-            name: 'branchcode',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 2186291899858027558),
-            name: 'branchtype',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 5514587754540901657),
-            name: 'contacttype',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 4501247310374040308),
-            name: 'name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 8344766107997284992),
-            name: 'personaltype',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 8943404241503059150),
-            name: 'surname',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 2624296339032804208),
-            name: 'taxid',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 7947895959104899051),
-            name: 'telephone',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 5159799296727879845),
-            name: 'zipcode',
-            type: 9,
-            flags: 0)
-      ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
       lastPropertyId: const IdUid(29, 2896230014411146678),
@@ -1146,7 +1075,11 @@ ModelDefinition getObjectBoxModel() {
       lastIndexId: const IdUid(22, 2148263337621240197),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
-      retiredEntityUids: const [1146034735562944753, 2941303872910854793],
+      retiredEntityUids: const [
+        1146034735562944753,
+        2941303872910854793,
+        6112838636353604158
+      ],
       retiredIndexUids: const [
         9219344176730085609,
         2276328705805420932,
@@ -1228,7 +1161,19 @@ ModelDefinition getObjectBoxModel() {
         37100495742644418,
         5283627247557061711,
         5185449551030321875,
-        6211016703725845138
+        6211016703725845138,
+        6346803462781096608,
+        4371969015836101455,
+        864477947317268223,
+        7694412760550714080,
+        2186291899858027558,
+        5514587754540901657,
+        4501247310374040308,
+        8344766107997284992,
+        8943404241503059150,
+        2624296339032804208,
+        7947895959104899051,
+        5159799296727879845
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1675,70 +1620,8 @@ ModelDefinition getObjectBoxModel() {
 
           return object;
         }),
-    MemberObjectBoxStruct: EntityDefinition<MemberObjectBoxStruct>(
-        model: _entities[6],
-        toOneRelations: (MemberObjectBoxStruct object) => [],
-        toManyRelations: (MemberObjectBoxStruct object) => {},
-        getId: (MemberObjectBoxStruct object) => object.id,
-        setId: (MemberObjectBoxStruct object, int id) {
-          object.id = id;
-        },
-        objectToFB: (MemberObjectBoxStruct object, fb.Builder fbb) {
-          final guidfixedOffset = fbb.writeString(object.guidfixed);
-          final addressOffset = fbb.writeString(object.address);
-          final branchcodeOffset = fbb.writeString(object.branchcode);
-          final nameOffset = fbb.writeString(object.name);
-          final surnameOffset = fbb.writeString(object.surname);
-          final taxidOffset = fbb.writeString(object.taxid);
-          final telephoneOffset = fbb.writeString(object.telephone);
-          final zipcodeOffset = fbb.writeString(object.zipcode);
-          fbb.startTable(13);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, guidfixedOffset);
-          fbb.addOffset(2, addressOffset);
-          fbb.addOffset(3, branchcodeOffset);
-          fbb.addInt64(4, object.branchtype);
-          fbb.addInt64(5, object.contacttype);
-          fbb.addOffset(6, nameOffset);
-          fbb.addInt64(7, object.personaltype);
-          fbb.addOffset(8, surnameOffset);
-          fbb.addOffset(9, taxidOffset);
-          fbb.addOffset(10, telephoneOffset);
-          fbb.addOffset(11, zipcodeOffset);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-
-          final object = MemberObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              address: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              branchcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              branchtype:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0),
-              contacttype:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
-              name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              personaltype:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              surname: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, ''),
-              taxid:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
-              telephone: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              zipcode: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''))
-            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-
-          return object;
-        }),
     PosLogObjectBoxStruct: EntityDefinition<PosLogObjectBoxStruct>(
-        model: _entities[7],
+        model: _entities[6],
         toOneRelations: (PosLogObjectBoxStruct object) => [],
         toManyRelations: (PosLogObjectBoxStruct object) => {},
         getId: (PosLogObjectBoxStruct object) => object.id,
@@ -1826,7 +1709,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     PrinterObjectBoxStruct: EntityDefinition<PrinterObjectBoxStruct>(
-        model: _entities[8],
+        model: _entities[7],
         toOneRelations: (PrinterObjectBoxStruct object) => [],
         toManyRelations: (PrinterObjectBoxStruct object) => {},
         getId: (PrinterObjectBoxStruct object) => object.id,
@@ -1872,7 +1755,7 @@ ModelDefinition getObjectBoxModel() {
         }),
     ProductBarcodeObjectBoxStruct: EntityDefinition<
             ProductBarcodeObjectBoxStruct>(
-        model: _entities[9],
+        model: _entities[8],
         toOneRelations: (ProductBarcodeObjectBoxStruct object) => [],
         toManyRelations: (ProductBarcodeObjectBoxStruct object) => {},
         getId: (ProductBarcodeObjectBoxStruct object) => object.id,
@@ -1960,7 +1843,7 @@ ModelDefinition getObjectBoxModel() {
         }),
     ProductCategoryObjectBoxStruct: EntityDefinition<
             ProductCategoryObjectBoxStruct>(
-        model: _entities[10],
+        model: _entities[9],
         toOneRelations: (ProductCategoryObjectBoxStruct object) => [],
         toManyRelations: (ProductCategoryObjectBoxStruct object) => {},
         getId: (ProductCategoryObjectBoxStruct object) => object.id,
@@ -2020,7 +1903,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     BankObjectBoxStruct: EntityDefinition<BankObjectBoxStruct>(
-        model: _entities[11],
+        model: _entities[10],
         toOneRelations: (BankObjectBoxStruct object) => [],
         toManyRelations: (BankObjectBoxStruct object) => {},
         getId: (BankObjectBoxStruct object) => object.id,
@@ -2062,7 +1945,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     PosTicketObjectBoxStruct: EntityDefinition<PosTicketObjectBoxStruct>(
-        model: _entities[12],
+        model: _entities[11],
         toOneRelations: (PosTicketObjectBoxStruct object) => [],
         toManyRelations: (PosTicketObjectBoxStruct object) => {},
         getId: (PosTicketObjectBoxStruct object) => object.id,
@@ -2549,418 +2432,367 @@ class EmployeeObjectBoxStruct_ {
       QueryStringProperty<EmployeeObjectBoxStruct>(_entities[5].properties[6]);
 }
 
-/// [MemberObjectBoxStruct] entity fields to define ObjectBox queries.
-class MemberObjectBoxStruct_ {
-  /// see [MemberObjectBoxStruct.id]
-  static final id =
-      QueryIntegerProperty<MemberObjectBoxStruct>(_entities[6].properties[0]);
-
-  /// see [MemberObjectBoxStruct.guidfixed]
-  static final guidfixed =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[1]);
-
-  /// see [MemberObjectBoxStruct.address]
-  static final address =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[2]);
-
-  /// see [MemberObjectBoxStruct.branchcode]
-  static final branchcode =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[3]);
-
-  /// see [MemberObjectBoxStruct.branchtype]
-  static final branchtype =
-      QueryIntegerProperty<MemberObjectBoxStruct>(_entities[6].properties[4]);
-
-  /// see [MemberObjectBoxStruct.contacttype]
-  static final contacttype =
-      QueryIntegerProperty<MemberObjectBoxStruct>(_entities[6].properties[5]);
-
-  /// see [MemberObjectBoxStruct.name]
-  static final name =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[6]);
-
-  /// see [MemberObjectBoxStruct.personaltype]
-  static final personaltype =
-      QueryIntegerProperty<MemberObjectBoxStruct>(_entities[6].properties[7]);
-
-  /// see [MemberObjectBoxStruct.surname]
-  static final surname =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[8]);
-
-  /// see [MemberObjectBoxStruct.taxid]
-  static final taxid =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[9]);
-
-  /// see [MemberObjectBoxStruct.telephone]
-  static final telephone =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[10]);
-
-  /// see [MemberObjectBoxStruct.zipcode]
-  static final zipcode =
-      QueryStringProperty<MemberObjectBoxStruct>(_entities[6].properties[11]);
-}
-
 /// [PosLogObjectBoxStruct] entity fields to define ObjectBox queries.
 class PosLogObjectBoxStruct_ {
   /// see [PosLogObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[0]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[0]);
 
   /// see [PosLogObjectBoxStruct.guid_auto_fixed]
   static final guid_auto_fixed =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[1]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[1]);
 
   /// see [PosLogObjectBoxStruct.guid_ref]
   static final guid_ref =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[2]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[2]);
 
   /// see [PosLogObjectBoxStruct.guid_code_ref]
   static final guid_code_ref =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[3]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[3]);
 
   /// see [PosLogObjectBoxStruct.log_date_time]
   static final log_date_time =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[4]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[4]);
 
   /// see [PosLogObjectBoxStruct.command_code]
   static final command_code =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[5]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[5]);
 
   /// see [PosLogObjectBoxStruct.is_void]
   static final is_void =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[6]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[6]);
 
   /// see [PosLogObjectBoxStruct.success]
   static final success =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[7]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[7]);
 
   /// see [PosLogObjectBoxStruct.extra_code]
   static final extra_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[8]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[8]);
 
   /// see [PosLogObjectBoxStruct.remark]
   static final remark =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[9]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[9]);
 
   /// see [PosLogObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[10]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[10]);
 
   /// see [PosLogObjectBoxStruct.price]
   static final price =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[7].properties[11]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[6].properties[11]);
 
   /// see [PosLogObjectBoxStruct.name]
   static final name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[12]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[12]);
 
   /// see [PosLogObjectBoxStruct.qty]
   static final qty =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[7].properties[13]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[6].properties[13]);
 
   /// see [PosLogObjectBoxStruct.qty_fixed]
   static final qty_fixed =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[7].properties[14]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[6].properties[14]);
 
   /// see [PosLogObjectBoxStruct.default_code]
   static final default_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[15]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[15]);
 
   /// see [PosLogObjectBoxStruct.selected]
   static final selected =
-      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[7].properties[16]);
+      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[6].properties[16]);
 
   /// see [PosLogObjectBoxStruct.unit_code]
   static final unit_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[17]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[17]);
 
   /// see [PosLogObjectBoxStruct.unit_name]
   static final unit_name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[18]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[18]);
 
   /// see [PosLogObjectBoxStruct.barcode]
   static final barcode =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[19]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[19]);
 
   /// see [PosLogObjectBoxStruct.discount_text]
   static final discount_text =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[7].properties[20]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[20]);
 
   /// see [PosLogObjectBoxStruct.hold_number]
   static final hold_number =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[21]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[21]);
 
   /// see [PosLogObjectBoxStruct.doc_mode]
   static final doc_mode =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[7].properties[22]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[22]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.
 class PrinterObjectBoxStruct_ {
   /// see [PrinterObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[8].properties[0]);
+      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[7].properties[0]);
 
   /// see [PrinterObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[8].properties[1]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[1]);
 
   /// see [PrinterObjectBoxStruct.guid_fixed]
   static final guid_fixed =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[8].properties[2]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[2]);
 
   /// see [PrinterObjectBoxStruct.name1]
   static final name1 =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[8].properties[3]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[3]);
 
   /// see [PrinterObjectBoxStruct.type]
   static final type =
-      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[8].properties[4]);
+      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[7].properties[4]);
 
   /// see [PrinterObjectBoxStruct.print_ip_address]
   static final print_ip_address =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[8].properties[5]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[5]);
 
   /// see [PrinterObjectBoxStruct.printer_port]
   static final printer_port =
-      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[8].properties[6]);
+      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[7].properties[6]);
 }
 
 /// [ProductBarcodeObjectBoxStruct] entity fields to define ObjectBox queries.
 class ProductBarcodeObjectBoxStruct_ {
   /// see [ProductBarcodeObjectBoxStruct.id]
   static final id = QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[0]);
+      _entities[8].properties[0]);
 
   /// see [ProductBarcodeObjectBoxStruct.barcode]
   static final barcode = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[1]);
+      _entities[8].properties[1]);
 
   /// see [ProductBarcodeObjectBoxStruct.names]
   static final names = QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[2]);
+      _entities[8].properties[2]);
 
   /// see [ProductBarcodeObjectBoxStruct.name_all]
   static final name_all = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[3]);
+      _entities[8].properties[3]);
 
   /// see [ProductBarcodeObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[4]);
+      _entities[8].properties[4]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_guid]
   static final item_guid = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[5]);
+      _entities[8].properties[5]);
 
   /// see [ProductBarcodeObjectBoxStruct.descriptions]
   static final descriptions =
       QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[6]);
+          _entities[8].properties[6]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_code]
   static final item_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[7]);
+      _entities[8].properties[7]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_unit_code]
   static final item_unit_code =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[8]);
+          _entities[8].properties[8]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_code]
   static final unit_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[9]);
+      _entities[8].properties[9]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_names]
   static final unit_names =
       QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[10]);
+          _entities[8].properties[10]);
 
   /// see [ProductBarcodeObjectBoxStruct.new_line]
   static final new_line = QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[11]);
+      _entities[8].properties[11]);
 
   /// see [ProductBarcodeObjectBoxStruct.product_count]
   static final product_count =
       QueryDoubleProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[12]);
+          _entities[8].properties[12]);
 
   /// see [ProductBarcodeObjectBoxStruct.options_json]
   static final options_json =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[13]);
+          _entities[8].properties[13]);
 
   /// see [ProductBarcodeObjectBoxStruct.images_url]
   static final images_url = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[9].properties[14]);
+      _entities[8].properties[14]);
 
   /// see [ProductBarcodeObjectBoxStruct.color_select]
   static final color_select =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[15]);
+          _entities[8].properties[15]);
 
   /// see [ProductBarcodeObjectBoxStruct.color_select_hex]
   static final color_select_hex =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[16]);
+          _entities[8].properties[16]);
 
   /// see [ProductBarcodeObjectBoxStruct.image_or_color]
   static final image_or_color =
       QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[17]);
+          _entities[8].properties[17]);
 
   /// see [ProductBarcodeObjectBoxStruct.prices]
   static final prices =
       QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[9].properties[18]);
+          _entities[8].properties[18]);
 }
 
 /// [ProductCategoryObjectBoxStruct] entity fields to define ObjectBox queries.
 class ProductCategoryObjectBoxStruct_ {
   /// see [ProductCategoryObjectBoxStruct.id]
   static final id = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-      _entities[10].properties[0]);
+      _entities[9].properties[0]);
 
   /// see [ProductCategoryObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[10].properties[1]);
+      _entities[9].properties[1]);
 
   /// see [ProductCategoryObjectBoxStruct.names]
   static final names =
       QueryStringVectorProperty<ProductCategoryObjectBoxStruct>(
-          _entities[10].properties[2]);
+          _entities[9].properties[2]);
 
   /// see [ProductCategoryObjectBoxStruct.image_url]
   static final image_url = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[10].properties[3]);
+      _entities[9].properties[3]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselect]
   static final colorselect =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[10].properties[4]);
+          _entities[9].properties[4]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselecthex]
   static final colorselecthex =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[10].properties[5]);
+          _entities[9].properties[5]);
 
   /// see [ProductCategoryObjectBoxStruct.codelist]
   static final codelist = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[10].properties[6]);
+      _entities[9].properties[6]);
 
   /// see [ProductCategoryObjectBoxStruct.parent_guid_fixed]
   static final parent_guid_fixed =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[10].properties[7]);
+          _entities[9].properties[7]);
 
   /// see [ProductCategoryObjectBoxStruct.use_image_or_color]
   static final use_image_or_color =
       QueryBooleanProperty<ProductCategoryObjectBoxStruct>(
-          _entities[10].properties[8]);
+          _entities[9].properties[8]);
 
   /// see [ProductCategoryObjectBoxStruct.xorder]
   static final xorder = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-      _entities[10].properties[9]);
+      _entities[9].properties[9]);
 
   /// see [ProductCategoryObjectBoxStruct.category_count]
   static final category_count =
       QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-          _entities[10].properties[10]);
+          _entities[9].properties[10]);
 }
 
 /// [BankObjectBoxStruct] entity fields to define ObjectBox queries.
 class BankObjectBoxStruct_ {
   /// see [BankObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<BankObjectBoxStruct>(_entities[11].properties[0]);
+      QueryIntegerProperty<BankObjectBoxStruct>(_entities[10].properties[0]);
 
   /// see [BankObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<BankObjectBoxStruct>(_entities[11].properties[1]);
+      QueryStringProperty<BankObjectBoxStruct>(_entities[10].properties[1]);
 
   /// see [BankObjectBoxStruct.logo]
   static final logo =
-      QueryStringProperty<BankObjectBoxStruct>(_entities[11].properties[2]);
+      QueryStringProperty<BankObjectBoxStruct>(_entities[10].properties[2]);
 
   /// see [BankObjectBoxStruct.names]
   static final names = QueryStringVectorProperty<BankObjectBoxStruct>(
-      _entities[11].properties[3]);
+      _entities[10].properties[3]);
 
   /// see [BankObjectBoxStruct.guidfixed]
   static final guidfixed =
-      QueryStringProperty<BankObjectBoxStruct>(_entities[11].properties[4]);
+      QueryStringProperty<BankObjectBoxStruct>(_entities[10].properties[4]);
 }
 
 /// [PosTicketObjectBoxStruct] entity fields to define ObjectBox queries.
 class PosTicketObjectBoxStruct_ {
   /// see [PosTicketObjectBoxStruct.id]
   static final id = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[0]);
+      _entities[11].properties[0]);
 
   /// see [PosTicketObjectBoxStruct.guidfixed]
   static final guidfixed = QueryStringProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[1]);
+      _entities[11].properties[1]);
 
   /// see [PosTicketObjectBoxStruct.ticketName]
   static final ticketName = QueryStringProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[2]);
+      _entities[11].properties[2]);
 
   /// see [PosTicketObjectBoxStruct.logo]
   static final logo = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[3]);
+      _entities[11].properties[3]);
 
   /// see [PosTicketObjectBoxStruct.cashierDetail]
   static final cashierDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[4]);
+      _entities[11].properties[4]);
 
   /// see [PosTicketObjectBoxStruct.customerDetail]
   static final customerDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[5]);
+      _entities[11].properties[5]);
 
   /// see [PosTicketObjectBoxStruct.customerAddress]
   static final customerAddress = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[6]);
+      _entities[11].properties[6]);
 
   /// see [PosTicketObjectBoxStruct.customerTaxId]
   static final customerTaxId = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[7]);
+      _entities[11].properties[7]);
 
   /// see [PosTicketObjectBoxStruct.descriptionWidth]
   static final descriptionWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[8]);
+      _entities[11].properties[8]);
 
   /// see [PosTicketObjectBoxStruct.amountWidth]
   static final amountWidth = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[9]);
+      _entities[11].properties[9]);
 
   /// see [PosTicketObjectBoxStruct.saleDetail]
   static final saleDetail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[10]);
+      _entities[11].properties[10]);
 
   /// see [PosTicketObjectBoxStruct.docNoQrCode]
   static final docNoQrCode = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[11]);
+      _entities[11].properties[11]);
 
   /// see [PosTicketObjectBoxStruct.shopName]
   static final shopName = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[12]);
+      _entities[11].properties[12]);
 
   /// see [PosTicketObjectBoxStruct.shopAddress]
   static final shopAddress = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[13]);
+      _entities[11].properties[13]);
 
   /// see [PosTicketObjectBoxStruct.shopTaxId]
   static final shopTaxId = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[14]);
+      _entities[11].properties[14]);
 
   /// see [PosTicketObjectBoxStruct.shopTel]
   static final shopTel = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[15]);
+      _entities[11].properties[15]);
 
   /// see [PosTicketObjectBoxStruct.printMode]
   static final printMode = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[16]);
+      _entities[11].properties[16]);
 
   /// see [PosTicketObjectBoxStruct.printerWidth]
   static final printerWidth = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[12].properties[17]);
+      _entities[11].properties[17]);
 }

@@ -137,7 +137,7 @@ class _FindEmployeeState extends State<FindEmployee>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: global.posTheme.secondary,
-        title: const Text("ค้นหา พนักงาน"),
+        title:  Text(global.language("find_employee")),
       ),
       body: findByText(),
     );
