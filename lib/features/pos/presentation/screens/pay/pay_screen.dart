@@ -6,7 +6,7 @@ import 'package:dedepos/core/service_locator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';
-import 'package:dedepos/api/sync_bill.dart';
+import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_cash.dart';
@@ -521,7 +521,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
                 ),
                 child: Center(
                   child: Text(
-                    global.language("รูปแบบการชำระ"),
+                    global.language("payment_channel"), // รูปแบบการชำระ
                     style: TextStyle(
                       color: Colors.white,
                       fontSize:

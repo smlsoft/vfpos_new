@@ -1,6 +1,6 @@
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/model/find/find_employee_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/api/rest_api.dart';
 
 class FindEmployeeByNameLoadStart extends FindEmployeeByNameEvent {
   final String words;

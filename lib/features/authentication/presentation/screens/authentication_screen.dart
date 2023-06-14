@@ -238,7 +238,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           horizontalLine(),
-          const Text(" OR "),
+          Text(" ${global.language("or")} "),
           horizontalLine()
         ],
       ),

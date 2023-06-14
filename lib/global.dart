@@ -1,8 +1,10 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:presentation_displays/display.dart';
@@ -25,7 +27,6 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
-import 'package:dedepos/model/objectbox/member_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/api/sync/master/sync_master.dart' as sync;
@@ -50,8 +51,11 @@ import 'db/config_helper.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
-import 'model/json/language_model.dart';
 
+bool developerMode = true;
+late List<LanguageSystemModel> languageSystemData;
+late List<LanguageSystemCodeModel> languageSystemCode;
+String userLanguage = "";
 DisplayManager displayManager = DisplayManager();
 bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
@@ -62,7 +66,6 @@ String ipAddress = "";
 List<String> errorMessage = [];
 List<InformationModel> informationList = <InformationModel>[];
 bool initSuccess = false;
-late List<LanguageSystemCodeModel> languageSystemCode;
 late String pathApplicationDocumentsDirectory;
 List<PosHoldProcessModel> posHoldProcessResult = [];
 int posHoldActiveNumber = 0;
@@ -111,7 +114,6 @@ double payScreenNumberPadAmount = 0;
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
     PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-String? userLanguage;
 String userLoginCode = "001";
 String userLoginName = "สมชาย";
 String employeeLogin = "";
@@ -151,7 +153,6 @@ String syncTableTimeName = "lastSyncTable";
 String syncTableZoneTimeName = "lastSyncTableZone";
 String syncDeviceTimeName = "lastSyncDevice";
 bool isOnline = false;
-MemberObjectBoxStruct? userData;
 PaymentModel? paymentData;
 late Store objectBoxStore;
 String dateFormatSync = "yyyy-MM-ddTHH:mm:ss";
@@ -172,7 +173,7 @@ PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
 bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
 String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
 String posSaleChannelLogoUrl = "";
-
+List<String> googleLanguageCode = [];
 List<PosSaleChannelModel> posSaleChannelList = [];
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
@@ -498,7 +499,7 @@ void showAlertDialog(
     required String title,
     required String message}) {
   Widget okButton = TextButton(
-    child: const Text("OK"),
+    child: Text(global.language("OK")),
     onPressed: () {
       Navigator.pop(context);
     },
@@ -727,44 +728,21 @@ String findLogoImageFromCreditCardProvider(String code) {
 }
 
 String language(String code) {
-  String result = "";
-  int left = 0;
-  int right = languageSystemCode.length - 1;
-
-  while (left <= right) {
-    int middle = (left + right) ~/ 2;
-    int comparison = languageSystemCode[middle].code.compareTo(code);
-
-    if (comparison == 0) {
-      int langLeft = 0;
-      int langRight = languageSystemCode[middle].langs.length - 1;
-
-      while (langLeft <= langRight) {
-        int langMiddle = (langLeft + langRight) ~/ 2;
-        int langComparison = languageSystemCode[middle]
-            .langs[langMiddle]
-            .code
-            .compareTo(userLanguage ?? 'th');
-
-        if (langComparison == 0) {
-          result = languageSystemCode[middle].langs[langMiddle].text;
-          break;
-        } else if (langComparison < 0) {
-          langLeft = langMiddle + 1;
-        } else {
-          langRight = langMiddle - 1;
-        }
-      }
+  bool found = false;
+  code = code.trim().toLowerCase();
+  String result = code;
+  for (int i = 0; i < languageSystemData.length; i++) {
+    if (languageSystemData[i].code == code) {
+      result = languageSystemData[i].text;
+      found = true;
       break;
-    } else if (comparison < 0) {
-      left = middle + 1;
-    } else {
-      right = middle - 1;
     }
   }
-
-  if (result.trim().isEmpty) {
-    // dev.log(code);
+  if (!found) {
+    dev.log("language not found: $code");
+    if (developerMode && code.trim().isNotEmpty && kIsWeb == false) {
+      googleMultiLanguageSheetAppendRow(["pos_client", code]);
+    }
   }
   return (result.trim().isEmpty) ? code : result;
 }
@@ -1222,4 +1200,20 @@ double printerWidthByPixel() {
   } else {
     return 576;
   }
+}
+
+void languageSelect(String languageCode) {
+  languageSystemData = [];
+  for (int i = 0; i < languageSystemCode.length; i++) {
+    for (int j = 0; j < languageSystemCode[i].langs.length; j++) {
+      if (languageSystemCode[i].langs[j].code == userLanguage) {
+        languageSystemData.add(LanguageSystemModel(
+            code: languageSystemCode[i].code.trim(),
+            text: languageSystemCode[i].langs[j].text.trim()));
+      }
+    }
+  }
+  /*global.languageSystemData.sort((a, b) {
+    return a.code.compareTo(b.code);
+  });*/
 }

@@ -236,7 +236,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Find Item"),
+        title: Text(global.language("find_item")),
       ),
       body: findByText(),
     );

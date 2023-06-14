@@ -218,28 +218,28 @@ Widget posBill(BillObjectBoxStruct bill) {
         },
         children: [
           TableRow(children: [
-            const Text("เลขที่"),
+            Text(global.language("doc_number")),
             Text(
               bill.doc_number,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
           TableRow(children: [
-            const Text("วันที่"),
+            Text(global.language("doc_date")),
             Text(
               global.dateTimeFormat(bill.date_time),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
           TableRow(children: [
-            const Text("มูลค่า"),
+            Text(global.language("amount")),
             Text(
               global.moneyFormat.format(bill.total_amount),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
           TableRow(children: [
-            const Text("สำเนา"),
+            Text(global.language("copy")),
             Text(
               global.moneyFormat.format(bill.print_copy_bill_date_time.length),
               style: const TextStyle(fontWeight: FontWeight.bold),
