@@ -24,15 +24,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      serviceLocator<CheckUserLoginStatus>()
-          .checkIfUserLoggedIn()
-          .then((isUserLoggedIn) async {
+      serviceLocator<CheckUserLoginStatus>().checkIfUserLoggedIn().then((isUserLoggedIn) async {
         if (isUserLoggedIn) {
           final user = await serviceLocator<UserCacheService>().getUser();
 
-          context
-              .read<AuthenticationBloc>()
-              .add(AuthenticationEvent.authenticated(user: user!));
+          context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user!));
 
           await global.appStorage.write("token", user.token);
           global.apiConnected = true;
@@ -40,23 +36,18 @@ class _SplashScreenState extends State<SplashScreen> {
           global.loginProcess = true;
           // global.apiConnected = true;
 
-          serviceLocator<CheckUserLoginStatus>()
-              .checkIfUserSelectedShop()
-              .then((userSelectedShop) {
+          serviceLocator<CheckUserLoginStatus>().checkIfUserSelectedShop().then((userSelectedShop) {
             if (userSelectedShop != null) {
-              context.read<SelectShopBloc>().add(
-                  SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
+              global.apiShopID = userSelectedShop.guidfixed;
+              context.read<SelectShopBloc>().add(SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
 
-              context.router.pushAndPopUntil(const InitShopRoute(),
-                  predicate: (route) => false);
+              context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
             } else {
-              context.router.pushAndPopUntil(const SelectShopRoute(),
-                  predicate: (route) => false);
+              context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
             }
           });
         } else {
-          context.router.pushAndPopUntil(const AuthenticationRoute(),
-              predicate: (route) => false);
+          context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
         }
       });
     });
