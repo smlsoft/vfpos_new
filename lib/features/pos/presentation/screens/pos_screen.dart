@@ -1,6 +1,6 @@
 import 'dart:ui';
-
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/flavors.dart';
@@ -9,6 +9,7 @@ import 'package:dedepos/features/pos/presentation/screens/pos_cancel_bill.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_product_weight.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_reprint_bill.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_sale_channel.dart';
+import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/util/menu_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -27,7 +28,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/services/find_employee.dart';
-import 'package:dedepos/services/find_member.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_hold_bill.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
@@ -83,10 +83,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final TextEditingController empCode = TextEditingController();
   final TextEditingController receiveAmount = TextEditingController();
   final FindItem findItemScreen = const FindItem();
-  final FindMember findMemberScreen = const FindMember();
   bool displayDetailByBarcode = false;
   final debounce = global.Debounce(500);
-  final List<FindItemModel> findByCodeNameLastResult = [];
+  final List<FindItemModel> findItemByCodeNameLastResult = [];
+  final List<FindMemberModel> findMemberByNameTelephoneLastResult = [];
   final TextEditingController textFindByTextController = TextEditingController();
   FocusNode? textFindByTextFocus;
   int activeLineNumber = -1;
@@ -562,10 +562,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget findMemberByText() {
-    return BlocBuilder<FindItemByCodeNameBarcodeBloc, FindItemByCodeNameBarcodeState>(builder: (context, state) {
-      if (state is FindItemByCodeNameBarcodeLoadSuccess) {
-        findByCodeNameLastResult.addAll(state.result);
-        context.read<FindItemByCodeNameBarcodeBloc>().add(FindItemByCodeNameBarcodeLoadFinish());
+    return BlocBuilder<FindMemberByTelNameBloc, FindMemberByTelNameState>(builder: (context, state) {
+      if (state is FindMemberByTelNameLoadSuccess) {
+        findMemberByNameTelephoneLastResult.addAll(state.result);
+        context.read<FindMemberByTelNameBloc>().add(FindMemberByTelNameLoadFinish());
       }
       return Card(
         shape: RoundedRectangleBorder(
@@ -588,15 +588,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   controller: textFindByTextController,
                   onChanged: (string) {
                     debounce.run(() {
-                      findByCodeNameLastResult.clear();
-                      context.read<FindItemByCodeNameBarcodeBloc>().add(FindItemByCodeNameBarcodeLoadStart(words: textFindByTextController.text, offset: 0, limit: 50));
+                      findItemByCodeNameLastResult.clear();
+                      context.read<FindMemberByTelNameBloc>().add(FindMemberByTelNameLoadStart(words: textFindByTextController.text, offset: 0, limit: 50));
                     });
                   },
                   decoration: InputDecoration(
                     hintText: "ข้อความบางส่วน (ชื่อ,รหัส,หมายเลขโทรศัพท์)",
                     suffixIcon: IconButton(
                       onPressed: () => setState(() {
-                        findByCodeNameLastResult.clear();
+                        findItemByCodeNameLastResult.clear();
                         textFindByTextController.clear();
                       }),
                       icon: const Icon(Icons.clear),
@@ -605,9 +605,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(
-                children: findByCodeNameLastResult.map((value) {
-                  var index = findByCodeNameLastResult.indexOf(value);
-                  var detail = findByCodeNameLastResult[index];
+                children: findItemByCodeNameLastResult.map((value) {
+                  var index = findItemByCodeNameLastResult.indexOf(value);
+                  var detail = findItemByCodeNameLastResult[index];
                   return Row(children: [
                     Expanded(
                         flex: 5,
@@ -706,7 +706,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget findProductByText() {
     return BlocBuilder<FindItemByCodeNameBarcodeBloc, FindItemByCodeNameBarcodeState>(builder: (context, state) {
       if (state is FindItemByCodeNameBarcodeLoadSuccess) {
-        findByCodeNameLastResult.addAll(state.result);
+        findItemByCodeNameLastResult.addAll(state.result);
         context.read<FindItemByCodeNameBarcodeBloc>().add(FindItemByCodeNameBarcodeLoadFinish());
       }
       return Card(
@@ -730,7 +730,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   controller: textFindByTextController,
                   onChanged: (string) {
                     debounce.run(() {
-                      findByCodeNameLastResult.clear();
+                      findItemByCodeNameLastResult.clear();
                       context.read<FindItemByCodeNameBarcodeBloc>().add(FindItemByCodeNameBarcodeLoadStart(words: textFindByTextController.text, offset: 0, limit: 50));
                     });
                   },
@@ -738,7 +738,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     hintText: "ข้อความบางส่วน (ชื่อ,รหัส)",
                     suffixIcon: IconButton(
                       onPressed: () => setState(() {
-                        findByCodeNameLastResult.clear();
+                        findItemByCodeNameLastResult.clear();
                         textFindByTextController.clear();
                       }),
                       icon: const Icon(Icons.clear),
@@ -755,9 +755,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(
-                children: findByCodeNameLastResult.map((value) {
-                  var index = findByCodeNameLastResult.indexOf(value);
-                  var detail = findByCodeNameLastResult[index];
+                children: findItemByCodeNameLastResult.map((value) {
+                  var index = findItemByCodeNameLastResult.indexOf(value);
+                  var detail = findItemByCodeNameLastResult[index];
                   return Row(children: [
                     Expanded(
                         flex: 5,
@@ -3005,13 +3005,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     barcodeScanActive = true;
   }
 
-  void findMemberByCodeName() async {
-    await Navigator.push(
-      context,
-      PageTransition(type: PageTransitionType.rightToLeft, child: findMemberScreen),
-    );
-  }
-
   void findEmployee() async {
     await Navigator.push(
       context,
@@ -3963,7 +3956,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                           ).then((value) => setState(() {}));
                                         },
                                         child: Image.network(global.posSaleChannelLogoUrl))),
-                              Text((global.posScreenMode == global.PosScreenModeEnum.posSale) ? 'ขายสินค้า' : 'รับคืนสินค้า',
+                              Text(
+                                  (global.posScreenMode == global.PosScreenModeEnum.posSale)
+                                      ? global.language("doc_sale") //  'ขายสินค้า'
+                                      : global.language("doc_return"), // 'รับคืนสินค้า',
                                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, shadows: [
                                     Shadow(
                                       blurRadius: 10.0,

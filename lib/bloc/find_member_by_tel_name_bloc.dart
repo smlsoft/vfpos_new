@@ -1,13 +1,14 @@
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/api/rest_api.dart';
 
 class FindMemberByTelNameLoadStart extends FindMemberByTelNameEvent {
   final String words;
   final int offset;
   final int limit;
 
-  FindMemberByTelNameLoadStart(this.words, this.offset, this.limit);
+  FindMemberByTelNameLoadStart(
+      {required this.words, required this.offset, required this.limit});
 }
 
 class FindMemberByTelNameLoadSuccess extends FindMemberByTelNameState {
@@ -18,7 +19,7 @@ class FindMemberByTelNameLoadSuccess extends FindMemberByTelNameState {
 
 class FindMemberByTelNameBloc
     extends Bloc<FindMemberByTelNameEvent, FindMemberByTelNameState> {
-  final RestApiFindMemberByTelName apiFindMemberByTelName;
+  final ApiRepository apiFindMemberByTelName;
 
   final int? offset;
   final int? limit;

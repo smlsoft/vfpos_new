@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
-import 'package:dedepos/api/sync/api_repository.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/master/sync_bank.dart';
 import 'package:dedepos/api/sync/master/sync_employee.dart';
 import 'package:dedepos/api/user_repository.dart';

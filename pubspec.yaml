@@ -97,6 +97,7 @@ dependencies:
   sunmi_ext_printer: ^0.0.1
   print_bluetooth_thermal: ^1.0.9
   flutter_pos_printer_platform: ^1.1.0
+  gsheets: ^0.4.2
 
 dev_dependencies:
   flutter_driver:

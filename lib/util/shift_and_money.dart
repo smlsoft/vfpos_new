@@ -13,16 +13,18 @@ Widget shiftAndMoneyScreen({required int mode}) {
   String header = "";
   switch (mode) {
     case 0:
-      header = "เปิดกะ+เงินทอน";
+      header = global
+          .language("open_the_cash_register_and_change"); // "เปิดกะ+เงินทอน";
       break;
     case 1:
-      header = "ปิดกะ+ส่งเงิน";
+      header = global
+          .language("close_the_shift_and_submit_the_money"); // "ปิดกะ+ส่งเงิน";
       break;
     case 2:
-      header = "เติมเงินทอน";
+      header = global.language("replenish_change"); // "เติมเงินทอน";
       break;
     case 3:
-      header = "นำเงินออก";
+      header = global.language("take_out_money"); // "นำเงินออก";
       break;
   }
   return Container(
@@ -86,7 +88,8 @@ Widget shiftAndMoneyScreen({required int mode}) {
                       children: [
                         TableRow(
                           children: [
-                            Text("รหัสพนักงาน", style: textStyle),
+                            Text(global.language("employee_code"),
+                                style: textStyle),
                             Text(global.userLoginCode,
                                 style: textStyle.copyWith(
                                     fontWeight: FontWeight.bold)),
@@ -94,7 +97,8 @@ Widget shiftAndMoneyScreen({required int mode}) {
                         ),
                         TableRow(
                           children: [
-                            Text("ชื่อพนักงาน", style: textStyle),
+                            Text(global.language("employee_name"),
+                                style: textStyle),
                             Text(global.userLoginName,
                                 style: textStyle.copyWith(
                                     fontWeight: FontWeight.bold)),
@@ -107,15 +111,15 @@ Widget shiftAndMoneyScreen({required int mode}) {
                       TextField(
                         controller: remarkTextEditingController,
                         style: textStyle,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'หมายเหตุ',
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          hintText: global.language("remark"),
                         ),
                       ),
                     if (mode == 2 || mode == 3) const SizedBox(height: 10),
                     Expanded(
                         child: NumberPad(
-                            header: "จำนวนเงิน",
+                            header: global.language("amount_of_money"),
                             onChange: (value) {
                               serviceLocator<Log>().debug(value);
                             })),

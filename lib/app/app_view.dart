@@ -1,4 +1,4 @@
-import 'package:dedepos/api/rest_api.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/bloc/bloc.dart';
 import 'package:dedepos/features/authentication/presentation/bloc/authentication_bloc.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
@@ -23,7 +23,7 @@ class App extends StatelessWidget {
                     RestApiFindItemByCodeNameBarcode())),
         BlocProvider(
             create: (context) => FindMemberByTelNameBloc(
-                apiFindMemberByTelName: RestApiFindMemberByTelName())),
+                apiFindMemberByTelName: ApiRepository())),
         BlocProvider(
             create: (context) => FindEmployeeByNameBloc(
                 apiFindEmployeeByName: RestApiFindEmployeeByWord())),

@@ -1,6 +1,6 @@
+import 'package:dedepos/api/api_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
-import 'package:dedepos/api/rest_api.dart';
 
 class FindItemByCodeNameBarcodeLoadStart
     extends FindItemByCodeNameBarcodeEvent {
