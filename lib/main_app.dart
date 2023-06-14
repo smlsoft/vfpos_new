@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/bloc/bill_bloc.dart';
-import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_secondary_screen.dart';
+import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/util/app_auth.dart';
 import 'package:dedepos/util/pos_client.dart';
 import 'package:dedepos/util/select_mode_screen.dart';
@@ -14,18 +16,17 @@ import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/util/menu_screen.dart';
 import 'package:dedepos/util/loading_screen.dart';
 import 'package:dedepos/util/login.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/api/rest_api.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 import 'package:dedepos/bloc/server_bloc.dart';
 import 'package:dedepos/api/network/server.dart' as server;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:intl/intl.dart';
-
 import 'bootstrap.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -63,6 +64,7 @@ Future<void> mainApp() async {
 
   Intl.defaultLocale = "th";
   initializeDateFormatting();
+
   if (Platform.isAndroid) {
     // Position position = await global.determinePosition();
   }
@@ -122,7 +124,7 @@ Future<void> mainApp() async {
                       RestApiFindItemByCodeNameBarcode())),
           BlocProvider(
               create: (context) => FindMemberByTelNameBloc(
-                  apiFindMemberByTelName: RestApiFindMemberByTelName())),
+                  apiFindMemberByTelName: ApiRepository())),
           BlocProvider(
               create: (context) => FindEmployeeByNameBloc(
                   apiFindEmployeeByName: RestApiFindEmployeeByWord())),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dedepos/app/http_verify.dart';
@@ -8,7 +9,10 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/google_sheet.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:presentation_displays/display.dart';
@@ -41,12 +45,30 @@ Future<void> initializeApp() async {
   }
 }
 
-void initializeEnvironmentConfig() {
+Future<void> initializeEnvironmentConfig() async {
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
     defaultValue: Environment.DEV,
   );
   Environment().initConfig(environment);
+  //
+  if (global.developerMode && kIsWeb == false) {
+    // Developer Mode
+    await googleMultiLanguageSheetLoad().then((_) {
+      global.userLanguage = "th";
+      global.languageSelect(global.userLanguage);
+    });
+  } else {
+    try {
+      global.languageSystemCode =
+          (json.decode(await rootBundle.loadString('assets/language.json'))
+                  as List)
+              .map((i) => LanguageSystemCodeModel.fromJson(i))
+              .toList();
+    } catch (_) {}
+    global.userLanguage = "th";
+    global.languageSelect(global.userLanguage);
+  }
 }
 
 Future<void> setupDisplay() async {

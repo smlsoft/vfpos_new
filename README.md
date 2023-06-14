@@ -188,3 +188,6 @@ flutter run --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=STAG
             ]
         },
 ```
+
+
+webBot@19682511

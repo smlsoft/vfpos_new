@@ -1,6 +1,6 @@
 import 'dart:ui';
-
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/flavors.dart';
@@ -9,6 +9,7 @@ import 'package:dedepos/features/pos/presentation/screens/pos_cancel_bill.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_product_weight.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_reprint_bill.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_sale_channel.dart';
+import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/util/menu_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -27,7 +28,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/services/find_employee.dart';
-import 'package:dedepos/services/find_member.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_hold_bill.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
@@ -83,19 +83,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final TextEditingController empCode = TextEditingController();
   final TextEditingController receiveAmount = TextEditingController();
   final FindItem findItemScreen = const FindItem();
-  final FindMember findMemberScreen = const FindMember();
   bool displayDetailByBarcode = false;
   final debounce = global.Debounce(500);
-  final List<FindItemModel> findByCodeNameLastResult = [];
-  final TextEditingController textFindByTextController =
-      TextEditingController();
+  final List<FindItemModel> findItemByCodeNameLastResult = [];
+  final List<FindMemberModel> findMemberByNameTelephoneLastResult = [];
+  final TextEditingController textFindByTextController = TextEditingController();
   FocusNode? textFindByTextFocus;
   int activeLineNumber = -1;
   final bool isListen = false;
   final double confidence = 1.0;
   late TabController tabletTabController;
-  SplitViewController splitViewController = SplitViewController(
-      weights: [0.6, 0.4], limits: [WeightLimit(min: 0.1, max: 0.9)]);
+  SplitViewController splitViewController = SplitViewController(weights: [0.6, 0.4], limits: [WeightLimit(min: 0.1, max: 0.9)]);
   bool showNumericPad = false;
   double showNumericPadTop = 100;
   double showNumericPadLeft = 100;
@@ -144,8 +142,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     if (global.syncRefreshProductCategory) {
       dev.log("syncRefreshProductCategory");
       global.syncRefreshProductCategory = false;
-      context.read<ProductCategoryBloc>().add(
-          ProductCategoryLoadStart(parentCategoryGuid: categoryGuidSelected));
+      context.read<ProductCategoryBloc>().add(ProductCategoryLoadStart(parentCategoryGuid: categoryGuidSelected));
     }
     if (global.syncRefreshProductBarcode) {
       dev.log("syncRefreshProductBarcode");
@@ -162,7 +159,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     restartClearData();
     global.posScreenMode = widget.posScreenMode;
     if (global.isDesktopScreen()) {
-      deviceMode = 0;
+      deviceMode = 1;
     } else if (global.isTabletScreen()) {
       deviceMode = 1;
     } else {
@@ -180,20 +177,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       }
     });
 
-    context
-        .read<ProductCategoryBloc>()
-        .add(ProductCategoryLoadStart(parentCategoryGuid: ''));
+    context.read<ProductCategoryBloc>().add(ProductCategoryLoadStart(parentCategoryGuid: ''));
     checkOnline();
     // เรียกรายการประกอบการขายจาก Hold
-    global.payScreenData =
-        global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
+    global.payScreenData = global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
     //
     global.productCategoryCodeSelected.clear();
     global.themeSelect(2);
-    autoScrollController = AutoScrollController(
-        viewportBoundaryGetter: () =>
-            Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
-        axis: Axis.vertical);
+    autoScrollController = AutoScrollController(viewportBoundaryGetter: () => Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom), axis: Axis.vertical);
     //processPromotionTemp();
     loadCategory();
     loadProductByCategory(categoryGuidSelected);
@@ -201,8 +192,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       tabletTabController = TabController(length: 5, vsync: this);
       tabletTabController.addListener(() {
         if (!tabletTabController.indexIsChanging) {
-          if (tabletTabController.index == 3 ||
-              tabletTabController.index == 4) {
+          if (tabletTabController.index == 3 || tabletTabController.index == 4) {
             SystemChannels.textInput.invokeMethod('TextInput.show');
           } else {
             SystemChannels.textInput.invokeMethod('TextInput.hide');
@@ -236,8 +226,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       // จอแสดงผล POS
       if (Platform.isAndroid) {
         if (global.isInternalCustomerDisplayConnected) {
-          global.displayManager.showSecondaryDisplay(
-              displayId: 1, routerName: "PosSecondaryRoute");
+          global.displayManager.showSecondaryDisplay(displayId: 1, routerName: "PosSecondaryRoute");
         }
       }
     });
@@ -275,51 +264,35 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Future<void> getProcessFromTerminal() async {
     if (global.appMode == global.AppModeEnum.posRemote) {
-      HttpParameterModel jsonParameter =
-          HttpParameterModel(holdNumber: global.posHoldActiveNumber);
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "get_process", json: jsonEncode(jsonParameter.toJson()));
-      global.posHoldProcessResult[global.posHoldActiveNumber] =
-          PosHoldProcessModel.fromJson(jsonDecode(
-              await global.getFromServer(json: jsonEncode(json.toJson()))));
-      PosProcess().sumCategoryCount(
-          value: global
-              .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+      HttpParameterModel jsonParameter = HttpParameterModel(holdNumber: global.posHoldActiveNumber);
+      HttpGetDataModel json = HttpGetDataModel(code: "get_process", json: jsonEncode(jsonParameter.toJson()));
+      global.posHoldProcessResult[global.posHoldActiveNumber] = PosHoldProcessModel.fromJson(jsonDecode(await global.getFromServer(json: jsonEncode(json.toJson()))));
+      PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
       setState(() {});
     }
   }
 
   void loadCategory() {
     // ignore: unused_local_variable
-    String categoryGuid = (global.productCategoryCodeSelected.isEmpty)
-        ? ""
-        : global
-            .productCategoryCodeSelected[
-                global.productCategoryCodeSelected.length - 1]
-            .guid_fixed;
+    String categoryGuid = (global.productCategoryCodeSelected.isEmpty) ? "" : global.productCategoryCodeSelected[global.productCategoryCodeSelected.length - 1].guid_fixed;
   }
 
   Future<void> loadProductByCategory(String categoryGuid) async {
     // ดึงรายการ Category ย่อย และ รายการสินค้า
     if (categoryGuid.isNotEmpty) {
-      global.productCategoryChildList = await ProductCategoryHelper()
-          .selectByParentCategoryGuidOrderByXorder(parentGuid: categoryGuid);
-      var selectCodeList = await ProductCategoryHelper()
-          .selectByCategoryGuidFindFirst(categoryGuid);
+      global.productCategoryChildList = await ProductCategoryHelper().selectByParentCategoryGuidOrderByXorder(parentGuid: categoryGuid);
+      var selectCodeList = await ProductCategoryHelper().selectByCategoryGuidFindFirst(categoryGuid);
       global.productListByCategory = [];
       if (selectCodeList != null) {
         List<String> barcodeList = [];
         ProductCategoryObjectBoxStruct category = selectCodeList;
         for (var item in jsonDecode(category.codelist)) {
-          SyncCategoryCodeListModel code =
-              SyncCategoryCodeListModel.fromJson(item);
+          SyncCategoryCodeListModel code = SyncCategoryCodeListModel.fromJson(item);
           barcodeList.add(code.barcode);
         }
-        var selectProductByBarcodeList =
-            await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
+        var selectProductByBarcodeList = await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
         for (var item in jsonDecode(category.codelist)) {
-          SyncCategoryCodeListModel codeList =
-              SyncCategoryCodeListModel.fromJson(item);
+          SyncCategoryCodeListModel codeList = SyncCategoryCodeListModel.fromJson(item);
           for (var product in selectProductByBarcodeList) {
             if (product.barcode == codeList.barcode) {
               global.productListByCategory.add(product);
@@ -412,8 +385,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         {
           // 101=ส่วนขยาย (Check Box)
           // เพิ่มรายการใหม่ (Extra Check Box)
-          List<PosLogObjectBoxStruct> posLogSelect =
-              await logHelper.selectByGuidFixed(findActiveLineByGuid);
+          List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
           if (posLogSelect.isNotEmpty) {
             await logHelper.insert(PosLogObjectBoxStruct(
                 guid_code_ref: guidCodeRef,
@@ -436,16 +408,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         {
           // 1=เพิ่มสินค้า
           // Get Item Name
-          ProductBarcodeObjectBoxStruct? productSelect =
-              await ProductBarcodeHelper().selectByBarcodeFirst(barcode);
+          ProductBarcodeObjectBoxStruct? productSelect = await ProductBarcodeHelper().selectByBarcodeFirst(barcode);
           String productNameStr = '';
           String unitCodeStr = "";
           String unitNameStr = "";
           if (productSelect != null) {
             if (1 == 0) {
               // สินค้าชั่งน้ำหนัก
-              qtyForCalc = await productWeightScreen(
-                  productSelect.barcode, productSelect.images_url);
+              qtyForCalc = await productWeightScreen(productSelect.barcode, productSelect.images_url);
             }
             if (qtyForCalc != 0) {
               productNameStr = productSelect.names[0];
@@ -465,63 +435,37 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   price: price);
               findActiveLineByGuid = data.guid_auto_fixed;
               await logHelper.insert(data);
-              global.playSound(
-                  sound: global.SoundEnum.beep, word: productNameStr);
+              global.playSound(sound: global.SoundEnum.beep, word: productNameStr);
               widgetMessage = [
-                Text(productNameStr,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold)),
+                Text(productNameStr, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 Text(
                     overflow: TextOverflow.ellipsis,
                     "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} $unitNameStr",
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green)),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
                 Text(
                     overflow: TextOverflow.ellipsis,
                     "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language(global.language("money_symbol"))}",
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.cyan)),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.cyan)),
                 Text(
                     overflow: TextOverflow.ellipsis,
                     "${global.language("total")} ${global.moneyFormat.format(qtyForCalc * price)} ${global.language(global.language("money_symbol"))}",
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue)),
-                Text("Barcode : $barcode",
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey)),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+                Text("Barcode : $barcode", overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey)),
               ];
               widgetMessageImageUrl = productSelect.images_url;
             }
           } else {
             widgetMessage = [
-              Center(
-                  child: Text("${global.language("item_not_found")} $barcode",
-                      style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red))),
+              Center(child: Text("${global.language("item_not_found")} $barcode", style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.red))),
             ];
             widgetMessageImageUrl = "";
-            global.playSound(
-                sound: global.SoundEnum.fail,
-                word: global.language("item_not_found"));
+            global.playSound(sound: global.SoundEnum.fail, word: global.language("item_not_found"));
           }
         }
         break;
       case 2:
         // 2=เพิ่มจำนวน + 1
-        List<PosLogObjectBoxStruct> posLogSelect =
-            await logHelper.selectByGuidFixed(findActiveLineByGuid);
+        List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
           await logHelper.insert(PosLogObjectBoxStruct(
             doc_mode: global.posScreenToInt(),
@@ -530,20 +474,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             hold_number: global.posHoldActiveNumber,
             command_code: commandCode,
           ));
-          global.playSound(
-              sound: global.SoundEnum.beep,
-              word:
-                  global.language("plus") + global.language("one") + unitName);
+          global.playSound(sound: global.SoundEnum.beep, word: global.language("plus") + global.language("one") + unitName);
         } else {
-          global.playSound(
-              sound: global.SoundEnum.fail,
-              word: global.language("item_not_found"));
+          global.playSound(sound: global.SoundEnum.fail, word: global.language("item_not_found"));
         }
         break;
       case 3:
         // 3=ลดจำนวน - 1
-        List<PosLogObjectBoxStruct> posLogSelect =
-            await logHelper.selectByGuidFixed(findActiveLineByGuid);
+        List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
           await logHelper.insert(PosLogObjectBoxStruct(
               doc_mode: global.posScreenToInt(),
@@ -552,14 +490,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               hold_number: global.posHoldActiveNumber,
               command_code: commandCode,
               qty: qtyForCalc));
-          global.playSound(
-              sound: global.SoundEnum.beep,
-              word:
-                  global.language("minus") + global.language("one") + unitName);
+          global.playSound(sound: global.SoundEnum.beep, word: global.language("minus") + global.language("one") + unitName);
         } else {
-          global.playSound(
-              sound: global.SoundEnum.fail,
-              word: global.language("item_not_found"));
+          global.playSound(sound: global.SoundEnum.fail, word: global.language("item_not_found"));
         }
         break;
       case 4:
@@ -605,22 +538,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 9:
         // 9=ลบรายการ
         await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(),
-            log_date_time: DateTime.now(),
-            hold_number: global.posHoldActiveNumber,
-            command_code: commandCode,
-            guid_ref: findActiveLineByGuid));
-        global.playSound(
-            sound: global.SoundEnum.beep,
-            word: global.language("delete") + global.language("line"));
+            doc_mode: global.posScreenToInt(), log_date_time: DateTime.now(), hold_number: global.posHoldActiveNumber, command_code: commandCode, guid_ref: findActiveLineByGuid));
+        global.playSound(sound: global.SoundEnum.beep, word: global.language("delete") + global.language("line"));
         productOptions.clear();
         break;
       case 99:
         // เริ่มใหม่
-        await logHelper.deleteByHoldNumber(
-            holdNumber: global.posHoldActiveNumber);
-        global.playSound(
-            sound: global.SoundEnum.beep, word: global.language("restart"));
+        await logHelper.deleteByHoldNumber(holdNumber: global.posHoldActiveNumber);
+        global.playSound(sound: global.SoundEnum.beep, word: global.language("restart"));
         productOptions.clear();
         findActiveLineByGuid = "";
         break;
@@ -629,8 +554,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         break;
     }
     for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
-      if (global.posRemoteDeviceList[index].holdNumberActive ==
-          global.posHoldActiveNumber) {
+      if (global.posRemoteDeviceList[index].holdNumberActive == global.posHoldActiveNumber) {
         global.posRemoteDeviceList[index].processSuccess = false;
       }
     }
@@ -638,13 +562,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget findMemberByText() {
-    return BlocBuilder<FindItemByCodeNameBarcodeBloc,
-        FindItemByCodeNameBarcodeState>(builder: (context, state) {
-      if (state is FindItemByCodeNameBarcodeLoadSuccess) {
-        findByCodeNameLastResult.addAll(state.result);
-        context
-            .read<FindItemByCodeNameBarcodeBloc>()
-            .add(FindItemByCodeNameBarcodeLoadFinish());
+    return BlocBuilder<FindMemberByTelNameBloc, FindMemberByTelNameState>(builder: (context, state) {
+      if (state is FindMemberByTelNameLoadSuccess) {
+        findMemberByNameTelephoneLastResult.addAll(state.result);
+        context.read<FindMemberByTelNameBloc>().add(FindMemberByTelNameLoadFinish());
       }
       return Card(
         shape: RoundedRectangleBorder(
@@ -667,19 +588,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   controller: textFindByTextController,
                   onChanged: (string) {
                     debounce.run(() {
-                      findByCodeNameLastResult.clear();
-                      context.read<FindItemByCodeNameBarcodeBloc>().add(
-                          FindItemByCodeNameBarcodeLoadStart(
-                              words: textFindByTextController.text,
-                              offset: 0,
-                              limit: 50));
+                      findItemByCodeNameLastResult.clear();
+                      context.read<FindMemberByTelNameBloc>().add(FindMemberByTelNameLoadStart(words: textFindByTextController.text, offset: 0, limit: 50));
                     });
                   },
                   decoration: InputDecoration(
                     hintText: "ข้อความบางส่วน (ชื่อ,รหัส,หมายเลขโทรศัพท์)",
                     suffixIcon: IconButton(
                       onPressed: () => setState(() {
-                        findByCodeNameLastResult.clear();
+                        findItemByCodeNameLastResult.clear();
                         textFindByTextController.clear();
                       }),
                       icon: const Icon(Icons.clear),
@@ -688,26 +605,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(
-                children: findByCodeNameLastResult.map((value) {
-                  var index = findByCodeNameLastResult.indexOf(value);
-                  var detail = findByCodeNameLastResult[index];
+                children: findItemByCodeNameLastResult.map((value) {
+                  var index = findItemByCodeNameLastResult.indexOf(value);
+                  var detail = findItemByCodeNameLastResult[index];
                   return Row(children: [
                     Expanded(
                         flex: 5,
                         // ignore: prefer_interpolation_to_compose_strings
-                        child: Text(detail.item_names[0] +
-                            "/" +
-                            detail.unit_names[0] +
-                            '/' +
-                            detail.item_code +
-                            "/" +
-                            detail.barcode)),
-                    Expanded(
-                        flex: 2,
-                        child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                                global.moneyFormat.format(detail.prices[0])))),
+                        child: Text(detail.item_names[0] + "/" + detail.unit_names[0] + '/' + detail.item_code + "/" + detail.barcode)),
+                    Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text(global.moneyFormat.format(detail.prices[0])))),
                     Expanded(
                         flex: 1,
                         child: Align(
@@ -734,44 +640,30 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                   await showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return StatefulBuilder(
-                                            builder: (context, setState) {
+                                        return StatefulBuilder(builder: (context, setState) {
                                           return AlertDialog(
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(12.0))),
-                                            contentPadding:
-                                                const EdgeInsets.all(10),
+                                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                                            contentPadding: const EdgeInsets.all(10),
                                             content: SizedBox(
                                                 height: 500,
                                                 child: NumberPad(
-                                                    header:
-                                                        global.language("qty"),
-                                                    title: Text(
-                                                        '${detail.item_names[0]} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}',
+                                                    header: global.language("qty"),
+                                                    title: Text('${detail.item_names[0]} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}',
                                                         style: const TextStyle(
                                                           fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                          fontWeight: FontWeight.bold,
                                                         )),
                                                     onChange: (qtyStr) => {
-                                                          if (qtyStr
-                                                                  .isNotEmpty &&
-                                                              double.parse(
-                                                                      qtyStr) >
-                                                                  0)
+                                                          if (qtyStr.isNotEmpty && double.parse(qtyStr) > 0)
                                                             {
-                                                              detail.qty =
-                                                                  double.parse(
-                                                                      qtyStr),
+                                                              detail.qty = double.parse(qtyStr),
                                                             }
                                                         })),
                                           );
                                         });
                                       });
                                 },
-                                child: Text(global.qtyShortFormat
-                                    .format(detail.qty))))),
+                                child: Text(global.qtyShortFormat.format(detail.qty))))),
                     Expanded(
                         flex: 1,
                         child: Align(
@@ -795,13 +687,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.all(2),
                                 ),
                                 onPressed: () async {
-                                  logInsert(
-                                      commandCode: 1,
-                                      barcode: detail.barcode,
-                                      qty: detail.qty.toString());
-                                  processEvent(
-                                      barcode: detail.barcode,
-                                      holdNumber: global.posHoldActiveNumber);
+                                  logInsert(commandCode: 1, barcode: detail.barcode, qty: detail.qty.toString());
+                                  processEvent(barcode: detail.barcode, holdNumber: global.posHoldActiveNumber);
                                   detail.qty = 1;
                                   //Navigator.pop(context, SelectItemConditionModel(command: 1, qty: _detail.qty, price: _detail.price, data: BarcodeStruct(barcode: _detail.barcode, itemCode: _detail.itemCode, itemName: _detail.itemName, unitCode: _detail.unitCode, unitName: _detail.unitName)));
                                 },
@@ -817,13 +704,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget findProductByText() {
-    return BlocBuilder<FindItemByCodeNameBarcodeBloc,
-        FindItemByCodeNameBarcodeState>(builder: (context, state) {
+    return BlocBuilder<FindItemByCodeNameBarcodeBloc, FindItemByCodeNameBarcodeState>(builder: (context, state) {
       if (state is FindItemByCodeNameBarcodeLoadSuccess) {
-        findByCodeNameLastResult.addAll(state.result);
-        context
-            .read<FindItemByCodeNameBarcodeBloc>()
-            .add(FindItemByCodeNameBarcodeLoadFinish());
+        findItemByCodeNameLastResult.addAll(state.result);
+        context.read<FindItemByCodeNameBarcodeBloc>().add(FindItemByCodeNameBarcodeLoadFinish());
       }
       return Card(
         shape: RoundedRectangleBorder(
@@ -846,19 +730,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   controller: textFindByTextController,
                   onChanged: (string) {
                     debounce.run(() {
-                      findByCodeNameLastResult.clear();
-                      context.read<FindItemByCodeNameBarcodeBloc>().add(
-                          FindItemByCodeNameBarcodeLoadStart(
-                              words: textFindByTextController.text,
-                              offset: 0,
-                              limit: 50));
+                      findItemByCodeNameLastResult.clear();
+                      context.read<FindItemByCodeNameBarcodeBloc>().add(FindItemByCodeNameBarcodeLoadStart(words: textFindByTextController.text, offset: 0, limit: 50));
                     });
                   },
                   decoration: InputDecoration(
                     hintText: "ข้อความบางส่วน (ชื่อ,รหัส)",
                     suffixIcon: IconButton(
                       onPressed: () => setState(() {
-                        findByCodeNameLastResult.clear();
+                        findItemByCodeNameLastResult.clear();
                         textFindByTextController.clear();
                       }),
                       icon: const Icon(Icons.clear),
@@ -866,55 +746,24 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   )),
               Row(children: [
                 Expanded(flex: 3, child: Text(global.language("item_name"))),
-                Expanded(
-                    flex: 2,
-                    child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(global.language("price")))),
-                Expanded(
-                    flex: 1,
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: Text(global.language("minus")))),
-                Expanded(
-                    flex: 1,
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: Text(global.language("qty")))),
-                Expanded(
-                    flex: 1,
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: Text(global.language("plus")))),
-                Expanded(
-                    flex: 1,
-                    child: Align(
-                        alignment: Alignment.center,
-                        child: Text(global.language("save"))))
+                Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text(global.language("price")))),
+                Expanded(flex: 1, child: Align(alignment: Alignment.center, child: Text(global.language("minus")))),
+                Expanded(flex: 1, child: Align(alignment: Alignment.center, child: Text(global.language("qty")))),
+                Expanded(flex: 1, child: Align(alignment: Alignment.center, child: Text(global.language("plus")))),
+                Expanded(flex: 1, child: Align(alignment: Alignment.center, child: Text(global.language("save"))))
               ]),
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(
-                children: findByCodeNameLastResult.map((value) {
-                  var index = findByCodeNameLastResult.indexOf(value);
-                  var detail = findByCodeNameLastResult[index];
+                children: findItemByCodeNameLastResult.map((value) {
+                  var index = findItemByCodeNameLastResult.indexOf(value);
+                  var detail = findItemByCodeNameLastResult[index];
                   return Row(children: [
                     Expanded(
                         flex: 5,
                         // ignore: prefer_interpolation_to_compose_strings
-                        child: Text(detail.item_names[0] +
-                            "/" +
-                            detail.unit_names[0] +
-                            '/' +
-                            detail.item_code +
-                            "/" +
-                            detail.barcode)),
-                    Expanded(
-                        flex: 2,
-                        child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                                global.moneyFormat.format(detail.prices[0])))),
+                        child: Text(detail.item_names[0] + "/" + detail.unit_names[0] + '/' + detail.item_code + "/" + detail.barcode)),
+                    Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text(global.moneyFormat.format(detail.prices[0])))),
                     Expanded(
                         flex: 1,
                         child: Align(
@@ -941,44 +790,30 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                   await showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return StatefulBuilder(
-                                            builder: (context, setState) {
+                                        return StatefulBuilder(builder: (context, setState) {
                                           return AlertDialog(
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(12.0))),
-                                            contentPadding:
-                                                const EdgeInsets.all(10),
+                                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                                            contentPadding: const EdgeInsets.all(10),
                                             content: SizedBox(
                                                 height: 500,
                                                 child: NumberPad(
-                                                    header:
-                                                        global.language("qty"),
-                                                    title: Text(
-                                                        '${detail.item_names[0]} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}',
+                                                    header: global.language("qty"),
+                                                    title: Text('${detail.item_names[0]} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}',
                                                         style: const TextStyle(
                                                           fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                          fontWeight: FontWeight.bold,
                                                         )),
                                                     onChange: (qtyStr) => {
-                                                          if (qtyStr
-                                                                  .isNotEmpty &&
-                                                              double.parse(
-                                                                      qtyStr) >
-                                                                  0)
+                                                          if (qtyStr.isNotEmpty && double.parse(qtyStr) > 0)
                                                             {
-                                                              detail.qty =
-                                                                  double.parse(
-                                                                      qtyStr),
+                                                              detail.qty = double.parse(qtyStr),
                                                             }
                                                         })),
                                           );
                                         });
                                       });
                                 },
-                                child: Text(global.qtyShortFormat
-                                    .format(detail.qty))))),
+                                child: Text(global.qtyShortFormat.format(detail.qty))))),
                     Expanded(
                         flex: 1,
                         child: Align(
@@ -1002,13 +837,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.all(2),
                                 ),
                                 onPressed: () async {
-                                  logInsert(
-                                      commandCode: 1,
-                                      barcode: detail.barcode,
-                                      qty: detail.qty.toString());
-                                  processEvent(
-                                      barcode: detail.barcode,
-                                      holdNumber: global.posHoldActiveNumber);
+                                  logInsert(commandCode: 1, barcode: detail.barcode, qty: detail.qty.toString());
+                                  processEvent(barcode: detail.barcode, holdNumber: global.posHoldActiveNumber);
                                   detail.qty = 1;
                                   //Navigator.pop(context, SelectItemConditionModel(command: 1, qty: _detail.qty, price: _detail.price, data: BarcodeStruct(barcode: _detail.barcode, itemCode: _detail.itemCode, itemName: _detail.itemName, unitCode: _detail.unitCode, unitName: _detail.unitName)));
                                 },
@@ -1035,8 +865,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     } catch (e) {}*/
   }
 
-  Future<void> processEvent(
-      {required String barcode, required int holdNumber}) async {
+  Future<void> processEvent({required String barcode, required int holdNumber}) async {
     if (barcode.isNotEmpty) {
       product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
           ProductBarcodeObjectBoxStruct(
@@ -1060,10 +889,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               product_count: 0);
       productOptions = product.options();
     }
-    posCompileProcess(
-            holdNumber: global.posHoldActiveNumber,
-            docMode: global.posScreenToInt())
-        .then((value) {
+    posCompileProcess(holdNumber: global.posHoldActiveNumber, docMode: global.posScreenToInt()).then((value) {
       if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
         findActiveLineByGuid = value.lineGuid;
       }
@@ -1085,11 +911,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       activeGuid = "";
     }*/
     if (findActiveLineByGuid.isNotEmpty) {
-      for (int i = 0;
-          i < global.posHoldProcessResult[holdNumber].posProcess.details.length;
-          i++) {
-        PosProcessDetailModel detail =
-            global.posHoldProcessResult[holdNumber].posProcess.details[i];
+      for (int i = 0; i < global.posHoldProcessResult[holdNumber].posProcess.details.length; i++) {
+        PosProcessDetailModel detail = global.posHoldProcessResult[holdNumber].posProcess.details[i];
         if (detail.guid == findActiveLineByGuid) {
           activeLineNumber = i;
           break;
@@ -1097,13 +920,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       }
     }
     Future.delayed(const Duration(milliseconds: 50), () {
-      autoScrollController.scrollToIndex(
-          (activeLineNumber < 0) ? 0 : activeLineNumber,
-          preferPosition: AutoScrollPosition.begin);
+      autoScrollController.scrollToIndex((activeLineNumber < 0) ? 0 : activeLineNumber, preferPosition: AutoScrollPosition.begin);
     });
     for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
-      if (global.posRemoteDeviceList[index].holdNumberActive ==
-          global.posHoldActiveNumber) {
+      if (global.posRemoteDeviceList[index].holdNumberActive == global.posHoldActiveNumber) {
         global.posRemoteDeviceList[index].processSuccess = false;
       }
     }
@@ -1112,17 +932,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void numPadChangeQty(String qty, String unitName) async {
     if (qty.isNotEmpty && double.parse(qty) > 0) {
-      global.playSound(
-          sound: global.SoundEnum.buttonTing,
-          word: global.language("qty_update") +
-              global.language("is") +
-              qty.toString() +
-              unitName);
-      logInsert(
-          commandCode: 4,
-          guid: findActiveLineByGuid,
-          qty: qty,
-          closeExtra: false);
+      global.playSound(sound: global.SoundEnum.buttonTing, word: global.language("qty_update") + global.language("is") + qty.toString() + unitName);
+      logInsert(commandCode: 4, guid: findActiveLineByGuid, qty: qty, closeExtra: false);
       processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
     }
   }
@@ -1130,36 +941,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   void numPadChangePrice(String priceStr) async {
     double price = double.tryParse(priceStr) ?? 0.0;
     if (price > 0) {
-      global.playSound(
-          sound: global.SoundEnum.buttonTing,
-          word: global.language("price_update") +
-              global.language("is") +
-              price.toString() +
-              global.language("money_symbol"));
-      logInsert(
-          commandCode: 5,
-          guid: findActiveLineByGuid,
-          price: price,
-          closeExtra: false);
+      global.playSound(sound: global.SoundEnum.buttonTing, word: global.language("price_update") + global.language("is") + price.toString() + global.language("money_symbol"));
+      logInsert(commandCode: 5, guid: findActiveLineByGuid, price: price, closeExtra: false);
     }
   }
 
-  Future<void> selectProductLevelExtraListCheck(
-      int groupIndex, int detailIndex, bool value) async {
+  Future<void> selectProductLevelExtraListCheck(int groupIndex, int detailIndex, bool value) async {
     if (value == true) {
       // ถ้าเลือกแล้ว ให้ทำการลบข้อมูลที่มีอยู่แล้วออก (ลบของเก่า)
-      PosLogHelper().deleteByGuidCodeRefHoldNumberCommandCode(
-          guidCode: productOptions[groupIndex].choices[detailIndex].guid_fixed,
-          commandCode: 101,
-          holdNumber: global.posHoldActiveNumber);
+      PosLogHelper().deleteByGuidCodeRefHoldNumberCommandCode(guidCode: productOptions[groupIndex].choices[detailIndex].guid_fixed, commandCode: 101, holdNumber: global.posHoldActiveNumber);
       global.playSound(sound: global.SoundEnum.beep);
     } else {
       /// ถ้าไม่ได้เลือก เพิ่มข้อมูลเพื่อให้ระบบประมวลผล
       /// ตรวจสอบว่ามีการเลือกมากกว่าที่กำหนดหรือไม่ (เช่น ไม่เกิน 2 รายการ)
       int count = 0;
-      for (int index = 0;
-          index < productOptions[groupIndex].choices.length;
-          index++) {
+      for (int index = 0; index < productOptions[groupIndex].choices.length; index++) {
         if (productOptions[groupIndex].choices[index].selected) {
           count++;
         }
@@ -1167,8 +963,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
       if (count < productOptions[groupIndex].max_select) {
         productOptions[groupIndex].choices[detailIndex].selected = value;
-        ProductChoiceModel detail =
-            productOptions[groupIndex].choices[detailIndex];
+        ProductChoiceModel detail = productOptions[groupIndex].choices[detailIndex];
         // เพิ่ม Log รายการที่เลือก
         logInsert(
             guidCodeRef: detail.guid_fixed,
@@ -1193,10 +988,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   void discountPadChange(String discount) async {
     if (discount.isNotEmpty) {
       if (double.tryParse(discount) != null) {
-        global.playSound(
-            word: global.language("discount") +
-                discount +
-                global.language("money_symbol"));
+        global.playSound(word: global.language("discount") + discount + global.language("money_symbol"));
       } else {
         List<String> discountList = discount.split(",");
         StringBuffer discountSpeech = StringBuffer();
@@ -1205,27 +997,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             discountSpeech.write(global.language("discount_plus"));
           }
           if (double.tryParse(discountList[index]) != null) {
-            discountSpeech
-                .write(discountList[index] + global.language("money_symbol"));
+            discountSpeech.write(discountList[index] + global.language("money_symbol"));
           } else {
             discountSpeech.write(discountList[index]);
           }
         }
-        global.playSound(
-            word: global.language("discount") + discountSpeech.toString());
+        global.playSound(word: global.language("discount") + discountSpeech.toString());
       }
-      logInsert(
-          commandCode: 6,
-          guid: findActiveLineByGuid,
-          discount: discount,
-          closeExtra: false);
+      logInsert(commandCode: 6, guid: findActiveLineByGuid, discount: discount, closeExtra: false);
     } else {
       global.playSound(word: global.language("discount_cancel"));
-      logInsert(
-          commandCode: 6,
-          guid: findActiveLineByGuid,
-          discount: '',
-          closeExtra: false);
+      logInsert(commandCode: 6, guid: findActiveLineByGuid, discount: '', closeExtra: false);
     }
   }
 
@@ -1239,13 +1021,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     controller.scannedDataStream.listen((scanData) async {
       textInput = "";
       qrCodeBarcodeScannerResult = scanData.code.toString();
-      logInsert(
-          commandCode: 1,
-          barcode: qrCodeBarcodeScannerResult,
-          qty: (textInput.isEmpty) ? "1.0" : textInput);
-      processEvent(
-          barcode: qrCodeBarcodeScannerResult,
-          holdNumber: global.posHoldActiveNumber);
+      logInsert(commandCode: 1, barcode: qrCodeBarcodeScannerResult, qty: (textInput.isEmpty) ? "1.0" : textInput);
+      processEvent(barcode: qrCodeBarcodeScannerResult, holdNumber: global.posHoldActiveNumber);
 
       await controller.pauseCamera();
       qrCodeBarcodeScannerSuccess = true;
@@ -1280,11 +1057,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ),
         Container(
           width: double.infinity,
-          decoration: (withOpacity)
-              ? const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(4)))
-              : const BoxDecoration(),
+          decoration: (withOpacity) ? const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(4))) : const BoxDecoration(),
           child: Padding(
             padding: const EdgeInsets.all(4),
             child: Column(
@@ -1325,18 +1098,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                     color: Colors.indigo[900],
                                     fontWeight: FontWeight.bold,
                                     shadows: const [
-                                      Shadow(
-                                          offset: Offset(-0.5, -0.5),
-                                          color: Colors.grey),
-                                      Shadow(
-                                          offset: Offset(0.5, -0.5),
-                                          color: Colors.grey),
-                                      Shadow(
-                                          offset: Offset(0.5, 0.5),
-                                          color: Colors.grey),
-                                      Shadow(
-                                          offset: Offset(-0.5, 0.5),
-                                          color: Colors.grey),
+                                      Shadow(offset: Offset(-0.5, -0.5), color: Colors.grey),
+                                      Shadow(offset: Offset(0.5, -0.5), color: Colors.grey),
+                                      Shadow(offset: Offset(0.5, 0.5), color: Colors.grey),
+                                      Shadow(offset: Offset(-0.5, 0.5), color: Colors.grey),
                                     ],
                                   ))),
                         )
@@ -1353,8 +1118,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget productLevelWidget(ProductBarcodeObjectBoxStruct product) {
     BoxDecoration boxDecoration = (product.image_or_color == false)
         ? BoxDecoration(
-            color: global
-                .colorFromHex(product.color_select_hex.replaceAll("#", "")),
+            color: global.colorFromHex(product.color_select_hex.replaceAll("#", "")),
           )
         : const BoxDecoration();
 
@@ -1367,11 +1131,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       ),
       onPressed: () async {
         displayDetailByBarcode = false;
-        logInsert(
-            commandCode: 1,
-            barcode: product.barcode,
-            closeExtra: false,
-            qty: "1.0");
+        logInsert(commandCode: 1, barcode: product.barcode, closeExtra: false, qty: "1.0");
       },
       child: Stack(
         children: [
@@ -1380,12 +1140,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: double.infinity,
             decoration: boxDecoration,
             child: productLevelLabelWidget(
-                imageUrl: product.images_url,
-                name: product.names[0],
-                unitName: product.unit_names[0],
-                price: (product.prices.isEmpty)
-                    ? 0
-                    : double.tryParse(product.prices[0]) ?? 0.0),
+                imageUrl: product.images_url, name: product.names[0], unitName: product.unit_names[0], price: (product.prices.isEmpty) ? 0 : double.tryParse(product.prices[0]) ?? 0.0),
           ),
           if (product.product_count != 0)
             Positioned(
@@ -1395,32 +1150,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 onTap: () {
                   //selectProductExtraList.clear();
                   displayDetailByBarcode = false;
-                  for (int index = 0;
-                      index <
-                              global
-                                  .posHoldProcessResult[
-                                      global.posHoldActiveNumber]
-                                  .posProcess
-                                  .details
-                                  .length &&
-                          displayDetailByBarcode == false;
-                      index++) {
-                    if (product.barcode ==
-                        global.posHoldProcessResult[global.posHoldActiveNumber]
-                            .posProcess.details[index].barcode) {
+                  for (int index = 0; index < global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length && displayDetailByBarcode == false; index++) {
+                    if (product.barcode == global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index].barcode) {
                       displayDetailByBarcode = true;
                       activeLineNumber = index;
-                      findActiveLineByGuid = global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
-                          .posProcess
-                          .details[index]
-                          .guid;
+                      findActiveLineByGuid = global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index].guid;
                     }
                   }
                   setState(() {});
-                  autoScrollController.scrollToIndex(
-                      (activeLineNumber < 0) ? 0 : activeLineNumber,
-                      preferPosition: AutoScrollPosition.begin);
+                  autoScrollController.scrollToIndex((activeLineNumber < 0) ? 0 : activeLineNumber, preferPosition: AutoScrollPosition.begin);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -1452,25 +1190,19 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget selectProductLevelListScreenWidget() {
-    double menuMinWidth = (global.isTabletScreen() || global.isDesktopScreen())
-        ? (gridItemSize * 120)
-        : (gridItemSize * 100);
-    int widgetPerLine = int.parse(
-        (MediaQuery.of(context).size.width / menuMinWidth).toStringAsFixed(0));
+    double menuMinWidth = (global.isTabletScreen() || global.isDesktopScreen()) ? (gridItemSize * 120) : (gridItemSize * 100);
+    int widgetPerLine = int.parse((MediaQuery.of(context).size.width / menuMinWidth).toStringAsFixed(0));
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth > menuMinWidth) {
-          widgetPerLine = int.parse(
-              (constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
+          widgetPerLine = int.parse((constraints.maxWidth / menuMinWidth).toStringAsFixed(0));
         } else {
           widgetPerLine = 1;
         }
         return Container(
             color: Colors.grey[200],
             child: (global.productListByCategory.isEmpty)
-                ? const Center(
-                    child:
-                        Icon(Icons.select_all, color: Colors.grey, size: 200))
+                ? const Center(child: Icon(Icons.select_all, color: Colors.grey, size: 200))
                 : GridView.count(
                     padding: EdgeInsets.zero,
                     crossAxisCount: widgetPerLine,
@@ -1488,42 +1220,27 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget selectProductLevelExtraListCheckWidget(int groupIndex) {
     if (activeLineNumber != -1) {
-      PosProcessDetailModel data = global
-          .posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess
-          .details[activeLineNumber];
-      for (var checkBoxIndex = 0;
-          checkBoxIndex < productOptions[groupIndex].choices.length;
-          checkBoxIndex++) {
+      PosProcessDetailModel data = global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[activeLineNumber];
+      for (var checkBoxIndex = 0; checkBoxIndex < productOptions[groupIndex].choices.length; checkBoxIndex++) {
         productOptions[groupIndex].choices[checkBoxIndex].selected = false;
       }
-      for (var detailIndex = 0;
-          detailIndex < data.extra.length;
-          detailIndex++) {
-        for (var checkBoxIndex = 0;
-            checkBoxIndex < productOptions[groupIndex].choices.length;
-            checkBoxIndex++) {
-          if (data.extra[detailIndex].guid_code_or_ref ==
-              productOptions[groupIndex].choices[checkBoxIndex].guid_fixed) {
+      for (var detailIndex = 0; detailIndex < data.extra.length; detailIndex++) {
+        for (var checkBoxIndex = 0; checkBoxIndex < productOptions[groupIndex].choices.length; checkBoxIndex++) {
+          if (data.extra[detailIndex].guid_code_or_ref == productOptions[groupIndex].choices[checkBoxIndex].guid_fixed) {
             productOptions[groupIndex].choices[checkBoxIndex].selected = true;
           }
         }
       }
     }
     return Column(children: [
-      for (var detailIndex = 0;
-          detailIndex < productOptions[groupIndex].choices.length;
-          detailIndex++)
+      for (var detailIndex = 0; detailIndex < productOptions[groupIndex].choices.length; detailIndex++)
         Material(
             // color: global.posTheme.background,
             child: InkWell(
                 onTap: () async {
-                  var value =
-                      productOptions[groupIndex].choices[detailIndex].selected;
-                  await selectProductLevelExtraListCheck(
-                      groupIndex, detailIndex, value);
-                  processEvent(
-                      barcode: "", holdNumber: global.posHoldActiveNumber);
+                  var value = productOptions[groupIndex].choices[detailIndex].selected;
+                  await selectProductLevelExtraListCheck(groupIndex, detailIndex, value);
+                  processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
                 },
                 child: Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -1540,38 +1257,16 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                     data: ThemeData(primarySwatch: Colors.blue),
                                     child: Checkbox(
                                       onChanged: null,
-                                      fillColor: MaterialStateProperty.all(
-                                          (productOptions[groupIndex]
-                                                  .choices[detailIndex]
-                                                  .selected)
-                                              ? Colors.blue
-                                              : Colors.grey),
-                                      value: productOptions[groupIndex]
-                                          .choices[detailIndex]
-                                          .selected,
+                                      fillColor: MaterialStateProperty.all((productOptions[groupIndex].choices[detailIndex].selected) ? Colors.blue : Colors.grey),
+                                      value: productOptions[groupIndex].choices[detailIndex].selected,
                                     ))),
                             const SizedBox(width: 5),
-                            Flexible(
-                                child: Text(
-                                    productOptions[groupIndex]
-                                        .choices[detailIndex]
-                                        .names[0],
-                                    style: const TextStyle(
-                                        fontSize: 12, color: Colors.black)))
+                            Flexible(child: Text(productOptions[groupIndex].choices[detailIndex].names[0], style: const TextStyle(fontSize: 12, color: Colors.black)))
                           ],
                         )),
-                        ((double.tryParse(productOptions[groupIndex]
-                                        .choices[detailIndex]
-                                        .price) ??
-                                    0) ==
-                                0)
+                        ((double.tryParse(productOptions[groupIndex].choices[detailIndex].price) ?? 0) == 0)
                             ? Container()
-                            : Text(
-                                "+${productOptions[groupIndex].choices[detailIndex].price}",
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold)),
+                            : Text("+${productOptions[groupIndex].choices[detailIndex].price}", style: const TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold)),
                       ],
                     ))))
     ]);
@@ -1599,8 +1294,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 Container(
                                     padding: const EdgeInsets.all(2),
                                     decoration: BoxDecoration(
-                                      border:
-                                          Border.all(color: Colors.blueAccent),
+                                      border: Border.all(color: Colors.blueAccent),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: CachedNetworkImage(
@@ -1608,49 +1302,27 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                       height: 60,
                                       imageUrl: product.images_url,
                                       fit: BoxFit.fill,
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(Icons.error),
+                                      errorWidget: (context, url, error) => const Icon(Icons.error),
                                     )),
                                 const SizedBox(width: 5),
                               ],
                             ),
                           Flexible(
-                              child: Text(
-                                  "${product.names[0]}/${product.unit_names[0]}",
-                                  maxLines: 2,
-                                  softWrap: false,
-                                  overflow: TextOverflow.fade,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black)))
+                              child: Text("${product.names[0]}/${product.unit_names[0]}",
+                                  maxLines: 2, softWrap: false, overflow: TextOverflow.fade, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)))
                         ],
                       ),
-                    for (var groupIndex = 0;
-                        groupIndex < productOptions.length;
-                        groupIndex++)
+                    for (var groupIndex = 0; groupIndex < productOptions.length; groupIndex++)
                       Column(children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                  child: Text(
-                                      productOptions[groupIndex].names[0],
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold))),
-                              const SizedBox(width: 10, height: 10),
-                              (productOptions[groupIndex].max_select > 1)
-                                  ? Flexible(
-                                      child: Text(
-                                          "${global.language("max")} ${productOptions[groupIndex].max_select} ${global.language("list")}",
-                                          style: const TextStyle(
-                                              fontSize: 10, color: Colors.red)))
-                                  : const Flexible(
-                                      child: Text("เลือกได้หนึ่งอย่าง",
-                                          style: TextStyle(
-                                              fontSize: 10, color: Colors.red)))
-                            ]),
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                          Flexible(child: Text(productOptions[groupIndex].names[0], style: const TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.bold))),
+                          const SizedBox(width: 10, height: 10),
+                          (productOptions[groupIndex].max_select > 1)
+                              ? Flexible(
+                                  child: Text("${global.language("max")} ${productOptions[groupIndex].max_select} ${global.language("list")}",
+                                      style: const TextStyle(fontSize: 10, color: Colors.red)))
+                              : const Flexible(child: Text("เลือกได้หนึ่งอย่าง", style: TextStyle(fontSize: 10, color: Colors.red)))
+                        ]),
                         selectProductLevelExtraListCheckWidget(groupIndex)
                       ])
                   ],
@@ -1669,8 +1341,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     }
   }
 
-  Widget selectProductLevelCardWidget(ProductCategoryObjectBoxStruct value,
-      double boxSize, bool append, double widthHeight) {
+  Widget selectProductLevelCardWidget(ProductCategoryObjectBoxStruct value, double boxSize, bool append, double widthHeight) {
     double round = 5;
     return Container(
         padding: const EdgeInsets.all(2),
@@ -1701,15 +1372,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             await loadProductByCategory(categoryGuidSelected);
             productOptions.clear();
             setState(() {
-              PosProcess().sumCategoryCount(
-                  value: global.posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess);
+              PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
             });
           },
           child: Stack(
             children: [
-              if (value.use_image_or_color == true &&
-                  value.image_url.isNotEmpty)
+              if (value.use_image_or_color == true && value.image_url.isNotEmpty)
                 CachedNetworkImage(
                   imageUrl: value.image_url,
                   width: double.infinity,
@@ -1718,8 +1386,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(round),
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
+                      image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(),
@@ -1728,10 +1395,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 width: double.infinity,
                 height: double.infinity,
                 padding: const EdgeInsets.all(4),
-                color: ((value.use_image_or_color == false)
-                    ? global
-                        .colorFromHex(value.colorselecthex.replaceAll("#", ""))
-                    : Colors.transparent),
+                color: ((value.use_image_or_color == false) ? global.colorFromHex(value.colorselecthex.replaceAll("#", "")) : Colors.transparent),
                 child: FittedBox(
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.bottomCenter,
@@ -1740,15 +1404,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                         shadows: [
-                          Shadow(
-                              offset: Offset(-0.95, -0.95),
-                              color: Colors.white),
-                          Shadow(
-                              offset: Offset(0.95, -0.95), color: Colors.white),
-                          Shadow(
-                              offset: Offset(0.95, 0.95), color: Colors.white),
-                          Shadow(
-                              offset: Offset(-0.95, 0.95), color: Colors.white),
+                          Shadow(offset: Offset(-0.95, -0.95), color: Colors.white),
+                          Shadow(offset: Offset(0.95, -0.95), color: Colors.white),
+                          Shadow(offset: Offset(0.95, 0.95), color: Colors.white),
+                          Shadow(offset: Offset(-0.95, 0.95), color: Colors.white),
                         ],
                       )),
                 ),
@@ -1759,8 +1418,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget selectProductLevelSelectWidget() {
-    double widthHeight =
-        (global.isDesktopScreen() || global.isTabletScreen()) ? 80 : 50;
+    double widthHeight = (global.isDesktopScreen() || global.isTabletScreen()) ? 80 : 50;
     List<Widget> categorySelectedList = [];
 
     if (global.productCategoryCodeSelected.isNotEmpty) {
@@ -1794,10 +1452,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 productOptions.clear();
                 loadCategory();
                 setState(() {
-                  PosProcess().sumCategoryCount(
-                      value: global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
-                          .posProcess);
+                  PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
                 });
               },
               child: const Center(
@@ -1807,16 +1462,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ),
       );
       for (var categoryList in global.productCategoryCodeSelected) {
-        categorySelectedList.add(selectProductLevelCardWidget(
-            categoryList, gridItemSize, false, widthHeight));
+        categorySelectedList.add(selectProductLevelCardWidget(categoryList, gridItemSize, false, widthHeight));
       }
     } else {
       categorySelectedList.add(Container());
     }
-    List<ProductCategoryObjectBoxStruct> categoryList =
-        (global.productCategoryChildList.isEmpty)
-            ? global.productCategoryList
-            : global.productCategoryChildList;
+    List<ProductCategoryObjectBoxStruct> categoryList = (global.productCategoryChildList.isEmpty) ? global.productCategoryList : global.productCategoryChildList;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -1836,10 +1487,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             PointerDeviceKind.mouse,
                           },
                         ),
-                        child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            children: categorySelectedList))),
+                        child: ListView(scrollDirection: Axis.horizontal, physics: const AlwaysScrollableScrollPhysics(), children: categorySelectedList))),
                 const SizedBox(
                   height: 10,
                 ),
@@ -1858,11 +1506,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 child: ListView(
                     scrollDirection: Axis.horizontal,
                     physics: const AlwaysScrollableScrollPhysics(),
-                    children: [
-                      for (final value in categoryList)
-                        selectProductLevelCardWidget(
-                            value, gridItemSize, true, widthHeight)
-                    ])))
+                    children: [for (final value in categoryList) selectProductLevelCardWidget(value, gridItemSize, true, widthHeight)])))
       ],
     );
   }
@@ -1877,10 +1521,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           SizedBox(
             height: 250,
             width: double.infinity,
-            child: transScreen(
-                mode: 1,
-                barcode: global.posHoldProcessResult[global.posHoldActiveNumber]
-                    .posProcess.details[activeLineNumber].barcode),
+            child: transScreen(mode: 1, barcode: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[activeLineNumber].barcode),
           ),
         selectProductLevelSelectWidget()
       ],
@@ -1925,28 +1566,20 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     child: QRView(
                       key: qrKey,
                       onQRViewCreated: onQRViewCreated,
-                      overlay: QrScannerOverlayShape(
-                          borderColor: Colors.red,
-                          borderRadius: 10,
-                          borderLength: 30,
-                          borderWidth: 10,
-                          cutOutSize: 150),
+                      overlay: QrScannerOverlayShape(borderColor: Colors.red, borderRadius: 10, borderLength: 30, borderWidth: 10, cutOutSize: 150),
                     ))
             : Container());
   }
 
   Widget detailHeaderWidget() {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
-      TextStyle textStyle = TextStyle(
-          color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+      TextStyle textStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
 
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border:
-                const Border(bottom: BorderSide(color: Colors.black, width: 1)),
+            border: const Border(bottom: BorderSide(color: Colors.black, width: 1)),
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
@@ -1954,33 +1587,23 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             children: [
               Expanded(
                 flex: 7,
-                child: Text(global.language("item_description"),
-                    style: textStyle.copyWith(fontSize: fontSize),
-                    overflow: TextOverflow.ellipsis),
+                child: Text(global.language("item_description"), style: textStyle.copyWith(fontSize: fontSize), overflow: TextOverflow.ellipsis),
               ),
-              Expanded(
-                  flex: 2,
-                  child: Text(global.language("total"),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize),
-                      overflow: TextOverflow.ellipsis)),
+              Expanded(flex: 2, child: Text(global.language("total"), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize), overflow: TextOverflow.ellipsis)),
             ],
           ));
     });
   }
 
   Widget detailFooterWidget() {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
-      TextStyle textStyle = TextStyle(
-          color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+      TextStyle textStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
 
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border:
-                const Border(top: BorderSide(color: Colors.black, width: 1)),
+            border: const Border(top: BorderSide(color: Colors.black, width: 1)),
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
@@ -1988,30 +1611,19 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             children: [
               Expanded(
                 flex: 7,
-                child: Text(
-                    "${global.language("total")} ${global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length} ${global.language("line")}",
+                child: Text("${global.language("total")} ${global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length} ${global.language("line")}",
                     style: textStyle.copyWith(fontSize: fontSize)),
               ),
               Expanded(flex: 1, child: Container()),
               Expanded(
                   flex: 1,
-                  child: Text(
-                      global.moneyFormat.format(global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
-                          .posProcess
-                          .total_piece),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
+                  child: Text(global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_piece),
+                      textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
               Expanded(flex: 1, child: Container()),
               Expanded(
                   flex: 2,
-                  child: Text(
-                      global.moneyFormat.format(global
-                          .posHoldProcessResult[global.posHoldActiveNumber]
-                          .posProcess
-                          .total_amount),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
+                  child: Text(global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount),
+                      textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
             ],
           ));
     });
@@ -2030,36 +1642,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       required String barcode,
       required String unitName,
       required String imageUrl}) {
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
       List<TextSpan> productTextSpan = [];
-      productTextSpan.add(TextSpan(
-          text: productName, style: textStyle.copyWith(fontSize: fontSize)));
+      productTextSpan.add(TextSpan(text: productName, style: textStyle.copyWith(fontSize: fontSize)));
       if (qty != 0) {
-        productTextSpan.add(TextSpan(
-            text: " ${global.moneyFormat.format(qty)} $unitName",
-            style:
-                textStyle.copyWith(fontSize: fontSize, color: Colors.green)));
+        productTextSpan.add(TextSpan(text: " ${global.moneyFormat.format(qty)} $unitName", style: textStyle.copyWith(fontSize: fontSize, color: Colors.green)));
         if (price != priceOriginal) {
-          productTextSpan.add(TextSpan(
-              text: " ",
-              style:
-                  textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
+          productTextSpan.add(TextSpan(text: " ", style: textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
         }
         if (price != priceOriginal) {
-          productTextSpan.add(TextSpan(
-              text: " @${global.moneyFormat.format(priceOriginal)}",
-              style: textStyle.copyWith(
-                  fontSize: fontSize,
-                  color: Colors.red,
-                  decoration: TextDecoration.lineThrough)));
+          productTextSpan
+              .add(TextSpan(text: " @${global.moneyFormat.format(priceOriginal)}", style: textStyle.copyWith(fontSize: fontSize, color: Colors.red, decoration: TextDecoration.lineThrough)));
         }
         if (price * qty != totalAmount || qty != 1 || price != priceOriginal) {
-          productTextSpan.add(TextSpan(
-              text: " ",
-              style:
-                  textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
+          productTextSpan.add(TextSpan(text: " ", style: textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
           productTextSpan.add(TextSpan(
               text: " @${global.moneyFormat.format(price)}",
               style: textStyle.copyWith(
@@ -2068,25 +1665,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               )));
         }
       }
-      RichText productText = RichText(
-          text: TextSpan(
-              style: textStyle.copyWith(fontSize: fontSize),
-              children: productTextSpan));
+      RichText productText = RichText(text: TextSpan(style: textStyle.copyWith(fontSize: fontSize), children: productTextSpan));
       return Row(
         children: [
           Expanded(
               flex: 7,
               child: Row(children: [
                 Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      productText,
-                      if (isActive)
-                        Text(barcode,
-                            style:
-                                textStyle.copyWith(fontSize: fontSize * 0.75)),
-                    ])),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  productText,
+                  if (isActive) Text(barcode, style: textStyle.copyWith(fontSize: fontSize * 0.75)),
+                ])),
                 if (isActive && imageUrl.isNotEmpty)
                   Container(
                       width: 50,
@@ -2101,35 +1690,24 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                           child: CachedNetworkImage(
                         fit: BoxFit.fill,
                         imageUrl: imageUrl,
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+                        placeholder: (context, url) => const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       )))
               ])),
           Expanded(
               flex: 2,
               child: (totalAmount == 0)
                   ? Container()
-                  : Text(global.moneyFormat.format(totalAmount),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(
-                          fontSize: fontSize, fontWeight: FontWeight.bold))),
+                  : Text(global.moneyFormat.format(totalAmount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
         ],
       );
     });
   }
 
-  Widget detailRow(
-      {required int index,
-      required PosProcessDetailModel detail,
-      required TextStyle textStyle,
-      bool isActive = false}) {
+  Widget detailRow({required int index, required PosProcessDetailModel detail, required TextStyle textStyle, bool isActive = false}) {
     double extraAmount = 0.0;
-    TextStyle extraTextStyle = TextStyle(
-        fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
-    String description =
-        "${detail.item_name}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
+    TextStyle extraTextStyle = TextStyle(fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
+    String description = "${detail.item_name}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
     for (final extra in detail.extra) {
       extraAmount += extra.total_amount;
     }
@@ -2164,60 +1742,44 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     if (extraAmount != 0) {
       columnList.add(detailWidget(
           isExtra: false,
-          productName:
-              "${global.language("total")} : ${detail.item_name}/${detail.unit_name}",
+          productName: "${global.language("total")} : ${detail.item_name}/${detail.unit_name}",
           qty: 0,
           price: 0,
           priceOriginal: detail.price_original,
           unitName: "",
           totalAmount: detail.total_amount + extraAmount,
-          textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: textStyle.fontWeight,
-              color: Colors.black),
+          textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.black),
           barcode: detail.barcode,
           imageUrl: ""));
     }
     if (detail.discount != 0) {
       columnList.add(detailWidget(
           isExtra: false,
-          productName:
-              "${global.language("discount")} : ${detail.discount_text}",
+          productName: "${global.language("discount")} : ${detail.discount_text}",
           qty: 0,
           price: 0,
           priceOriginal: detail.price_original,
           unitName: "",
           totalAmount: detail.discount * -1,
-          textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: textStyle.fontWeight,
-              color: Colors.red),
+          textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.red),
           barcode: detail.barcode,
           imageUrl: ""));
       columnList.add(detailWidget(
           isExtra: false,
-          productName:
-              "${global.language("after_discount")} : ${detail.discount_text}",
+          productName: "${global.language("after_discount")} : ${detail.discount_text}",
           qty: 0,
           price: 0,
           priceOriginal: detail.price_original,
           unitName: "",
           totalAmount: (detail.total_amount + extraAmount) - detail.discount,
-          textStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: textStyle.fontWeight,
-              color: Colors.blue),
+          textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.blue),
           barcode: detail.barcode,
           imageUrl: ""));
     }
     return Column(children: columnList);
   }
 
-  Widget detailData(
-      {required int index,
-      required PosProcessDetailModel detail,
-      required bool active,
-      required TextStyle textStyle}) {
+  Widget detailData({required int index, required PosProcessDetailModel detail, required bool active, required TextStyle textStyle}) {
     Widget widget = Container(
       padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 4),
       width: MediaQuery.of(context).size.width,
@@ -2228,8 +1790,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               : (index % 2 == 0)
                   ? Colors.white
                   : Colors.grey.shade100,
-      child: detailRow(
-          index: index, detail: detail, textStyle: textStyle, isActive: active),
+      child: detailRow(index: index, detail: detail, textStyle: textStyle, isActive: active),
     );
     return Material(
         color: Colors.white.withOpacity(0),
@@ -2238,27 +1799,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             : InkWell(
                 onTap: () async {
                   activeLineNumber = index;
-                  findActiveLineByGuid = global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess
-                      .details[index]
-                      .guid;
-                  global.posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess.select_promotion_temp_list
-                      .clear();
+                  findActiveLineByGuid = global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index].guid;
+                  global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.select_promotion_temp_list.clear();
 
-                  serviceLocator<Log>().debug(global
-                      .posHoldProcessResult[global.posHoldActiveNumber]
-                      .posProcess
-                      .details[index]
-                      .barcode);
+                  serviceLocator<Log>().debug(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index].barcode);
 
-                  product = await ProductBarcodeHelper().selectByBarcodeFirst(
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .details[index]
-                              .barcode) ??
+                  product = await ProductBarcodeHelper().selectByBarcodeFirst(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index].barcode) ??
                       ProductBarcodeObjectBoxStruct(
                           barcode: "",
                           color_select: "",
@@ -2285,13 +1831,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 child: widget));
   }
 
-  Widget detailButton(
-      {required int index,
-      required PosProcessDetailModel detail,
-      required bool active,
-      required TextStyle textStyle}) {
-    TextEditingController textFieldRemarkController =
-        TextEditingController(text: detail.remark);
+  Widget detailButton({required int index, required PosProcessDetailModel detail, required bool active, required TextStyle textStyle}) {
+    TextEditingController textFieldRemarkController = TextEditingController(text: detail.remark);
 
     return Container(
         color: Colors.cyan.shade100,
@@ -2303,10 +1844,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             commandButton(
               onPressed: () {
                 if (detail.qty > 1) {
-                  logInsert(
-                      commandCode: 3,
-                      guid: findActiveLineByGuid,
-                      closeExtra: false);
+                  logInsert(commandCode: 3, guid: findActiveLineByGuid, closeExtra: false);
                 }
               },
               label: '-1 ${detail.unit_name}',
@@ -2322,16 +1860,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     builder: (context) {
                       return StatefulBuilder(builder: (context, setState) {
                         return AlertDialog(
-                          shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12.0))),
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
                           contentPadding: const EdgeInsets.all(10),
                           content: SizedBox(
                               height: 500,
                               child: NumberPad(
                                   header: global.language("qty"),
-                                  title: Text(
-                                      '${detail.item_name} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${detail.unit_name}',
+                                  title: Text('${detail.item_name} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${detail.unit_name}',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -2350,10 +1885,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             ),
             commandButton(
               onPressed: () {
-                logInsert(
-                    commandCode: 2,
-                    guid: findActiveLineByGuid,
-                    closeExtra: false);
+                logInsert(commandCode: 2, guid: findActiveLineByGuid, closeExtra: false);
               },
               label: '+1 ${detail.unit_name}',
             ),
@@ -2367,9 +1899,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       builder: (context) {
                         return StatefulBuilder(builder: (context, setState) {
                           return AlertDialog(
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12.0))),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
                             contentPadding: const EdgeInsets.all(10),
                             content: SizedBox(
                                 width: double.infinity,
@@ -2400,9 +1930,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       builder: (context) {
                         return StatefulBuilder(builder: (context, setState) {
                           return AlertDialog(
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(12.0))),
+                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
                             contentPadding: const EdgeInsets.all(10),
                             content: SizedBox(
                                 height: 500,
@@ -2449,20 +1977,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                   ),
                                 ),
                               ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(2)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                               actions: <Widget>[
                                 ElevatedButton(
                                   child: Text(global.language('save')),
                                   onPressed: () async {
                                     Navigator.pop(context);
-                                    logInsert(
-                                        commandCode: 8,
-                                        guid: findActiveLineByGuid,
-                                        remark: textFieldRemarkController.text,
-                                        closeExtra: false);
-                                    global.playSound(
-                                        sound: global.SoundEnum.buttonTing);
+                                    logInsert(commandCode: 8, guid: findActiveLineByGuid, remark: textFieldRemarkController.text, closeExtra: false);
+                                    global.playSound(sound: global.SoundEnum.buttonTing);
                                   },
                                 ),
                                 ElevatedButton(
@@ -2493,18 +2015,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               title: Text(global.language('delete')),
                               content: Text(
                                   '${detail.item_name} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${detail.unit_name} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')} ${global.language('delete_confirm')}'),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(2)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                               actions: <Widget>[
                                 ElevatedButton(
                                   child: Text(global.language('delete')),
                                   onPressed: () async {
                                     Navigator.pop(context);
-                                    logInsert(
-                                        commandCode: 9,
-                                        guid: findActiveLineByGuid);
-                                    global.playSound(
-                                        sound: global.SoundEnum.buttonTing);
+                                    logInsert(commandCode: 9, guid: findActiveLineByGuid);
+                                    global.playSound(sound: global.SoundEnum.buttonTing);
                                     //selectProductExtraList.clear();
                                   },
                                 ),
@@ -2527,34 +2045,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget detail(PosProcessDetailModel detail, int index) {
-    bool active = (activeLineNumber == -1)
-        ? false
-        : ((activeLineNumber == index) ? true : false);
-    TextStyle textStyle = TextStyle(
-        color: Colors.black,
-        fontSize: 14,
-        fontWeight: (active) ? FontWeight.bold : FontWeight.normal);
+    bool active = (activeLineNumber == -1) ? false : ((activeLineNumber == index) ? true : false);
+    TextStyle textStyle = TextStyle(color: Colors.black, fontSize: 14, fontWeight: (active) ? FontWeight.bold : FontWeight.normal);
 
     return SizedBox(
       width: double.infinity,
       child: (active == false || detail.is_void)
-          ? detailData(
-              index: index,
-              detail: detail,
-              active: active,
-              textStyle: textStyle)
+          ? detailData(index: index, detail: detail, active: active, textStyle: textStyle)
           : Column(
               children: [
-                detailData(
-                    index: index,
-                    detail: detail,
-                    active: active,
-                    textStyle: textStyle),
-                detailButton(
-                    index: index,
-                    detail: detail,
-                    active: active,
-                    textStyle: textStyle),
+                detailData(index: index, detail: detail, active: active, textStyle: textStyle),
+                detailButton(index: index, detail: detail, active: active, textStyle: textStyle),
               ],
             ),
     );
@@ -2575,11 +2076,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       padding: const EdgeInsets.all(5),
       child: Align(
         alignment: Alignment.centerRight,
-        child: Text(textInput,
-            style: const TextStyle(
-                color: Colors.black,
-                fontSize: 32,
-                fontWeight: FontWeight.bold)),
+        child: Text(textInput, style: const TextStyle(color: Colors.black, fontSize: 32, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -2588,11 +2085,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(10)),
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
@@ -2614,177 +2107,166 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   child: Column(
                     children: [
                       Expanded(
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '7',
-                                  callBack: () => {textInputAdd("7")},
-                                ),
-                              ),
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    text: '8',
-                                    callBack: () => {textInputAdd("8")},
-                                  )),
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    text: '9',
-                                    callBack: () => {textInputAdd("9")},
-                                  )),
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    icon: Icons.backspace,
-                                    textAndIconColor: Colors.black,
-                                    callBack: () => {
-                                      if (textInput.isNotEmpty)
-                                        {
-                                          setState(() {
-                                            textInput = textInput.substring(
-                                                0, textInput.length - 1);
-                                          })
-                                        }
-                                    },
-                                  )),
-                            ]),
-                      ),
-                      Expanded(
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '4',
-                                  callBack: () => {textInputAdd("4")},
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '5',
-                                  callBack: () => {textInputAdd("5")},
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '6',
-                                  callBack: () => {textInputAdd("6")},
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  icon: Icons.add,
-                                  textAndIconColor: Colors.black,
-                                  callBack: () => {textInputAdd("+")},
-                                )),
-                          ])),
-                      Expanded(
-                          child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '1',
-                                  callBack: () => {textInputAdd("1")},
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '2',
-                                  callBack: () => {textInputAdd("2")},
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '3',
-                                  callBack: () => {textInputAdd("3")},
-                                )),
-                            Expanded(
-                                flex: 2,
-                                child: NumPadButton(
-                                  margin: 2,
-                                  text: '?',
-                                  callBack: () => {},
-                                )),
-                          ])),
-                      Expanded(
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    text: '.',
-                                    callBack: () => {textInputAdd(".")},
-                                  )),
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    text: '0',
-                                    callBack: () => {textInputAdd("0")},
-                                  )),
-                              Expanded(
-                                  flex: 4,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    text: 'C',
-                                    color: Colors.red[100],
-                                    callBack: () => {
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                          Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '7',
+                              callBack: () => {textInputAdd("7")},
+                            ),
+                          ),
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                margin: 2,
+                                text: '8',
+                                callBack: () => {textInputAdd("8")},
+                              )),
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                margin: 2,
+                                text: '9',
+                                callBack: () => {textInputAdd("9")},
+                              )),
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                margin: 2,
+                                icon: Icons.backspace,
+                                textAndIconColor: Colors.black,
+                                callBack: () => {
+                                  if (textInput.isNotEmpty)
+                                    {
                                       setState(() {
-                                        textInput = "";
+                                        textInput = textInput.substring(0, textInput.length - 1);
                                       })
-                                    },
-                                  )),
-                            ]),
+                                    }
+                                },
+                              )),
+                        ]),
                       ),
                       Expanded(
-                        child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: <Widget>[
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    text: 'D',
-                                    margin: 2,
-                                    color: Colors.cyan[100],
-                                    callBack: () => {textInputAdd("D")},
-                                  )),
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    margin: 2,
-                                    text: '%',
-                                    color: Colors.cyan[100],
-                                    callBack: () => {textInputAdd("%")},
-                                  )),
-                              Expanded(
-                                  flex: 2,
-                                  child: NumPadButton(
-                                    text: 'P',
-                                    margin: 2,
-                                    color: Colors.green[100],
-                                    callBack: () => {textInputAdd("P")},
-                                  )),
-                            ]),
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '4',
+                              callBack: () => {textInputAdd("4")},
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '5',
+                              callBack: () => {textInputAdd("5")},
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '6',
+                              callBack: () => {textInputAdd("6")},
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              icon: Icons.add,
+                              textAndIconColor: Colors.black,
+                              callBack: () => {textInputAdd("+")},
+                            )),
+                      ])),
+                      Expanded(
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '1',
+                              callBack: () => {textInputAdd("1")},
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '2',
+                              callBack: () => {textInputAdd("2")},
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '3',
+                              callBack: () => {textInputAdd("3")},
+                            )),
+                        Expanded(
+                            flex: 2,
+                            child: NumPadButton(
+                              margin: 2,
+                              text: '?',
+                              callBack: () => {},
+                            )),
+                      ])),
+                      Expanded(
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                margin: 2,
+                                text: '.',
+                                callBack: () => {textInputAdd(".")},
+                              )),
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                margin: 2,
+                                text: '0',
+                                callBack: () => {textInputAdd("0")},
+                              )),
+                          Expanded(
+                              flex: 4,
+                              child: NumPadButton(
+                                margin: 2,
+                                text: 'C',
+                                color: Colors.red[100],
+                                callBack: () => {
+                                  setState(() {
+                                    textInput = "";
+                                  })
+                                },
+                              )),
+                        ]),
+                      ),
+                      Expanded(
+                        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                text: 'D',
+                                margin: 2,
+                                color: Colors.cyan[100],
+                                callBack: () => {textInputAdd("D")},
+                              )),
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                margin: 2,
+                                text: '%',
+                                color: Colors.cyan[100],
+                                callBack: () => {textInputAdd("%")},
+                              )),
+                          Expanded(
+                              flex: 2,
+                              child: NumPadButton(
+                                text: 'P',
+                                margin: 2,
+                                color: Colors.green[100],
+                                callBack: () => {textInputAdd("P")},
+                              )),
+                        ]),
                       ),
                     ],
                   ),
@@ -2815,15 +2297,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         type: PageTransitionType.rightToLeft,
         child: PayScreen(
           defaultTabIndex: tabIndex,
-          posProcess: global
-              .posHoldProcessResult[global.posHoldActiveNumber].posProcess,
+          posProcess: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess,
         ),
       ),
     );
     if (result != null && result == true) {
       PosLogHelper logHelper = PosLogHelper();
-      await logHelper.deleteByHoldNumber(
-          holdNumber: global.posHoldActiveNumber);
+      await logHelper.deleteByHoldNumber(holdNumber: global.posHoldActiveNumber);
       productOptions.clear();
       findActiveLineByGuid = "";
       restartClearData();
@@ -2840,8 +2320,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           (global.posHoldActiveNumber != 0)
               ? Container(
                   margin: const EdgeInsets.only(right: 5),
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 0, bottom: 0),
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
                   decoration: BoxDecoration(
                     color: Colors.orange,
                     borderRadius: BorderRadius.circular(4),
@@ -2850,13 +2329,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 4,
                         blurRadius: 4,
-                        offset:
-                            const Offset(0, 2), // changes position of shadow
+                        offset: const Offset(0, 2), // changes position of shadow
                       ),
                     ],
                   ),
-                  child: Center(
-                      child: Text(global.posHoldActiveNumber.toString())))
+                  child: Center(child: Text(global.posHoldActiveNumber.toString())))
               : Container(),
           Expanded(
             child: ElevatedButton(
@@ -2880,13 +2357,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(
-                          global.moneyFormat.format(global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .posProcess
-                              .total_amount),
-                          style: const TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      Text(global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount),
+                          style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                       const SizedBox(
                         width: 10,
                       ),
@@ -2940,27 +2412,23 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setState) {
-              return AlertDialog(
-                  title: Text(global.language("restart")),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2)),
-                  actions: <Widget>[
-                    ElevatedButton(
-                      /// เริ่มใหม่ (ทั้งหมด)
-                      child: Text(global.language('restart')),
-                      onPressed: () async {
-                        logInsert(commandCode: 99);
-                        Navigator.pop(context);
-                        restartClearData();
-                      },
-                    ),
-                    ElevatedButton(
-                      child: Text(global.language('cancel')),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ]);
+              return AlertDialog(title: Text(global.language("restart")), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), actions: <Widget>[
+                ElevatedButton(
+                  /// เริ่มใหม่ (ทั้งหมด)
+                  child: Text(global.language('restart')),
+                  onPressed: () async {
+                    logInsert(commandCode: 99);
+                    Navigator.pop(context);
+                    restartClearData();
+                  },
+                ),
+                ElevatedButton(
+                  child: Text(global.language('cancel')),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ]);
             },
           );
         });
@@ -2971,37 +2439,31 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     //global.openCashDrawer();
   }
 
-  Widget commandButton(
-      {required Function onPressed, String label = "", IconData? icon}) {
+  Widget commandButton({required Function onPressed, String label = "", IconData? icon}) {
     return Expanded(
         child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: const EdgeInsets.only(
-                    left: 2, right: 2, top: 0, bottom: 0)),
+            style: ElevatedButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap, padding: const EdgeInsets.only(left: 2, right: 2, top: 0, bottom: 0)),
             onPressed: () {
               onPressed();
             },
             child: (icon != null)
                 ? FittedBox(
                     fit: BoxFit.fill,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FaIcon(
-                            icon,
-                            size: 16,
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            label,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.clip,
-                            style: const TextStyle(fontSize: 12),
-                          )
-                        ]))
+                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      FaIcon(
+                        icon,
+                        size: 16,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.clip,
+                        style: const TextStyle(fontSize: 12),
+                      )
+                    ]))
                 : FittedBox(
                     fit: BoxFit.fill,
                     child: Text(
@@ -3102,8 +2564,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               ),
             );
           } else {
-            context.router.pushAndPopUntil(const DashboardRoute(),
-                predicate: (route) => false);
+            context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
           }
         },
       )
@@ -3134,16 +2595,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             height: 4,
           ));
         }
-        columns.add(IntrinsicHeight(
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: rows)));
+        columns.add(IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: rows)));
       }
       return Container(
-          margin: EdgeInsets.all(
-              (global.deviceMode == global.DeviceModeEnum.androidPhone)
-                  ? 2
-                  : 0),
+          margin: EdgeInsets.all((global.deviceMode == global.DeviceModeEnum.androidPhone) ? 2 : 0),
           child: Column(
             children: columns,
           ));
@@ -3182,48 +2637,29 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget transScreenSummery() {
-    TextStyle textStyleTotal =
-        const TextStyle(color: Colors.black, fontSize: 16);
+    TextStyle textStyleTotal = const TextStyle(color: Colors.black, fontSize: 16);
     return SingleChildScrollView(
         child: Column(children: [
       Text(
           "${global.language("total_amount")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_amount)} ${global.language("money_symbol")}",
           style: textStyleTotal),
-      Text(
-          "${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_piece)} ${global.language("piece")}",
+      Text("${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.total_piece)} ${global.language("piece")}",
           style: textStyleTotal),
-      if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-          .promotion_list.isNotEmpty)
-        for (var detail in global
-            .posHoldProcessResult[global.posHoldActiveNumber]
-            .posProcess
-            .promotion_list)
+      if (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.promotion_list.isNotEmpty)
+        for (var detail in global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.promotion_list)
           Row(
             children: [
+              Expanded(flex: 12, child: Align(alignment: Alignment.topLeft, child: Text(detail.promotion_name, style: const TextStyle(fontSize: 10, color: Colors.black)))),
               Expanded(
-                  flex: 12,
-                  child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(detail.promotion_name,
-                          style: const TextStyle(
-                              fontSize: 10, color: Colors.black)))),
-              Expanded(
-                  flex: 3,
-                  child: Align(
-                      alignment: Alignment.topRight,
-                      child: Text(global.moneyFormat.format(detail.discount),
-                          style: const TextStyle(
-                              fontSize: 10, color: Colors.red)))),
+                  flex: 3, child: Align(alignment: Alignment.topRight, child: Text(global.moneyFormat.format(detail.discount), style: const TextStyle(fontSize: 10, color: Colors.red)))),
             ],
           ),
     ]));
   }
 
   Widget transScreen({required int mode, String barcode = ""}) {
-    return (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
-            .details.isEmpty)
-        ? const Center(
-            child: Icon(Icons.barcode_reader, color: Colors.grey, size: 200))
+    return (global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.isEmpty)
+        ? const Center(child: Icon(Icons.barcode_reader, color: Colors.grey, size: 200))
         : MediaQuery.removePadding(
             context: context,
             removeTop: true,
@@ -3239,71 +2675,29 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   Expanded(
                       child: (mode == 0)
                           ? ScrollConfiguration(
-                              behavior: ScrollConfiguration.of(context)
-                                  .copyWith(scrollbars: false),
-                              child: ListView(
-                                  scrollDirection: Axis.vertical,
-                                  controller: autoScrollController,
-                                  children: <Widget>[
-                                    for (int index = 0;
-                                        index <
-                                            global
-                                                .posHoldProcessResult[
-                                                    global.posHoldActiveNumber]
-                                                .posProcess
-                                                .details
-                                                .length;
-                                        index++)
-                                      AutoScrollTag(
-                                        key: ValueKey(index),
-                                        controller: autoScrollController,
-                                        index: index,
-                                        highlightColor:
-                                            Colors.black.withOpacity(0.1),
-                                        child: Container(
-                                          child: detail(
-                                              global
-                                                  .posHoldProcessResult[global
-                                                      .posHoldActiveNumber]
-                                                  .posProcess
-                                                  .details[index],
-                                              index),
-                                        ),
-                                      )
-                                  ]))
+                              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                              child: ListView(scrollDirection: Axis.vertical, controller: autoScrollController, children: <Widget>[
+                                for (int index = 0; index < global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length; index++)
+                                  AutoScrollTag(
+                                    key: ValueKey(index),
+                                    controller: autoScrollController,
+                                    index: index,
+                                    highlightColor: Colors.black.withOpacity(0.1),
+                                    child: Container(
+                                      child: detail(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index], index),
+                                    ),
+                                  )
+                              ]))
                           : ScrollConfiguration(
-                              behavior: ScrollConfiguration.of(context)
-                                  .copyWith(scrollbars: false),
-                              child: ListView(
-                                  scrollDirection: Axis.vertical,
-                                  children: <Widget>[
-                                    for (int index = 0;
-                                        index <
-                                            global
-                                                .posHoldProcessResult[
-                                                    global.posHoldActiveNumber]
-                                                .posProcess
-                                                .details
-                                                .length;
-                                        index++)
-                                      Container(
-                                        child: (barcode !=
-                                                global
-                                                    .posHoldProcessResult[global
-                                                        .posHoldActiveNumber]
-                                                    .posProcess
-                                                    .details[index]
-                                                    .barcode)
-                                            ? Container()
-                                            : detail(
-                                                global
-                                                    .posHoldProcessResult[global
-                                                        .posHoldActiveNumber]
-                                                    .posProcess
-                                                    .details[index],
-                                                index),
-                                      )
-                                  ]))),
+                              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                              child: ListView(scrollDirection: Axis.vertical, children: <Widget>[
+                                for (int index = 0; index < global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details.length; index++)
+                                  Container(
+                                    child: (barcode != global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index].barcode)
+                                        ? Container()
+                                        : detail(global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.details[index], index),
+                                  )
+                              ]))),
                   detailFooterWidget(),
                 ])));
   }
@@ -3330,17 +2724,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             Container(
                               padding: const EdgeInsets.all(2),
                               constraints: const BoxConstraints(maxWidth: 250),
-                              width: (MediaQuery.of(context).size.width / 100) *
-                                  40,
+                              width: (MediaQuery.of(context).size.width / 100) * 40,
                               child: Column(
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       global.language("receive_money"),
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
+                                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   Padding(
@@ -3361,9 +2752,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                       readOnly: true,
                                       controller: receiveAmount,
                                       keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                       decoration: InputDecoration(
                                         icon: const Icon(Icons.money),
                                         hintText: global.language('จำนวนเงิน'),
@@ -3376,20 +2765,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                     child: Row(
                                       children: [
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.amber.shade600),
+                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.amber.shade600),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child:
-                                              Text(global.language("cancel")),
+                                          child: Text(global.language("cancel")),
                                         ),
                                         const Spacer(),
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.green.shade600),
+                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade600),
                                           onPressed: () {
                                             /*ReceiveMoneyHelper
                                                 _receiveMoneyHelper =
@@ -3405,15 +2789,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                                         receiveAmount.text)));*/
                                             Navigator.of(context).pop();
 
-                                            global.playSound(
-                                                word:
-                                                    "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
+                                            global.playSound(word: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
 
-                                            showMessageDialog(
-                                                header: "บันทึกสำเร็จ",
-                                                msg:
-                                                    "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}",
-                                                type: "success");
+                                            showMessageDialog(header: "บันทึกสำเร็จ", msg: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}", type: "success");
                                           },
                                           child: Text(global.language("save")),
                                         ),
@@ -3425,8 +2803,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             ),
                             Container(
                               constraints: const BoxConstraints(maxWidth: 250),
-                              width: (MediaQuery.of(context).size.width / 100) *
-                                  50,
+                              width: (MediaQuery.of(context).size.width / 100) * 50,
                               child: Column(
                                 children: <Widget>[
                                   Align(
@@ -3434,172 +2811,132 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                     child: Column(children: [
                                       SizedBox(
                                           height: 60,
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '7',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("7")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '8',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("8")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '9',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("9")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: 'x',
-                                                      margin: 2,
-                                                      callBack: () => {},
-                                                    )),
-                                              ])),
+                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '7',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("7")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '8',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("8")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '9',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("9")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: 'x',
+                                                  margin: 2,
+                                                  callBack: () => {},
+                                                )),
+                                          ])),
                                       SizedBox(
                                           height: 60,
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '4',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("4")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '5',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("5")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '6',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("6")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '+',
-                                                      margin: 2,
-                                                      callBack: () => {},
-                                                    )),
-                                              ])),
+                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '4',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("4")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '5',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("5")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '6',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("6")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '+',
+                                                  margin: 2,
+                                                  callBack: () => {},
+                                                )),
+                                          ])),
                                       SizedBox(
                                           height: 60,
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '1',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("1")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '2',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("2")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '3',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("3")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: 'C',
-                                                      margin: 2,
-                                                      callBack: () =>
-                                                          {clearText()},
-                                                    )),
-                                              ])),
+                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '1',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("1")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '2',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("2")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '3',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("3")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: 'C',
+                                                  margin: 2,
+                                                  callBack: () => {clearText()},
+                                                )),
+                                          ])),
                                       SizedBox(
                                           height: 60,
-                                          child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '0',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged("0")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      text: '.',
-                                                      margin: 2,
-                                                      callBack: () => {
-                                                        textInputChanged(".")
-                                                      },
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      margin: 2,
-                                                      icon: Icons.backspace,
-                                                      callBack: () =>
-                                                          {backSpace()},
-                                                    )),
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: NumPadButton(
-                                                      margin: 2,
-                                                      icon: Icons.expand,
-                                                      callBack: () => {},
-                                                    )),
-                                              ])),
+                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '0',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged("0")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  text: '.',
+                                                  margin: 2,
+                                                  callBack: () => {textInputChanged(".")},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  margin: 2,
+                                                  icon: Icons.backspace,
+                                                  callBack: () => {backSpace()},
+                                                )),
+                                            Expanded(
+                                                flex: 2,
+                                                child: NumPadButton(
+                                                  margin: 2,
+                                                  icon: Icons.expand,
+                                                  callBack: () => {},
+                                                )),
+                                          ])),
                                     ]),
                                   ),
                                 ],
@@ -3627,15 +2964,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void backSpace() {
     if (receiveAmount.text.isNotEmpty) {
-      receiveAmount.text =
-          receiveAmount.text.substring(0, receiveAmount.text.length - 1);
+      receiveAmount.text = receiveAmount.text.substring(0, receiveAmount.text.length - 1);
     }
   }
 
-  void showMessageDialog(
-      {required String header,
-      required String msg,
-      required String type}) async {
+  void showMessageDialog({required String header, required String msg, required String type}) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -3664,41 +2997,22 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void findItemByCodeNameBarcode() async {
     barcodeScanActive = false;
-    await Navigator.push(
-            context,
-            PageTransition(
-                type: PageTransitionType.rightToLeft, child: findItemScreen))
-        .then((value) async {
+    await Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeft, child: findItemScreen)).then((value) async {
       if (value != null) {
-        logInsert(
-            commandCode: value.command,
-            barcode: value.data.barcode,
-            qty: value.qty.toString(),
-            price: value.priceOrPercent);
+        logInsert(commandCode: value.command, barcode: value.data.barcode, qty: value.qty.toString(), price: value.priceOrPercent);
       }
     });
     barcodeScanActive = true;
   }
 
-  void findMemberByCodeName() async {
-    await Navigator.push(
-      context,
-      PageTransition(
-          type: PageTransitionType.rightToLeft, child: findMemberScreen),
-    );
-  }
-
   void findEmployee() async {
     await Navigator.push(
       context,
-      PageTransition(
-          type: PageTransitionType.rightToLeft, child: const FindEmployee()),
+      PageTransition(type: PageTransitionType.rightToLeft, child: const FindEmployee()),
     ).then((value) {
       setState(() {
-        global.posHoldProcessResult[global.posHoldActiveNumber].saleCode =
-            value[0];
-        global.posHoldProcessResult[global.posHoldActiveNumber].saleName =
-            value[1];
+        global.posHoldProcessResult[global.posHoldActiveNumber].saleCode = value[0];
+        global.posHoldProcessResult[global.posHoldActiveNumber].saleName = value[1];
       });
     }).onError((error, stackTrace) => null);
   }
@@ -3720,19 +3034,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       findActiveLineByGuid = "";
       activeLineNumber = -1;
       if (global.appMode == global.AppModeEnum.posTerminal) {
-        posCompileProcess(
-                holdNumber: global.posHoldActiveNumber,
-                docMode: global.posScreenToInt())
-            .then((_) {
-          PosProcess().sumCategoryCount(
-              value: global
-                  .posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+        posCompileProcess(holdNumber: global.posHoldActiveNumber, docMode: global.posScreenToInt()).then((_) {
+          PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
         });
       } else {
         await getProcessFromTerminal();
       }
-      global.payScreenData =
-          global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
+      global.payScreenData = global.posHoldProcessResult[global.posHoldActiveNumber].payScreenData;
       setState(() {});
     }
   }
@@ -3744,26 +3052,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ),
         padding: const EdgeInsets.only(top: 4, bottom: 4),
         child: Column(children: [
-          for (var detail in global
-              .posHoldProcessResult[global.posHoldActiveNumber]
-              .posProcess
-              .promotion_list)
+          for (var detail in global.posHoldProcessResult[global.posHoldActiveNumber].posProcess.promotion_list)
             Row(
               children: [
+                Expanded(flex: 12, child: Align(alignment: Alignment.topLeft, child: Text(detail.promotion_name, style: const TextStyle(fontSize: 12, color: Colors.black)))),
                 Expanded(
-                    flex: 12,
-                    child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(detail.promotion_name,
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.black)))),
-                Expanded(
-                    flex: 3,
-                    child: Align(
-                        alignment: Alignment.topRight,
-                        child: Text(global.moneyFormat.format(detail.discount),
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.red)))),
+                    flex: 3, child: Align(alignment: Alignment.topRight, child: Text(global.moneyFormat.format(detail.discount), style: const TextStyle(fontSize: 12, color: Colors.red)))),
               ],
             )
         ]));
@@ -3771,8 +3065,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget posButtonShowMenu() {
     return myButton(
-        child:
-            Icon((showButtonMenu) ? Icons.arrow_downward : Icons.arrow_upward),
+        child: Icon((showButtonMenu) ? Icons.arrow_downward : Icons.arrow_upward),
         onPressed: () {
           setState(() {
             showButtonMenu = !showButtonMenu;
@@ -3787,14 +3080,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           setState(() {
             if (splitViewMode == 1) {
               splitViewMode = 2;
-              splitViewController = SplitViewController(
-                  weights: [0.4, 0.6],
-                  limits: [WeightLimit(min: 0.2, max: 0.8)]);
+              splitViewController = SplitViewController(weights: [0.4, 0.6], limits: [WeightLimit(min: 0.2, max: 0.8)]);
             } else {
               splitViewMode = 1;
-              splitViewController = SplitViewController(
-                  weights: [0.6, 0.4],
-                  limits: [WeightLimit(min: 0.2, max: 0.8)]);
+              splitViewController = SplitViewController(weights: [0.6, 0.4], limits: [WeightLimit(min: 0.2, max: 0.8)]);
             }
           });
         });
@@ -3896,9 +3185,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget posButtonSwitchDesktopTablet() {
     return myButton(
-        child: (deviceMode == 0)
-            ? const Icon(Icons.tablet)
-            : const FaIcon(FontAwesomeIcons.desktop),
+        child: (deviceMode == 0) ? const Icon(Icons.tablet) : const FaIcon(FontAwesomeIcons.desktop),
         onPressed: () {
           setState(() {
             if (deviceMode == 0) {
@@ -4042,11 +3329,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         menuList = Container();
     }
     return Column(children: [
-      if (deviceMode != 2)
-        Container(
-            height: 50,
-            margin: const EdgeInsets.only(top: 5),
-            child: totalAndPayScreen()),
+      if (deviceMode != 2) Container(height: 50, margin: const EdgeInsets.only(top: 5), child: totalAndPayScreen()),
       if (deviceMode != 2)
         const SizedBox(
           height: 4,
@@ -4081,8 +3364,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           Expanded(
               child: DefaultTabController(
                   length: 5,
-                  child: LayoutBuilder(builder:
-                      (BuildContext context, BoxConstraints constraints) {
+                  child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                     return TabBarView(
                       physics: const NeverScrollableScrollPhysics(),
                       controller: tabletTabController,
@@ -4114,8 +3396,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       ),
       child: Column(
         children: [
-          if ((Platform.isAndroid || Platform.isIOS) &&
-              qrCodeBarcodeScannerStart)
+          if ((Platform.isAndroid || Platform.isIOS) && qrCodeBarcodeScannerStart)
             SizedBox(
               width: double.infinity,
               height: 200,
@@ -4124,63 +3405,44 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           Container(
               width: double.infinity,
               padding: const EdgeInsets.only(left: 8, right: 4),
-              decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  borderRadius: BorderRadius.circular(2),
-                  border: Border.all(width: 0, color: Colors.blue)),
+              decoration: BoxDecoration(color: Colors.blue.shade100, borderRadius: BorderRadius.circular(2), border: Border.all(width: 0, color: Colors.blue)),
               child: Column(children: [
-                if (global.posHoldProcessResult[global.posHoldActiveNumber]
-                    .customerCode.isNotEmpty)
+                if (global.posHoldProcessResult[global.posHoldActiveNumber].customerCode.isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
                       Text(
                         '${global.language('customer')} :',
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.black),
+                        style: const TextStyle(fontSize: 20, color: Colors.black),
                       ),
                       const SizedBox(width: 5),
                       Text(
                         "${global.posHoldProcessResult[global.posHoldActiveNumber].customerName} (${global.posHoldProcessResult[global.posHoldActiveNumber].customerCode})",
-                        style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                       )
                     ])),
                     IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleName = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleName = "";
                         });
                       },
                     )
                   ]),
-                if (global
-                    .posHoldProcessResult[global.posHoldActiveNumber].saleCode
-                    .trim()
-                    .isNotEmpty)
+                if (global.posHoldProcessResult[global.posHoldActiveNumber].saleCode.trim().isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
                       Text(
                         '${global.language('sale')} : ',
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.black),
+                        style: const TextStyle(fontSize: 14, color: Colors.black),
                       ),
                       const SizedBox(width: 5),
                       Text(
                         "${global.posHoldProcessResult[global.posHoldActiveNumber].saleName} (${global.posHoldProcessResult[global.posHoldActiveNumber].saleCode})",
-                        style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
                       )
                     ])),
                     IconButton(
@@ -4189,12 +3451,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       constraints: const BoxConstraints(),
                       onPressed: () {
                         setState(() {
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleName = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleName = "";
                         });
                       },
                     )
@@ -4219,8 +3477,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               gripColor: Colors.blueGrey.shade100,
               controller: splitViewController,
               //onWeightChanged: (w) => print("Horizontal $w"),
-              indicator:
-                  const SplitIndicator(viewMode: SplitViewMode.Horizontal),
+              indicator: const SplitIndicator(viewMode: SplitViewMode.Horizontal),
               viewMode: SplitViewMode.Horizontal,
               activeIndicator: const SplitIndicator(
                 viewMode: SplitViewMode.Horizontal,
@@ -4253,8 +3510,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     showNumericPadTop = offset.dy;
                   });
                 },
-                child: SizedBox(
-                    width: 250, height: 310, child: numericPadWidget()),
+                child: SizedBox(width: 250, height: 310, child: numericPadWidget()),
               )),
       ]),
     ));
@@ -4263,10 +3519,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget posLayoutPhoneScreen() {
     return SafeArea(
         child: Column(children: [
-      Container(
-          height: 50,
-          margin: const EdgeInsets.all(2),
-          child: totalAndPayScreen()),
+      Container(height: 50, margin: const EdgeInsets.all(2), child: totalAndPayScreen()),
       Expanded(
           child: DefaultTabController(
               length: 4,
@@ -4305,31 +3558,23 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                         ),
                                       ],
                                     )),
-                                Expanded(child: LayoutBuilder(builder:
-                                    (BuildContext context,
-                                        BoxConstraints constraints) {
+                                Expanded(child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                                   return Column(children: [
-                                    if ((Platform.isAndroid ||
-                                            Platform.isIOS) &&
-                                        qrCodeBarcodeScannerStart)
+                                    if ((Platform.isAndroid || Platform.isIOS) && qrCodeBarcodeScannerStart)
                                       SizedBox(
                                         width: double.infinity,
                                         height: 200,
                                         child: selectProductByQrCodeOrBarcode(),
                                       ),
                                     Expanded(
-                                        child: TabBarView(
-                                            controller: phoneTabController,
-                                            children: [
-                                          transScreen(mode: 0),
-                                          selectProductLevelWidget(),
-                                          findProductByText(),
-                                          Container()
-                                          //commandScreen(),
-                                        ])),
-                                    (phoneTabController.index != 2)
-                                        ? posLayoutBottom()
-                                        : Container(),
+                                        child: TabBarView(controller: phoneTabController, children: [
+                                      transScreen(mode: 0),
+                                      selectProductLevelWidget(),
+                                      findProductByText(),
+                                      Container()
+                                      //commandScreen(),
+                                    ])),
+                                    (phoneTabController.index != 2) ? posLayoutBottom() : Container(),
                                   ]);
                                 })),
                               ],
@@ -4350,11 +3595,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ),
       ),
       child: Column(children: [
-        Expanded(
-            child: Row(children: [
-          Expanded(child: transScreen(mode: 0)),
-          if (productOptions.isNotEmpty) selectProductExtraListWidget()
-        ])),
+        Expanded(child: Row(children: [Expanded(child: transScreen(mode: 0)), if (productOptions.isNotEmpty) selectProductExtraListWidget()])),
       ]),
     );
     Widget screenSale = Container(
@@ -4369,63 +3610,44 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           Container(
               width: double.infinity,
               padding: const EdgeInsets.only(left: 8, right: 4),
-              decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  borderRadius: BorderRadius.circular(2),
-                  border: Border.all(width: 0, color: Colors.blue)),
+              decoration: BoxDecoration(color: Colors.blue.shade100, borderRadius: BorderRadius.circular(2), border: Border.all(width: 0, color: Colors.blue)),
               child: Column(children: [
-                if (global.posHoldProcessResult[global.posHoldActiveNumber]
-                    .customerCode.isNotEmpty)
+                if (global.posHoldProcessResult[global.posHoldActiveNumber].customerCode.isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
                       Text(
                         '${global.language('ลูกค้า')} :',
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.black),
+                        style: const TextStyle(fontSize: 20, color: Colors.black),
                       ),
                       const SizedBox(width: 5),
                       Text(
                         "${global.posHoldProcessResult[global.posHoldActiveNumber].customerName} (${global.posHoldProcessResult[global.posHoldActiveNumber].customerCode})",
-                        style: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                       )
                     ])),
                     IconButton(
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleName = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleName = "";
                         });
                       },
                     )
                   ]),
-                if (global
-                    .posHoldProcessResult[global.posHoldActiveNumber].saleCode
-                    .trim()
-                    .isNotEmpty)
+                if (global.posHoldProcessResult[global.posHoldActiveNumber].saleCode.trim().isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
                       Text(
                         '${global.language('sale')} : ',
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.black),
+                        style: const TextStyle(fontSize: 14, color: Colors.black),
                       ),
                       const SizedBox(width: 5),
                       Text(
                         "${global.posHoldProcessResult[global.posHoldActiveNumber].saleName} (${global.posHoldProcessResult[global.posHoldActiveNumber].saleCode})",
-                        style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
                       )
                     ])),
                     IconButton(
@@ -4434,12 +3656,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       constraints: const BoxConstraints(),
                       onPressed: () {
                         setState(() {
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[global.posHoldActiveNumber]
-                              .saleName = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode = "";
+                          global.posHoldProcessResult[global.posHoldActiveNumber].saleName = "";
                         });
                       },
                     )
@@ -4453,22 +3671,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(10),
                   width: double.infinity,
                   height: 180,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(2),
-                      border: Border.all(width: 0, color: Colors.blue),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5.0,
-                        ),
-                      ]),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(2), border: Border.all(width: 0, color: Colors.blue), boxShadow: const [
+                    BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 5.0,
+                    ),
+                  ]),
                   child: Row(children: [
-                    Expanded(
-                        child: SingleChildScrollView(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: widgetMessage))),
+                    Expanded(child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgetMessage))),
                     if (widgetMessageImageUrl.isNotEmpty)
                       Image(
                           image: CachedNetworkImageProvider(
@@ -4520,10 +3730,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       posNumPadGlobalKey.currentState!.backspace();
                     }
                   }
-                  if (keyLabel.contains("NUMPAD") ||
-                      keyLabel.contains("MULTIPLY")) {
-                    keyLabel =
-                        keyLabel.removeAllWhitespace.replaceAll("NUMPAD", "");
+                  if (keyLabel.contains("NUMPAD") || keyLabel.contains("MULTIPLY")) {
+                    keyLabel = keyLabel.removeAllWhitespace.replaceAll("NUMPAD", "");
                     if (keyLabel.contains("DECIMAL")) {
                       keyLabel = ".";
                     }
@@ -4544,8 +3752,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       gripColor: Colors.blueGrey.shade100,
                       controller: splitViewController,
                       //onWeightChanged: (w) => print("Horizontal $w"),
-                      indicator: const SplitIndicator(
-                          viewMode: SplitViewMode.Horizontal),
+                      indicator: const SplitIndicator(viewMode: SplitViewMode.Horizontal),
                       viewMode: SplitViewMode.Horizontal,
                       activeIndicator: const SplitIndicator(
                         viewMode: SplitViewMode.Horizontal,
@@ -4572,15 +3779,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                           child: Center(child: numericPadWidget()),
                         ),
                         childWhenDragging: Container(),
-                        onDraggableCanceled:
-                            (Velocity velocity, Offset offset) {
+                        onDraggableCanceled: (Velocity velocity, Offset offset) {
                           setState(() {
                             showNumericPadLeft = offset.dx;
                             showNumericPadTop = offset.dy;
                           });
                         },
-                        child: SizedBox(
-                            width: 250, height: 310, child: numericPadWidget()),
+                        child: SizedBox(width: 250, height: 310, child: numericPadWidget()),
                       )),
               ]),
             )));
@@ -4625,9 +3830,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   void productCategoryLoadFinish() {
-    PosProcess().sumCategoryCount(
-        value:
-            global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+    PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
     context.read<ProductCategoryBloc>().add(ProductCategoryLoadFinish());
   }
 
@@ -4642,12 +3845,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 serviceLocator<Log>().debug('xxxxxx Category');
                 loadCategory();
                 await loadProductByCategory(categoryGuidSelected);
-                PosProcess().sumCategoryCount(
-                    value: global
-                        .posHoldProcessResult[global.posHoldActiveNumber]
-                        .posProcess);
-                processEvent(
-                    barcode: "", holdNumber: global.posHoldActiveNumber);
+                PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+                processEvent(barcode: "", holdNumber: global.posHoldActiveNumber);
                 productCategoryLoadFinish();
               }
             },
@@ -4714,40 +3913,28 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       posNumPadGlobalKey.currentState!.clear();
                     }
                   }
-                  serviceLocator<Log>().debug(
-                      '------------------------ Scan Barcode : $barcode');
-                  if (global.posNumPadProductWeightGlobalKey.currentState !=
-                      null) {
+                  serviceLocator<Log>().debug('------------------------ Scan Barcode : $barcode');
+                  if (global.posNumPadProductWeightGlobalKey.currentState != null) {
                     // เปิดหน้าจอน้ำหนัก
-                    serviceLocator<Log>().debug(
-                        '------------------------ Pass Barcode : $barcode');
-                    global.posNumPadProductWeightGlobalKey.currentState!
-                        .passValue(barcode);
+                    serviceLocator<Log>().debug('------------------------ Pass Barcode : $barcode');
+                    global.posNumPadProductWeightGlobalKey.currentState!.passValue(barcode);
                   } else {
                     if (isVisible == true || barcodeScanActive == true) {
-                      logInsert(
-                          commandCode: 1,
-                          barcode: barcode,
-                          qty: (textInput.isEmpty) ? "1.0" : textInput);
+                      logInsert(commandCode: 1, barcode: barcode, qty: (textInput.isEmpty) ? "1.0" : textInput);
                       textInput = "";
                     }
                   }
                 },
                 child: AnnotatedRegion<SystemUiOverlayStyle>(
                     value: const SystemUiOverlayStyle(
-                      systemNavigationBarColor:
-                          Colors.blue, // Set navigation bar color
-                      systemNavigationBarIconBrightness:
-                          Brightness.light, // Set navigation bar icons' color
+                      systemNavigationBarColor: Colors.blue, // Set navigation bar color
+                      systemNavigationBarIconBrightness: Brightness.light, // Set navigation bar icons' color
                     ),
                     child: Scaffold(
                         appBar: AppBar(
                           toolbarHeight: 24,
                           automaticallyImplyLeading: false,
-                          backgroundColor: (global.posScreenMode ==
-                                  global.PosScreenModeEnum.posSale)
-                              ? Colors.blue
-                              : Colors.red,
+                          backgroundColor: (global.posScreenMode == global.PosScreenModeEnum.posSale) ? Colors.blue : Colors.red,
                           title: Row(
                             children: [
                               if (global.posSaleChannelCode != "XXX")
@@ -4764,40 +3951,31 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const PosSaleChannelScreen(),
+                                              builder: (context) => const PosSaleChannelScreen(),
                                             ),
                                           ).then((value) => setState(() {}));
                                         },
-                                        child: Image.network(
-                                            global.posSaleChannelLogoUrl))),
+                                        child: Image.network(global.posSaleChannelLogoUrl))),
                               Text(
-                                  (global.posScreenMode ==
-                                          global.PosScreenModeEnum.posSale)
-                                      ? 'ขายสินค้า'
-                                      : 'รับคืนสินค้า',
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 10.0,
-                                          color: Colors.black54,
-                                          offset: Offset(2.0, 2.0),
-                                        ),
-                                      ])),
+                                  (global.posScreenMode == global.PosScreenModeEnum.posSale)
+                                      ? global.language("doc_sale") //  'ขายสินค้า'
+                                      : global.language("doc_return"), // 'รับคืนสินค้า',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, shadows: [
+                                    Shadow(
+                                      blurRadius: 10.0,
+                                      color: Colors.black54,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ])),
                               const Spacer(),
                               const Text("DEDE POS",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [
-                                        Shadow(
-                                          blurRadius: 10.0,
-                                          color: Colors.black54,
-                                          offset: Offset(2.0, 2.0),
-                                        ),
-                                      ])),
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, shadows: [
+                                    Shadow(
+                                      blurRadius: 10.0,
+                                      color: Colors.black54,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ])),
                             ],
                           ),
                         ),

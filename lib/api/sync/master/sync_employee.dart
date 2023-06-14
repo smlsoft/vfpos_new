@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:dedepos/api/sync/api_repository.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/employee_helper.dart';

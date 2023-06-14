@@ -4,6 +4,15 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart' as global_model;
 import 'package:dio/dio.dart';
+import 'package:dedepos/db/employee_helper.dart';
+import 'package:dedepos/db/product_barcode_helper.dart';
+import 'package:dedepos/model/objectbox/employees_struct.dart';
+import 'package:dedepos/model/find/find_employee_model.dart';
+import 'package:dedepos/model/find/find_member_model.dart';
+import 'package:dedepos/model/find/find_item_model.dart';
+import 'dart:async';
+import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 // GET {{host}}/master-sync/list?lastupdate=2010-01-02T15:04&module=productunit&limit=1&offset=0&action=new
 class ApiRepository {
@@ -498,5 +507,93 @@ class ApiRepository {
       serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
+  }
+
+  Future<List<FindMemberModel>> findMemberByTelName(
+      String word, int offset, int limit) async {
+    Dio client = Client().init();
+    List<FindMemberModel> result = [];
+    if (word.trim().isNotEmpty) {
+      try {
+        final response = await client.get(
+            '/debtaccount/debtor/list?q=$word&offset=$offset&limit=$limit&lang=th');
+        try {
+          final rawData = json.decode(response.toString());
+
+          //print(rawData);
+
+          if (rawData['error'] != null) {
+            String errorMessage = '${rawData['code']}: ${rawData['message']}';
+            serviceLocator<Log>().error(errorMessage);
+            throw Exception('${rawData['code']}: ${rawData['message']}');
+          }
+          result = [];
+          var data = ApiResponse.fromMap(rawData);
+          return result;
+        } catch (ex) {
+          serviceLocator<Log>().error(ex);
+          throw Exception(ex);
+        }
+      } on DioError catch (ex) {
+        String errorMessage = ex.response.toString();
+        serviceLocator<Log>().error(errorMessage);
+        throw Exception(errorMessage);
+      }
+    }
+    return result;
+  }
+}
+
+class RestApiFindItemByCodeNameBarcode {
+  Future<List<FindItemModel>> findItemByCodeNameBarcode(
+      String word, int offset, int limit) async {
+    //String _fieldName = "barcode,code,name_1";
+    List<FindItemModel> result = [];
+    if (word.trim().isNotEmpty) {
+      ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
+      List<ProductBarcodeObjectBoxStruct> select =
+          productBarcodeHelper.selectByCodeNameBarCode(
+              word: word.toString(), limit: limit, offset: offset, order: "");
+      for (int index = 0; index < select.length; index++) {
+        ProductBarcodeObjectBoxStruct source = select[index];
+        List<double> packPrices = [];
+        for (int priceIndex = 0;
+            priceIndex < source.prices.length;
+            priceIndex++) {
+          packPrices.add(double.tryParse(source.prices[priceIndex]) ?? 0.0);
+        }
+        result.add(FindItemModel(
+            barcode: source.barcode,
+            item_code: "", // _source.code,
+            item_names: source.names,
+            unit_code: source.unit_code,
+            unit_names: source.unit_names,
+            unit_type: 0,
+            qty: 1.0,
+            prices: packPrices,
+            images_guid_list: []));
+      }
+    }
+    return result;
+  }
+}
+
+class RestApiFindEmployeeByWord {
+  Future<List<FindEmployeeModel>> findEmployeeByWord(String word) async {
+    List<FindEmployeeModel> result = [];
+    EmployeeHelper employeeHelper = EmployeeHelper();
+    List<EmployeeObjectBoxStruct> select = employeeHelper.select(word: word);
+    for (int index = 0; index < select.length; index++) {
+      EmployeeObjectBoxStruct source = select[index];
+      result.add(
+        FindEmployeeModel(
+            name: source.name,
+            code: source.code,
+            roles: "" /* _source.roles.toString()*/,
+            profile_picture: source.profile_picture,
+            username: source.name),
+      );
+    }
+    return result;
   }
 }
