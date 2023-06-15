@@ -249,8 +249,8 @@ msix_config:
   display_name: DEDEPOS
   publisher_display_name: SMLSoft
   publisher: smlsoft
-  identity_name: com.smlsoft.dedepos
-  language: en-us
-  capabilities: internetClient, location, microphone, webcam
-  certificate_path: C:\source\flutter-test-key\CERTIFICATE.pfx
-  certificate_password: sml19682511
+  identity_name: com.smlsoft.vfpos
+  # language: en-us
+  # capabilities: internetClient, location, microphone, webcam
+  # certificate_path: C:\source\flutter-test-key\CERTIFICATE.pfx
+  # certificate_password: sml19682511
