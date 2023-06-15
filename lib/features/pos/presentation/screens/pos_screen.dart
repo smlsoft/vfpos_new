@@ -1276,7 +1276,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       image: CachedNetworkImageProvider(
                   imageUrl,
                 )))
-              : Container(),
+              : Center(child:Icon(  Icons.library_books, color: Colors.grey,  size: 40,)),
         ),
         Container(
           width: double.infinity,
@@ -1593,8 +1593,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     if (activeLineNumber != -1)
                       Row(
                         children: [
-                          if (product.images_url.isNotEmpty && global.isOnline)
-                            Row(
+                           if(product.images_url.isNotEmpty && global.isOnline)
+                             Row(
                               children: [
                                 Container(
                                     padding: const EdgeInsets.all(2),
@@ -1614,6 +1614,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 const SizedBox(width: 5),
                               ],
                             ),
+                            // :Center(child:Icon(  Icons.library_books, color: Colors.grey,)),
                           Flexible(
                               child: Text(
                                   "${product.names[0]}/${product.unit_names[0]}",
@@ -1723,6 +1724,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(),
+                ):Container(
+                    
+                  child: const Center(
+                  child: Icon(
+                    Icons.library_books,
+                    color: Colors.grey,
+                 size: 40,
+                  ),
+                ),
                 ),
               Container(
                 width: double.infinity,
@@ -3094,13 +3104,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         onPressed: () {
           // Navigator.pop(context);
 
-          if (F.appFlavor == Flavor.DEV) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MenuScreen(),
-              ),
-            );
+          if (F.appFlavor == Flavor.VFPOS) {
+       context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
           } else {
             context.router.pushAndPopUntil(const DashboardRoute(),
                 predicate: (route) => false);
