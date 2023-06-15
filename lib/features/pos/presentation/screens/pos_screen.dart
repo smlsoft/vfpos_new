@@ -1265,19 +1265,29 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     bool withOpacity = true,
   }) {
     double fontSize = 14.0;
-
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: (imageUrl.trim().isNotEmpty)
-              ? Center(
-                  child: Image(
-                      image: CachedNetworkImageProvider(
-                  imageUrl,
-                )))
-              : Center(child:Icon(  Icons.library_books, color: Colors.grey,  size: 40,)),
-        ),
+            child: (imageUrl.trim().isNotEmpty)
+                ? SizedBox(
+                    width: double.infinity,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.fill,
+                    ))
+                : Center(
+                    child: Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: fontSize * 1.25,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                  ))),
         Container(
           width: double.infinity,
           decoration: (withOpacity)
@@ -1290,16 +1300,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: fontSize * 0.8,
-                    color: Colors.black,
+                if (imageUrl.trim().isNotEmpty)
+                  Text(
+                    name,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: fontSize * 0.8,
+                      color: Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 3,
-                ),
                 SizedBox(
                     width: double.infinity,
                     child: Stack(
@@ -1474,6 +1485,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 : GridView.count(
                     padding: EdgeInsets.zero,
                     crossAxisCount: widgetPerLine,
+                    childAspectRatio: 1 / 1.2,
                     children: [
                       for (final detail in global.productListByCategory)
                         Container(
@@ -1593,8 +1605,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     if (activeLineNumber != -1)
                       Row(
                         children: [
-                           if(product.images_url.isNotEmpty && global.isOnline)
-                             Row(
+                          if (product.images_url.isNotEmpty && global.isOnline)
+                            Row(
                               children: [
                                 Container(
                                     padding: const EdgeInsets.all(2),
@@ -1614,7 +1626,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 const SizedBox(width: 5),
                               ],
                             ),
-                            // :Center(child:Icon(  Icons.library_books, color: Colors.grey,)),
                           Flexible(
                               child: Text(
                                   "${product.names[0]}/${product.unit_names[0]}",
@@ -1673,6 +1684,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget selectProductLevelCardWidget(ProductCategoryObjectBoxStruct value,
       double boxSize, bool append, double widthHeight) {
     double round = 5;
+    String name = value.names[0];
+
     return Container(
         padding: const EdgeInsets.all(2),
         width: widthHeight,
@@ -1707,64 +1720,64 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       .posProcess);
             });
           },
-          child: Stack(
-            children: [
-              if (value.use_image_or_color == true &&
-                  value.image_url.isNotEmpty)
-                CachedNetworkImage(
-                  imageUrl: value.image_url,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.fill,
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(round),
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(),
-                ):Container(
-                    
-                  child: const Center(
-                  child: Icon(
-                    Icons.library_books,
-                    color: Colors.grey,
-                 size: 40,
-                  ),
-                ),
-                ),
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                padding: const EdgeInsets.all(4),
-                color: ((value.use_image_or_color == false)
-                    ? global
-                        .colorFromHex(value.colorselecthex.replaceAll("#", ""))
-                    : Colors.transparent),
-                child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  alignment: Alignment.bottomCenter,
-                  child: Text(value.names[0],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        shadows: [
-                          Shadow(
-                              offset: Offset(-0.95, -0.95),
-                              color: Colors.white),
-                          Shadow(
-                              offset: Offset(0.95, -0.95), color: Colors.white),
-                          Shadow(
-                              offset: Offset(0.95, 0.95), color: Colors.white),
-                          Shadow(
-                              offset: Offset(-0.95, 0.95), color: Colors.white),
-                        ],
+          child:
+              (value.use_image_or_color == true && value.image_url.isNotEmpty)
+                  ? Column(children: [
+                      Expanded(
+                          child: CachedNetworkImage(
+                        imageUrl: value.image_url,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.fill,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(round),
+                            image: DecorationImage(
+                                image: imageProvider, fit: BoxFit.cover),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(),
                       )),
-                ),
-              ),
-            ],
-          ),
+                      Center(
+                          child: Text(name,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ))),
+                    ])
+                  : Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      padding: const EdgeInsets.all(4),
+                      color: ((value.use_image_or_color == false)
+                          ? global.colorFromHex(
+                              value.colorselecthex.replaceAll("#", ""))
+                          : Colors.transparent),
+                      child: Center(
+                          child: Text(name,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                shadows: [
+                                  Shadow(
+                                      offset: Offset(-0.95, -0.95),
+                                      color: Colors.white),
+                                  Shadow(
+                                      offset: Offset(0.95, -0.95),
+                                      color: Colors.white),
+                                  Shadow(
+                                      offset: Offset(0.95, 0.95),
+                                      color: Colors.white),
+                                  Shadow(
+                                      offset: Offset(-0.95, 0.95),
+                                      color: Colors.white),
+                                ],
+                              ))),
+                    ),
         ));
   }
 
@@ -3105,9 +3118,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           // Navigator.pop(context);
 
           if (F.appFlavor == Flavor.VFPOS) {
-       context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
-          } else {
             context.router.pushAndPopUntil(const DashboardRoute(),
+                predicate: (route) => false);
+          } else {
+            context.router.pushAndPopUntil(const MenuRoute(),
                 predicate: (route) => false);
           }
         },
@@ -4469,10 +4483,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: widgetMessage))),
                     if (widgetMessageImageUrl.isNotEmpty)
-                      Image(
-                          image: CachedNetworkImageProvider(
-                        widgetMessageImageUrl,
-                      ))
+                      CachedNetworkImage(
+                        imageUrl: widgetMessageImageUrl,
+                      )
                   ]),
                 ),
                 Expanded(

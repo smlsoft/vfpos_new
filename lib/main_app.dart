@@ -30,7 +30,7 @@ import 'package:presentation_displays/display.dart';
 import 'package:intl/intl.dart';
 import 'bootstrap.dart';
 
-Route<dynamic> generateRoute(RouteSettings settings) {
+/* Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
       return MaterialPageRoute(builder: (_) => Container());
@@ -57,9 +57,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               ));
   }
 }
-
+*/
 /// mainApp เดิมให้ ยกเลิกใช้งาน ย้ายไปใช้ app_view
-Future<void> mainApp() async {
+/*Future<void> mainApp() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -197,3 +197,4 @@ Future<void> mainApp() async {
     runApp(const PosSecondaryScreen());
   }
 }
+*/

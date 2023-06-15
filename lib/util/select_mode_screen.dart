@@ -13,13 +13,6 @@ class _SelectModeScreenState extends State<SelectModeScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          buttonTheme: ButtonThemeData(
-            buttonColor: Colors.blue,
-            textTheme: ButtonTextTheme.primary,
-          ),
-        ),
         home: SafeArea(
             child: Scaffold(
                 resizeToAvoidBottomInset: false,

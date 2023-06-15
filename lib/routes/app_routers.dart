@@ -8,6 +8,7 @@ import 'package:dedepos/features/splash/presentation/splash_screen.dart';
 import 'package:dedepos/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/util/menu_screen.dart';
+import 'package:dedepos/util/select_language_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../global.dart';
@@ -28,8 +29,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: InitPOSRoute.page),
         AutoRoute(page: InitShopRoute.page),
         AutoRoute(page: PosSecondaryRoute.page),
-        AutoRoute(page: MenuRoute.page)
-
-        /// routes go here
+        AutoRoute(page: MenuRoute.page),
       ];
 }

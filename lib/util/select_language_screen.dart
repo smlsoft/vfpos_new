@@ -1,10 +1,10 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/routes/app_routers.dart';
+import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:async';
 
-@RoutePage()
 class SelectLanguageScreen extends StatefulWidget {
   const SelectLanguageScreen({Key? key}) : super(key: key);
 
@@ -35,10 +35,14 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                               global.userScreenLanguage =
                                   global.countryCodes[index];
                               await GetStorage()
-                                  .write('language', global.userScreenLanguage);
-                              global.languageSelect(global.userScreenLanguage);
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushNamed(context, "/menu");
+                                  .write('language', global.userScreenLanguage)
+                                  .then((value) {
+                                global
+                                    .languageSelect(global.userScreenLanguage);
+                                context.router.pushAndPopUntil(
+                                    const MenuRoute(),
+                                    predicate: (route) => false);
+                              });
                             },
                             child: Row(children: [
                               Image.asset(
