@@ -61,8 +61,8 @@ List<String> countryNames = [
   "Korea"
 ];
 List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
-late List<LanguageSystemModel> languageSystemData;
-late List<LanguageSystemCodeModel> languageSystemCode;
+List<LanguageSystemModel> languageSystemData = [];
+List<LanguageSystemCodeModel> languageSystemCode = [];
 String userScreenLanguage = "";
 DisplayManager displayManager = DisplayManager();
 bool isInternalCustomerDisplayConnected = false;
