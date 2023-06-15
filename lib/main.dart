@@ -14,7 +14,7 @@ import 'app/app_view.dart';
 import 'flavors.dart';
 
 void main() async {
-  F.appFlavor = Flavor.DEDEPOS;
+  F.appFlavor = Flavor.VFPOS;
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";

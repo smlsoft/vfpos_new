@@ -111,6 +111,7 @@ dev_dependencies:
   json_serializable: ^6.6.1
   auto_route_generator: ^7.1.1
   msix: ^3.7.0
+  flutter_flavorizr: ^2.1.5
 
 dependency_overrides:
   intl: ^0.17.0

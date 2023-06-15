@@ -28,6 +28,8 @@ flutter run --flavor dedepos -t lib/main_dedepos.dart
 
 flutter build windows --flavor dedepos -t lib/main_dedepos.dart
 
+flutter build windows -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD  --dart-define=FLAVOR=vfpos
+
 flutter pub run msix:create --publisher "CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27" --display-name "DEDE POS" --identity-name "SMLSoft.DEDEPOS" --version "1.0.0.0" --capabilities "internetClient, location, microphone, webcam" --logo-path ".\assets\dede-pos-icon.png" --publisher-display-name "SMLSoft" 
 
 ## Flavor 
