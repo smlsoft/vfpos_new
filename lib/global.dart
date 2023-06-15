@@ -14,7 +14,6 @@ import 'dart:math';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:dedepos/api/network/sync_model.dart';
-import 'package:localstore/localstore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
@@ -53,9 +52,18 @@ import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 
 bool developerMode = true;
+List<String> countryNames = [
+  "English",
+  "Thai",
+  "Laos",
+  "Chinese",
+  "Japan",
+  "Korea"
+];
+List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 late List<LanguageSystemModel> languageSystemData;
 late List<LanguageSystemCodeModel> languageSystemCode;
-String userLanguage = "";
+String userScreenLanguage = "";
 DisplayManager displayManager = DisplayManager();
 bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
@@ -96,8 +104,7 @@ String providerName = "DATA";
 String databaseName = "DEMO"; // "DATA1 or DEMO";
 bool speechToTextVisible = false;
 bool loginSuccess = false;
-GetStorage appStorage = GetStorage('AppStorage');
-Localstore appLocalStore = Localstore.instance;
+GetStorage appStorage = GetStorage();
 late PrinterLocalStrongDataModel printerLocalStrongData;
 bool loginProcess = false;
 bool syncDataSuccess = false;
@@ -111,7 +118,8 @@ double payScreenNumberPadLeft = 100;
 double payScreenNumberPadTop = 100;
 String payScreenNumberPadText = "";
 double payScreenNumberPadAmount = 0;
-PayScreenNumberPadWidgetEnum payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
+PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
+    PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
 String userLoginCode = "001";
 String userLoginName = "สมชาย";
@@ -164,7 +172,8 @@ int targetDeviceIpPort = 4040;
 bool targetDeviceConnected = false;
 Function? functionPosScreenRefresh;
 DeviceModeEnum deviceMode = DeviceModeEnum.none;
-PosScreenNewDataStyleEnum posScreenNewDataStyle = PosScreenNewDataStyleEnum.addLastLine;
+PosScreenNewDataStyleEnum posScreenNewDataStyle =
+    PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
 PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
@@ -252,7 +261,8 @@ Future<Position> determinePosition() async {
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are denied forever, handle appropriately.
-    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
   }
 
   // When we reach here, permissions are granted and we can
@@ -261,11 +271,13 @@ Future<Position> determinePosition() async {
 }
 
 bool isPhoneDevice() {
-  return deviceMode == DeviceModeEnum.iphone || deviceMode == DeviceModeEnum.androidPhone;
+  return deviceMode == DeviceModeEnum.iphone ||
+      deviceMode == DeviceModeEnum.androidPhone;
 }
 
 bool isTabletDevice() {
-  return deviceMode == DeviceModeEnum.ipad || deviceMode == DeviceModeEnum.androidTablet;
+  return deviceMode == DeviceModeEnum.ipad ||
+      deviceMode == DeviceModeEnum.androidTablet;
 }
 
 Future<void> getDeviceModel(BuildContext context) async {
@@ -432,7 +444,11 @@ double calcTextToNumber(String text) {
     textTrim = textTrim.replaceAll(" ", "");
   }
   if (textTrim.isNotEmpty) {
-    textTrim = textTrim.replaceAll("X", "").replaceAll("x", "").replaceAll("+", "").replaceAll("-", "");
+    textTrim = textTrim
+        .replaceAll("X", "")
+        .replaceAll("x", "")
+        .replaceAll("+", "")
+        .replaceAll("-", "");
     result = double.parse(textTrim);
   }
   return result;
@@ -459,14 +475,17 @@ Future<String> billRunning() async {
         }
       }
     }
-    result = "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
+    result =
+        "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
 
     /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
-    var find = billHelper.selectByDocNumber(docNumber: result, posScreenMode: global.posScreenToInt());
+    var find = billHelper.selectByDocNumber(
+        docNumber: result, posScreenMode: global.posScreenToInt());
     if (find == null) {
       success = true;
     } else {
-      configHelper.update(ConfigObjectBoxStruct(device_id: global.deviceId, last_doc_number: result));
+      configHelper.update(ConfigObjectBoxStruct(
+          device_id: global.deviceId, last_doc_number: result));
     }
   }
   return result;
@@ -482,7 +501,10 @@ Future<bool> hasNetwork() async {
   }
 }
 
-void showAlertDialog({required BuildContext context, required String title, required String message}) {
+void showAlertDialog(
+    {required BuildContext context,
+    required String title,
+    required String message}) {
   Widget okButton = TextButton(
     child: Text(global.language("OK")),
     onPressed: () {
@@ -594,7 +616,14 @@ String dateTimeFormat(DateTime dateTime, {bool showTime = true}) {
 Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
-    SyncDeviceModel info = SyncDeviceModel(device: deviceId, ip: "", holdNumberActive: 0, docModeActive: 0, connected: true, isClient: false, isCashierTerminal: false);
+    SyncDeviceModel info = SyncDeviceModel(
+        device: deviceId,
+        ip: "",
+        holdNumberActive: 0,
+        docModeActive: 0,
+        connected: true,
+        isClient: false,
+        isCashierTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
     postToServer(
         ip: url,
@@ -602,7 +631,8 @@ Future<void> systemProcess() async {
         callBack: (value) {
           if (value.isNotEmpty) {
             try {
-              SyncDeviceModel getInfo = SyncDeviceModel.fromJson(jsonDecode(value));
+              SyncDeviceModel getInfo =
+                  SyncDeviceModel.fromJson(jsonDecode(value));
               customerDisplayDeviceList[index].connected = getInfo.connected;
             } catch (e) {
               serviceLocator<Log>().error(e);
@@ -617,17 +647,26 @@ Future<void> sendProcessToCustomerDisplay() async {
     if (customerDisplayDeviceList[index].connected) {
       var url = "${customerDisplayDeviceList[index].ip}:5041";
       try {
-        var jsonData = HttpPost(command: "process", data: jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+        var jsonData = HttpPost(
+            command: "process",
+            data:
+                jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
         dev.log("sendProcessToCustomerDisplay : $url");
-        postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (value) {});
+        postToServer(
+            ip: url,
+            jsonData: jsonEncode(jsonData.toJson()),
+            callBack: (value) {});
       } catch (e) {
         serviceLocator<Log>().error("$e : $url");
       }
     }
   }
-  if (Platform.isAndroid && displayMachine == DisplayMachineEnum.posTerminal && isInternalCustomerDisplayConnected == true) {
+  if (Platform.isAndroid &&
+      displayMachine == DisplayMachineEnum.posTerminal &&
+      isInternalCustomerDisplayConnected == true) {
     // Send to จอสอง
-    displayManager.transferDataToPresentation(jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+    displayManager.transferDataToPresentation(
+        jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
   }
 }
 
@@ -636,8 +675,13 @@ Future<void> sendProcessToRemote() async {
     if (posRemoteDeviceList[index].connected) {
       var url = "${posRemoteDeviceList[index].ip}:$targetDeviceIpPort";
       try {
-        var jsonData = HttpPost(command: "process_result", data: jsonEncode(posHoldProcessResult[posRemoteDeviceList[index].holdNumberActive].toJson()));
-        postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
+        var jsonData = HttpPost(
+            command: "process_result",
+            data: jsonEncode(posHoldProcessResult[
+                    posRemoteDeviceList[index].holdNumberActive]
+                .toJson()));
+        postToServer(
+            ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
         serviceLocator<Log>().error("$e : $url");
       }
@@ -645,9 +689,11 @@ Future<void> sendProcessToRemote() async {
   }
 }
 
-double calcDiscountFormula({required double totalAmount, required String discountText}) {
+double calcDiscountFormula(
+    {required double totalAmount, required String discountText}) {
   double sumDiscount = 0.0;
-  List<String> split = discountText.trim().replaceAll(" ", "").replaceAll(" ", "").split(",");
+  List<String> split =
+      discountText.trim().replaceAll(" ", "").replaceAll(" ", "").split(",");
   for (int index = 0; index < split.length; index++) {
     String discount = split[index];
     double result = 0.0;
@@ -677,7 +723,8 @@ Future<void> createLogoImageFromBankProvider() async {
     if (element.logo != "") {
       String base64 = element.logo.replaceFirst("data:image/png;base64,", "");
       Uint8List bytes = base64Decode(base64);
-      File file = File("$pathApplicationDocumentsDirectory/bank${element.code.toLowerCase()}.png");
+      File file = File(
+          "$pathApplicationDocumentsDirectory/bank${element.code.toLowerCase()}.png");
       file.writeAsBytes(bytes);
     }
   }
@@ -724,9 +771,10 @@ void posScreenListHeightSet(double value) {
 void loadConfig() {
   printerLocalStrongData = PrinterLocalStrongDataModel();
   try {
-    appLocalStore.collection("dedepos").doc("printer").get().then((value) {
+    appStorage.read("printer").then((value) {
       try {
-        printerLocalStrongData = PrinterLocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
+        printerLocalStrongData =
+            PrinterLocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
       } catch (_) {}
       {
         // ประเภทเครื่องพิมพ์ Cashier
@@ -773,11 +821,18 @@ void loadConfig() {
 
 Future<void> registerRemoteToTerminal() async {
   if (appMode == AppModeEnum.posRemote) {
-    var url = "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
+    var url =
+        "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
     var uri = Uri.parse(url);
     try {
-      SyncDeviceModel sendData =
-          SyncDeviceModel(device: "XXX", ip: ipAddress, holdNumberActive: posHoldActiveNumber, docModeActive: 0, connected: true, isCashierTerminal: false, isClient: true);
+      SyncDeviceModel sendData = SyncDeviceModel(
+          device: "XXX",
+          ip: ipAddress,
+          holdNumberActive: posHoldActiveNumber,
+          docModeActive: 0,
+          connected: true,
+          isCashierTerminal: false,
+          isClient: true);
       var jsonEncodeStr = jsonEncode(sendData.toJson());
       await http
           .post(uri,
@@ -811,7 +866,10 @@ Future<void> startLoading() async {
       paymentcode: "promptpay",
       bookbankcode: "001",
       paymentlogo: "",
-      names: [LanguageModel(code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)],
+      names: [
+        LanguageModel(
+            code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
+      ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
@@ -823,7 +881,10 @@ Future<void> startLoading() async {
       paymentcode: "promptpay",
       bookbankcode: "002",
       paymentlogo: "",
-      names: [LanguageModel(code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)],
+      names: [
+        LanguageModel(
+            code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
+      ],
       countrycode: "TH",
       paymenttype: 20,
       feeRate: 0.0,
@@ -834,7 +895,10 @@ Future<void> startLoading() async {
       paymentcode: "truemoney",
       bookbankcode: "002",
       paymentlogo: "",
-      names: [LanguageModel(code: "th", codeTranslator: "th", name: "True Money", use: true)],
+      names: [
+        LanguageModel(
+            code: "th", codeTranslator: "th", name: "True Money", use: true)
+      ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
@@ -845,7 +909,10 @@ Future<void> startLoading() async {
       bookbankcode: "002",
       paymentcode: "linepay",
       paymentlogo: "",
-      names: [LanguageModel(code: "th", codeTranslator: "th", name: "Line Pay", use: true)],
+      names: [
+        LanguageModel(
+            code: "th", codeTranslator: "th", name: "Line Pay", use: true)
+      ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
@@ -856,7 +923,10 @@ Future<void> startLoading() async {
       bookbankcode: "002",
       paymentcode: "alipay",
       paymentlogo: "",
-      names: [LanguageModel(code: "th", codeTranslator: "th", name: "Alipay", use: true)],
+      names: [
+        LanguageModel(
+            code: "th", codeTranslator: "th", name: "Alipay", use: true)
+      ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
@@ -909,7 +979,8 @@ Future<void> startLoading() async {
   });
 
   generatePosHoldProcess();
-  pathApplicationDocumentsDirectory = (await getApplicationDocumentsDirectory()).path;
+  pathApplicationDocumentsDirectory =
+      (await getApplicationDocumentsDirectory()).path;
 
   initSuccess = true;
 }
@@ -926,8 +997,12 @@ Future<String> getFromServer({required String json}) async {
   // String url = "$httpServerIp:$httpServerPort?data=$base64String";
 
   String url = "$targetDeviceIpAddress:$targetDeviceIpPort";
-  final response =
-      await httpClient.get(Uri.http(url, '/', {'json': base64String}), headers: {"Content-Type": "application/json", "Cache-Control": "no-cache", "Accept": "text/event-stream"});
+  final response = await httpClient
+      .get(Uri.http(url, '/', {'json': base64String}), headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache",
+    "Accept": "text/event-stream"
+  });
   if (response.statusCode == 200) {
     return response.body;
   } else {
@@ -935,7 +1010,10 @@ Future<String> getFromServer({required String json}) async {
   }
 }
 
-Future<void> postToServer({required String ip, required String jsonData, required Function callBack}) async {
+Future<void> postToServer(
+    {required String ip,
+    required String jsonData,
+    required Function callBack}) async {
   String result = "";
   try {
     var request = http.Request("POST", Uri.parse("http://$ip"));
@@ -955,7 +1033,8 @@ Future<void> postToServer({required String ip, required String jsonData, require
   }
 }
 
-Future<String> postToServerAndWait({required String ip, required String jsonData}) async {
+Future<String> postToServerAndWait(
+    {required String ip, required String jsonData}) async {
   String result = "";
   try {
     var request = http.Request("POST", Uri.parse("http://$ip"));
@@ -1017,7 +1096,14 @@ Future scanServerByName(String name) async {
   String subNet = ipAddress.substring(0, ipAddress.lastIndexOf("."));
   for (int i = 1; i < 255; i++) {
     String ip = "$subNet.$i";
-    ipList.add(SyncDeviceModel(device: "", ip: ip, holdNumberActive: 0, docModeActive: 0, connected: false, isClient: false, isCashierTerminal: false));
+    ipList.add(SyncDeviceModel(
+        device: "",
+        ip: ip,
+        holdNumberActive: 0,
+        docModeActive: 0,
+        connected: false,
+        isClient: false,
+        isCashierTerminal: false));
   }
   int countTread = 0;
   bool loopScan = true;
@@ -1027,14 +1113,20 @@ Future scanServerByName(String name) async {
       if (!ipList[index].connected) {
         if (countTread < 10) {
           countTread++;
-          String url = "http://${ipList[index].ip}:$targetDeviceIpPort/scan?uuid=${const Uuid().v4()}";
+          String url =
+              "http://${ipList[index].ip}:$targetDeviceIpPort/scan?uuid=${const Uuid().v4()}";
           try {
-            http.post(Uri.parse(url)).timeout(const Duration(seconds: 1)).then((result) {
+            http
+                .post(Uri.parse(url))
+                .timeout(const Duration(seconds: 1))
+                .then((result) {
               countTread--;
               if (result.statusCode == 200) {
                 if (result.body.isNotEmpty) {
-                  serviceLocator<Log>().debug("Connected to ${ipList[index].ip}");
-                  SyncDeviceModel server = SyncDeviceModel.fromJson(jsonDecode(result.body));
+                  serviceLocator<Log>()
+                      .debug("Connected to ${ipList[index].ip}");
+                  SyncDeviceModel server =
+                      SyncDeviceModel.fromJson(jsonDecode(result.body));
                   if (server.device == name && server.isCashierTerminal) {
                     ipList[index].connected = true;
                     loopScan = false;
@@ -1062,14 +1154,18 @@ Future scanServerByName(String name) async {
 }
 
 bool isTabletScreen() {
-  return (deviceMode == DeviceModeEnum.androidTablet || deviceMode == DeviceModeEnum.ipad);
+  return (deviceMode == DeviceModeEnum.androidTablet ||
+      deviceMode == DeviceModeEnum.ipad);
 }
 
 bool isDesktopScreen() {
-  return (deviceMode == DeviceModeEnum.macosDesktop || deviceMode == DeviceModeEnum.linuxDesktop || deviceMode == DeviceModeEnum.windowsDesktop);
+  return (deviceMode == DeviceModeEnum.macosDesktop ||
+      deviceMode == DeviceModeEnum.linuxDesktop ||
+      deviceMode == DeviceModeEnum.windowsDesktop);
 }
 
-String syncFindLastUpdate(List<SyncMasterStatusModel> dataList, String tableName) {
+String syncFindLastUpdate(
+    List<SyncMasterStatusModel> dataList, String tableName) {
   for (var item in dataList) {
     if (item.tableName == tableName) {
       return DateFormat(dateFormatSync).format(DateTime.parse(item.lastUpdate));
@@ -1082,13 +1178,16 @@ void testPrinterConnect() async {
   if (printerList.isNotEmpty) {
     for (var printer in printerList) {
       try {
-        final Socket socket = await Socket.connect(printer.printer_ip_address, printer.printer_port, timeout: const Duration(seconds: 5));
+        final Socket socket = await Socket.connect(
+            printer.printer_ip_address, printer.printer_port,
+            timeout: const Duration(seconds: 5));
         printer.is_ready = true;
         socket.destroy();
       } catch (e) {
         serviceLocator<Log>().error(e.toString());
         printer.is_ready = false;
-        errorMessage.add("${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
+        errorMessage.add(
+            "${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
       }
     }
   }
@@ -1114,8 +1213,10 @@ void languageSelect(String languageCode) {
   languageSystemData = [];
   for (int i = 0; i < languageSystemCode.length; i++) {
     for (int j = 0; j < languageSystemCode[i].langs.length; j++) {
-      if (languageSystemCode[i].langs[j].code == userLanguage) {
-        languageSystemData.add(LanguageSystemModel(code: languageSystemCode[i].code.trim(), text: languageSystemCode[i].langs[j].text.trim()));
+      if (languageSystemCode[i].langs[j].code == userScreenLanguage) {
+        languageSystemData.add(LanguageSystemModel(
+            code: languageSystemCode[i].code.trim(),
+            text: languageSystemCode[i].langs[j].text.trim()));
       }
     }
   }

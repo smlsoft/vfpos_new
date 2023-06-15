@@ -59,8 +59,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
           borderRadius: const BorderRadius.all(Radius.circular(4)),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(global
-              .language('กรณีชำระด้วย QR Code มากกว่า 1 รายการ (แบ่งจ่าย)')),
+          Text(global.language(
+              'qr_code_split')), // กรณีชำระด้วย QR Code มากกว่า 1 รายการ (แบ่งจ่าย)
           Container(
             padding: const EdgeInsets.only(left: 4, right: 4),
             child: Row(children: [
@@ -70,7 +70,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                     controller: _descriptionController,
                     decoration: InputDecoration(
                       border: const UnderlineInputBorder(),
-                      labelText: global.language('รายละเอียด'),
+                      labelText: global.language('description'), // 'รายละเอียด'
                     ),
                   )),
               Expanded(
@@ -109,7 +109,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                           child: Column(
                             children: [
                               Text(
-                                global.language('จำนวนเงิน'),
+                                global.language('amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -142,7 +142,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                       ),
                       child: Center(
                         child: Text(
-                            '${global.language('ประเภท Wallet ชำระจำนวน')} : ${global.moneyFormat.format(_amount)} ${global.language('money_symbol')}',
+                            '${global.language('wallet_amount')} : ${global.moneyFormat.format(_amount)} ${global.language('money_symbol')}',
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
                       )),
@@ -182,11 +182,11 @@ class PayQrWidgetState extends State<PayQrWidget> {
                   ],
                 ),
                 buildDetailsBlock(
-                  label: global.language('รายละเอียด'),
+                  label: global.language('qr_description'),
                   value: global.payScreenData.qr[index].description,
                 ),
                 buildDetailsBlock(
-                    label: global.language('ยอดเงิน'),
+                    label: global.language('qr_amount'),
                     value: global.moneyFormat
                         .format(global.payScreenData.qr[index].amount)),
               ],
@@ -204,7 +204,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       content: Text(
-                          global.language("ต้องการยกเลิกรายการนี้จริงหรือไม่")),
+                          global.language("delete_confirm")),
                       actions: [
                         TextButton(
                           child: Text(global.language("cancel")),
@@ -291,7 +291,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
             return StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
                 title: Column(children: [
-                  Text(global.language('กรุณาบันทึกจำนวนเงินที่จะชำระ')),
+                  Text(global.language('money_amount')),
                   const SizedBox(height: 18),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.close),
@@ -377,7 +377,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                               ),
                               child: Center(
                                   child: Text(
-                                "${global.language("รับชำระด้วย QR Code เต็มจำนวน")} : ${global.moneyFormat.format(diffAmount())} ${global.language("money_symbol")}",
+                                "${global.language("pay_qr_code_full_amount")} : ${global.moneyFormat.format(diffAmount())} ${global.language("money_symbol")}",
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,

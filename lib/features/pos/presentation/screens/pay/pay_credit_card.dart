@@ -420,7 +420,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             content: Text(global
-                                .language("ต้องการยกเลิกรายการนี้จริงหรือไม่")),
+                                .language("delete_confirm_warning")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),

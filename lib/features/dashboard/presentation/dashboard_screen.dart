@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/environment.dart';
-import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';
@@ -30,7 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget buttonMenuMoneyFill() => ItemMenuDashboard(
         icon: Icons.payments,
-        title: 'รับเงินทอน',
+        title: global.language("add_change_money"), // 'รับเงินทอน',
         callBack: () {
           showDialogShiftAndMoney(0);
         },
@@ -38,25 +37,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget buttonMenuPrintFullVatInvoice() => ItemMenuDashboard(
         icon: Icons.receipt,
-        title: 'พิมพ์ใบกำกับภาษี (แบบเต็ม)',
+        title: global.language(
+            "print_tax_invoice_full_format"), // พิมพ์ใบกำกับภาษี (แบบเต็ม)
         callBack: () {},
       );
 
   Widget buttonCancelBillPos() => ItemMenuDashboard(
         icon: Icons.add,
-        title: 'ยกเลิกใบเสร็จ',
+        title: global.language("cancel_invoice"), // 'ยกเลิกใบเสร็จ',
         callBack: () {},
       );
 
   Widget buttonReprintPos() => ItemMenuDashboard(
         icon: Icons.text_snippet,
-        title: 'พิมพ์สำเนาใบเสร็จ',
+        title: global.language("re_print_invoice"), // 'พิมพ์สำเนาใบเสร็จ',
         callBack: () {},
       );
 
   Widget buttonProductReturn() => ItemMenuDashboard(
         icon: Icons.repartition,
-        title: 'คืนสินค้า',
+        title: global.language("return_product"), //'คืนสินค้า',
         callBack: () {
           context.router.pushAndPopUntil(
               PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
@@ -142,7 +142,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: ItemMenuDashboard(
                             icon: Icons.monetization_on,
-                            title: 'ส่งยอดขาย',
+                            title:
+                                global.language("submit_sales"), // 'ส่งยอดขาย',
                             callBack: () {
                               showDialogShiftAndMoney(1);
                             },
@@ -266,7 +267,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: ItemMenuDashboard(
                           icon: Icons.logout,
-                          title: 'ออกจากระบบ',
+                          title: global.language("log_out"), // 'ออกจากระบบ',
                           callBack: () {
                             context
                                 .read<AuthenticationBloc>()

@@ -730,10 +730,8 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                               productId: "",
                               paperSize: printerPaperSize,
                               printBillAuto: printBillAuto);
-                          global.appLocalStore
-                              .collection("dedepos")
-                              .doc("printer")
-                              .set(data.toJson())
+                          global.appStorage
+                              .write("printer", data.toJson())
                               .then((value) {
                             global.loadConfig();
                             Navigator.pop(context);

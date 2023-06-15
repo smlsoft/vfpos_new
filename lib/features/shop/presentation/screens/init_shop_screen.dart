@@ -24,8 +24,8 @@ class _InitShopScreenState extends State<InitShopScreen> {
     }
 
     Future.delayed(const Duration(seconds: 1), () {
-      global.apiUserName = global.appStorage.read("apiUserName");
-      global.apiUserPassword = global.appStorage.read("apiUserPassword");
+      global.apiUserName = global.appStorage.read("apiUserName") ?? "";
+      global.apiUserPassword = global.appStorage.read("apiUserPassword") ?? "";
 
       preparePosScreen().then((_) {
         if (global.appMode == global.AppModeEnum.posRemote) {
@@ -40,10 +40,13 @@ class _InitShopScreenState extends State<InitShopScreen> {
           // );
 
           Future.delayed(Duration(seconds: loadtime), () {
-            if (F.appFlavor == Flavor.DEDEPOS || F.appFlavor == Flavor.SMLSUPERPOS) {
-              context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
+            if (F.appFlavor == Flavor.DEDEPOS ||
+                F.appFlavor == Flavor.SMLSUPERPOS) {
+              context.router.pushAndPopUntil(const MenuRoute(),
+                  predicate: (route) => false);
             } else {
-              context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
+              context.router.pushAndPopUntil(const DashboardRoute(),
+                  predicate: (route) => false);
             }
           });
         }

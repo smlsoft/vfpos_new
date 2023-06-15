@@ -74,7 +74,7 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                                   TableRow(children: [
                                     TableCell(
                                         child: Text(
-                                      global.language("calcel_description"),
+                                      global.language("cancel_description"),
                                     )),
                                     TableCell(
                                       child: TextField(

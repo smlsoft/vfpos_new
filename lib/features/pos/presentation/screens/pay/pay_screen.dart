@@ -785,7 +785,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
               ),
               child: Center(
                 child: Text(
-                  global.language("การชำระเงิน"),
+                  global.language("pay_channel"), // การชำระเงิน
                   style: TextStyle(
                     color: Colors.white,
                     fontSize:

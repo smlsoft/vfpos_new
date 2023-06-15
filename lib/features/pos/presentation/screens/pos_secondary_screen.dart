@@ -120,14 +120,15 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
           Expanded(
             flex: 2,
             child: screenBoxShadowLabelAndNumber(
-              label: "ชิ้น",
+              label: global.language("unit_pc"),
               value: processResult.posProcess.total_piece,
             ),
           ),
           Expanded(
             flex: 3,
             child: screenBoxShadowLabelAndNumber(
-                label: "บาท", value: processResult.posProcess.total_amount),
+                label: global.language("money_symbol"),
+                value: processResult.posProcess.total_amount),
           ),
         ],
       ),
@@ -157,7 +158,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
           Expanded(
               flex: 5,
               child: Text(
-                'รายละเอียดสินค้า',
+                global.language("product_description"), // 'รายละเอียดสินค้า',
                 style: textStyle,
               )),
           Expanded(
@@ -165,7 +166,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    'จำนวน',
+                    global.language("product_qty"), //'จำนวน',
                     style: textStyle,
                   ))),
           Expanded(
@@ -173,7 +174,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
               child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    'ยอดรวม',
+                    global.language("product_amount"), // 'ยอดรวม',
                     style: textStyle,
                   ))),
         ],

@@ -82,7 +82,7 @@ class _PayChequeState extends State<PayCheque> {
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
                                 title:
-                                    Text(global.language("กรุณาเลือกธนาคาร")),
+                                    Text(global.language("please_select_bank")),
                                 content: SizedBox(
                                     width: 350,
                                     height: 300,
@@ -134,8 +134,8 @@ class _PayChequeState extends State<PayCheque> {
                                           .findLogoImageFromCreditCardProvider(
                                               bankCode))
                                       : Container())),
-                          const Text(
-                            'ธนาคาร',
+                          Text(
+                            global.language("bank_name"),
                             style: TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
@@ -189,7 +189,7 @@ class _PayChequeState extends State<PayCheque> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('เลขที่เช็ค'),
+                                global.language('cheque_number'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -243,7 +243,7 @@ class _PayChequeState extends State<PayCheque> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('เลขที่สาขา'),
+                                global.language('chq_branch_number'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -292,7 +292,7 @@ class _PayChequeState extends State<PayCheque> {
                                         textAlign: TextAlign.center,
                                       )))),
                               Text(
-                                global.language('วันที่ถึงกำหนด'),
+                                global.language('due_date'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -354,7 +354,7 @@ class _PayChequeState extends State<PayCheque> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('จำนวนเงิน'),
+                                global.language('money_amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -380,7 +380,7 @@ class _PayChequeState extends State<PayCheque> {
                     }
                   },
                   label: Text(
-                    global.language("บันทึกเช็ค"),
+                    global.language("cheque_save"),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -423,11 +423,11 @@ class _PayChequeState extends State<PayCheque> {
                               global.payScreenData.cheque[index].bank_code))),
                   const SizedBox(width: 10),
                   buildDetailsBlock(
-                      label: global.language("เลขที่เช็ค"),
+                      label: global.language("cheque_number"),
                       value: global.payScreenData.cheque[index].cheque_number),
                   const SizedBox(width: 50),
                   buildDetailsBlock(
-                      label: global.language("เลขที่สาขา"),
+                      label: global.language("bank_branch_number"),
                       value: global.payScreenData.cheque[index].branch_number),
                 ],
               ),
@@ -437,13 +437,13 @@ class _PayChequeState extends State<PayCheque> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     buildDetailsBlock(
-                      label: global.language('วันที่ถึงกำหนด'),
+                      label: global.language('due_date'),
                       value: DateFormat.yMMMMEEEEd()
                           .formatInBuddhistCalendarThai(
                               global.payScreenData.cheque[index].due_date),
                     ),
                     buildDetailsBlock(
-                        label: global.language('ยอดเงิน'),
+                        label: global.language('amount'),
                         value: global.moneyFormat
                             .format(global.payScreenData.cheque[index].amount)),
                   ],
@@ -460,8 +460,7 @@ class _PayChequeState extends State<PayCheque> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text(global
-                                .language("ต้องการยกเลิกรายการนี้จริงหรือไม่")),
+                            content: Text(global.language("delete_confirm")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),

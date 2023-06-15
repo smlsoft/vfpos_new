@@ -12,6 +12,7 @@ import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/printer_config.dart';
+import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,6 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  int menuMode = 0; // 0=Menu,1=Select Language
   List<Widget> menuPosList = [];
   List<Widget> menuShiftList = [];
   List<Widget> menuVisitList = [];
@@ -37,54 +37,31 @@ class _MenuScreenState extends State<MenuScreen> {
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
   TextEditingController password = TextEditingController();
-  List<String> countryNames = ["English", "Thai", "Laos", "Chinese", "Japan", "Korea"];
-  List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 
   var appBarHeight = AppBar().preferredSize.height;
 
   List<Widget> menuForVisit() {
     return [
-      menuItem(icon: Icons.list_alt_outlined, title: 'กำหนดพิกัด GPS', callBack: () {}),
-      menuItem(icon: Icons.list_alt_outlined, title: 'ถ่ายรูปหน้าร้าน', callBack: () {}),
-      menuItem(icon: Icons.list_alt_outlined, title: 'ถ่ายรูปสินค้า', callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'กำหนดพิกัด GPS',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'ถ่ายรูปหน้าร้าน',
+          callBack: () {}),
+      menuItem(
+          icon: Icons.list_alt_outlined,
+          title: 'ถ่ายรูปสินค้า',
+          callBack: () {}),
     ];
-  }
-
-  Widget selectLanguage() {
-    return Container(
-        padding: const EdgeInsets.all(4),
-        color: Colors.white,
-        child: ListView.builder(
-            itemCount: countryNames.length,
-            itemBuilder: (_, index) {
-              return Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        global.userLanguage = countryCodes[index];
-                        GetStorage().write('language', global.userLanguage);
-                        menuMode = 0;
-                      });
-                    },
-                    child: Row(children: [
-                      Image.asset(
-                        'assets/flags/${countryCodes[index]}.png',
-                        width: 100,
-                        height: 100,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(countryNames[index])
-                    ]),
-                  ));
-            }));
   }
 
   List<Widget> menuPos() {
     return [
       menuItem(
           icon: Icons.point_of_sale,
-          title: 'pos_screen',
+          title: global.language("pos_screen"),
           callBack: () {
             // Navigator.push(
             //   context,
@@ -96,18 +73,20 @@ class _MenuScreenState extends State<MenuScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posSale),
+                builder: (context) => const PosScreen(
+                    posScreenMode: global.PosScreenModeEnum.posSale),
               ),
             );
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: "doc_return", // 'รับคืนสินค้า',
+          title: global.language("pos_return_screen"), // 'รับคืนสินค้า',
           callBack: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posReturn),
+                builder: (context) => const PosScreen(
+                    posScreenMode: global.PosScreenModeEnum.posReturn),
               ),
             );
           }),
@@ -123,7 +102,8 @@ class _MenuScreenState extends State<MenuScreen> {
               insetPadding: const EdgeInsets.all(0),
               contentPadding: const EdgeInsets.all(0),
               backgroundColor: Colors.transparent,
-              content: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+              content: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
                 return shiftAndMoneyScreen(mode: mode);
               }));
         });
@@ -133,13 +113,13 @@ class _MenuScreenState extends State<MenuScreen> {
     return [
       menuItem(
           icon: Icons.request_quote,
-          title: global.language("open_period"), // 'เปิดกะ/รับเงินทอน',
+          title: global.language("open_shift"), // 'เปิดกะ/รับเงินทอน',
           callBack: () {
             showDialogShiftAndMoney(0);
           }),
       menuItem(
           icon: Icons.request_quote,
-          title: global.language("deposit_money"), // 'รับเงินทอนเพิ่ม',
+          title: global.language("add_change_money"), // 'รับเงินทอนเพิ่ม',
           callBack: () {
             showDialogShiftAndMoney(2);
           }),
@@ -151,14 +131,18 @@ class _MenuScreenState extends State<MenuScreen> {
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
-          title: global.language("close_period"), // 'ปิดกะ/ส่งเงิน',
+          title: global.language("close_shift"), // 'ปิดกะ/ส่งเงิน',
           callBack: () {
             showDialogShiftAndMoney(1);
           }),
     ];
   }
 
-  Widget menuItem({required IconData icon, required String title, Color color = Colors.white, required Function callBack}) {
+  Widget menuItem(
+      {required IconData icon,
+      required String title,
+      Color color = Colors.white,
+      required Function callBack}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.black,
@@ -180,7 +164,7 @@ class _MenuScreenState extends State<MenuScreen> {
             color: const Color(0xFFF56045),
           ),
           AutoSizeText(
-            global.language(title),
+            title,
             textAlign: TextAlign.center,
             // overflow: TextOverflow.ellipsis,
             style: const TextStyle(
@@ -192,6 +176,14 @@ class _MenuScreenState extends State<MenuScreen> {
         ],
       ),
     );
+  }
+
+  void rebuildScreen() {
+    menuPosList = menuPos();
+    menuShiftList = menuShift();
+    if (F.appFlavor == Flavor.SMLMOBILESALES) {
+      menuVisitList = menuForVisit();
+    }
   }
 
   @override
@@ -209,19 +201,7 @@ class _MenuScreenState extends State<MenuScreen> {
           printer_type: printer.type);
       global.printerList.add(newPrinter);
     }
-
-    try {
-      global.userLanguage = GetStorage().read("language") ?? 'th';
-    } catch (_) {
-      global.userLanguage = "";
-    }
-    menuMode = (global.userLanguage != null && global.userLanguage!.isNotEmpty) ? 0 : 1;
-
-    menuPosList = menuPos();
-    menuShiftList = menuShift();
-    if (F.appFlavor == Flavor.SMLMOBILESALES) {
-      menuVisitList = menuForVisit();
-    }
+    rebuildScreen();
     syncBillProcess();
   }
 
@@ -287,7 +267,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       global.userLoginCode = "";
                       global.userLoginName = "";
                     });
-                    context.read<AuthenticationBloc>().add(const UserLogoutEvent());
+                    context
+                        .read<AuthenticationBloc>()
+                        .add(const UserLogoutEvent());
                   },
                   child: const Icon(Icons.logout)),
             ],
@@ -305,15 +287,21 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ],
           ),
-          margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+          margin:
+              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
           padding: const EdgeInsets.all(8.0),
-          child: Row(children: [Text(global.deviceId), const Spacer(), Text(global.deviceName)])),
+          child: Row(children: [
+            Text(global.deviceId),
+            const Spacer(),
+            Text(global.deviceName)
+          ])),
     ]);
 
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is AuthenticationInitialState) {
-          context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
+          context.router.pushAndPopUntil(const AuthenticationRoute(),
+              predicate: (route) => false);
         }
       },
       child: MaterialApp(
@@ -324,182 +312,202 @@ class _MenuScreenState extends State<MenuScreen> {
             appBar: AppBar(
                 centerTitle: true,
                 foregroundColor: Colors.white,
-                title: Text("${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_remote")}"),
-                actions: (menuMode == 1)
-                    ? []
-                    : [
-                        IconButton(
-                          icon: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.green, width: 2),
-                              ),
-                              child: Image.asset('assets/flags/${global.userLanguage}.png')),
-                          onPressed: () {
-                            setState(() {
-                              menuMode = 1;
-                            });
-                          },
-                        ),
-                        PopupMenuButton(
-                          elevation: 2,
-                          icon: const Icon(Icons.more_vert),
-                          offset: Offset(0.0, appBarHeight),
-                          onSelected: (value) {
-                            if (value == 1) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const PrinterConfigScreen(),
-                                ),
-                              );
-                            }
-                          },
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(8.0),
-                              bottomRight: Radius.circular(8.0),
-                              topLeft: Radius.circular(8.0),
-                              topRight: Radius.circular(8.0),
-                            ),
-                          ),
-                          itemBuilder: (ctx) => [
-                            buildPopupMenuItem(
-                              title: global.language('printer_config'),
-                              valueCode: 1,
-                              iconData: Icons.print_rounded,
-                            ),
-                            buildPopupMenuItem(
-                              title: global.language('logout'),
-                              valueCode: 9,
-                              iconData: Icons.logout,
-                            ),
-                          ],
-                        )
-                      ]),
-            resizeToAvoidBottomInset: false,
-            body: (menuMode == 1)
-                ? selectLanguage()
-                : (global.userLoginCode.isEmpty)
-                    ? Container(
+                title: Text(
+                    "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_remote")}"),
+                actions: [
+                  IconButton(
+                    icon: Container(
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.25), BlendMode.dstATop),
-                            image: const AssetImage('assets/images/login.png'),
-                            fit: BoxFit.cover,
+                          border: Border.all(color: Colors.green, width: 2),
+                        ),
+                        child: Image.asset(
+                            'assets/flags/${global.userScreenLanguage}.png')),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SelectLanguageScreen(),
+                        ),
+                      );
+                      setState(() {});
+                    },
+                  ),
+                  PopupMenuButton(
+                    elevation: 2,
+                    icon: const Icon(Icons.more_vert),
+                    offset: Offset(0.0, appBarHeight),
+                    onSelected: (value) {
+                      if (value == 1) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrinterConfigScreen(),
                           ),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 7,
-                              offset: const Offset(0, 3), // changes position of shadow
+                        );
+                      }
+                    },
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(8.0),
+                        bottomRight: Radius.circular(8.0),
+                        topLeft: Radius.circular(8.0),
+                        topRight: Radius.circular(8.0),
+                      ),
+                    ),
+                    itemBuilder: (ctx) => [
+                      buildPopupMenuItem(
+                        title: global.language('printer_config'),
+                        valueCode: 1,
+                        iconData: Icons.print_rounded,
+                      ),
+                      buildPopupMenuItem(
+                        title: global.language('logout'),
+                        valueCode: 9,
+                        iconData: Icons.logout,
+                      ),
+                    ],
+                  )
+                ]),
+            resizeToAvoidBottomInset: false,
+            body: (global.userLoginCode.isEmpty)
+                ? Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.25), BlendMode.dstATop),
+                        image: const AssetImage('assets/images/login.png'),
+                        fit: BoxFit.cover,
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 7,
+                          offset:
+                              const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    margin: const EdgeInsets.all(10),
+                    child: SizedBox(
+                        width: double.infinity,
+                        child: Center(
+                          child: Container(
+                              width: 200,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 10,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  posLoginDialog();
+                                },
+                                child: Text(
+                                  global.language("login"),
+                                  overflow: TextOverflow.clip,
+                                ),
+                              )),
+                        )))
+                : Column(children: [
+                    infoWidget,
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: menuPosList.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).size.width ~/
+                                            150,
+                                    crossAxisSpacing: 5.0,
+                                    mainAxisSpacing: 5.0,
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return menuPosList[index];
+                                  },
+                                ),
+                              ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: menuShiftList.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).size.width ~/
+                                            150,
+                                    crossAxisSpacing: 5.0,
+                                    mainAxisSpacing: 5.0,
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return menuShiftList[index];
+                                  },
+                                ),
+                              ),
+                            ),
+                            if (menuVisitList.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  child: GridView.builder(
+                                    shrinkWrap: true,
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: menuVisitList.length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          MediaQuery.of(context).size.width ~/
+                                              150,
+                                      crossAxisSpacing: 5.0,
+                                      mainAxisSpacing: 5.0,
+                                    ),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return menuVisitList[index];
+                                    },
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
-                        margin: const EdgeInsets.all(10),
-                        child: SizedBox(
-                            width: double.infinity,
-                            child: Center(
-                              child: Container(
-                                  width: 200,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 10,
-                                        blurRadius: 7,
-                                        offset: const Offset(0, 3), // changes position of shadow
-                                      ),
-                                    ],
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      posLoginDialog();
-                                    },
-                                    child: Text(
-                                      global.language("login"),
-                                      overflow: TextOverflow.clip,
-                                    ),
-                                  )),
-                            )))
-                    : Column(children: [
-                        infoWidget,
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SizedBox(
-                                    child: GridView.builder(
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount: menuPosList.length,
-                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                                        crossAxisSpacing: 5.0,
-                                        mainAxisSpacing: 5.0,
-                                      ),
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return menuPosList[index];
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: SizedBox(
-                                    child: GridView.builder(
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount: menuShiftList.length,
-                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                                        crossAxisSpacing: 5.0,
-                                        mainAxisSpacing: 5.0,
-                                      ),
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return menuShiftList[index];
-                                      },
-                                    ),
-                                  ),
-                                ),
-                                if (menuVisitList.isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      child: GridView.builder(
-                                        shrinkWrap: true,
-                                        physics: const BouncingScrollPhysics(),
-                                        itemCount: menuVisitList.length,
-                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                                          crossAxisSpacing: 5.0,
-                                          mainAxisSpacing: 5.0,
-                                        ),
-                                        itemBuilder: (BuildContext context, int index) {
-                                          return menuVisitList[index];
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ]),
+                      ),
+                    )
+                  ]),
           ),
         ),
       ),
     );
   }
 
-  PopupMenuItem buildPopupMenuItem({required String title, required IconData iconData, required int valueCode}) {
+  PopupMenuItem buildPopupMenuItem(
+      {required String title,
+      required IconData iconData,
+      required int valueCode}) {
     return PopupMenuItem(
       value: valueCode,
       child: Row(
@@ -525,7 +533,8 @@ class _MenuScreenState extends State<MenuScreen> {
 
   void backSpace() {
     if (receiveAmount.text.isNotEmpty) {
-      receiveAmount.text = receiveAmount.text.substring(0, receiveAmount.text.length - 1);
+      receiveAmount.text =
+          receiveAmount.text.substring(0, receiveAmount.text.length - 1);
     }
   }
 
@@ -550,7 +559,8 @@ class _MenuScreenState extends State<MenuScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
                             global.language("login"),
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Padding(
@@ -583,7 +593,8 @@ class _MenuScreenState extends State<MenuScreen> {
                           child: Row(
                             children: [
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.amber.shade600),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.amber.shade600),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -591,7 +602,8 @@ class _MenuScreenState extends State<MenuScreen> {
                               ),
                               const Spacer(),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade600),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green.shade600),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -610,7 +622,10 @@ class _MenuScreenState extends State<MenuScreen> {
         });
   }
 
-  void showMsgDialog({required String header, required String msg, required String type}) async {
+  void showMsgDialog(
+      {required String header,
+      required String msg,
+      required String type}) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -659,14 +674,17 @@ class _MenuScreenState extends State<MenuScreen> {
                             Container(
                               padding: const EdgeInsets.all(2),
                               constraints: const BoxConstraints(maxWidth: 250),
-                              width: (MediaQuery.of(context).size.width / 100) * 40,
+                              width: (MediaQuery.of(context).size.width / 100) *
+                                  40,
                               child: Column(
                                 children: [
                                   const Padding(
                                     padding: EdgeInsets.all(8.0),
                                     child: Text(
                                       "receive_money",
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   Padding(
@@ -687,11 +705,15 @@ class _MenuScreenState extends State<MenuScreen> {
                                       readOnly: true,
                                       controller: receiveAmount,
                                       keyboardType: TextInputType.number,
-                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                      decoration: const InputDecoration(
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly
+                                      ],
+                                      decoration: InputDecoration(
                                         icon: Icon(Icons.money),
-                                        hintText: 'จำนวนเงิน',
-                                        labelText: 'เงินทอน',
+                                        hintText:
+                                            global.language("money_amount"),
+                                        labelText:
+                                            global.language("money_change"),
                                       ),
                                     ),
                                   ),
@@ -700,7 +722,9 @@ class _MenuScreenState extends State<MenuScreen> {
                                     child: Row(
                                       children: [
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.amber.shade600),
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.amber.shade600),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
@@ -709,7 +733,9 @@ class _MenuScreenState extends State<MenuScreen> {
                                         ),
                                         const Spacer(),
                                         ElevatedButton(
-                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade600),
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.green.shade600),
                                           onPressed: () async {
                                             // String docNumber =
                                             //     const Uuid().v4();
@@ -736,9 +762,15 @@ class _MenuScreenState extends State<MenuScreen> {
 
                                             Navigator.of(context).pop();
 
-                                            global.playSound(word: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
+                                            global.playSound(
+                                                word:
+                                                    "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
 
-                                            showMsgDialog(header: "บันทึกสำเร็จ", msg: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}", type: "success");
+                                            showMsgDialog(
+                                                header: "บันทึกสำเร็จ",
+                                                msg:
+                                                    "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}",
+                                                type: "success");
                                           },
                                           child: Text(global.language("save")),
                                         ),
@@ -750,7 +782,8 @@ class _MenuScreenState extends State<MenuScreen> {
                             ),
                             Container(
                               constraints: const BoxConstraints(maxWidth: 250),
-                              width: (MediaQuery.of(context).size.width / 100) * 50,
+                              width: (MediaQuery.of(context).size.width / 100) *
+                                  50,
                               child: Column(
                                 children: <Widget>[
                                   Align(
@@ -758,116 +791,156 @@ class _MenuScreenState extends State<MenuScreen> {
                                     child: Column(children: [
                                       SizedBox(
                                           height: 60,
-                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '7',
-                                                  callBack: () => {textInputChanged("7")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '8',
-                                                  callBack: () => {textInputChanged("8")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '9',
-                                                  callBack: () => {textInputChanged("9")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: 'x',
-                                                  callBack: () => {},
-                                                )),
-                                          ])),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '7',
+                                                      callBack: () => {
+                                                        textInputChanged("7")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '8',
+                                                      callBack: () => {
+                                                        textInputChanged("8")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '9',
+                                                      callBack: () => {
+                                                        textInputChanged("9")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: 'x',
+                                                      callBack: () => {},
+                                                    )),
+                                              ])),
                                       SizedBox(
                                           height: 60,
-                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '4',
-                                                  callBack: () => {textInputChanged("4")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '5',
-                                                  callBack: () => {textInputChanged("5")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '6',
-                                                  callBack: () => {textInputChanged("6")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '+',
-                                                  callBack: () => {},
-                                                )),
-                                          ])),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '4',
+                                                      callBack: () => {
+                                                        textInputChanged("4")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '5',
+                                                      callBack: () => {
+                                                        textInputChanged("5")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '6',
+                                                      callBack: () => {
+                                                        textInputChanged("6")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '+',
+                                                      callBack: () => {},
+                                                    )),
+                                              ])),
                                       SizedBox(
                                           height: 60,
-                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '1',
-                                                  callBack: () => {textInputChanged("1")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '2',
-                                                  callBack: () => {textInputChanged("2")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '3',
-                                                  callBack: () => {textInputChanged("3")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: 'C',
-                                                  callBack: () => {clearText()},
-                                                )),
-                                          ])),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '1',
+                                                      callBack: () => {
+                                                        textInputChanged("1")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '2',
+                                                      callBack: () => {
+                                                        textInputChanged("2")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '3',
+                                                      callBack: () => {
+                                                        textInputChanged("3")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: 'C',
+                                                      callBack: () =>
+                                                          {clearText()},
+                                                    )),
+                                              ])),
                                       SizedBox(
                                           height: 60,
-                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '0',
-                                                  callBack: () => {textInputChanged("0")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  text: '.',
-                                                  callBack: () => {textInputChanged(".")},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  icon: Icons.backspace,
-                                                  callBack: () => {backSpace()},
-                                                )),
-                                            Expanded(
-                                                flex: 2,
-                                                child: NumPadButton(
-                                                  icon: Icons.expand,
-                                                  callBack: () => {},
-                                                )),
-                                          ])),
+                                          child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '0',
+                                                      callBack: () => {
+                                                        textInputChanged("0")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      text: '.',
+                                                      callBack: () => {
+                                                        textInputChanged(".")
+                                                      },
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      icon: Icons.backspace,
+                                                      callBack: () =>
+                                                          {backSpace()},
+                                                    )),
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: NumPadButton(
+                                                      icon: Icons.expand,
+                                                      callBack: () => {},
+                                                    )),
+                                              ])),
                                     ]),
                                   ),
                                 ],

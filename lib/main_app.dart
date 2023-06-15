@@ -24,6 +24,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 import 'package:dedepos/bloc/server_bloc.dart';
 import 'package:dedepos/api/network/server.dart' as server;
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:intl/intl.dart';

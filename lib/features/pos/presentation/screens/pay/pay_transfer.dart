@@ -71,7 +71,7 @@ class _PayTransferState extends State<PayTransfer> {
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
                                 title: Text(
-                                    global.language("กรุณาเลือกประเภทบัตร")),
+                                    global.language("please_select_bank")),
                                 content: SizedBox(
                                     width: 350,
                                     height: 300,
@@ -183,7 +183,7 @@ class _PayTransferState extends State<PayTransfer> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('จำนวนเงิน'),
+                                global.language('total_amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -207,7 +207,7 @@ class _PayTransferState extends State<PayTransfer> {
                     }
                   },
                   label: Text(
-                    global.language("บันทึกเงินโอน"),
+                    global.language("money_transfer"),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -250,7 +250,7 @@ class _PayTransferState extends State<PayTransfer> {
                               global.payScreenData.transfer[index].bank_code))),
                   const SizedBox(width: 10),
                   buildDetailsBlock(
-                      label: global.language('ยอดเงิน'),
+                      label: global.language('total_amount'),
                       value: global.moneyFormat
                           .format(global.payScreenData.transfer[index].amount)),
                 ],
@@ -267,7 +267,7 @@ class _PayTransferState extends State<PayTransfer> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             content: Text(global
-                                .language("ต้องการยกเลิกรายการนี้จริงหรือไม่")),
+                                .language("delete_confirm")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),

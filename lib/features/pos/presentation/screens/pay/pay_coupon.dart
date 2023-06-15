@@ -105,7 +105,7 @@ class _PayCouponState extends State<PayCoupon> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('เลขที่คูปอง'),
+                                global.language('coupon_number'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -166,7 +166,7 @@ class _PayCouponState extends State<PayCoupon> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('จำนวนเงิน'),
+                                global.language('money_amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -179,7 +179,7 @@ class _PayCouponState extends State<PayCoupon> {
             controller: _descriptionController,
             decoration: InputDecoration(
               border: const UnderlineInputBorder(),
-              labelText: global.language('รายละเอียด'),
+              labelText: global.language('coupon_description'),
             ),
           ),
           Row(
@@ -198,7 +198,7 @@ class _PayCouponState extends State<PayCoupon> {
                     }
                   },
                   label: Text(
-                    global.language("บันทึกคูปอง"),
+                    global.language("coupon_save"),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -234,11 +234,11 @@ class _PayCouponState extends State<PayCoupon> {
               title: Row(
                 children: [
                   _buildDetailsBlock(
-                      label: global.language("เลขที่คูปอง"),
+                      label: global.language("coupon_number"),
                       value: global.payScreenData.coupon[index].number),
                   const SizedBox(width: 10),
                   _buildDetailsBlock(
-                      label: global.language("รายละเอียด"),
+                      label: global.language("coupon_description"),
                       value: global.payScreenData.coupon[index].description),
                 ],
               ),
@@ -248,7 +248,7 @@ class _PayCouponState extends State<PayCoupon> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     _buildDetailsBlock(
-                        label: global.language('ยอดเงิน'),
+                        label: global.language('coupon_amount'),
                         value: global.moneyFormat
                             .format(global.payScreenData.coupon[index].amount)),
                   ],

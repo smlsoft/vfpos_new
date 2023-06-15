@@ -173,7 +173,7 @@ class _PayQrScreenState extends State<PayQrScreen>
             backgroundColor: Colors.blue,
             initialPosition: 0,
             duration: 5 * 60,
-            text: global.language('เหลือเวลาทำรายการ'),
+            text: global.language('time_remaining_to_complete_the_transaction'),
             onComplete: () {
               Navigator.pop(context, false);
             },
@@ -190,7 +190,7 @@ class _PayQrScreenState extends State<PayQrScreen>
           child: FittedBox(
               fit: BoxFit.fitWidth,
               child: Text(
-                '${global.language('จำนวนเงิน')} : ${global.moneyFormat.format(widget.amount)} ${global.language('money_symbol')}',
+                '${global.language('money_amount')} : ${global.moneyFormat.format(widget.amount)} ${global.language('money_symbol')}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ))),
       const SizedBox(height: 8),

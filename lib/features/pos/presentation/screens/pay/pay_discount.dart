@@ -204,7 +204,7 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                               alignment: Alignment.topLeft,
                               child: Text(
                                   global.language(
-                                      'สูตรส่วนลด เช่น 5%,10,3%,20 = ลด 5% แล้วลดอีก 10 บาท แล้วลดอีก 3% แล้วลดอีก 20 บาท'),
+                                      'discount_formula_example'), // สูตรส่วนลด เช่น 5%,10,3%,20 = ลด 5% แล้วลดอีก 10 บาท แล้วลดอีก 3% แล้วลดอีก 20 บาท
                                   style: const TextStyle(
                                       color: Colors.grey, fontSize: 12)))),
                       Align(

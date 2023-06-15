@@ -53,7 +53,6 @@ void main() async {
   Intl.defaultLocale = "th";
   initializeDateFormatting();
   await setUpServiceLocator();
-  // await GetStorage.init('AppStorage');
   await initializeApp();
   //runApp(const App());
   runApp(App());

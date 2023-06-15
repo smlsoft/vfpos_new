@@ -32,7 +32,6 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 
 Future<void> initializeApp() async {
   HttpOverrides.global = new MyHttpOverrides();
-  await GetStorage.init('AppStorage');
   await setupDisplay();
 
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
@@ -46,6 +45,14 @@ Future<void> initializeApp() async {
 }
 
 Future<void> initializeEnvironmentConfig() async {
+  await GetStorage.init();
+  //
+  try {
+    global.userScreenLanguage = GetStorage().read("language");
+  } catch (ex) {
+    global.userScreenLanguage = "th";
+  }
+  //
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
     defaultValue: Environment.DEV,
@@ -55,8 +62,7 @@ Future<void> initializeEnvironmentConfig() async {
   if (global.developerMode && kIsWeb == false) {
     // Developer Mode
     await googleMultiLanguageSheetLoad().then((_) {
-      global.userLanguage = "th";
-      global.languageSelect(global.userLanguage);
+      global.languageSelect(global.userScreenLanguage);
     });
   } else {
     try {
@@ -66,8 +72,7 @@ Future<void> initializeEnvironmentConfig() async {
               .map((i) => LanguageSystemCodeModel.fromJson(i))
               .toList();
     } catch (_) {}
-    global.userLanguage = "th";
-    global.languageSelect(global.userLanguage);
+    global.languageSelect(global.userScreenLanguage);
   }
 }
 

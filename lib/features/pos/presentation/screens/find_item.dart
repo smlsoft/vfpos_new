@@ -85,7 +85,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: "ข้อความบางส่วน (ชื่อ,รหัส)",
+                  hintText: global.language("partial_text"), // "ข้อความบางส่วน (ชื่อ,รหัส)",
                   suffixIcon: IconButton(
                     onPressed: () => setState(() {
                       _findByCodeNameLastResult.clear();
