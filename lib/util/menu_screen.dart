@@ -93,8 +93,8 @@ class _MenuScreenState extends State<MenuScreen> {
     ];
   }
 
-  void showDialogShiftAndMoney(int mode) {
-    showDialog(
+  Future<void> showDialogShiftAndMoney(int mode) async {
+    await showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {

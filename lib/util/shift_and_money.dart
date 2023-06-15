@@ -121,6 +121,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
                         child: NumberPad(
                             header: global.language("amount_of_money"),
                             onChange: (value) {
+                              // กด ตกลง
                               serviceLocator<Log>().debug(value);
                             })),
                   ],

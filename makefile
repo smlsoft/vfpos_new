@@ -14,3 +14,4 @@ flutter_android_build_gradie:
 	dart run flutter_flavorizr -p android:buildGradle
 flutter_run_dedepos:
 	flutter run --flavor dedepos -t lib/main_dedepos.dart
+	
