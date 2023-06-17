@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
 import 'package:image/image.dart' as im;
 import 'dart:async';
@@ -22,6 +23,7 @@ import 'package:sunmi_printer_plus/enums.dart';
 import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'dart:ui' as ui;
 
+@RoutePage()
 class PrinterConfigScreen extends StatefulWidget {
   const PrinterConfigScreen({Key? key}) : super(key: key);
 
