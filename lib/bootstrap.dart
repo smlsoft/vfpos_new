@@ -1,3 +1,4 @@
+import 'package:dedepos/api/network/server.dart' as server;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -74,6 +75,9 @@ Future<void> initializeEnvironmentConfig() async {
     } catch (_) {}
     global.languageSelect(global.userScreenLanguage);
   }
+  // Server
+  await global.startLoading();
+  server.startServer();
 }
 
 Future<void> setupDisplay() async {

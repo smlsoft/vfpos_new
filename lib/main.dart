@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dedepos/bootstrap.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';

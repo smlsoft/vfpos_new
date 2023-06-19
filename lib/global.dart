@@ -4,6 +4,7 @@ import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
+import 'package:dedepos/model/objectbox/staff_client_struct.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
@@ -181,6 +182,8 @@ String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
 String posSaleChannelLogoUrl = "";
 List<String> googleLanguageCode = [];
 List<PosSaleChannelModel> posSaleChannelList = [];
+List<StaffClientObjectBoxStruct> staffClientList = [];
+String connectGuid = "";
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 

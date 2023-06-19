@@ -43,3 +43,26 @@ class SyncDeviceModel {
 
   Map<String, dynamic> toJson() => _$SyncDeviceModelToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true)
+class SyncStaffDeviceModel {
+  // เชื่อมกับเครื่อง Staff
+  String serverShopId;
+  String serverIp;
+  String clientName;
+  String clientGuid;
+  String clientIp;
+
+  SyncStaffDeviceModel({
+    required this.serverShopId,
+    required this.serverIp,
+    required this.clientName,
+    required this.clientGuid,
+    required this.clientIp,
+  });
+
+  factory SyncStaffDeviceModel.fromJson(Map<String, dynamic> json) =>
+      _$SyncStaffDeviceModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SyncStaffDeviceModelToJson(this);
+}

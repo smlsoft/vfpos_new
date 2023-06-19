@@ -45,3 +45,23 @@ Map<String, dynamic> _$SyncDeviceModelToJson(SyncDeviceModel instance) =>
       'docModeActive': instance.docModeActive,
       'processSuccess': instance.processSuccess,
     };
+
+SyncStaffDeviceModel _$SyncStaffDeviceModelFromJson(
+        Map<String, dynamic> json) =>
+    SyncStaffDeviceModel(
+      serverShopId: json['serverShopId'] as String,
+      serverIp: json['serverIp'] as String,
+      clientName: json['clientName'] as String,
+      clientGuid: json['clientGuid'] as String,
+      clientIp: json['clientIp'] as String,
+    );
+
+Map<String, dynamic> _$SyncStaffDeviceModelToJson(
+        SyncStaffDeviceModel instance) =>
+    <String, dynamic>{
+      'serverShopId': instance.serverShopId,
+      'serverIp': instance.serverIp,
+      'clientName': instance.clientName,
+      'clientGuid': instance.clientGuid,
+      'clientIp': instance.clientIp,
+    };

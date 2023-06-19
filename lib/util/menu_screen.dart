@@ -13,6 +13,7 @@ import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/printer_config.dart';
+import 'package:dedepos/util/connect_staff_client.dart';
 import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/util/shift_and_money.dart';
 import 'package:dedepos/widgets/button.dart';
@@ -34,6 +35,8 @@ class _MenuScreenState extends State<MenuScreen> {
   List<Widget> menuPosList = [];
   List<Widget> menuShiftList = [];
   List<Widget> menuVisitList = [];
+  List<Widget> menuUtilList = [];
+  TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -138,6 +141,23 @@ class _MenuScreenState extends State<MenuScreen> {
     ];
   }
 
+  List<Widget> menuUtil() {
+    return [
+      menuItem(
+          icon: Icons.request_quote,
+          title: global
+              .language("connect_staff_client"), // 'เชื่อมต่อเครื่องพนักงาน',
+          callBack: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ConnectStaffClientPage(),
+              ),
+            );
+          }),
+    ];
+  }
+
   Widget menuItem(
       {required IconData icon,
       required String title,
@@ -181,6 +201,7 @@ class _MenuScreenState extends State<MenuScreen> {
   void rebuildScreen() {
     menuPosList = menuPos();
     menuShiftList = menuShift();
+    menuUtilList = menuUtil();
     if (F.appFlavor == Flavor.SMLMOBILESALES) {
       menuVisitList = menuForVisit();
     }
@@ -493,6 +514,28 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 ),
                               ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: menuUtilList.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).size.width ~/
+                                            150,
+                                    crossAxisSpacing: 5.0,
+                                    mainAxisSpacing: 5.0,
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return menuUtilList[index];
+                                  },
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
