@@ -24,6 +24,7 @@ import 'model/objectbox/printer_struct.dart';
 import 'model/objectbox/product_barcode_struct.dart';
 import 'model/objectbox/product_category_struct.dart';
 import 'model/objectbox/staff_client_struct.dart';
+import 'model/objectbox/table_struct.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -1084,6 +1085,41 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(17, 3443028984694321207),
+      name: 'TableObjectBoxStruct',
+      lastPropertyId: const IdUid(5, 4935629986497191588),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 6669131040763069820),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 5795745292303190759),
+            name: 'guidfixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(24, 7106622893458798281)),
+        ModelProperty(
+            id: const IdUid(3, 2037224567778915375),
+            name: 'number',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 6573507408230314771),
+            name: 'name1',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 4935629986497191588),
+            name: 'zone',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -1107,8 +1143,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(16, 685559122264089870),
-      lastIndexId: const IdUid(23, 654933896551137154),
+      lastEntityId: const IdUid(17, 3443028984694321207),
+      lastIndexId: const IdUid(24, 7106622893458798281),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -2087,6 +2123,45 @@ ModelDefinition getObjectBoxModel() {
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
+        }),
+    TableObjectBoxStruct: EntityDefinition<TableObjectBoxStruct>(
+        model: _entities[13],
+        toOneRelations: (TableObjectBoxStruct object) => [],
+        toManyRelations: (TableObjectBoxStruct object) => {},
+        getId: (TableObjectBoxStruct object) => object.id,
+        setId: (TableObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (TableObjectBoxStruct object, fb.Builder fbb) {
+          final guidfixedOffset = fbb.writeString(object.guidfixed);
+          final numberOffset = fbb.writeString(object.number);
+          final name1Offset = fbb.writeString(object.name1);
+          final zoneOffset = fbb.writeString(object.zone);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, guidfixedOffset);
+          fbb.addOffset(2, numberOffset);
+          fbb.addOffset(3, name1Offset);
+          fbb.addOffset(4, zoneOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = TableObjectBoxStruct(
+              guidfixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              number: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, ''),
+              name1: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, ''),
+              zone: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
         })
   };
 
@@ -2893,4 +2968,27 @@ class StaffClientObjectBoxStruct_ {
   /// see [StaffClientObjectBoxStruct.deviceIp]
   static final deviceIp = QueryStringProperty<StaffClientObjectBoxStruct>(
       _entities[12].properties[4]);
+}
+
+/// [TableObjectBoxStruct] entity fields to define ObjectBox queries.
+class TableObjectBoxStruct_ {
+  /// see [TableObjectBoxStruct.id]
+  static final id =
+      QueryIntegerProperty<TableObjectBoxStruct>(_entities[13].properties[0]);
+
+  /// see [TableObjectBoxStruct.guidfixed]
+  static final guidfixed =
+      QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[1]);
+
+  /// see [TableObjectBoxStruct.number]
+  static final number =
+      QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[2]);
+
+  /// see [TableObjectBoxStruct.name1]
+  static final name1 =
+      QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[3]);
+
+  /// see [TableObjectBoxStruct.zone]
+  static final zone =
+      QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[4]);
 }

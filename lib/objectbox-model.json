@@ -1069,10 +1069,46 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "17:3443028984694321207",
+      "lastPropertyId": "5:4935629986497191588",
+      "name": "TableObjectBoxStruct",
+      "properties": [
+        {
+          "id": "1:6669131040763069820",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5795745292303190759",
+          "name": "guidfixed",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "24:7106622893458798281"
+        },
+        {
+          "id": "3:2037224567778915375",
+          "name": "number",
+          "type": 9
+        },
+        {
+          "id": "4:6573507408230314771",
+          "name": "name1",
+          "type": 9
+        },
+        {
+          "id": "5:4935629986497191588",
+          "name": "zone",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "16:685559122264089870",
-  "lastIndexId": "23:654933896551137154",
+  "lastEntityId": "17:3443028984694321207",
+  "lastIndexId": "24:7106622893458798281",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

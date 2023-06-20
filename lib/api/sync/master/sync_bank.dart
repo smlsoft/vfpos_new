@@ -12,7 +12,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
-Future<ApiResponse> serverBank({
+Future<ApiResponse> serverBankGetData({
   int limit = 0,
   int offset = 0,
   String lastupdate = '',
@@ -95,7 +95,7 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await serverBank(offset: offset, limit: limit, lastupdate: lastUpdateTime)
+      await serverBankGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime)
           .then((value) {
         if (value.success) {
           var dataList = value.data["bankmaster"];

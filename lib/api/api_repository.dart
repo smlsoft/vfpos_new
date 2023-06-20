@@ -39,7 +39,7 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> serverEmployee({
+  Future<ApiResponse> serverEmployeeGetData({
     int limit = 0,
     int offset = 0,
     String lastupdate = '',
@@ -49,6 +49,33 @@ class ApiRepository {
     try {
       String query =
           "/master-sync/list?lastupdate=$lastupdate&module=employee&offset=$offset&limit=$limit&action=all";
+      final response = await client.get(query);
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<ApiResponse> serverTableGetData({
+    int limit = 0,
+    int offset = 0,
+    String lastupdate = '',
+  }) async {
+    Dio client = Client().init();
+
+    try {
+      String query =
+          "/master-sync/list?lastupdate=$lastupdate&module=shoptable&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
