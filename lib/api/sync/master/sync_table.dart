@@ -7,6 +7,7 @@ import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/api/sync/model/sync_employee_model.dart';
 import 'package:dedepos/api/sync/model/item_remove_model.dart';
 import 'package:dedepos/db/table_helper.dart';
+import 'package:dedepos/db/table_process_helper.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
@@ -96,5 +97,29 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
       offset += limit;
     }
     global.appStorage.write(global.syncTableTimeName, getLastUpdateTime);
+    // เพิ่มโต็ะไว้ที่ Table Process ด้วย
+    var tableList = TableHelper().getAll();
+    for (var table in tableList) {
+      // find old table
+      var oldTable = TableProcessHelper().getByTableNumber(table.number);
+      if (oldTable == null) {
+        TableProcessHelper().insert(TableProcessObjectBoxStruct(
+          guidfixed: table.guidfixed,
+          number: table.number,
+          name1: table.name1,
+          zone: table.zone,
+          table_status: 0,
+          amount: 0,
+          order_success: true,
+          qr_code: "",
+          man_count: 0,
+          woman_count: 0,
+          child_count: 0,
+          table_al_la_crate_mode: true,
+          buffet_code: "",
+          table_open_datetime: DateTime.now(),
+        ));
+      }
+    }
   }
 }

@@ -72,7 +72,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text(global.language("sync_data")),
+                Text("Data Synchronization"),
               ],
             ),
           ),

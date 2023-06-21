@@ -4,9 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/buffet_mode_helper.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/features/authentication/auth.dart';
-import 'package:dedepos/features/pos/restaurant/table_open_page.dart';
+import 'package:dedepos/features/pos/restaurant/table_manager_page.dart';
 import 'package:dedepos/features/receive_money/receive_money.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
@@ -169,7 +170,8 @@ class _MenuScreenState extends State<MenuScreen> {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TableOpenPage(),
+                builder: (context) => TableManagerPage(
+                    tableManagerMode: global.TableManagerEnum.openTable),
               ),
             );
           }),
@@ -243,6 +245,7 @@ class _MenuScreenState extends State<MenuScreen> {
     }
     rebuildScreen();
     syncBillProcess();
+    global.buffetModeList = BuffetModeHelper().getAll();
   }
 
   @override

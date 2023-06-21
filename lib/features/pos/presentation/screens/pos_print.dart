@@ -18,7 +18,7 @@ import 'package:image/image.dart' as im;
 import 'dart:ui' as ui;
 
 Future<void> printBill(DateTime docDate, String docNo) async {
-  if (global.posTicket.printMode == 0) {
+  if (global.posTicket.print_mode == 0) {
     PosPrintBillClass posPrintBill =
         PosPrintBillClass(docDate: docDate, docNo: docNo);
     posPrintBill.printBill();
@@ -31,9 +31,13 @@ class PosPrintBillCommandColumnModel {
   double width;
   String text;
   PrintColumnAlign align;
+  double fontSize;
 
   PosPrintBillCommandColumnModel(
-      {this.width = 0, this.text = "", this.align = PrintColumnAlign.left});
+      {this.width = 0,
+      this.text = "",
+      this.align = PrintColumnAlign.left,
+      this.fontSize = 24});
 }
 
 class PosPrintBillCommandModel {
@@ -43,11 +47,13 @@ class PosPrintBillCommandModel {
   PosStyles? posStyles;
   PosTextSize? posTextSize;
   List<PosPrintBillCommandColumnModel> columns;
+  double value;
 
   PosPrintBillCommandModel(
       {required this.mode,
       this.text,
       this.image,
+      this.value = 0,
       this.posStyles = const PosStyles(bold: false),
       this.columns = const [],
       this.posTextSize = PosTextSize.size1});
@@ -75,7 +81,7 @@ class PosPrintBillClass {
       Uint8List bytes = data.buffer.asUint8List();
       commandList.add(PosPrintBillCommandModel(mode: 1, image: bytes));
     }
-    if (global.posTicket.shopName) {
+    if (global.posTicket.shop_name) {
       // พิมพ์ชื่อร้าน
       commandList.add(PosPrintBillCommandModel(
           mode: 2,
@@ -107,7 +113,7 @@ class PosPrintBillClass {
           align: PrintColumnAlign.center)
     ]));
     //
-    if (global.posTicket.shopTaxId) {
+    if (global.posTicket.shop_tax_id) {
       // พิมพ์ เลขที่ผู้เสียภาษี
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
         PosPrintBillCommandColumnModel(
@@ -117,7 +123,7 @@ class PosPrintBillClass {
       ]));
     }
     //
-    if (global.posTicket.shopTel) {
+    if (global.posTicket.shop_tel) {
       // พิมพ์ เลขที่ผู้เสียภาษี
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
         PosPrintBillCommandColumnModel(
@@ -142,11 +148,11 @@ class PosPrintBillClass {
           global.billPayHelper.selectByDocNumber(docNumber: docNo);
       //
       double sumWidth =
-          global.posTicket.descriptionWidth + global.posTicket.amountWidth;
+          global.posTicket.description_width + global.posTicket.amount_width;
       double calcWidth = global.printerWidthByCharacter() / sumWidth;
       int widthCharDescription =
-          (global.posTicket.descriptionWidth * calcWidth).toInt();
-      int widthCharAmount = (global.posTicket.amountWidth * calcWidth).toInt();
+          (global.posTicket.description_width * calcWidth).toInt();
+      int widthCharAmount = (global.posTicket.amount_width * calcWidth).toInt();
 
       // Line
       commandList.add(PosPrintBillCommandModel(mode: 3));
@@ -256,7 +262,7 @@ class PosPrintBillClass {
       // Line
       commandList.add(PosPrintBillCommandModel(mode: 3));
 
-      if (global.posTicket.saleDetail && bill.sale_code.isNotEmpty) {
+      if (global.posTicket.sale_detail && bill.sale_code.isNotEmpty) {
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
           PosPrintBillCommandColumnModel(
               width: 1,
@@ -271,7 +277,7 @@ class PosPrintBillClass {
       ]));
 
       //
-      if (global.posTicket.cashierDetail && bill.cashier_code.isNotEmpty) {
+      if (global.posTicket.cashier_detail && bill.cashier_code.isNotEmpty) {
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
           PosPrintBillCommandColumnModel(
               width: 1,
@@ -329,7 +335,8 @@ class PosPrintBillClass {
                 printProcess.columnWidth.add(command.columns[index].width);
                 printProcess.column.add(PrintColumn(
                     text: command.columns[index].text,
-                    align: command.columns[index].align));
+                    align: command.columns[index].align,
+                    fontSize: command.columns[index].fontSize));
               }
               ui.Image result = await printProcess
                   .lineFeedImage(command.posStyles ?? const PosStyles());
@@ -407,7 +414,8 @@ class PosPrintBillClass {
                 printProcess.columnWidth.add(command.columns[index].width);
                 printProcess.column.add(PrintColumn(
                     text: command.columns[index].text,
-                    align: command.columns[index].align));
+                    align: command.columns[index].align,
+                    fontSize: command.columns[index].fontSize));
               }
               ui.Image result = await printProcess
                   .lineFeedImage(command.posStyles ?? const PosStyles());
@@ -493,7 +501,8 @@ class PosPrintBillClass {
                 printProcess.columnWidth.add(command.columns[index].width);
                 printProcess.column.add(PrintColumn(
                     text: command.columns[index].text,
-                    align: command.columns[index].align));
+                    align: command.columns[index].align,
+                    fontSize: command.columns[index].fontSize));
               }
               ui.Image result = await printProcess
                   .lineFeedImage(command.posStyles ?? const PosStyles());
@@ -663,7 +672,8 @@ class PosPrintBillClass {
               printProcess.columnWidth.add(command.columns[index].width);
               printProcess.column.add(PrintColumn(
                   text: command.columns[index].text,
-                  align: command.columns[index].align));
+                  align: command.columns[index].align,
+                  fontSize: command.columns[index].fontSize));
             }
             ui.Image result = await printProcess
                 .lineFeedImage(command.posStyles ?? const PosStyles());
