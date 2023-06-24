@@ -20,8 +20,12 @@ enum PrintColumnAlign { left, right, center }
 class PrintColumn {
   late String text;
   late PrintColumnAlign align;
+  late double fontSize;
 
-  PrintColumn({required this.text, this.align = PrintColumnAlign.left});
+  PrintColumn(
+      {required this.text,
+      this.align = PrintColumnAlign.left,
+      this.fontSize = 24});
 }
 
 class PrintProcess {
@@ -254,7 +258,8 @@ class PrintProcess {
           columnIndex++) {
         columnList.add(PrintColumn(
             text: (rowIndex == 0) ? column[columnIndex].text : "",
-            align: column[columnIndex].align));
+            align: column[columnIndex].align,
+            fontSize: column[columnIndex].fontSize));
       }
       rowList.add(columnList);
     }
@@ -267,7 +272,9 @@ class PrintProcess {
         if (textColumn.isNotEmpty) {
           TextSpan span = TextSpan(
               style: TextStyle(
-                  color: Colors.black, fontSize: 24, fontFamily: 'Prompt'),
+                  color: Colors.black,
+                  fontSize: column[columnIndex].fontSize,
+                  fontFamily: 'Prompt'),
               text: textColumn);
           TextPainter tp =
               TextPainter(text: span, textDirection: ui.TextDirection.ltr);
@@ -310,7 +317,9 @@ class PrintProcess {
         String text = rowList[rowIndex][columnIndex].text;
         TextSpan span = TextSpan(
             style: TextStyle(
-                color: Colors.black, fontSize: 24, fontFamily: 'Prompt'),
+                color: Colors.black,
+                fontSize: column[columnIndex].fontSize,
+                fontFamily: 'Prompt'),
             text: text);
         TextPainter tp = TextPainter(
             text: span,
@@ -320,7 +329,9 @@ class PrintProcess {
                     ? TextAlign.center
                     : TextAlign.left,
             textDirection: TextDirection.ltr);
-        tp.layout(minWidth: columnWidthList[columnIndex]);
+        tp.layout(
+          minWidth: columnWidthList[columnIndex],
+        );
         tp.paint(
             canvas,
             Offset((columnIndex == 0) ? 0 : columnWidthList[columnIndex - 1],

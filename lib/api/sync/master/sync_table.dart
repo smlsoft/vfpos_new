@@ -1,19 +1,23 @@
 import 'dart:async';
 import 'package:dedepos/api/api_repository.dart';
+import 'package:dedepos/api/sync/model/sync_table_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/api/sync/model/sync_employee_model.dart';
 import 'package:dedepos/api/sync/model/item_remove_model.dart';
+import 'package:dedepos/db/table_helper.dart';
+import 'package:dedepos/db/table_process_helper.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:intl/intl.dart';
 
-Future syncEmployee(List<ItemRemoveModel> removeList,
-    List<SyncEmployeeModel> newDataList) async {
+Future syncTable(
+    List<ItemRemoveModel> removeList, List<SyncTableModel> newDataList) async {
   List<String> removeMany = [];
-  List<EmployeeObjectBoxStruct> manyForInsert = [];
+  List<TableObjectBoxStruct> manyForInsert = [];
 
   // Delete
   for (var removeData in removeList) {
@@ -29,63 +33,60 @@ Future syncEmployee(List<ItemRemoveModel> removeList,
     global.syncTimeIntervalSecond = 1;
     removeMany.add(newData.guidfixed);
 
-    EmployeeObjectBoxStruct newEmployee = EmployeeObjectBoxStruct(
+    TableObjectBoxStruct newTable = TableObjectBoxStruct(
       guidfixed: newData.guidfixed,
-      code: newData.code,
-      email: newData.email,
-      is_enabled: newData.isenabled,
-      name: newData.name,
-      profile_picture: newData.profilepicture,
+      number: newData.number,
+      name1: newData.name1,
+      zone: newData.zone,
     );
 
     serviceLocator<Log>()
-        .trace("Sync Employee : ${newData.code} ${newData.name}");
-    manyForInsert.add(newEmployee);
+        .trace("Sync Table : ${newData.number} ${newData.name1}");
+    manyForInsert.add(newTable);
   }
   if (removeMany.isNotEmpty) {
-    EmployeeHelper().deleteByGuidFixedMany(removeMany);
+    TableHelper().deleteByGuidFixedMany(removeMany);
   }
   if (manyForInsert.isNotEmpty) {
-    EmployeeHelper().insertMany(manyForInsert);
+    TableHelper().insertMany(manyForInsert);
   }
 }
 
-Future<void> syncEmployeeCompare(
-    List<SyncMasterStatusModel> masterStatus) async {
+Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
 
   // Sync พนักงาน
-  String lastUpdateTime = global.appStorage.read(global.syncEmployeeTimeName) ??
-      global.syncDateBegin;
-  if (EmployeeHelper().count() == 0) {
+  String lastUpdateTime =
+      global.appStorage.read(global.syncTableTimeName) ?? global.syncDateBegin;
+  if (TableHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
   lastUpdateTime =
       DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
-  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "employee");
+  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "shoptable");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
       await apiRepository
-          .serverEmployeeGetData(
+          .serverTableGetData(
               offset: offset, limit: limit, lastupdate: lastUpdateTime)
           .then((value) {
         if (value.success) {
-          var dataList = value.data["employee"];
+          var dataList = value.data["shoptable"];
           List<ItemRemoveModel> removeList = (dataList["remove"] as List)
               .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
               .toList();
-          List<SyncEmployeeModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncEmployeeModel.fromJson(newCate))
+          List<SyncTableModel> newDataList = (dataList["new"] as List)
+              .map((newCate) => SyncTableModel.fromJson(newCate))
               .toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             serviceLocator<Log>().trace(
                 "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
-            syncEmployee(removeList, newDataList);
+            syncTable(removeList, newDataList);
           }
         } else {
           serviceLocator<Log>()
@@ -95,6 +96,30 @@ Future<void> syncEmployeeCompare(
       });
       offset += limit;
     }
-    global.appStorage.write(global.syncEmployeeTimeName, getLastUpdateTime);
+    global.appStorage.write(global.syncTableTimeName, getLastUpdateTime);
+    // เพิ่มโต็ะไว้ที่ Table Process ด้วย
+    var tableList = TableHelper().getAll();
+    for (var table in tableList) {
+      // find old table
+      var oldTable = TableProcessHelper().getByTableNumber(table.number);
+      if (oldTable == null) {
+        TableProcessHelper().insert(TableProcessObjectBoxStruct(
+          guidfixed: table.guidfixed,
+          number: table.number,
+          name1: table.name1,
+          zone: table.zone,
+          table_status: 0,
+          amount: 0,
+          order_success: true,
+          qr_code: "",
+          man_count: 0,
+          woman_count: 0,
+          child_count: 0,
+          table_al_la_crate_mode: true,
+          buffet_code: "",
+          table_open_datetime: DateTime.now(),
+        ));
+      }
+    }
   }
 }

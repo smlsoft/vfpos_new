@@ -2,6 +2,7 @@ import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sn
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/google_sheet.dart';
+import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:dedepos/model/objectbox/staff_client_struct.dart';
@@ -105,7 +106,7 @@ String providerName = "DATA";
 String databaseName = "DEMO"; // "DATA1 or DEMO";
 bool speechToTextVisible = false;
 bool loginSuccess = false;
-GetStorage appStorage = GetStorage();
+late GetStorage appStorage;
 late PrinterLocalStrongDataModel printerLocalStrongData;
 bool loginProcess = false;
 bool syncDataSuccess = false;
@@ -184,6 +185,8 @@ List<String> googleLanguageCode = [];
 List<PosSaleChannelModel> posSaleChannelList = [];
 List<StaffClientObjectBoxStruct> staffClientList = [];
 String connectGuid = "";
+List<BuffetModeObjectBoxStruct> buffetModeList = [];
+int buffetMaxMinute = 120;
 
 enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
 
@@ -196,6 +199,8 @@ enum SoundEnum { beep, fail, buttonTing }
 enum DisplayMachineEnum { customerDisplay, posTerminal }
 
 enum PosScreenModeEnum { posSale, posReturn }
+
+enum TableManagerEnum { openTable, closeTable, moveTable, mergeTable }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -776,49 +781,46 @@ void posScreenListHeightSet(double value) {
 void loadConfig() {
   printerLocalStrongData = PrinterLocalStrongDataModel();
   try {
-    appStorage.read("printer").then((value) {
-      try {
-        printerLocalStrongData =
-            PrinterLocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
-      } catch (_) {}
-      {
-        // ประเภทเครื่องพิมพ์ Cashier
-        switch (printerLocalStrongData.printerCashierType) {
-          case 0:
-            printerCashierType = PrinterCashierTypeEnum.thermal;
-            break;
-          case 1:
-            printerCashierType = PrinterCashierTypeEnum.dot;
-            break;
-          case 2:
-            printerCashierType = PrinterCashierTypeEnum.laser;
-            break;
-          case 3:
-            printerCashierType = PrinterCashierTypeEnum.inkjet;
-            break;
-        }
+    String loadPrinter = appStorage.read("xprinter");
+    printerLocalStrongData =
+        PrinterLocalStrongDataModel.fromJson(jsonDecode(loadPrinter));
+    {
+      // ประเภทเครื่องพิมพ์ Cashier
+      switch (printerLocalStrongData.printerCashierType) {
+        case 0:
+          printerCashierType = PrinterCashierTypeEnum.thermal;
+          break;
+        case 1:
+          printerCashierType = PrinterCashierTypeEnum.dot;
+          break;
+        case 2:
+          printerCashierType = PrinterCashierTypeEnum.laser;
+          break;
+        case 3:
+          printerCashierType = PrinterCashierTypeEnum.inkjet;
+          break;
       }
-      {
-        // การเชื่อมต่อเครื่องพิมพ์ Cashier
-        switch (printerLocalStrongData.connectType) {
-          case 1:
-            printerCashierConnect = PrinterCashierConnectEnum.usb;
-            break;
-          case 2:
-            printerCashierConnect = PrinterCashierConnectEnum.ip;
-            break;
-          case 3:
-            printerCashierConnect = PrinterCashierConnectEnum.bluetooth;
-            break;
-          case 4:
-            printerCashierConnect = PrinterCashierConnectEnum.windows;
-            break;
-          case 100:
-            printerCashierConnect = PrinterCashierConnectEnum.sunmi1;
-            break;
-        }
+    }
+    {
+      // การเชื่อมต่อเครื่องพิมพ์ Cashier
+      switch (printerLocalStrongData.connectType) {
+        case 1:
+          printerCashierConnect = PrinterCashierConnectEnum.usb;
+          break;
+        case 2:
+          printerCashierConnect = PrinterCashierConnectEnum.ip;
+          break;
+        case 3:
+          printerCashierConnect = PrinterCashierConnectEnum.bluetooth;
+          break;
+        case 4:
+          printerCashierConnect = PrinterCashierConnectEnum.windows;
+          break;
+        case 100:
+          printerCashierConnect = PrinterCashierConnectEnum.sunmi1;
+          break;
       }
-    });
+    }
   } catch (e) {
     dev.log(e.toString());
   }
@@ -1228,4 +1230,13 @@ void languageSelect(String languageCode) {
   /*global.languageSystemData.sort((a, b) {
     return a.code.compareTo(b.code);
   });*/
+}
+
+int findBuffetModeIndex(String code) {
+  for (var item in buffetModeList) {
+    if (item.code == code) {
+      return buffetModeList.indexOf(item);
+    }
+  }
+  return -1;
 }

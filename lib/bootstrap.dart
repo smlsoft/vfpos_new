@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:presentation_displays/display.dart';
 
 void bootstrap(FutureOr<Widget> Function() builder) async {
@@ -32,7 +33,7 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 }
 
 Future<void> initializeApp() async {
-  HttpOverrides.global = new MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   await setupDisplay();
 
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
@@ -47,6 +48,7 @@ Future<void> initializeApp() async {
 
 Future<void> initializeEnvironmentConfig() async {
   await GetStorage.init();
+  global.appStorage = GetStorage();
   //
   try {
     global.userScreenLanguage = GetStorage().read("language");

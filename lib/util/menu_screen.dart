@@ -4,8 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/buffet_mode_helper.dart';
 import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/features/authentication/auth.dart';
+import 'package:dedepos/features/pos/restaurant/table_manager_page.dart';
 import 'package:dedepos/features/receive_money/receive_money.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/model/objectbox/printer_struct.dart';
@@ -36,6 +38,7 @@ class _MenuScreenState extends State<MenuScreen> {
   List<Widget> menuShiftList = [];
   List<Widget> menuVisitList = [];
   List<Widget> menuUtilList = [];
+  List<Widget> menuRestaurantList = [];
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
@@ -158,6 +161,23 @@ class _MenuScreenState extends State<MenuScreen> {
     ];
   }
 
+  List<Widget> menuRestaurant() {
+    return [
+      menuItem(
+          icon: Icons.request_quote,
+          title: global.language("table_open"),
+          callBack: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TableManagerPage(
+                    tableManagerMode: global.TableManagerEnum.openTable),
+              ),
+            );
+          }),
+    ];
+  }
+
   Widget menuItem(
       {required IconData icon,
       required String title,
@@ -202,6 +222,7 @@ class _MenuScreenState extends State<MenuScreen> {
     menuPosList = menuPos();
     menuShiftList = menuShift();
     menuUtilList = menuUtil();
+    menuRestaurantList = menuRestaurant();
     if (F.appFlavor == Flavor.SMLMOBILESALES) {
       menuVisitList = menuForVisit();
     }
@@ -224,6 +245,7 @@ class _MenuScreenState extends State<MenuScreen> {
     }
     rebuildScreen();
     syncBillProcess();
+    global.buffetModeList = BuffetModeHelper().getAll();
   }
 
   @override
@@ -514,6 +536,28 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 ),
                               ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: menuRestaurantList.length,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount:
+                                        MediaQuery.of(context).size.width ~/
+                                            150,
+                                    crossAxisSpacing: 5.0,
+                                    mainAxisSpacing: 5.0,
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return menuRestaurantList[index];
+                                  },
+                                ),
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox(

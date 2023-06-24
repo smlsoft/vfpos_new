@@ -81,7 +81,7 @@ class _InitPOSScreenState extends State<InitPOSScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text(global.language("sync_data")),
+                Text("Data Synchronization"),
               ],
             ),
           ),

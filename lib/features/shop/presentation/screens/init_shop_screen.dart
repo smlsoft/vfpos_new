@@ -79,7 +79,7 @@ class _InitShopScreenState extends State<InitShopScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text(global.language("sync_data")),
+                Text("Data Synchronization"),
               ],
             ),
           ),

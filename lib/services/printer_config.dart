@@ -69,24 +69,28 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
   }
 
   Future<void> startBluetoothDiscovery() async {
-    final List<BluetoothInfo> listResult =
-        await PrintBluetoothThermal.pairedBluetooths;
-    await Future.forEach(listResult, (BluetoothInfo bluetooth) {
-      String name = bluetooth.name;
-      String mac = bluetooth.macAdress;
-      setState(() {
-        printerList.add(
-          PrinterDeviceModel(
-            fullName: "Bluetooth : $name $mac",
-            productName: "Bluetooth Printer",
-            deviceName: name,
-            deviceId: mac,
-            ipAddress: mac,
-            connectType: global.PrinterCashierConnectEnum.bluetooth,
-          ),
-        );
+    try {
+      final List<BluetoothInfo> listResult =
+          await PrintBluetoothThermal.pairedBluetooths;
+      await Future.forEach(listResult, (BluetoothInfo bluetooth) {
+        String name = bluetooth.name;
+        String mac = bluetooth.macAdress;
+        setState(() {
+          printerList.add(
+            PrinterDeviceModel(
+              fullName: "Bluetooth : $name $mac",
+              productName: "Bluetooth Printer",
+              deviceName: name,
+              deviceId: mac,
+              ipAddress: mac,
+              connectType: global.PrinterCashierConnectEnum.bluetooth,
+            ),
+          );
+        });
       });
-    });
+    } catch (e) {
+      print(e);
+    }
   }
 
   void scanNetworkPrinter() async {
@@ -732,13 +736,12 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                               productId: "",
                               paperSize: printerPaperSize,
                               printBillAuto: printBillAuto);
-                          global.appStorage
-                              .write("printer", data.toJson())
-                              .then((value) {
-                            global.loadConfig();
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          });
+                          var jsonString =
+                              const JsonEncoder().convert(data.toJson());
+                          await global.appStorage.write("xprinter", jsonString);
+                          global.loadConfig();
+                          Navigator.pop(context);
+                          Navigator.pop(context);
                         },
                       ),
                       ElevatedButton(

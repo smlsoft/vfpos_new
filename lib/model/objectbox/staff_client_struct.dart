@@ -6,13 +6,13 @@ class StaffClientObjectBoxStruct {
   @Unique()
   String guid;
   String name;
-  String deviceGuid;
-  String deviceIp;
+  String device_guid;
+  String device_ip;
 
   StaffClientObjectBoxStruct({
     this.guid = "",
     this.name = "",
-    this.deviceGuid = "",
-    this.deviceIp = "",
+    this.device_guid = "",
+    this.device_ip = "",
   });
 }

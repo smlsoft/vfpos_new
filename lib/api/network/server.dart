@@ -188,8 +188,8 @@ Future<void> startServer() async {
                     global.staffClientList.add(StaffClientObjectBoxStruct(
                         guid: jsonCategory.clientGuid,
                         name: jsonCategory.clientName,
-                        deviceGuid: jsonCategory.clientGuid,
-                        deviceIp: jsonCategory.clientIp));
+                        device_guid: jsonCategory.clientGuid,
+                        device_ip: jsonCategory.clientIp));
                     response.write("success");
                     break;
                   case "process_result":

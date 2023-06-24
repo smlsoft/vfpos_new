@@ -9,41 +9,41 @@ class PosTicketObjectBoxStruct {
   int id = 0;
   @Unique()
   late String guidfixed;
-  late String ticketName;
-  late int printMode; // 0 = Raw (Text Mode), 1 = Image
-  late int printerWidth;
+  late String ticket_name;
+  late int print_mode; // 0 = Raw (Text Mode), 1 = Image
+  late int printer_width;
   late bool logo;
-  late bool shopName;
-  late bool shopAddress;
-  late bool shopTaxId;
-  late bool shopTel;
-  late bool cashierDetail;
-  late bool customerDetail;
-  late bool customerAddress;
-  late bool customerTaxId;
-  late double descriptionWidth;
-  late double amountWidth;
-  late bool saleDetail;
-  late bool docNoQrCode;
+  late bool shop_name;
+  late bool shop_address;
+  late bool shop_tax_id;
+  late bool shop_tel;
+  late bool cashier_detail;
+  late bool customer_detail;
+  late bool customer_address;
+  late bool customer_tax_id;
+  late double description_width;
+  late double amount_width;
+  late bool sale_detail;
+  late bool doc_no_qr_code;
 
   PosTicketObjectBoxStruct(
       {this.logo = true,
-      this.printMode = 0,
-      this.printerWidth = 0,
+      this.print_mode = 0,
+      this.printer_width = 0,
       this.guidfixed = "",
-      this.ticketName = "",
-      this.shopName = true,
-      this.shopAddress = true,
-      this.shopTaxId = true,
-      this.shopTel = true,
-      this.cashierDetail = true,
-      this.customerDetail = true,
-      this.customerAddress = true,
-      this.customerTaxId = true,
-      this.descriptionWidth = 40,
-      this.amountWidth = 12,
-      this.saleDetail = true,
-      this.docNoQrCode = true});
+      this.ticket_name = "",
+      this.shop_name = true,
+      this.shop_address = true,
+      this.shop_tax_id = true,
+      this.shop_tel = true,
+      this.cashier_detail = true,
+      this.customer_detail = true,
+      this.customer_address = true,
+      this.customer_tax_id = true,
+      this.description_width = 40,
+      this.amount_width = 12,
+      this.sale_detail = true,
+      this.doc_no_qr_code = true});
 
   factory PosTicketObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
       _$PosTicketObjectBoxStructFromJson(json);
