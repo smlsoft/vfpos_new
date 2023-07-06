@@ -55,9 +55,7 @@ class _InitShopScreenState extends State<InitShopScreen> {
   }
 
   /// เตรียมข้อมูล
-  Future<void> preparePosScreen() async {
-    await global.startLoading();
-  }
+  Future<void> preparePosScreen() async {}
 
   @override
   Widget build(BuildContext context) {

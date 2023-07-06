@@ -19,7 +19,7 @@ class PosCancelBillDetailScreen extends StatefulWidget {
 }
 
 class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now());
+  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now(),table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now());
   List<BillDetailObjectBoxStruct> billDetails = [];
   TextEditingController cancelDescriptionController = TextEditingController();
 

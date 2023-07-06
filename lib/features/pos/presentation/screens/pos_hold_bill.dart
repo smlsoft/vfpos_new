@@ -1,8 +1,15 @@
+import 'package:dedepos/db/table_process_helper.dart';
+import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/objectbox/table_struct.dart';
+import 'package:dedepos/objectbox.g.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:intl/intl.dart';
 
 class PosHoldBill extends StatefulWidget {
-  const PosHoldBill({Key? key}) : super(key: key);
+  final int holdType;
+
+  const PosHoldBill({Key? key, required this.holdType}) : super(key: key);
 
   @override
   State<PosHoldBill> createState() => _PosHoldBillState();
@@ -12,10 +19,10 @@ class _PosHoldBillState extends State<PosHoldBill>
     with TickerProviderStateMixin {
   @override
   void initState() {
-    super.initState();
+    super.initState();    
     for (int index = 0; index < global.posHoldProcessResult.length; index++) {
       global.posLogHelper
-          .holdCount(global.posHoldProcessResult[index].holdNumber)
+          .holdCount(global.posHoldProcessResult[index].code)
           .then((value) {
         setState(() {
           global.posHoldProcessResult[index].logCount = value;
@@ -25,30 +32,110 @@ class _PosHoldBillState extends State<PosHoldBill>
   }
 
   Widget holdBillContent() {
+    List<PosHoldProcessModel> holds = [];
+    if (widget.holdType == 1) {
+      // ระบบ POS
+      for (int index = 0; index < global.posHoldProcessResult.length; index++) {
+        if (global.posHoldProcessResult[index].holdType == widget.holdType) {
+          holds.add(global.posHoldProcessResult[index]);
+        }
+      }
+    }
+    if (widget.holdType == 2) {
+      // ระบบร้านอาหาร
+      List<TableProcessObjectBoxStruct> tableInfo =
+          TableProcessHelper().getAll();
+      for (var table in tableInfo) {
+        if (table.table_status == 2) {
+          PosHoldProcessModel hold = PosHoldProcessModel(code: table.number);
+          hold.holdType = 2;
+          holds.add(hold);
+        }
+      }
+    }
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
             childAspectRatio: 3 / 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10),
-        itemCount: global.posHoldProcessResult.length,
+        itemCount: holds.length,
         itemBuilder: (BuildContext ctx, index) {
-          return holdButton(index);
+          return holdButton(holds[index].code);
         });
   }
 
-  Widget holdButton(int number) {
+  Widget holdButton(String number) {
     late Color backgroundColor;
 
-    if (global.posHoldProcessResult[number].logCount != 0) {
+    if (global
+            .posHoldProcessResult[global.findPosHoldProcessResultIndex(number)]
+            .logCount !=
+        0) {
       backgroundColor = Colors.cyan;
     } else {
       backgroundColor = Colors.green;
     }
+    Widget tableStatus = Container();
+    if (widget.holdType == 1) {
+      // POS
+      tableStatus = Text(
+          (global
+                      .posHoldProcessResult[
+                          global.findPosHoldProcessResultIndex(number)]
+                      .logCount ==
+                  0)
+              ? global.language("blank")
+              : "${global.language('qty')} ${global.posHoldProcessResult[global.findPosHoldProcessResultIndex(number)].logCount} รายการ",
+          style: const TextStyle(color: Colors.white, fontSize: 16));
+    }
+    if (widget.holdType == 2) {
+      TableProcessObjectBoxStruct tableInfo = global.objectBoxStore
+          .box<TableProcessObjectBoxStruct>()
+          .query(TableProcessObjectBoxStruct_.number.equals(number))
+          .build()
+          .findFirst()!;
+
+      // ร้านอาหาร
+      String orderType = "";
+      if (tableInfo.table_al_la_crate_mode) {
+        orderType = "อาราคัส";
+      } else {
+        int findBuffetIndex = global.findBuffetModeIndex(tableInfo.buffet_code);
+        if (findBuffetIndex != -1) {
+          orderType =
+              orderType = global.buffetModeLists[findBuffetIndex].names[0];
+        }
+      }
+
+      tableStatus = Container(
+          padding: const EdgeInsets.all(4),
+          child: Column(children: [
+            Text("ประเภท : $orderType",
+                style: const TextStyle(color: Colors.white, fontSize: 12)),
+            if (tableInfo.man_count != 0)
+              Text(
+                  "ผู้ชาย : ${global.moneyFormat.format(tableInfo.man_count.toDouble())}",
+                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+            if (tableInfo.woman_count != 0)
+              Text(
+                  "ผู้หญิง : ${global.moneyFormat.format(tableInfo.woman_count.toDouble())}",
+                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+            if (tableInfo.child_count != 0)
+              Text(
+                  "เด็ก : ${global.moneyFormat.format(tableInfo.child_count.toDouble())}",
+                  style: const TextStyle(color: Colors.white, fontSize: 12)),
+            Text(
+                "เวลาเปิดโต๊ะ : " +
+                    DateFormat('dd-HH:mm')
+                        .format(tableInfo.table_open_datetime),
+                style: const TextStyle(color: Colors.white, fontSize: 12)),
+          ]));
+    }
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: (global.posHoldActiveNumber == number)
+          backgroundColor: (global.posHoldActiveCode == number)
               ? global.posTheme.secondary
               : backgroundColor),
       onPressed: () async {
@@ -67,11 +154,7 @@ class _PosHoldBillState extends State<PosHoldBill>
               child: Center(child: Text(number.toString()))),
           Expanded(
               child: Center(
-            child: Text(
-                (global.posHoldProcessResult[number].logCount == 0)
-                    ? global.language("blank")
-                    : "${global.language('qty')} ${global.posHoldProcessResult[number].logCount}",
-                style: const TextStyle(color: Colors.white, fontSize: 16)),
+            child: tableStatus,
           ))
         ],
       ),
@@ -82,7 +165,9 @@ class _PosHoldBillState extends State<PosHoldBill>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(global.language("pos_hold_bill")),
+        title: Text((widget.holdType == 1)
+            ? global.language("pos_hold_bill")
+            : global.language("pos_hold_table")),
         backgroundColor: global.posTheme.background,
       ),
       body: Padding(

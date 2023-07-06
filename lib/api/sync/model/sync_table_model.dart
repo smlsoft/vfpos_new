@@ -1,3 +1,4 @@
+import 'package:dedepos/global_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'sync_table_model.g.dart';
 
@@ -5,13 +6,13 @@ part 'sync_table_model.g.dart';
 class SyncTableModel {
   String guidfixed;
   String number;
-  String name1;
+  List<LanguageDataModel> names;
   String zone;
 
   SyncTableModel({
     required this.guidfixed,
     required this.number,
-    required this.name1,
+    required this.names,
     required this.zone,
   });
 

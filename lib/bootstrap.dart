@@ -47,6 +47,7 @@ Future<void> initializeApp() async {
 }
 
 Future<void> initializeEnvironmentConfig() async {
+  // Storage
   await GetStorage.init();
   global.appStorage = GetStorage();
   //
@@ -80,6 +81,12 @@ Future<void> initializeEnvironmentConfig() async {
   // Server
   await global.startLoading();
   server.startServer();
+  // ตรวจสอบ Order จากระบบ Order OnLine
+  Timer.periodic(const Duration(seconds: 1), (Timer t) async {
+    if (global.shopId.isNotEmpty && global.checkOrderActive == false) {
+      global.checkOrderOnline();
+    }
+  });
 }
 
 Future<void> setupDisplay() async {

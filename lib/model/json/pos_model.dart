@@ -71,7 +71,7 @@ class BarcodeModel {
 class SelectItemConditionModel {
   int command;
   double qty;
-  List<double> prices;
+  String prices;
   BarcodeModel data;
 
   SelectItemConditionModel(

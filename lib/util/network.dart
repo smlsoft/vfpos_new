@@ -20,7 +20,8 @@ Future<String> ipAddress() async {
   for (NetworkInterface interface in interfaces) {
     if (interface.name == 'lo') continue; // Skip the loopback interface
     for (InternetAddress address in interface.addresses) {
-      if (address.type == InternetAddressType.IPv4) {
+      if (address.address.contains("192.168.") &&
+          address.type == InternetAddressType.IPv4) {
         return address.address;
       }
     }

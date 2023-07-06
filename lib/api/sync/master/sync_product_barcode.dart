@@ -29,86 +29,32 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
   }
   // Insert
   for (var newData in newDataList) {
-    //print("Insert Product Barcode : " + newData.barcode);
     global.syncTimeIntervalSecond = 1;
     manyForDelete.add(newData.guidfixed);
-    List<String> packNameValues = [];
-    List<String> packUnitNameValues = [];
-    List<String> packPriceValues = [];
-    String nameAll = "";
-    for (int index = 0; index < newData.names.length; index++) {
-      packNameValues.add(newData.names[index].name);
-      nameAll += "${newData.names[index].name},";
-    }
-    for (int index = 0; index < newData.itemunitnames.length; index++) {
-      packUnitNameValues.add(newData.itemunitnames[index].name);
-    }
-
-    // 0=ราคาทั่วไป,1=ราคาสมาชิก
-    for (int index = 0; index < newData.prices!.length; index++) {
-      packPriceValues.add(newData.prices![index].price.toString());
-    }
-    String optionsJson = "";
-    if (newData.options != null) {
-      for (SyncProductOptionModel option in newData.options!) {
-        List<String> packOptionNames = [];
-        for (int index = 0; index < option.names.length; index++) {
-          packOptionNames.add(option.names[index].name);
-        }
-        ProductOptionModel newOption = ProductOptionModel(
-          guid_fixed: option.guid,
-          choice_type: option.choicetype,
-          max_select: (option.choicetype != 0) ? 1 : option.maxselect,
-          names: packOptionNames,
-          choices: [],
-        );
-        for (SyncProductChoiceModel choice in option.choices) {
-          List<String> packChoiceNames = [];
-          for (int index = 0; index < choice.names.length; index++) {
-            packChoiceNames.add(choice.names[index].name);
-          }
-          ProductChoiceModel newChoice = ProductChoiceModel(
-            guid_fixed: choice.guid,
-            guid_code: option.guid,
-            names: packChoiceNames,
-            product_code: choice.refproductcode,
-            barcode: choice.refbarcode,
-            is_default: choice.isdefault,
-            item_unit_code: choice.refunitcode,
-            price: choice.price,
-            qty: choice.qty,
-            selected: false,
-          );
-          newOption.choices.add(newChoice);
-        }
-        if (optionsJson != "") {
-          optionsJson += ",";
-        }
-        optionsJson += jsonEncode(newOption.toJson());
-      }
-    }
-    optionsJson = "[$optionsJson]";
     ProductBarcodeObjectBoxStruct newBarcode = ProductBarcodeObjectBoxStruct(
       guid_fixed: newData.guidfixed,
-      names: packNameValues,
-      name_all: nameAll,
+      names: jsonEncode(newData.names),
+      name_all:
+          (newData.names).map((e) => e.name).toList().join(" ").toString(),
       product_count: 0,
       barcode: newData.barcode,
       item_guid: "",
-      descriptions: [],
+      descriptions: "",
       item_code: newData.itemcode,
       item_unit_code: newData.itemunitcode,
-      unit_names: packUnitNameValues,
-      prices: packPriceValues,
+      unit_names: jsonEncode(newData.itemunitnames),
+      prices: (newData.prices == null) ? "" : jsonEncode(newData.prices!),
       new_line: 0,
       unit_code: newData.itemunitcode,
-      options_json: optionsJson,
+      options_json: jsonEncode(newData.options),
       images_url: newData.imageuri,
       image_or_color: newData.useimageorcolor,
       color_select: newData.colorselect,
+      isalacarte: newData.isalacarte!,
+      ordertypes:
+          (newData.ordertypes == null) ? "" : jsonEncode(newData.ordertypes!),
       color_select_hex: newData.colorselecthex,
     );
-    // newBarcode.images_url = global.getImageForTest();
     newBarcode.image_or_color = true;
 
     manyForInsert.add(newBarcode);
@@ -119,8 +65,8 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
         index++) {
       if (global.productCategoryCodeSelected[index].guid_fixed ==
           newData.guidfixed) {
-        global.productCategoryCodeSelected[index].names
-            .add(newData.names[0].name);
+        global.productCategoryCodeSelected[index].names =
+            jsonEncode(newData.names);
         global.productCategoryCodeSelected[index].image_url = newData.imageuri;
 
         /*global.productGroupCodeSelected[_index].xorder =
@@ -185,8 +131,6 @@ Future<void> syncProductBarcodeCompare(
           List<SyncProductBarcodeModel> newDataList = (dataList["new"] as List)
               .map((newCate) => SyncProductBarcodeModel.fromJson(newCate))
               .toList();
-          serviceLocator<Log>().debug(
-              "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
@@ -200,8 +144,6 @@ Future<void> syncProductBarcodeCompare(
       });
       offset += limit;
     }
-    serviceLocator<Log>().debug(
-        "Update syncProductBarcodeTimeName Success : ${ProductBarcodeHelper().count()}");
     global.appStorage
         .write(global.syncProductBarcodeTimeName, getLastUpdateTime);
   }

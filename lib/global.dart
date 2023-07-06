@@ -1,11 +1,23 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/kitchen_helper.dart';
+import 'package:dedepos/db/shift_helper.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
+import 'package:dedepos/model/objectbox/kitchen_struct.dart';
+import 'package:dedepos/model/objectbox/order_temp_struct.dart';
+import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:dedepos/model/objectbox/staff_client_struct.dart';
+import 'package:dedepos/model/objectbox/table_struct.dart';
+import 'package:dedepos/services/print_process.dart';
+import 'package:dedepos/util/print_kitchen.dart';
+import 'package:dedepos/util/printer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
@@ -31,7 +43,6 @@ import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/api/sync/master/sync_master.dart' as sync;
-import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -53,6 +64,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 
+late ProfileSettingModel profileSetting;
 bool developerMode = true;
 List<String> countryNames = [
   "English",
@@ -71,6 +83,8 @@ bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
 var httpClient = http.Client();
 late BuildContext globalContext;
+bool tableSelected = false;
+String tableNumberSelected = "";
 void posProcessRefresh = () {};
 String ipAddress = "";
 List<String> errorMessage = [];
@@ -78,7 +92,7 @@ List<InformationModel> informationList = <InformationModel>[];
 bool initSuccess = false;
 late String pathApplicationDocumentsDirectory;
 List<PosHoldProcessModel> posHoldProcessResult = [];
-int posHoldActiveNumber = 0;
+String posHoldActiveCode = "0";
 ProductCategoryHelper productCategoryHelper = ProductCategoryHelper();
 ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 EmployeeHelper employeeHelper = EmployeeHelper();
@@ -107,7 +121,7 @@ String databaseName = "DEMO"; // "DATA1 or DEMO";
 bool speechToTextVisible = false;
 bool loginSuccess = false;
 late GetStorage appStorage;
-late PrinterLocalStrongDataModel printerLocalStrongData;
+List<PrinterLocalStrongDataModel> printerLocalStrongData = [];
 bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
@@ -137,7 +151,6 @@ List<ProductCategoryObjectBoxStruct> productCategoryCodeSelected = [];
 List<ProductCategoryObjectBoxStruct> productCategoryList = [];
 List<ProductBarcodeObjectBoxStruct> productListByCategory = [];
 List<ProductCategoryObjectBoxStruct> productCategoryChildList = [];
-List<PrinterModel> printerList = [];
 String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
 String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
 String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
@@ -158,15 +171,15 @@ String syncMemberTimeName = "lastSyncMember";
 String syncEmployeeTimeName = "lastSyncEmployee";
 String syncBankTimeName = "lastSyncBank";
 String syncTableTimeName = "lastSyncTable";
+String syncBuffetModeTimeName = "lastSyncBuffetMode";
 String syncTableZoneTimeName = "lastSyncTableZone";
+String syncKitchenTimeName = "lastSyncTableZone";
 String syncDeviceTimeName = "lastSyncDevice";
 bool isOnline = false;
 PaymentModel? paymentData;
 late Store objectBoxStore;
 String dateFormatSync = "yyyy-MM-ddTHH:mm:ss";
 PosVersionEnum posVersion = PosVersionEnum.vfpos;
-PrinterCashierTypeEnum printerCashierType = PrinterCashierTypeEnum.thermal;
-PrinterCashierConnectEnum printerCashierConnect = PrinterCashierConnectEnum.ip;
 bool customerDisplayDesktopMultiScreen = true;
 String targetDeviceIpAddress = "";
 int targetDeviceIpPort = 4040;
@@ -185,12 +198,17 @@ List<String> googleLanguageCode = [];
 List<PosSaleChannelModel> posSaleChannelList = [];
 List<StaffClientObjectBoxStruct> staffClientList = [];
 String connectGuid = "";
-List<BuffetModeObjectBoxStruct> buffetModeList = [];
+List<BuffetModeObjectBoxStruct> buffetModeLists = [];
 int buffetMaxMinute = 120;
+String printerConfigCashierCode = "printer_config_cashier";
+String printerConfigTicketCode = "printer_config_ticket";
+String shopId = "";
+bool checkOrderActive = false;
+int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
 
-enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
+enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterCashierConnectEnum { ip, bluetooth, usb, windows, sunmi1 }
+enum PrinterConnectEnum { ip, bluetooth, usb, windows, sunmi1 }
 
 enum PosVersionEnum { pos, restaurant, vfpos }
 
@@ -200,7 +218,14 @@ enum DisplayMachineEnum { customerDisplay, posTerminal }
 
 enum PosScreenModeEnum { posSale, posReturn }
 
-enum TableManagerEnum { openTable, closeTable, moveTable, mergeTable }
+enum TableManagerEnum {
+  openTable,
+  closeTable,
+  moveTable,
+  mergeTable,
+  informationTable,
+  splitTable
+}
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -227,6 +252,78 @@ enum DeviceModeEnum {
   linuxDesktop,
   androidPhone,
   androidTablet,
+}
+
+/*PrinterTypeEnum printerType(int printerType) {
+  switch (printerType) {
+    case 0:
+      return PrinterTypeEnum.thermal;
+    case 1:
+      return PrinterTypeEnum.dot;
+    case 2:
+      return PrinterTypeEnum.laser;
+    case 3:
+      return PrinterTypeEnum.inkjet;
+    default:
+      return PrinterTypeEnum.thermal;
+  }
+}
+
+PrinterConnectEnum printerConnectType(int printerConnectType) {
+  switch (printerConnectType) {
+    case 0:
+      return PrinterConnectEnum.ip;
+    case 1:
+      return PrinterConnectEnum.bluetooth;
+    case 2:
+      return PrinterConnectEnum.usb;
+    case 3:
+      return PrinterConnectEnum.windows;
+    case 4:
+      return PrinterConnectEnum.sunmi1;
+    default:
+      return PrinterConnectEnum.ip;
+  }
+}*/
+
+int findPosHoldProcessResultIndex(String code) {
+  for (var i = 0; i < posHoldProcessResult.length; i++) {
+    if (posHoldProcessResult[i].code == code) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+Future<void> loadPrinter() async {
+  // ลบทิ้ง เพื่อทดสอบ
+  // await appStorage.remove(global.printerCashierStrongCode);
+  // await appStorage.remove(global.printerTableTicketStrongCode);
+  printerLocalStrongData.clear();
+  List<String> printerCodes = [
+    printerConfigCashierCode,
+    printerConfigTicketCode
+  ];
+  List<String> printerNames = ["Cashier", "Ticket"];
+  // Kitchen
+  List<KitchenObjectBoxStruct> kitchenList = KitchenHelper().getAll();
+  for (var kitchen in kitchenList) {
+    printerCodes.add(kitchen.code);
+    printerNames
+        .add(getNameFromJsonLanguage(kitchen.names, userScreenLanguage));
+  }
+  for (var printerCode in printerCodes) {
+    try {
+      // ดึงข้อมูลจาก Local Storage
+      String printerJson = await appStorage.read(printerCode);
+      printerLocalStrongData
+          .add(PrinterLocalStrongDataModel.fromJson(jsonDecode(printerJson)));
+    } catch (e) {
+      printerLocalStrongData.add(PrinterLocalStrongDataModel(
+          code: printerCode,
+          name: printerNames[printerCodes.indexOf(printerCode)]));
+    }
+  }
 }
 
 int posScreenToInt() {
@@ -627,9 +724,10 @@ Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
     SyncDeviceModel info = SyncDeviceModel(
-        device: deviceId,
+        deviceId: deviceId,
+        deviceName: deviceName,
         ip: "",
-        holdNumberActive: 0,
+        holdCodeActive: "",
         docModeActive: 0,
         connected: true,
         isClient: false,
@@ -659,8 +757,9 @@ Future<void> sendProcessToCustomerDisplay() async {
       try {
         var jsonData = HttpPost(
             command: "process",
-            data:
-                jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+            data: jsonEncode(posHoldProcessResult[
+                    findPosHoldProcessResultIndex(posHoldActiveCode)]
+                .toJson()));
         dev.log("sendProcessToCustomerDisplay : $url");
         postToServer(
             ip: url,
@@ -675,8 +774,9 @@ Future<void> sendProcessToCustomerDisplay() async {
       displayMachine == DisplayMachineEnum.posTerminal &&
       isInternalCustomerDisplayConnected == true) {
     // Send to จอสอง
-    displayManager.transferDataToPresentation(
-        jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+    displayManager.transferDataToPresentation(jsonEncode(
+        posHoldProcessResult[findPosHoldProcessResultIndex(posHoldActiveCode)]
+            .toJson()));
   }
 }
 
@@ -688,7 +788,8 @@ Future<void> sendProcessToRemote() async {
         var jsonData = HttpPost(
             command: "process_result",
             data: jsonEncode(posHoldProcessResult[
-                    posRemoteDeviceList[index].holdNumberActive]
+                    global.findPosHoldProcessResultIndex(
+                        posRemoteDeviceList[index].holdCodeActive)]
                 .toJson()));
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
@@ -778,52 +879,8 @@ void posScreenListHeightSet(double value) {
   appStorage.write(posScreenListHeightName, value);
 }
 
-void loadConfig() {
-  printerLocalStrongData = PrinterLocalStrongDataModel();
-  try {
-    String loadPrinter = appStorage.read("xprinter");
-    printerLocalStrongData =
-        PrinterLocalStrongDataModel.fromJson(jsonDecode(loadPrinter));
-    {
-      // ประเภทเครื่องพิมพ์ Cashier
-      switch (printerLocalStrongData.printerCashierType) {
-        case 0:
-          printerCashierType = PrinterCashierTypeEnum.thermal;
-          break;
-        case 1:
-          printerCashierType = PrinterCashierTypeEnum.dot;
-          break;
-        case 2:
-          printerCashierType = PrinterCashierTypeEnum.laser;
-          break;
-        case 3:
-          printerCashierType = PrinterCashierTypeEnum.inkjet;
-          break;
-      }
-    }
-    {
-      // การเชื่อมต่อเครื่องพิมพ์ Cashier
-      switch (printerLocalStrongData.connectType) {
-        case 1:
-          printerCashierConnect = PrinterCashierConnectEnum.usb;
-          break;
-        case 2:
-          printerCashierConnect = PrinterCashierConnectEnum.ip;
-          break;
-        case 3:
-          printerCashierConnect = PrinterCashierConnectEnum.bluetooth;
-          break;
-        case 4:
-          printerCashierConnect = PrinterCashierConnectEnum.windows;
-          break;
-        case 100:
-          printerCashierConnect = PrinterCashierConnectEnum.sunmi1;
-          break;
-      }
-    }
-  } catch (e) {
-    dev.log(e.toString());
-  }
+Future<void> loadConfig() async {
+  await loadPrinter();
 }
 
 Future<void> registerRemoteToTerminal() async {
@@ -833,9 +890,10 @@ Future<void> registerRemoteToTerminal() async {
     var uri = Uri.parse(url);
     try {
       SyncDeviceModel sendData = SyncDeviceModel(
-          device: "XXX",
+          deviceId: "XXX",
+          deviceName: "XXX",
           ip: ipAddress,
-          holdNumberActive: posHoldActiveNumber,
+          holdCodeActive: posHoldActiveCode,
           docModeActive: 0,
           connected: true,
           isCashierTerminal: false,
@@ -865,8 +923,7 @@ Future<void> registerRemoteToTerminal() async {
 /// - สร้าง Process Result ตามจำนวน Hold บิล (global.generatePosHoldProcess)
 Future<void> startLoading() async {
   {
-    serviceLocator<Log>().debug("Start Loading... POS Screen ");
-    loadConfig();
+    await loadConfig();
     // Payment
     qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
@@ -957,7 +1014,6 @@ Future<void> startLoading() async {
   // await setupObjectBox();
 
   int xxx = ProductBarcodeHelper().count();
-  serviceLocator<Log>().debug("ProductBarcodeHelper().count() $xxx");
   //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
   //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
   {
@@ -995,7 +1051,7 @@ Future<void> startLoading() async {
 /// สร้าง Process Result ตามจำนวน Hold บิล
 void generatePosHoldProcess() {
   for (int loop = 0; loop < 50; loop++) {
-    posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
+    posHoldProcessResult.add(PosHoldProcessModel(code: loop.toString()));
   }
 }
 
@@ -1060,25 +1116,6 @@ Future<String> postToServerAndWait(
   return result;
 }
 
-String getImageForTest() {
-  List<String> images = [
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/cokecan_1024x1024@2x.png?v=1586878773',
-    '',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/c3ef1fb0352b565a9b710dc50b9790c8_1024x1024@2x.jpg?v=1588397618',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/green_cross_500ml_1024x1024@2x.jpg?v=1590209308',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1MGpbJWKQ_Mha_cHowinO9xm7gNpK6Jnk_1024x1024@2x.jpg?v=1586007533',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/40456_1024x1024@2x.jpg?v=1587914211',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/15464fbbc5eb8baa71425d9c2ed97ea7_1024x1024@2x.jpg?v=1588397501',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/251_FIT_N__RIGHT_FOUR_SEASONS_330ML_1024x1024@2x.jpg?v=1586836584',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/nestle_ice_cream_oreo_cone_1_1024x1024@2x.jpg?v=1587117184',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1ts9iXyMxStMrVq_md9dNcYw3PtHxwqtq_1024x1024@2x.png?v=1585991136',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/faa22afb6b279e9a57ac6756d7100c5a_medium_96b3c449-e5c9-4b18-909f-16089453972a_360x.png?v=1587173843',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/VITAMILKCHOCOSHAKE300ML-500x500_1024x1024@2x.jpg?v=1586880107',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/unnamed_1024x1024@2x.jpg?v=1587129692'
-  ];
-  return images[Random().nextInt(images.length)];
-}
-
 Future<String> getIpAddress() async {
   // Get a list of the network interfaces available on the device
   List<NetworkInterface> interfaces = await NetworkInterface.list();
@@ -1097,16 +1134,17 @@ Future<String> getIpAddress() async {
   return "";
 }
 
-Future scanServerByName(String name) async {
+Future scanServerById(String name) async {
   List<SyncDeviceModel> ipList = [];
   String ipAddress = await getIpAddress();
   String subNet = ipAddress.substring(0, ipAddress.lastIndexOf("."));
   for (int i = 1; i < 255; i++) {
     String ip = "$subNet.$i";
     ipList.add(SyncDeviceModel(
-        device: "",
+        deviceId: "",
+        deviceName: "",
         ip: ip,
-        holdNumberActive: 0,
+        holdCodeActive: "",
         docModeActive: 0,
         connected: false,
         isClient: false,
@@ -1134,7 +1172,7 @@ Future scanServerByName(String name) async {
                       .debug("Connected to ${ipList[index].ip}");
                   SyncDeviceModel server =
                       SyncDeviceModel.fromJson(jsonDecode(result.body));
-                  if (server.device == name && server.isCashierTerminal) {
+                  if (server.deviceId == name && server.isCashierTerminal) {
                     ipList[index].connected = true;
                     loopScan = false;
                     targetDeviceIpAddress = ipList[index].ip;
@@ -1182,34 +1220,33 @@ String syncFindLastUpdate(
 }
 
 void testPrinterConnect() async {
-  if (printerList.isNotEmpty) {
-    for (var printer in printerList) {
+  if (printerLocalStrongData.isNotEmpty) {
+    for (var printer in printerLocalStrongData) {
       try {
         final Socket socket = await Socket.connect(
-            printer.printer_ip_address, printer.printer_port,
-            timeout: const Duration(seconds: 5));
-        printer.is_ready = true;
+            printer.ipAddress, printer.ipPort,
+            timeout: const Duration(seconds: 10));
+        printer.isReady = true;
         socket.destroy();
       } catch (e) {
-        serviceLocator<Log>().error(e.toString());
-        printer.is_ready = false;
+        printer.isReady = false;
         errorMessage.add(
-            "${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
+            "${language("printer")} : ${printer.name}/${printer.ipAddress}:${printer.ipPort} ${language("not_ready")} $e");
       }
     }
   }
 }
 
-int printerWidthByCharacter() {
-  if (global.printerLocalStrongData.paperSize == 1) {
+int printerWidthByCharacter(int printerIndex) {
+  if (global.printerLocalStrongData[printerIndex].paperSize == 1) {
     return 32;
   } else {
     return 48;
   }
 }
 
-double printerWidthByPixel() {
-  if (global.printerLocalStrongData.paperSize == 1) {
+double printerWidthByPixel(int printerIndex) {
+  if (global.printerLocalStrongData[printerIndex].paperSize == 1) {
     return 384;
   } else {
     return 576;
@@ -1233,10 +1270,213 @@ void languageSelect(String languageCode) {
 }
 
 int findBuffetModeIndex(String code) {
-  for (var item in buffetModeList) {
+  for (var item in buffetModeLists) {
     if (item.code == code) {
-      return buffetModeList.indexOf(item);
+      return buffetModeLists.indexOf(item);
     }
   }
   return -1;
+}
+
+Future<void> saveOrderToHoldBill(List<OrderTempObjectBoxStruct> orders) async {
+  if (orders.isNotEmpty) {
+    for (var order in orders) {
+      String newOrderId = "T-" + order.orderId;
+      ProductBarcodeObjectBoxStruct? productSelect =
+          await ProductBarcodeHelper().selectByBarcodeFirst(order.barcode);
+      if (productSelect != null) {
+        double price = global.getProductPrice(productSelect.prices, 1);
+        PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
+            log_date_time: DateTime.now(),
+            doc_mode: global.posScreenToInt(),
+            hold_code: newOrderId,
+            command_code: 1,
+            barcode: order.barcode,
+            name: productSelect.names,
+            unit_code: productSelect.unit_code,
+            unit_name: productSelect.unit_names,
+            qty: order.qty,
+            price: price);
+        String insertGuid = data.guid_auto_fixed;
+        await PosLogHelper().insert(data);
+        // เพิ่มส่วนขยาย (option)
+        if (order.optionSelected.isNotEmpty) {
+          List<OrderProductOptionModel> options =
+              jsonDecode(order.optionSelected)
+                  .map<OrderProductOptionModel>(
+                      (e) => OrderProductOptionModel.fromJson(e))
+                  .toList();
+          for (var option in options) {
+            for (var choice in option.choices) {
+              if (choice.selected) {
+                List<PosLogObjectBoxStruct> posLogSelect =
+                    await PosLogHelper().selectByGuidFixed(insertGuid);
+                if (posLogSelect.isNotEmpty) {
+                  await PosLogHelper().insert(PosLogObjectBoxStruct(
+                      guid_code_ref: "",
+                      doc_mode: global.posScreenToInt(),
+                      guid_ref: insertGuid,
+                      log_date_time: DateTime.now(),
+                      hold_code: newOrderId,
+                      command_code: 101,
+                      extra_code: "",
+                      code: choice.guid,
+                      price: choice.priceValue,
+                      name: jsonEncode(choice.names),
+                      qty_fixed: choice.qty,
+                      qty: choice.qty,
+                      selected: true));
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+Future<void> checkOrderOnline() async {
+  checkOrderActive = true;
+  {
+    List<OrderTempDataModel> orderTemp = [];
+    List<OrderTempDataModel> orderSave = [];
+    try {
+      // ดึง Order ลูกค้าสั่งเอง
+      String selectQuery =
+          "select orderid,barcode,sum(qty) as qty,optionselected,remark from ordertemp where shopid='${global.shopId}' and isclose=1 group by orderid,barcode,optionselected,remark order by barcode";
+      var value = await clickHouseSelect(selectQuery);
+      ResponseDataModel responseData = ResponseDataModel.fromJson(value);
+      // Print
+      String orderId = "";
+      bool updateOrder = false;
+      for (var order in responseData.data) {
+        orderId = order["orderid"];
+        OrderTempDataModel orderData = OrderTempDataModel(
+          orderGuid: Uuid().v4(),
+          barcode: order["barcode"],
+          qty: double.tryParse(order["qty"].toString()) ?? 0,
+          optionSelected: order["optionselected"],
+          remark: order["remark"],
+        );
+        orderTemp.add(orderData);
+        orderSave.add(orderData);
+        if (orderToKitchenPrintMode == 0) {
+          // พิมพ์แยกใบ
+          await sendToKitchen(orderId: orderId, orderList: orderTemp);
+          updateOrder = true;
+          orderTemp.clear();
+        }
+      }
+      if (orderTemp.isNotEmpty) {
+        await sendToKitchen(orderId: orderId, orderList: orderTemp);
+        updateOrder = true;
+      }
+      if (updateOrder) {
+        // update สถานะ ว่า ส่งไปที่ครัวแล้ว
+        String updateQuery =
+            "alter table ordertemp update isclose=2 where shopid='${global.shopId}' and orderid='$orderId'";
+        await clickHouseExecute(updateQuery);
+      }
+    } catch (e) {
+      serviceLocator<Log>().error(e.toString());
+    }
+    //saveOrderToHoldBill(orderSave);
+  }
+  {
+    // Order Staff สั่ง
+    List<OrderTempObjectBoxStruct> orderSave = [];
+    List<OrderTempDataModel> orderTemp = [];
+    List<String> orderIdList = [];
+    try {
+      // เรียกรายการที่ยังไม่ส่ง Order ไปที่ครัว ทุกโต๊ะ
+      final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
+      final getData =
+          box.query(OrderTempObjectBoxStruct_.isClose.equals(1)).build().find();
+      for (var data in getData) {
+        if (!orderIdList.contains(data.orderId)) {
+          orderIdList.add(data.orderId);
+        }
+      }
+
+      for (var orderId in orderIdList) {
+        // เลือกรายการ Order ทีละโต๊ะ
+        final getData = box
+            .query(OrderTempObjectBoxStruct_.orderId
+                .equals(orderId)
+                .and(OrderTempObjectBoxStruct_.isClose.equals(1)))
+            .build()
+            .find();
+        for (var data in getData) {
+          print("Order ID " + orderId);
+          orderTemp.add(OrderTempDataModel(
+            orderGuid: data.orderGuid,
+            barcode: data.barcode,
+            qty: data.qty,
+            optionSelected: data.optionSelected,
+            remark: data.remark,
+          ));
+          orderSave.add(data);
+        }
+        if (orderToKitchenPrintMode == 0) {
+          // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
+          await sendToKitchen(orderId: orderId, orderList: orderTemp);
+          orderTemp.clear();
+        }
+        if (orderTemp.isNotEmpty) {
+          // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
+          await sendToKitchen(orderId: orderId, orderList: orderTemp);
+        }
+        // ปรับปรุงสถานะ ว่าส่ง order แล้ว
+        var orderTempUpdate = box
+            .query(OrderTempObjectBoxStruct_.orderId.equals(orderId))
+            .build()
+            .find();
+        for (var data in orderTempUpdate) {
+          // ปรับปรุง ว่าส่ง order แล้ว
+          data.isClose = 2;
+        }
+        box.putMany(orderTempUpdate, mode: PutMode.update);
+      }
+    } catch (e) {
+      serviceLocator<Log>().error(e.toString());
+    }
+    saveOrderToHoldBill(orderSave);
+  }
+  checkOrderActive = false;
+}
+
+String getNameFromJsonLanguage(String jsonNames, String languageCode) {
+  List<LanguageDataModel> names =
+      jsonDecode(jsonNames).map<LanguageDataModel>((item) {
+    return LanguageDataModel.fromJson(item);
+  }).toList();
+  for (var item in names) {
+    if (item.code == languageCode) {
+      return item.name;
+    }
+  }
+  return "*";
+}
+
+String getNameFromLanguage(List<LanguageDataModel> names, String languageCode) {
+  for (var item in names) {
+    if (item.code == languageCode) {
+      return item.name;
+    }
+  }
+  return "*";
+}
+
+double getProductPrice(String prices, int keyNumber) {
+  List<PriceDataModel> priceList =
+      jsonDecode(prices).map<PriceDataModel>((item) {
+    return PriceDataModel.fromJson(item);
+  }).toList();
+  for (var item in priceList) {
+    if (item.keynumber == keyNumber) {
+      return item.price;
+    }
+  }
+  return 0;
 }

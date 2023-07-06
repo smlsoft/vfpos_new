@@ -53,7 +53,7 @@ class _PosClientState extends State<PosClient> {
                   onPressed: () {
                     List<String> split =
                         posTerminalCodeController.text.split(',');
-                    global.scanServerByName(split[0]);
+                    global.scanServerById(split[0]);
                     setState(() {
                       scanStart = true;
                     });

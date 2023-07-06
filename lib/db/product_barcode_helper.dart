@@ -25,6 +25,10 @@ class ProductBarcodeHelper {
     }
   }
 
+  List<ProductBarcodeObjectBoxStruct> getAll() {
+    return box.query().build().find();
+  }
+
   int count() {
     return box.count();
   }
@@ -59,6 +63,8 @@ class ProductBarcodeHelper {
           item_unit_code: data.item_unit_code,
           options_json: "",
           images_url: data.images_url,
+          isalacarte: data.isalacarte,
+          ordertypes: data.ordertypes,
           product_count: 0);
       /*List<ProductOptionStruct> _jsonOption =  ProductOptionStruct.fromJson(jsonDecode(  _data.options));
       _data.options.forEach((_optionStr) {

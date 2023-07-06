@@ -1,10 +1,14 @@
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/shift_helper.dart';
+import 'package:dedepos/model/objectbox/shift_struct.dart';
+import 'package:dedepos/util/printer.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:uuid/uuid.dart';
 
-/// Mode (0=เปิดกะ+เงินทอน, 1=ปิดกะ+ส่งเงิน, 2=เติมเงินทอน, 3=นำเงินออก)
+/// Mode (1=เปิดกะ+เงินทอน, 2=ปิดกะ+ส่งเงิน, 3=เติมเงินทอน, 4=นำเงินออก)
 Widget shiftAndMoneyScreen({required int mode}) {
   TextEditingController remarkTextEditingController = TextEditingController();
   TextStyle textStyle = const TextStyle(
@@ -18,7 +22,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
       break;
     case 1:
       header = global
-          .language("close_the_shift_and_submit_the_money"); // "ปิดกะ+ส่งเงิน";
+          .language("close_the_shift"); // "ปิดกะ+ส่งเงิน";
       break;
     case 2:
       header = global.language("replenish_change"); // "เติมเงินทอน";
@@ -121,8 +125,28 @@ Widget shiftAndMoneyScreen({required int mode}) {
                         child: NumberPad(
                             header: global.language("amount_of_money"),
                             onChange: (value) {
+                              double amount = double.tryParse(value) ?? 0;
                               // กด ตกลง
-                              serviceLocator<Log>().debug(value);
+                              if (amount != 0) {
+                                String guid = Uuid().v4();
+                                ShiftObjectBoxStruct data =
+                                    ShiftObjectBoxStruct(
+                                  guidfixed: guid,
+                                  doctype: mode,
+                                  docdate: DateTime.now(),
+                                  remark: remarkTextEditingController.text,
+                                  usercode: global.userLoginCode,
+                                  username: global.userLoginName,
+                                  amount: amount,
+                                  creditcard: 1,
+                                  promptpay: 2,
+                                  transfer: 3,
+                                  cheque: 4,
+                                  coupon: 5,
+                                );
+                                ShiftHelper().insert(data);
+                                shiftAndMoneyPrint(guid);
+                              }
                             })),
                   ],
                 )))

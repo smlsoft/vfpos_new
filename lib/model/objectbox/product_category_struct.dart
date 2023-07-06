@@ -17,8 +17,8 @@ class ProductCategoryObjectBoxStruct {
 
   String parent_guid_fixed;
 
-  /// ชื่อกลุ่มสินค้า (ภาษา 1)
-  List<String> names;
+  /// ชื่อกลุ่มสินค้า
+  String names;
 
   /// url รูปภาพกลุ่มสินค้า
   String image_url;

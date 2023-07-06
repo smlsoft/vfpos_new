@@ -17,11 +17,14 @@ import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'package:image/image.dart' as im;
 import 'dart:ui' as ui;
 
-Future<void> printBill(DateTime docDate, String docNo) async {
+Future<void> printBill(
+    {required DateTime docDate,
+    required String docNo,
+    required String languageCode}) async {
   if (global.posTicket.print_mode == 0) {
-    PosPrintBillClass posPrintBill =
-        PosPrintBillClass(docDate: docDate, docNo: docNo);
-    posPrintBill.printBill();
+    PosPrintBillClass posPrintBill = PosPrintBillClass(
+        docDate: docDate, docNo: docNo, languageCode: languageCode);
+    //posPrintBill.printBill();
   } else {
     //printBillImage(docNo);
   }
@@ -62,10 +65,12 @@ class PosPrintBillCommandModel {
 class PosPrintBillClass {
   DateTime docDate;
   String docNo;
+  String languageCode;
   double billWidth =
-      (global.printerLocalStrongData.paperSize == 1) ? 378.0 : 575.0;
+      (global.printerLocalStrongData[0].paperSize == 1) ? 378.0 : 575.0;
 
-  PosPrintBillClass({required this.docDate, required this.docNo});
+  PosPrintBillClass(
+      {required this.docDate, required this.docNo, required this.languageCode});
 
   Future<List<PosPrintBillCommandModel>> buildCommand() async {
     List<PosPrintBillCommandModel> commandList = [];
@@ -81,56 +86,69 @@ class PosPrintBillClass {
       Uint8List bytes = data.buffer.asUint8List();
       commandList.add(PosPrintBillCommandModel(mode: 1, image: bytes));
     }
-    if (global.posTicket.shop_name) {
+    /*if (global.posTicket.shop_name) {
       // พิมพ์ชื่อร้าน
       commandList.add(PosPrintBillCommandModel(
           mode: 2,
           columns: [
             PosPrintBillCommandColumnModel(
-                width: 1, text: "ร้านโซลาว", align: PrintColumnAlign.center)
+                width: 1,
+                text: global.profileSetting.company.names[0].name,
+                align: PrintColumnAlign.center)
           ],
           posTextSize: PosTextSize.size2));
     }
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
-          width: 1, text: "(สำนักงานใหญ่)", align: PrintColumnAlign.center)
+          width: 1,
+          text: global.profileSetting.branch[0].names[0].name,
+          align: PrintColumnAlign.center)
     ]));
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
           width: 1, text: "(Vat Included)", align: PrintColumnAlign.center)
-    ]));
+    ]));*/
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
-          width: 1,
-          text: "ใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ",
-          align: PrintColumnAlign.center)
+          width: 1, text: "ใบสรุปรายการ", align: PrintColumnAlign.center)
     ]));
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+    /*commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
           width: 1,
-          text:
-              "141/469 หมู่ที่ 2 ต.ต้นเปา อ.สันกำแพง จ.เชียงใหม่ 50130, อาคารซอฟท์แวร์พาร์ค ชั้น 7 ถ.แจ้งวัฒนะ ต.คลองเกลือ อ.ปากเกร็ด จ.นนทบุรี 11120",
+          text: "",
           align: PrintColumnAlign.center)
-    ]));
+    ]));*/
     //
     if (global.posTicket.shop_tax_id) {
       // พิมพ์ เลขที่ผู้เสียภาษี
-      commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-        PosPrintBillCommandColumnModel(
-            width: 1,
-            text: "เลขประจำตัวผู้เสียภาษี : 0135549000236",
-            align: PrintColumnAlign.center)
-      ]));
+      if (global.profileSetting.company.taxID.trim().isNotEmpty) {
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+          PosPrintBillCommandColumnModel(
+              width: 1,
+              text:
+                  "เลขประจำตัวผู้เสียภาษี : ${global.profileSetting.company.taxID}",
+              align: PrintColumnAlign.center)
+        ]));
+      }
     }
     //
     if (global.posTicket.shop_tel) {
-      // พิมพ์ เลขที่ผู้เสียภาษี
-      commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-        PosPrintBillCommandColumnModel(
-            width: 1,
-            text: "โทรศัพท์ : 0899223131",
-            align: PrintColumnAlign.center)
-      ]));
+      // พิมพ์ เบอร์โทรศัพท์
+      String phone = "";
+      for (var item in global.profileSetting.company.phones) {
+        if (phone.isNotEmpty) {
+          phone += ",";
+        }
+        phone += item;
+      }
+      if (phone.isNotEmpty) {
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+          PosPrintBillCommandColumnModel(
+              width: 1,
+              text: "โทรศัพท์ : " + phone,
+              align: PrintColumnAlign.center)
+        ]));
+      }
     }
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
@@ -149,7 +167,7 @@ class PosPrintBillClass {
       //
       double sumWidth =
           global.posTicket.description_width + global.posTicket.amount_width;
-      double calcWidth = global.printerWidthByCharacter() / sumWidth;
+      double calcWidth = global.printerWidthByCharacter(0) / sumWidth;
       int widthCharDescription =
           (global.posTicket.description_width * calcWidth).toInt();
       int widthCharAmount = (global.posTicket.amount_width * calcWidth).toInt();
@@ -161,7 +179,7 @@ class PosPrintBillClass {
       for (var detail in billDetails) {
         /// สินค้าทั่วไป
         String desc =
-            "${global.moneyFormat.format(detail.qty)} ${detail.item_name}/${detail.unit_name}";
+            "${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.item_name, languageCode)}/${global.getNameFromJsonLanguage(detail.unit_name, languageCode)}";
         if (detail.discount_text.isNotEmpty) {
           desc = "$desc ${global.language("discount")}";
           if (detail.discount_text.contains("%") ||
@@ -192,9 +210,11 @@ class PosPrintBillClass {
             global.billDetailExtraHelper.selectByDocNumberAndLineNumber(
                 docNumber: detail.doc_number, lineNumber: detail.line_number);
         for (var extra in extras) {
+          String extraDesc =
+              " + ${global.getNameFromJsonLanguage(extra.item_name, languageCode)}";
           commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
             PosPrintBillCommandColumnModel(
-                width: widthCharDescription.toDouble(), text: desc),
+                width: widthCharDescription.toDouble(), text: extraDesc),
             PosPrintBillCommandColumnModel(
                 width: widthCharAmount.toDouble(),
                 text: (extra.total_amount == 0)
@@ -290,19 +310,19 @@ class PosPrintBillClass {
       }
     } else {
       serviceLocator<Log>().error(
-          "Printer Connect fail.${global.printerLocalStrongData.ipAddress}:${global.printerLocalStrongData.ipPort}");
+          "Printer Connect fail.${global.printerLocalStrongData[0].ipAddress}:${global.printerLocalStrongData[0].ipPort}");
     }
     return commandList;
   }
 
   void printBillByBluetoothImageMode() async {
     await PrintBluetoothThermal.connect(
-        macPrinterAddress: global.printerLocalStrongData.deviceName);
+        macPrinterAddress: global.printerLocalStrongData[0].deviceName);
     bool connectStatus = await PrintBluetoothThermal.connectionStatus;
     if (connectStatus) {
       final profile = await CapabilityProfile.load();
       final generator = Generator(
-          (global.printerLocalStrongData.paperSize == 1)
+          (global.printerLocalStrongData[0].paperSize == 1)
               ? PaperSize.mm58
               : PaperSize.mm80,
           profile);
@@ -316,11 +336,11 @@ class PosPrintBillClass {
         ..style = ui.PaintingStyle.fill;
 
       canvas.drawRect(
-          Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 20000.0),
+          Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(0), 20000.0),
           backgroundPaint);
 
       await buildCommand().then((value) async {
-        PrintProcess printProcess = PrintProcess();
+        PrintProcess printProcess = PrintProcess(printerIndex: 0);
         for (var command in value) {
           // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
           switch (command.mode) {
@@ -350,7 +370,7 @@ class PosPrintBillClass {
         }
         final picture = recorder.endRecording();
         final imageBuffer = picture.toImage(
-            global.printerWidthByPixel().toInt(), maxHeight.toInt());
+            global.printerWidthByPixel(0).toInt(), maxHeight.toInt());
         final pngBytes = await imageBuffer
             .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
         im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
@@ -377,14 +397,14 @@ class PosPrintBillClass {
   }
 
   void printBillByIpImageMode() async {
-    PaperSize paper = (global.printerLocalStrongData.paperSize == 1)
+    PaperSize paper = (global.printerLocalStrongData[0].paperSize == 1)
         ? PaperSize.mm58
         : PaperSize.mm80;
     CapabilityProfile profile = await CapabilityProfile.load();
     NetworkPrinter printer = NetworkPrinter(paper, profile);
     PosPrintResult res = await printer.connect(
-        global.printerLocalStrongData.ipAddress,
-        port: global.printerLocalStrongData.ipPort);
+        global.printerLocalStrongData[0].ipAddress,
+        port: global.printerLocalStrongData[0].ipPort);
 
     if (res == PosPrintResult.success) {
       double maxHeight = 0;
@@ -395,11 +415,11 @@ class PosPrintBillClass {
         ..style = ui.PaintingStyle.fill;
 
       canvas.drawRect(
-          Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 20000.0),
+          Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(0), 20000.0),
           backgroundPaint);
 
       await buildCommand().then((value) async {
-        PrintProcess printProcess = PrintProcess();
+        PrintProcess printProcess = PrintProcess(printerIndex: 0);
         for (var command in value) {
           // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
           switch (command.mode) {
@@ -425,7 +445,7 @@ class PosPrintBillClass {
             case 3: // Line
               canvas.drawLine(
                   Offset(0, maxHeight),
-                  Offset(0 + global.printerWidthByPixel(), maxHeight),
+                  Offset(0 + global.printerWidthByPixel(0), maxHeight),
                   ui.Paint());
               maxHeight += 1;
 
@@ -434,7 +454,7 @@ class PosPrintBillClass {
         }
         final picture = recorder.endRecording();
         final imageBuffer = picture.toImage(
-            global.printerWidthByPixel().toInt(), maxHeight.toInt());
+            global.printerWidthByPixel(0).toInt(), maxHeight.toInt());
         final pngBytes = await imageBuffer
             .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
         im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
@@ -462,8 +482,8 @@ class PosPrintBillClass {
     try {
       await PrinterManager.instance.connect(
           type: PrinterType.usb,
-          model:
-              UsbPrinterInput(name: global.printerLocalStrongData.deviceName));
+          model: UsbPrinterInput(
+              name: global.printerLocalStrongData[0].deviceName));
       double maxHeight = 0;
       final recorder = ui.PictureRecorder();
       final canvas = ui.Canvas(recorder);
@@ -477,11 +497,11 @@ class PosPrintBillClass {
       await buildCommand().then((value) async {
         final profile = await CapabilityProfile.load();
         final generator = Generator(
-            (global.printerLocalStrongData.paperSize == 1)
+            (global.printerLocalStrongData[0].paperSize == 1)
                 ? PaperSize.mm58
                 : PaperSize.mm80,
             profile);
-        PrintProcess printProcess = PrintProcess();
+        PrintProcess printProcess = PrintProcess(printerIndex: 0);
         for (var command in value) {
           // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
           switch (command.mode) {
@@ -512,7 +532,7 @@ class PosPrintBillClass {
             case 3: // Line
               canvas.drawLine(
                   Offset(0, maxHeight),
-                  Offset(0 + global.printerWidthByPixel(), maxHeight),
+                  Offset(0 + global.printerWidthByPixel(0), maxHeight),
                   ui.Paint());
               maxHeight += 1;
               break;
@@ -653,11 +673,11 @@ class PosPrintBillClass {
       ..style = ui.PaintingStyle.fill;
 
     canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 20000.0),
+        Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(0), 20000.0),
         backgroundPaint);
 
     await buildCommand().then((value) async {
-      PrintProcess printProcess = PrintProcess();
+      PrintProcess printProcess = PrintProcess(printerIndex: 0);
       for (var command in value) {
         // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
         switch (command.mode) {
@@ -687,7 +707,7 @@ class PosPrintBillClass {
       }
       final picture = recorder.endRecording();
       final imageBuffer = picture.toImage(
-          global.printerWidthByPixel().toInt(), maxHeight.toInt());
+          global.printerWidthByPixel(0).toInt(), maxHeight.toInt());
       final pngBytes = await imageBuffer
           .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
       im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
@@ -718,20 +738,20 @@ class PosPrintBillClass {
   }
 
   Future<void> printBill() async {
-    switch (global.printerCashierConnect) {
-      case global.PrinterCashierConnectEnum.ip:
+    switch (global.printerLocalStrongData[0].printerConnectType) {
+      case global.PrinterConnectEnum.ip:
         printBillByIpImageMode();
         break;
-      case global.PrinterCashierConnectEnum.bluetooth:
+      case global.PrinterConnectEnum.bluetooth:
         printBillByBluetoothImageMode();
         break;
-      case global.PrinterCashierConnectEnum.usb:
+      case global.PrinterConnectEnum.usb:
         // TODO: Handle this case.
         break;
-      case global.PrinterCashierConnectEnum.windows:
+      case global.PrinterConnectEnum.windows:
         printBillByWindowsImageMode();
         break;
-      case global.PrinterCashierConnectEnum.sunmi1:
+      case global.PrinterConnectEnum.sunmi1:
         await printBillBySunmi();
         break;
     }

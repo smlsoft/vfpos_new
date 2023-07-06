@@ -19,11 +19,15 @@ import 'model/objectbox/bill_struct.dart';
 import 'model/objectbox/buffet_mode_struct.dart';
 import 'model/objectbox/config_struct.dart';
 import 'model/objectbox/employees_struct.dart';
+import 'model/objectbox/kitchen_struct.dart';
+import 'model/objectbox/order_temp_struct.dart';
 import 'model/objectbox/pos_log_struct.dart';
 import 'model/objectbox/pos_ticket_struct.dart';
 import 'model/objectbox/printer_struct.dart';
+import 'model/objectbox/product_barcode_status_struct.dart';
 import 'model/objectbox/product_barcode_struct.dart';
 import 'model/objectbox/product_category_struct.dart';
+import 'model/objectbox/shift_struct.dart';
 import 'model/objectbox/staff_client_struct.dart';
 import 'model/objectbox/table_struct.dart';
 
@@ -191,7 +195,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(40, 3981669769998466808),
+      lastPropertyId: const IdUid(48, 1177222554456037894),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -384,6 +388,46 @@ final _entities = <ModelEntity>[
             id: const IdUid(40, 3981669769998466808),
             name: 'doc_mode',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(41, 6101214349185002484),
+            name: 'table_number',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(42, 3379596103423412040),
+            name: 'man_count',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(43, 265077901294483324),
+            name: 'woman_count',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(44, 2740080074449528369),
+            name: 'child_count',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(45, 1569557248973868641),
+            name: 'table_al_la_crate_mode',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(46, 7583169247102178512),
+            name: 'buffet_code',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(47, 220678948749693814),
+            name: 'table_open_date_time',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(48, 1177222554456037894),
+            name: 'table_close_date_time',
+            type: 10,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -579,7 +623,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(29, 2896230014411146678),
+      lastPropertyId: const IdUid(30, 8558907513583874744),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -689,16 +733,16 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(28, 6877901496144380651),
-            name: 'hold_number',
-            type: 6,
-            flags: 8,
-            indexId: const IdUid(15, 8091174755438905349)),
-        ModelProperty(
             id: const IdUid(29, 2896230014411146678),
             name: 'doc_mode',
             type: 6,
-            flags: 0)
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(30, 8558907513583874744),
+            name: 'hold_code',
+            type: 9,
+            flags: 2048,
+            indexId: const IdUid(29, 7684323603419779677))
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -750,7 +794,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(11, 2320464900211169166),
       name: 'ProductBarcodeObjectBoxStruct',
-      lastPropertyId: const IdUid(27, 2602671413310264723),
+      lastPropertyId: const IdUid(29, 4005330741966595239),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -767,7 +811,7 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(3, 128268912818831567),
             name: 'names',
-            type: 30,
+            type: 9,
             flags: 0),
         ModelProperty(
             id: const IdUid(4, 1898030965134642083),
@@ -787,7 +831,7 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(9, 3948816048500249260),
             name: 'descriptions',
-            type: 30,
+            type: 9,
             flags: 0),
         ModelProperty(
             id: const IdUid(10, 4431391709402412395),
@@ -807,7 +851,7 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(13, 308762073223941852),
             name: 'unit_names',
-            type: 30,
+            type: 9,
             flags: 0),
         ModelProperty(
             id: const IdUid(15, 2166942377076170762),
@@ -847,7 +891,17 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(27, 2602671413310264723),
             name: 'prices',
-            type: 30,
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 5322643886496037132),
+            name: 'isalacarte',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(29, 4005330741966595239),
+            name: 'ordertypes',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -855,7 +909,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(12, 3870970304180097832),
       name: 'ProductCategoryObjectBoxStruct',
-      lastPropertyId: const IdUid(19, 314613545527023253),
+      lastPropertyId: const IdUid(20, 8381865015687853360),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -869,11 +923,6 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 2080,
             indexId: const IdUid(12, 3301175078738520112)),
-        ModelProperty(
-            id: const IdUid(4, 730340412401747952),
-            name: 'names',
-            type: 30,
-            flags: 0),
         ModelProperty(
             id: const IdUid(5, 3611893689138283912),
             name: 'image_url',
@@ -913,6 +962,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(19, 314613545527023253),
             name: 'category_count',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 8381865015687853360),
+            name: 'names',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1090,7 +1144,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(17, 3443028984694321207),
       name: 'TableObjectBoxStruct',
-      lastPropertyId: const IdUid(5, 4935629986497191588),
+      lastPropertyId: const IdUid(6, 1410098016834617091),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1110,13 +1164,13 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(4, 6573507408230314771),
-            name: 'name1',
+            id: const IdUid(5, 4935629986497191588),
+            name: 'zone',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(5, 4935629986497191588),
-            name: 'zone',
+            id: const IdUid(6, 1410098016834617091),
+            name: 'names',
             type: 9,
             flags: 0)
       ],
@@ -1125,7 +1179,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(18, 2798929453371134862),
       name: 'TableProcessObjectBoxStruct',
-      lastPropertyId: const IdUid(18, 8270476554283322189),
+      lastPropertyId: const IdUid(20, 176469185807426556),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1142,11 +1196,6 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(3, 5085556313288651871),
             name: 'number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 3115463190620379409),
-            name: 'name1',
             type: 9,
             flags: 0),
         ModelProperty(
@@ -1203,6 +1252,16 @@ final _entities = <ModelEntity>[
             id: const IdUid(17, 6296198992495397770),
             name: 'buffet_code',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 5678449237115277704),
+            name: 'names',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 176469185807426556),
+            name: 'order_count',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1210,7 +1269,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(19, 902662215410189876),
       name: 'BuffetModeObjectBoxStruct',
-      lastPropertyId: const IdUid(7, 712436512051069427),
+      lastPropertyId: const IdUid(8, 8295315638924899374),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1243,6 +1302,286 @@ final _entities = <ModelEntity>[
             id: const IdUid(7, 712436512051069427),
             name: 'names',
             type: 30,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 8295315638924899374),
+            name: 'guid_fixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(27, 6987394566233339533))
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(22, 1593243704545833045),
+      name: 'OrderTempObjectBoxStruct',
+      lastPropertyId: const IdUid(24, 2433925935161313700),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 5059928700460385158),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 1412479261625534870),
+            name: 'orderId',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 1133708056477090269),
+            name: 'orderGuid',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 8465096875511025398),
+            name: 'machineId',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 2915609588240768519),
+            name: 'orderDateTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 568981117016072060),
+            name: 'barcode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 7457173803621793772),
+            name: 'qty',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 2463950839755499374),
+            name: 'price',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 7942892707819365606),
+            name: 'amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 6114347103883389384),
+            name: 'optionSelected',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 6956921827867671668),
+            name: 'remark',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 2298051416268360625),
+            name: 'unitCode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 6918711280476277450),
+            name: 'imageUri',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 5470355289543115455),
+            name: 'names',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 6099700126355519141),
+            name: 'unitName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(20, 4588881187511296155),
+            name: 'isClose',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(21, 8757486528172593206),
+            name: 'kdsSuccessTime',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 4102796609573021855),
+            name: 'kdsSuccess',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(23, 2608694628300361350),
+            name: 'kdsCancel',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(24, 2433925935161313700),
+            name: 'kdsId',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(23, 132682824475798031),
+      name: 'ShiftObjectBoxStruct',
+      lastPropertyId: const IdUid(14, 8105615966884369140),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 4552258922640294638),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 736305232454012800),
+            name: 'guidfixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(28, 5843812346112327570)),
+        ModelProperty(
+            id: const IdUid(4, 3934974826038705207),
+            name: 'usercode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 4197405941915220955),
+            name: 'username',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 502208546667992143),
+            name: 'amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 1032876544607312751),
+            name: 'docdate',
+            type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 1809191007000798763),
+            name: 'doctype',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 1379428883542424279),
+            name: 'remark',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 279110058598876108),
+            name: 'creditcard',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 1411295496765316665),
+            name: 'promptpay',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 2603294536916758312),
+            name: 'transfer',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 6433641551535201153),
+            name: 'cheque',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 8105615966884369140),
+            name: 'coupon',
+            type: 8,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(24, 3648190862108900128),
+      name: 'KitchenObjectBoxStruct',
+      lastPropertyId: const IdUid(8, 4863464276817891847),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 2453477182230979731),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 2619749431021816641),
+            name: 'guidfixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(30, 1946305390779056827)),
+        ModelProperty(
+            id: const IdUid(4, 6951968986314018621),
+            name: 'names',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 23804301142244487),
+            name: 'code',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 7819334867336409319),
+            name: 'products',
+            type: 30,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 4863464276817891847),
+            name: 'zones',
+            type: 30,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(26, 5815277660752569177),
+      name: 'ProductBarcodeStatusObjectBoxStruct',
+      lastPropertyId: const IdUid(9, 6355683828767287420),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 7365854576691551651),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 9063840829312203172),
+            name: 'barcode',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(32, 5416923422372552405)),
+        ModelProperty(
+            id: const IdUid(4, 7751038887647623357),
+            name: 'qtyStart',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 4051589309452979751),
+            name: 'qtyBalance',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 8340734588812981871),
+            name: 'qtyMin',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 2532734067069956800),
+            name: 'orderDisable',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 8308709260526399216),
+            name: 'orderStatus',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 6355683828767287420),
+            name: 'orderAutoStock',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1269,14 +1608,17 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(19, 902662215410189876),
-      lastIndexId: const IdUid(26, 4964376486402589352),
+      lastEntityId: const IdUid(26, 5815277660752569177),
+      lastIndexId: const IdUid(32, 5416923422372552405),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
         1146034735562944753,
         2941303872910854793,
-        6112838636353604158
+        6112838636353604158,
+        2112196851304236571,
+        6893961381326252544,
+        6135587021504179585
       ],
       retiredIndexUids: const [
         9219344176730085609,
@@ -1288,7 +1630,8 @@ ModelDefinition getObjectBoxModel() {
         6294095423857103477,
         9220642195862943628,
         1242838351284240312,
-        2783570486487198139
+        2783570486487198139,
+        8091174755438905349
       ],
       retiredPropertyUids: const [
         5697435774194423126,
@@ -1392,7 +1735,58 @@ ModelDefinition getObjectBoxModel() {
         90451298623088956,
         2492432508909606967,
         388567867064767873,
-        8270476554283322189
+        8270476554283322189,
+        6138526154137720104,
+        7440409797916043879,
+        3048636916601864088,
+        8085067256928237364,
+        4975991332573927073,
+        1444444155063952043,
+        876022197426864818,
+        4840143330859338956,
+        2869781557600865602,
+        5871325008246180806,
+        2367647246964987008,
+        6774781120969864940,
+        7086216710067723754,
+        3632445462158367948,
+        1517453612191950451,
+        513848821876155027,
+        5921274733276125315,
+        2896494801869784527,
+        3153621332760250564,
+        9092642371671070269,
+        6358407186117041800,
+        4872126797261013507,
+        2632073665133683401,
+        8631204897859739502,
+        730340412401747952,
+        7842930113349897996,
+        6877901496144380651,
+        6573507408230314771,
+        3115463190620379409,
+        4366504747644699723,
+        5842475493159202355,
+        8500895880952878587,
+        7092818265313245075,
+        7098871764500180850,
+        8148295435662810582,
+        3059567659327268829,
+        5338860218013186644,
+        8797824776983060478,
+        5655385424147307810,
+        622292719723419340,
+        2622022458013156115,
+        4257045420305360110,
+        6613184534708463510,
+        3339790084692564600,
+        385142231766537679,
+        5729406171896378275,
+        5274711492465876926,
+        5235405778777209391,
+        8061769850907075896,
+        3886119394820363955,
+        1644985707331018481
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1574,7 +1968,9 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.full_vat_doc_number);
           final cancel_descriptionOffset =
               fbb.writeString(object.cancel_description);
-          fbb.startTable(41);
+          final table_numberOffset = fbb.writeString(object.table_number);
+          final buffet_codeOffset = fbb.writeString(object.buffet_code);
+          fbb.startTable(49);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -1613,6 +2009,14 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(37, full_vat_doc_numberOffset);
           fbb.addOffset(38, cancel_descriptionOffset);
           fbb.addInt64(39, object.doc_mode);
+          fbb.addOffset(40, table_numberOffset);
+          fbb.addInt64(41, object.man_count);
+          fbb.addInt64(42, object.woman_count);
+          fbb.addInt64(43, object.child_count);
+          fbb.addBool(44, object.table_al_la_crate_mode);
+          fbb.addOffset(45, buffet_codeOffset);
+          fbb.addInt64(46, object.table_open_date_time.millisecondsSinceEpoch);
+          fbb.addInt64(47, object.table_close_date_time.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1623,6 +2027,10 @@ ModelDefinition getObjectBoxModel() {
           final object = BillObjectBoxStruct(
               date_time: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)),
+              table_open_date_time: DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 96, 0)),
+              table_close_date_time: DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 98, 0)),
               doc_number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
               doc_mode:
@@ -1633,12 +2041,9 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 12, ''),
               customer_telephone: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 14, ''),
-              vat_rate:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0),
-              total_amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              total_before_amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0),
+              vat_rate: const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0),
+              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
+              total_before_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0),
               total_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0),
               total_except_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 52, 0),
               cashier_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
@@ -1666,6 +2071,12 @@ ModelDefinition getObjectBoxModel() {
               full_vat_address: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
               full_vat_tax_id: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 58, ''),
               full_vat_branch_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 60, ''),
+              table_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 84, ''),
+              child_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 90, 0),
+              woman_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 88, 0),
+              man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 86, 0),
+              table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false),
+              buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 94, ''),
               print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -1860,7 +2271,8 @@ ModelDefinition getObjectBoxModel() {
           final unit_nameOffset = fbb.writeString(object.unit_name);
           final barcodeOffset = fbb.writeString(object.barcode);
           final discount_textOffset = fbb.writeString(object.discount_text);
-          fbb.startTable(30);
+          final hold_codeOffset = fbb.writeString(object.hold_code);
+          fbb.startTable(31);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
@@ -1882,8 +2294,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(21, unit_nameOffset);
           fbb.addOffset(22, barcodeOffset);
           fbb.addOffset(25, discount_textOffset);
-          fbb.addInt64(27, object.hold_number);
           fbb.addInt64(28, object.doc_mode);
+          fbb.addOffset(29, hold_codeOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1901,8 +2313,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 10, ''),
               log_date_time: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
-              hold_number:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0),
+              hold_code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 62, ''),
               command_code:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
               barcode: const fb.StringReader(asciiOptimization: true)
@@ -1972,155 +2384,157 @@ ModelDefinition getObjectBoxModel() {
 
           return object;
         }),
-    ProductBarcodeObjectBoxStruct: EntityDefinition<
-            ProductBarcodeObjectBoxStruct>(
-        model: _entities[8],
-        toOneRelations: (ProductBarcodeObjectBoxStruct object) => [],
-        toManyRelations: (ProductBarcodeObjectBoxStruct object) => {},
-        getId: (ProductBarcodeObjectBoxStruct object) => object.id,
-        setId: (ProductBarcodeObjectBoxStruct object, int id) {
-          object.id = id;
-        },
-        objectToFB: (ProductBarcodeObjectBoxStruct object, fb.Builder fbb) {
-          final barcodeOffset = fbb.writeString(object.barcode);
-          final namesOffset = fbb.writeList(
-              object.names.map(fbb.writeString).toList(growable: false));
-          final name_allOffset = fbb.writeString(object.name_all);
-          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
-          final item_guidOffset = fbb.writeString(object.item_guid);
-          final descriptionsOffset = fbb.writeList(
-              object.descriptions.map(fbb.writeString).toList(growable: false));
-          final item_codeOffset = fbb.writeString(object.item_code);
-          final item_unit_codeOffset = fbb.writeString(object.item_unit_code);
-          final unit_codeOffset = fbb.writeString(object.unit_code);
-          final unit_namesOffset = fbb.writeList(
-              object.unit_names.map(fbb.writeString).toList(growable: false));
-          final options_jsonOffset = fbb.writeString(object.options_json);
-          final images_urlOffset = fbb.writeString(object.images_url);
-          final color_selectOffset = fbb.writeString(object.color_select);
-          final color_select_hexOffset =
-              fbb.writeString(object.color_select_hex);
-          final pricesOffset = fbb.writeList(
-              object.prices.map(fbb.writeString).toList(growable: false));
-          fbb.startTable(28);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, barcodeOffset);
-          fbb.addOffset(2, namesOffset);
-          fbb.addOffset(3, name_allOffset);
-          fbb.addOffset(6, guid_fixedOffset);
-          fbb.addOffset(7, item_guidOffset);
-          fbb.addOffset(8, descriptionsOffset);
-          fbb.addOffset(9, item_codeOffset);
-          fbb.addOffset(10, item_unit_codeOffset);
-          fbb.addOffset(11, unit_codeOffset);
-          fbb.addOffset(12, unit_namesOffset);
-          fbb.addInt64(14, object.new_line);
-          fbb.addFloat64(15, object.product_count);
-          fbb.addOffset(16, options_jsonOffset);
-          fbb.addOffset(17, images_urlOffset);
-          fbb.addOffset(19, color_selectOffset);
-          fbb.addOffset(20, color_select_hexOffset);
-          fbb.addBool(23, object.image_or_color);
-          fbb.addOffset(26, pricesOffset);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
+    ProductBarcodeObjectBoxStruct:
+        EntityDefinition<ProductBarcodeObjectBoxStruct>(
+            model: _entities[8],
+            toOneRelations: (ProductBarcodeObjectBoxStruct object) => [],
+            toManyRelations: (ProductBarcodeObjectBoxStruct object) => {},
+            getId: (ProductBarcodeObjectBoxStruct object) => object.id,
+            setId: (ProductBarcodeObjectBoxStruct object, int id) {
+              object.id = id;
+            },
+            objectToFB: (ProductBarcodeObjectBoxStruct object, fb.Builder fbb) {
+              final barcodeOffset = fbb.writeString(object.barcode);
+              final namesOffset = fbb.writeString(object.names);
+              final name_allOffset = fbb.writeString(object.name_all);
+              final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+              final item_guidOffset = fbb.writeString(object.item_guid);
+              final descriptionsOffset = fbb.writeString(object.descriptions);
+              final item_codeOffset = fbb.writeString(object.item_code);
+              final item_unit_codeOffset =
+                  fbb.writeString(object.item_unit_code);
+              final unit_codeOffset = fbb.writeString(object.unit_code);
+              final unit_namesOffset = fbb.writeString(object.unit_names);
+              final options_jsonOffset = fbb.writeString(object.options_json);
+              final images_urlOffset = fbb.writeString(object.images_url);
+              final color_selectOffset = fbb.writeString(object.color_select);
+              final color_select_hexOffset =
+                  fbb.writeString(object.color_select_hex);
+              final pricesOffset = fbb.writeString(object.prices);
+              final ordertypesOffset = fbb.writeString(object.ordertypes);
+              fbb.startTable(30);
+              fbb.addInt64(0, object.id);
+              fbb.addOffset(1, barcodeOffset);
+              fbb.addOffset(2, namesOffset);
+              fbb.addOffset(3, name_allOffset);
+              fbb.addOffset(6, guid_fixedOffset);
+              fbb.addOffset(7, item_guidOffset);
+              fbb.addOffset(8, descriptionsOffset);
+              fbb.addOffset(9, item_codeOffset);
+              fbb.addOffset(10, item_unit_codeOffset);
+              fbb.addOffset(11, unit_codeOffset);
+              fbb.addOffset(12, unit_namesOffset);
+              fbb.addInt64(14, object.new_line);
+              fbb.addFloat64(15, object.product_count);
+              fbb.addOffset(16, options_jsonOffset);
+              fbb.addOffset(17, images_urlOffset);
+              fbb.addOffset(19, color_selectOffset);
+              fbb.addOffset(20, color_select_hexOffset);
+              fbb.addBool(23, object.image_or_color);
+              fbb.addOffset(26, pricesOffset);
+              fbb.addBool(27, object.isalacarte);
+              fbb.addOffset(28, ordertypesOffset);
+              fbb.finish(fbb.endTable());
+              return object.id;
+            },
+            objectFromFB: (Store store, ByteData fbData) {
+              final buffer = fb.BufferContext(fbData);
+              final rootOffset = buffer.derefObject(0);
 
-          final object = ProductBarcodeObjectBoxStruct(
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              names:
-                  const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false)
-                      .vTableGet(buffer, rootOffset, 8, []),
-              name_all: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              item_guid: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              descriptions:
-                  const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false)
-                      .vTableGet(buffer, rootOffset, 20, []),
-              item_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
-              item_unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              unit_names: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 28, []),
-              prices: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 56, []),
-              new_line: const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0),
-              unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              options_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
-              images_url: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
-              image_or_color: const fb.BoolReader().vTableGet(buffer, rootOffset, 50, false),
-              color_select: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, ''),
-              color_select_hex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
-              product_count: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0))
-            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+              final object = ProductBarcodeObjectBoxStruct(
+                  barcode: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 6, ''),
+                  names: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 8, ''),
+                  name_all: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 10, ''),
+                  guid_fixed: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 16, ''),
+                  item_guid: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 18, ''),
+                  descriptions: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 20, ''),
+                  item_code: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 22, ''),
+                  item_unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
+                  unit_names: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, ''),
+                  prices: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
+                  new_line: const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0),
+                  unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
+                  options_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
+                  images_url: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
+                  image_or_color: const fb.BoolReader().vTableGet(buffer, rootOffset, 50, false),
+                  color_select: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, ''),
+                  color_select_hex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
+                  isalacarte: const fb.BoolReader().vTableGet(buffer, rootOffset, 58, false),
+                  ordertypes: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 60, ''),
+                  product_count: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0))
+                ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
-          return object;
-        }),
-    ProductCategoryObjectBoxStruct: EntityDefinition<
-            ProductCategoryObjectBoxStruct>(
-        model: _entities[9],
-        toOneRelations: (ProductCategoryObjectBoxStruct object) => [],
-        toManyRelations: (ProductCategoryObjectBoxStruct object) => {},
-        getId: (ProductCategoryObjectBoxStruct object) => object.id,
-        setId: (ProductCategoryObjectBoxStruct object, int id) {
-          object.id = id;
-        },
-        objectToFB: (ProductCategoryObjectBoxStruct object, fb.Builder fbb) {
-          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
-          final namesOffset = fbb.writeList(
-              object.names.map(fbb.writeString).toList(growable: false));
-          final image_urlOffset = fbb.writeString(object.image_url);
-          final colorselectOffset = fbb.writeString(object.colorselect);
-          final colorselecthexOffset = fbb.writeString(object.colorselecthex);
-          final codelistOffset = fbb.writeString(object.codelist);
-          final parent_guid_fixedOffset =
-              fbb.writeString(object.parent_guid_fixed);
-          fbb.startTable(20);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(2, guid_fixedOffset);
-          fbb.addOffset(3, namesOffset);
-          fbb.addOffset(4, image_urlOffset);
-          fbb.addOffset(10, colorselectOffset);
-          fbb.addOffset(11, colorselecthexOffset);
-          fbb.addOffset(14, codelistOffset);
-          fbb.addOffset(15, parent_guid_fixedOffset);
-          fbb.addBool(16, object.use_image_or_color);
-          fbb.addInt64(17, object.xorder);
-          fbb.addInt64(18, object.category_count);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
+              return object;
+            }),
+    ProductCategoryObjectBoxStruct:
+        EntityDefinition<ProductCategoryObjectBoxStruct>(
+            model: _entities[9],
+            toOneRelations: (ProductCategoryObjectBoxStruct object) => [],
+            toManyRelations: (ProductCategoryObjectBoxStruct object) => {},
+            getId: (ProductCategoryObjectBoxStruct object) => object.id,
+            setId: (ProductCategoryObjectBoxStruct object, int id) {
+              object.id = id;
+            },
+            objectToFB:
+                (ProductCategoryObjectBoxStruct object, fb.Builder fbb) {
+              final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+              final image_urlOffset = fbb.writeString(object.image_url);
+              final colorselectOffset = fbb.writeString(object.colorselect);
+              final colorselecthexOffset =
+                  fbb.writeString(object.colorselecthex);
+              final codelistOffset = fbb.writeString(object.codelist);
+              final parent_guid_fixedOffset =
+                  fbb.writeString(object.parent_guid_fixed);
+              final namesOffset = fbb.writeString(object.names);
+              fbb.startTable(21);
+              fbb.addInt64(0, object.id);
+              fbb.addOffset(2, guid_fixedOffset);
+              fbb.addOffset(4, image_urlOffset);
+              fbb.addOffset(10, colorselectOffset);
+              fbb.addOffset(11, colorselecthexOffset);
+              fbb.addOffset(14, codelistOffset);
+              fbb.addOffset(15, parent_guid_fixedOffset);
+              fbb.addBool(16, object.use_image_or_color);
+              fbb.addInt64(17, object.xorder);
+              fbb.addInt64(18, object.category_count);
+              fbb.addOffset(19, namesOffset);
+              fbb.finish(fbb.endTable());
+              return object.id;
+            },
+            objectFromFB: (Store store, ByteData fbData) {
+              final buffer = fb.BufferContext(fbData);
+              final rootOffset = buffer.derefObject(0);
 
-          final object = ProductCategoryObjectBoxStruct(
-              guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              parent_guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 34, ''),
-              names: const fb.ListReader<String>(
-                      fb.StringReader(asciiOptimization: true),
-                      lazy: false)
-                  .vTableGet(buffer, rootOffset, 10, []),
-              image_url: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              category_count:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 40, 0),
-              use_image_or_color: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 36, false),
-              xorder: const fb.Int64Reader().vTableGet(buffer, rootOffset, 38, 0),
-              colorselect: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              colorselecthex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              codelist: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''))
-            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+              final object = ProductCategoryObjectBoxStruct(
+                  guid_fixed: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 8, ''),
+                  parent_guid_fixed:
+                      const fb.StringReader(asciiOptimization: true)
+                          .vTableGet(buffer, rootOffset, 34, ''),
+                  names: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 42, ''),
+                  image_url: const fb.StringReader(asciiOptimization: true)
+                      .vTableGet(buffer, rootOffset, 12, ''),
+                  category_count: const fb.Int64Reader()
+                      .vTableGet(buffer, rootOffset, 40, 0),
+                  use_image_or_color: const fb.BoolReader()
+                      .vTableGet(buffer, rootOffset, 36, false),
+                  xorder:
+                      const fb.Int64Reader().vTableGet(buffer, rootOffset, 38, 0),
+                  colorselect: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
+                  colorselecthex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
+                  codelist: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''))
+                ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
-          return object;
-        }),
+              return object;
+            }),
     BankObjectBoxStruct: EntityDefinition<BankObjectBoxStruct>(
         model: _entities[10],
         toOneRelations: (BankObjectBoxStruct object) => [],
@@ -2282,14 +2696,14 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (TableObjectBoxStruct object, fb.Builder fbb) {
           final guidfixedOffset = fbb.writeString(object.guidfixed);
           final numberOffset = fbb.writeString(object.number);
-          final name1Offset = fbb.writeString(object.name1);
           final zoneOffset = fbb.writeString(object.zone);
-          fbb.startTable(6);
+          final namesOffset = fbb.writeString(object.names);
+          fbb.startTable(7);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
-          fbb.addOffset(3, name1Offset);
           fbb.addOffset(4, zoneOffset);
+          fbb.addOffset(5, namesOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2302,8 +2716,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
-              name1: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
+              names: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
               zone: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 12, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
@@ -2321,15 +2735,14 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (TableProcessObjectBoxStruct object, fb.Builder fbb) {
           final guidfixedOffset = fbb.writeString(object.guidfixed);
           final numberOffset = fbb.writeString(object.number);
-          final name1Offset = fbb.writeString(object.name1);
           final zoneOffset = fbb.writeString(object.zone);
           final qr_codeOffset = fbb.writeString(object.qr_code);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
-          fbb.startTable(19);
+          final namesOffset = fbb.writeString(object.names);
+          fbb.startTable(21);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
-          fbb.addOffset(3, name1Offset);
           fbb.addOffset(4, zoneOffset);
           fbb.addInt64(5, object.table_status);
           fbb.addFloat64(6, object.amount);
@@ -2341,6 +2754,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addInt64(12, object.child_count);
           fbb.addBool(14, object.table_al_la_crate_mode);
           fbb.addOffset(16, buffet_codeOffset);
+          fbb.addOffset(18, namesOffset);
+          fbb.addFloat64(19, object.order_count);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2353,18 +2768,20 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
-              name1: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
+              names: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 40, ''),
               zone: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 12, ''),
               table_status:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
+              order_count:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 42, 0),
               amount:
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
               order_success: const fb.BoolReader()
                   .vTableGet(buffer, rootOffset, 18, false),
-              qr_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, ''),
+              qr_code:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 20, ''),
               table_open_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0)),
               man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0),
               woman_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0),
@@ -2387,13 +2804,15 @@ ModelDefinition getObjectBoxModel() {
           final codeOffset = fbb.writeString(object.code);
           final namesOffset = fbb.writeList(
               object.names.map(fbb.writeString).toList(growable: false));
-          fbb.startTable(8);
+          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, codeOffset);
           fbb.addFloat64(3, object.adultPrice);
           fbb.addFloat64(4, object.childPrice);
           fbb.addInt64(5, object.maxMinute);
           fbb.addOffset(6, namesOffset);
+          fbb.addOffset(7, guid_fixedOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2402,6 +2821,8 @@ ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
 
           final object = BuffetModeObjectBoxStruct(
+              guid_fixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 18, ''),
               code: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
               names: const fb.ListReader<String>(
@@ -2414,6 +2835,242 @@ ModelDefinition getObjectBoxModel() {
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0),
               maxMinute:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
+        }),
+    OrderTempObjectBoxStruct: EntityDefinition<OrderTempObjectBoxStruct>(
+        model: _entities[16],
+        toOneRelations: (OrderTempObjectBoxStruct object) => [],
+        toManyRelations: (OrderTempObjectBoxStruct object) => {},
+        getId: (OrderTempObjectBoxStruct object) => object.id,
+        setId: (OrderTempObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (OrderTempObjectBoxStruct object, fb.Builder fbb) {
+          final orderIdOffset = fbb.writeString(object.orderId);
+          final orderGuidOffset = fbb.writeString(object.orderGuid);
+          final machineIdOffset = fbb.writeString(object.machineId);
+          final barcodeOffset = fbb.writeString(object.barcode);
+          final optionSelectedOffset = fbb.writeString(object.optionSelected);
+          final remarkOffset = fbb.writeString(object.remark);
+          final unitCodeOffset = fbb.writeString(object.unitCode);
+          final imageUriOffset = fbb.writeString(object.imageUri);
+          final namesOffset = fbb.writeString(object.names);
+          final unitNameOffset = fbb.writeString(object.unitName);
+          final kdsIdOffset = fbb.writeString(object.kdsId);
+          fbb.startTable(25);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, orderIdOffset);
+          fbb.addOffset(2, orderGuidOffset);
+          fbb.addOffset(3, machineIdOffset);
+          fbb.addInt64(4, object.orderDateTime.millisecondsSinceEpoch);
+          fbb.addOffset(5, barcodeOffset);
+          fbb.addFloat64(6, object.qty);
+          fbb.addFloat64(7, object.price);
+          fbb.addFloat64(8, object.amount);
+          fbb.addOffset(10, optionSelectedOffset);
+          fbb.addOffset(11, remarkOffset);
+          fbb.addOffset(13, unitCodeOffset);
+          fbb.addOffset(15, imageUriOffset);
+          fbb.addOffset(16, namesOffset);
+          fbb.addOffset(17, unitNameOffset);
+          fbb.addInt64(19, object.isClose);
+          fbb.addInt64(20, object.kdsSuccessTime.millisecondsSinceEpoch);
+          fbb.addBool(21, object.kdsSuccess);
+          fbb.addBool(22, object.kdsCancel);
+          fbb.addOffset(23, kdsIdOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = OrderTempObjectBoxStruct(
+              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
+              orderId: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              orderGuid: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, ''),
+              machineId: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, ''),
+              orderDateTime: DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
+              barcode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
+              qty:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
+              price:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
+              amount:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
+              isClose: const fb.Int64Reader().vTableGet(buffer, rootOffset, 42, 0),
+              optionSelected: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
+              remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
+              names: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
+              unitCode: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
+              unitName: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
+              imageUri: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
+              kdsSuccessTime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 44, 0)),
+              kdsSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false),
+              kdsCancel: const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false),
+              kdsId: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''));
+
+          return object;
+        }),
+    ShiftObjectBoxStruct: EntityDefinition<ShiftObjectBoxStruct>(
+        model: _entities[17],
+        toOneRelations: (ShiftObjectBoxStruct object) => [],
+        toManyRelations: (ShiftObjectBoxStruct object) => {},
+        getId: (ShiftObjectBoxStruct object) => object.id,
+        setId: (ShiftObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ShiftObjectBoxStruct object, fb.Builder fbb) {
+          final guidfixedOffset = fbb.writeString(object.guidfixed);
+          final usercodeOffset = fbb.writeString(object.usercode);
+          final usernameOffset = fbb.writeString(object.username);
+          final remarkOffset = fbb.writeString(object.remark);
+          fbb.startTable(15);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, guidfixedOffset);
+          fbb.addOffset(3, usercodeOffset);
+          fbb.addOffset(4, usernameOffset);
+          fbb.addFloat64(5, object.amount);
+          fbb.addInt64(6, object.docdate.millisecondsSinceEpoch);
+          fbb.addInt64(7, object.doctype);
+          fbb.addOffset(8, remarkOffset);
+          fbb.addFloat64(9, object.creditcard);
+          fbb.addFloat64(10, object.promptpay);
+          fbb.addFloat64(11, object.transfer);
+          fbb.addFloat64(12, object.cheque);
+          fbb.addFloat64(13, object.coupon);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = ShiftObjectBoxStruct(
+              guidfixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              doctype:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
+              docdate: DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0)),
+              remark: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 20, ''),
+              usercode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, ''),
+              username: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''),
+              amount:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0),
+              creditcard:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
+              promptpay:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
+              transfer: const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0),
+              cheque: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
+              coupon: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
+        }),
+    KitchenObjectBoxStruct: EntityDefinition<KitchenObjectBoxStruct>(
+        model: _entities[18],
+        toOneRelations: (KitchenObjectBoxStruct object) => [],
+        toManyRelations: (KitchenObjectBoxStruct object) => {},
+        getId: (KitchenObjectBoxStruct object) => object.id,
+        setId: (KitchenObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (KitchenObjectBoxStruct object, fb.Builder fbb) {
+          final guidfixedOffset = fbb.writeString(object.guidfixed);
+          final namesOffset = fbb.writeString(object.names);
+          final codeOffset = fbb.writeString(object.code);
+          final productsOffset = fbb.writeList(
+              object.products.map(fbb.writeString).toList(growable: false));
+          final zonesOffset = fbb.writeList(
+              object.zones.map(fbb.writeString).toList(growable: false));
+          fbb.startTable(9);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, guidfixedOffset);
+          fbb.addOffset(3, namesOffset);
+          fbb.addOffset(5, codeOffset);
+          fbb.addOffset(6, productsOffset);
+          fbb.addOffset(7, zonesOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = KitchenObjectBoxStruct(
+              guidfixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
+              names: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, ''),
+              products: const fb.ListReader<String>(
+                      fb.StringReader(asciiOptimization: true),
+                      lazy: false)
+                  .vTableGet(buffer, rootOffset, 16, []),
+              zones: const fb.ListReader<String>(
+                      fb.StringReader(asciiOptimization: true),
+                      lazy: false)
+                  .vTableGet(buffer, rootOffset, 18, []))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
+        }),
+    ProductBarcodeStatusObjectBoxStruct: EntityDefinition<
+            ProductBarcodeStatusObjectBoxStruct>(
+        model: _entities[19],
+        toOneRelations: (ProductBarcodeStatusObjectBoxStruct object) => [],
+        toManyRelations: (ProductBarcodeStatusObjectBoxStruct object) => {},
+        getId: (ProductBarcodeStatusObjectBoxStruct object) => object.id,
+        setId: (ProductBarcodeStatusObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB:
+            (ProductBarcodeStatusObjectBoxStruct object, fb.Builder fbb) {
+          final barcodeOffset = fbb.writeString(object.barcode);
+          fbb.startTable(10);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, barcodeOffset);
+          fbb.addFloat64(3, object.qtyStart);
+          fbb.addFloat64(4, object.qtyBalance);
+          fbb.addFloat64(5, object.qtyMin);
+          fbb.addBool(6, object.orderDisable);
+          fbb.addInt64(7, object.orderStatus);
+          fbb.addBool(8, object.orderAutoStock);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = ProductBarcodeStatusObjectBoxStruct(
+              barcode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              orderStatus:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
+              orderDisable: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 16, false),
+              orderAutoStock: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 20, false),
+              qtyStart:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0),
+              qtyBalance:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0),
+              qtyMin:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2698,6 +3355,38 @@ class BillObjectBoxStruct_ {
   /// see [BillObjectBoxStruct.doc_mode]
   static final doc_mode =
       QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[37]);
+
+  /// see [BillObjectBoxStruct.table_number]
+  static final table_number =
+      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[38]);
+
+  /// see [BillObjectBoxStruct.man_count]
+  static final man_count =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[39]);
+
+  /// see [BillObjectBoxStruct.woman_count]
+  static final woman_count =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[40]);
+
+  /// see [BillObjectBoxStruct.child_count]
+  static final child_count =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[41]);
+
+  /// see [BillObjectBoxStruct.table_al_la_crate_mode]
+  static final table_al_la_crate_mode =
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[2].properties[42]);
+
+  /// see [BillObjectBoxStruct.buffet_code]
+  static final buffet_code =
+      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[43]);
+
+  /// see [BillObjectBoxStruct.table_open_date_time]
+  static final table_open_date_time =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[44]);
+
+  /// see [BillObjectBoxStruct.table_close_date_time]
+  static final table_close_date_time =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[45]);
 }
 
 /// [BillPayObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2923,13 +3612,13 @@ class PosLogObjectBoxStruct_ {
   static final discount_text =
       QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[20]);
 
-  /// see [PosLogObjectBoxStruct.hold_number]
-  static final hold_number =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[21]);
-
   /// see [PosLogObjectBoxStruct.doc_mode]
   static final doc_mode =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[22]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[21]);
+
+  /// see [PosLogObjectBoxStruct.hold_code]
+  static final hold_code =
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[22]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -2974,7 +3663,7 @@ class ProductBarcodeObjectBoxStruct_ {
       _entities[8].properties[1]);
 
   /// see [ProductBarcodeObjectBoxStruct.names]
-  static final names = QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
+  static final names = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
       _entities[8].properties[2]);
 
   /// see [ProductBarcodeObjectBoxStruct.name_all]
@@ -2991,7 +3680,7 @@ class ProductBarcodeObjectBoxStruct_ {
 
   /// see [ProductBarcodeObjectBoxStruct.descriptions]
   static final descriptions =
-      QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
+      QueryStringProperty<ProductBarcodeObjectBoxStruct>(
           _entities[8].properties[6]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_code]
@@ -3008,9 +3697,8 @@ class ProductBarcodeObjectBoxStruct_ {
       _entities[8].properties[9]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_names]
-  static final unit_names =
-      QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[10]);
+  static final unit_names = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
+      _entities[8].properties[10]);
 
   /// see [ProductBarcodeObjectBoxStruct.new_line]
   static final new_line = QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
@@ -3046,9 +3734,16 @@ class ProductBarcodeObjectBoxStruct_ {
           _entities[8].properties[17]);
 
   /// see [ProductBarcodeObjectBoxStruct.prices]
-  static final prices =
-      QueryStringVectorProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[18]);
+  static final prices = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
+      _entities[8].properties[18]);
+
+  /// see [ProductBarcodeObjectBoxStruct.isalacarte]
+  static final isalacarte = QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
+      _entities[8].properties[19]);
+
+  /// see [ProductBarcodeObjectBoxStruct.ordertypes]
+  static final ordertypes = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
+      _entities[8].properties[20]);
 }
 
 /// [ProductCategoryObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -3061,47 +3756,46 @@ class ProductCategoryObjectBoxStruct_ {
   static final guid_fixed = QueryStringProperty<ProductCategoryObjectBoxStruct>(
       _entities[9].properties[1]);
 
-  /// see [ProductCategoryObjectBoxStruct.names]
-  static final names =
-      QueryStringVectorProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[2]);
-
   /// see [ProductCategoryObjectBoxStruct.image_url]
   static final image_url = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[3]);
+      _entities[9].properties[2]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselect]
   static final colorselect =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[4]);
+          _entities[9].properties[3]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselecthex]
   static final colorselecthex =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[5]);
+          _entities[9].properties[4]);
 
   /// see [ProductCategoryObjectBoxStruct.codelist]
   static final codelist = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[6]);
+      _entities[9].properties[5]);
 
   /// see [ProductCategoryObjectBoxStruct.parent_guid_fixed]
   static final parent_guid_fixed =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[7]);
+          _entities[9].properties[6]);
 
   /// see [ProductCategoryObjectBoxStruct.use_image_or_color]
   static final use_image_or_color =
       QueryBooleanProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[8]);
+          _entities[9].properties[7]);
 
   /// see [ProductCategoryObjectBoxStruct.xorder]
   static final xorder = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[9]);
+      _entities[9].properties[8]);
 
   /// see [ProductCategoryObjectBoxStruct.category_count]
   static final category_count =
       QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[10]);
+          _entities[9].properties[9]);
+
+  /// see [ProductCategoryObjectBoxStruct.names]
+  static final names = QueryStringProperty<ProductCategoryObjectBoxStruct>(
+      _entities[9].properties[10]);
 }
 
 /// [BankObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -3241,12 +3935,12 @@ class TableObjectBoxStruct_ {
   static final number =
       QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[2]);
 
-  /// see [TableObjectBoxStruct.name1]
-  static final name1 =
-      QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[3]);
-
   /// see [TableObjectBoxStruct.zone]
   static final zone =
+      QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[3]);
+
+  /// see [TableObjectBoxStruct.names]
+  static final names =
       QueryStringProperty<TableObjectBoxStruct>(_entities[13].properties[4]);
 }
 
@@ -3264,56 +3958,60 @@ class TableProcessObjectBoxStruct_ {
   static final number = QueryStringProperty<TableProcessObjectBoxStruct>(
       _entities[14].properties[2]);
 
-  /// see [TableProcessObjectBoxStruct.name1]
-  static final name1 = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[3]);
-
   /// see [TableProcessObjectBoxStruct.zone]
   static final zone = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[4]);
+      _entities[14].properties[3]);
 
   /// see [TableProcessObjectBoxStruct.table_status]
   static final table_status = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[5]);
+      _entities[14].properties[4]);
 
   /// see [TableProcessObjectBoxStruct.amount]
   static final amount = QueryDoubleProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[6]);
+      _entities[14].properties[5]);
 
   /// see [TableProcessObjectBoxStruct.order_success]
   static final order_success =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[14].properties[7]);
+          _entities[14].properties[6]);
 
   /// see [TableProcessObjectBoxStruct.qr_code]
   static final qr_code = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[8]);
+      _entities[14].properties[7]);
 
   /// see [TableProcessObjectBoxStruct.table_open_datetime]
   static final table_open_datetime =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
-          _entities[14].properties[9]);
+          _entities[14].properties[8]);
 
   /// see [TableProcessObjectBoxStruct.man_count]
   static final man_count = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[10]);
+      _entities[14].properties[9]);
 
   /// see [TableProcessObjectBoxStruct.woman_count]
   static final woman_count = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[11]);
+      _entities[14].properties[10]);
 
   /// see [TableProcessObjectBoxStruct.child_count]
   static final child_count = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[14].properties[12]);
+      _entities[14].properties[11]);
 
   /// see [TableProcessObjectBoxStruct.table_al_la_crate_mode]
   static final table_al_la_crate_mode =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[14].properties[13]);
+          _entities[14].properties[12]);
 
   /// see [TableProcessObjectBoxStruct.buffet_code]
   static final buffet_code = QueryStringProperty<TableProcessObjectBoxStruct>(
+      _entities[14].properties[13]);
+
+  /// see [TableProcessObjectBoxStruct.names]
+  static final names = QueryStringProperty<TableProcessObjectBoxStruct>(
       _entities[14].properties[14]);
+
+  /// see [TableProcessObjectBoxStruct.order_count]
+  static final order_count = QueryDoubleProperty<TableProcessObjectBoxStruct>(
+      _entities[14].properties[15]);
 }
 
 /// [BuffetModeObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -3341,4 +4039,215 @@ class BuffetModeObjectBoxStruct_ {
   /// see [BuffetModeObjectBoxStruct.names]
   static final names = QueryStringVectorProperty<BuffetModeObjectBoxStruct>(
       _entities[15].properties[5]);
+
+  /// see [BuffetModeObjectBoxStruct.guid_fixed]
+  static final guid_fixed = QueryStringProperty<BuffetModeObjectBoxStruct>(
+      _entities[15].properties[6]);
+}
+
+/// [OrderTempObjectBoxStruct] entity fields to define ObjectBox queries.
+class OrderTempObjectBoxStruct_ {
+  /// see [OrderTempObjectBoxStruct.id]
+  static final id = QueryIntegerProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[0]);
+
+  /// see [OrderTempObjectBoxStruct.orderId]
+  static final orderId = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[1]);
+
+  /// see [OrderTempObjectBoxStruct.orderGuid]
+  static final orderGuid = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[2]);
+
+  /// see [OrderTempObjectBoxStruct.machineId]
+  static final machineId = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[3]);
+
+  /// see [OrderTempObjectBoxStruct.orderDateTime]
+  static final orderDateTime = QueryIntegerProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[4]);
+
+  /// see [OrderTempObjectBoxStruct.barcode]
+  static final barcode = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[5]);
+
+  /// see [OrderTempObjectBoxStruct.qty]
+  static final qty = QueryDoubleProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[6]);
+
+  /// see [OrderTempObjectBoxStruct.price]
+  static final price = QueryDoubleProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[7]);
+
+  /// see [OrderTempObjectBoxStruct.amount]
+  static final amount = QueryDoubleProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[8]);
+
+  /// see [OrderTempObjectBoxStruct.optionSelected]
+  static final optionSelected = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[9]);
+
+  /// see [OrderTempObjectBoxStruct.remark]
+  static final remark = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[10]);
+
+  /// see [OrderTempObjectBoxStruct.unitCode]
+  static final unitCode = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[11]);
+
+  /// see [OrderTempObjectBoxStruct.imageUri]
+  static final imageUri = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[12]);
+
+  /// see [OrderTempObjectBoxStruct.names]
+  static final names = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[13]);
+
+  /// see [OrderTempObjectBoxStruct.unitName]
+  static final unitName = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[14]);
+
+  /// see [OrderTempObjectBoxStruct.isClose]
+  static final isClose = QueryIntegerProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[15]);
+
+  /// see [OrderTempObjectBoxStruct.kdsSuccessTime]
+  static final kdsSuccessTime = QueryIntegerProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[16]);
+
+  /// see [OrderTempObjectBoxStruct.kdsSuccess]
+  static final kdsSuccess = QueryBooleanProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[17]);
+
+  /// see [OrderTempObjectBoxStruct.kdsCancel]
+  static final kdsCancel = QueryBooleanProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[18]);
+
+  /// see [OrderTempObjectBoxStruct.kdsId]
+  static final kdsId = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[19]);
+}
+
+/// [ShiftObjectBoxStruct] entity fields to define ObjectBox queries.
+class ShiftObjectBoxStruct_ {
+  /// see [ShiftObjectBoxStruct.id]
+  static final id =
+      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[17].properties[0]);
+
+  /// see [ShiftObjectBoxStruct.guidfixed]
+  static final guidfixed =
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[17].properties[1]);
+
+  /// see [ShiftObjectBoxStruct.usercode]
+  static final usercode =
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[17].properties[2]);
+
+  /// see [ShiftObjectBoxStruct.username]
+  static final username =
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[17].properties[3]);
+
+  /// see [ShiftObjectBoxStruct.amount]
+  static final amount =
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[17].properties[4]);
+
+  /// see [ShiftObjectBoxStruct.docdate]
+  static final docdate =
+      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[17].properties[5]);
+
+  /// see [ShiftObjectBoxStruct.doctype]
+  static final doctype =
+      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[17].properties[6]);
+
+  /// see [ShiftObjectBoxStruct.remark]
+  static final remark =
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[17].properties[7]);
+
+  /// see [ShiftObjectBoxStruct.creditcard]
+  static final creditcard =
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[17].properties[8]);
+
+  /// see [ShiftObjectBoxStruct.promptpay]
+  static final promptpay =
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[17].properties[9]);
+
+  /// see [ShiftObjectBoxStruct.transfer]
+  static final transfer =
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[17].properties[10]);
+
+  /// see [ShiftObjectBoxStruct.cheque]
+  static final cheque =
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[17].properties[11]);
+
+  /// see [ShiftObjectBoxStruct.coupon]
+  static final coupon =
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[17].properties[12]);
+}
+
+/// [KitchenObjectBoxStruct] entity fields to define ObjectBox queries.
+class KitchenObjectBoxStruct_ {
+  /// see [KitchenObjectBoxStruct.id]
+  static final id =
+      QueryIntegerProperty<KitchenObjectBoxStruct>(_entities[18].properties[0]);
+
+  /// see [KitchenObjectBoxStruct.guidfixed]
+  static final guidfixed =
+      QueryStringProperty<KitchenObjectBoxStruct>(_entities[18].properties[1]);
+
+  /// see [KitchenObjectBoxStruct.names]
+  static final names =
+      QueryStringProperty<KitchenObjectBoxStruct>(_entities[18].properties[2]);
+
+  /// see [KitchenObjectBoxStruct.code]
+  static final code =
+      QueryStringProperty<KitchenObjectBoxStruct>(_entities[18].properties[3]);
+
+  /// see [KitchenObjectBoxStruct.products]
+  static final products = QueryStringVectorProperty<KitchenObjectBoxStruct>(
+      _entities[18].properties[4]);
+
+  /// see [KitchenObjectBoxStruct.zones]
+  static final zones = QueryStringVectorProperty<KitchenObjectBoxStruct>(
+      _entities[18].properties[5]);
+}
+
+/// [ProductBarcodeStatusObjectBoxStruct] entity fields to define ObjectBox queries.
+class ProductBarcodeStatusObjectBoxStruct_ {
+  /// see [ProductBarcodeStatusObjectBoxStruct.id]
+  static final id = QueryIntegerProperty<ProductBarcodeStatusObjectBoxStruct>(
+      _entities[19].properties[0]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.barcode]
+  static final barcode =
+      QueryStringProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[1]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.qtyStart]
+  static final qtyStart =
+      QueryDoubleProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[2]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.qtyBalance]
+  static final qtyBalance =
+      QueryDoubleProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[3]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.qtyMin]
+  static final qtyMin =
+      QueryDoubleProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[4]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.orderDisable]
+  static final orderDisable =
+      QueryBooleanProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[5]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.orderStatus]
+  static final orderStatus =
+      QueryIntegerProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[6]);
+
+  /// see [ProductBarcodeStatusObjectBoxStruct.orderAutoStock]
+  static final orderAutoStock =
+      QueryBooleanProperty<ProductBarcodeStatusObjectBoxStruct>(
+          _entities[19].properties[7]);
 }

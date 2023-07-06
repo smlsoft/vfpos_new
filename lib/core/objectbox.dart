@@ -2,40 +2,9 @@ import 'dart:io';
 import 'dart:developer' as dev;
 import 'package:dedepos/db/buffet_mode_helper.dart';
 import 'package:dedepos/global.dart';
+import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../model/objectbox/buffet_mode_struct.dart';
-
-void createTestDatabase() {
-  BuffetModeHelper helper = BuffetModeHelper();
-  List<BuffetModeObjectBoxStruct> values = [];
-  values.add(BuffetModeObjectBoxStruct(
-      code: "pig".toUpperCase(),
-      names: ["บุฟเฟ่ต์หมู"],
-      adultPrice: 199,
-      childPrice: 99,
-      maxMinute: 120));
-  values.add(BuffetModeObjectBoxStruct(
-      code: "meet".toUpperCase(),
-      names: ["บุฟเฟ่ต์เนื้อ"],
-      adultPrice: 199,
-      childPrice: 99,
-      maxMinute: 120));
-  values.add(BuffetModeObjectBoxStruct(
-      code: "seafood".toUpperCase(),
-      names: ["บุฟเฟ่ต์ทะเล"],
-      adultPrice: 199,
-      childPrice: 99,
-      maxMinute: 120));
-  values.add(BuffetModeObjectBoxStruct(
-      code: "kitchen".toUpperCase(),
-      names: ["บุฟเฟ่ต์ไก่"],
-      adultPrice: 199,
-      childPrice: 99,
-      maxMinute: 120));
-  helper.insertMany(values);
-}
 
 Future<void> setupObjectBox() async {
   final appDirectory = await getApplicationDocumentsDirectory();
@@ -48,12 +17,10 @@ Future<void> setupObjectBox() async {
     final isExists = await objectBoxDirectory.exists();
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
-      // dev.log("ObjectBox Data : $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      // await objectBoxDirectory.delete(recursive: true);
       objectBoxStore = Store(getObjectBoxModel(),
           directory: objectBoxDirectory.path,
           queriesCaseSensitiveDefault: false);
-      createTestDatabase();
     } else {
       objectBoxStore = Store(getObjectBoxModel(),
           directory: objectBoxDirectory.path,

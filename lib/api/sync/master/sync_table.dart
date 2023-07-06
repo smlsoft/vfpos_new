@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/model/sync_table_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
@@ -36,12 +37,9 @@ Future syncTable(
     TableObjectBoxStruct newTable = TableObjectBoxStruct(
       guidfixed: newData.guidfixed,
       number: newData.number,
-      name1: newData.name1,
+      names: jsonEncode(newData.names),
       zone: newData.zone,
     );
-
-    serviceLocator<Log>()
-        .trace("Sync Table : ${newData.number} ${newData.name1}");
     manyForInsert.add(newTable);
   }
   if (removeMany.isNotEmpty) {
@@ -55,7 +53,7 @@ Future syncTable(
 Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
 
-  // Sync พนักงาน
+  // Sync Table
   String lastUpdateTime =
       global.appStorage.read(global.syncTableTimeName) ?? global.syncDateBegin;
   if (TableHelper().count() == 0) {
@@ -63,7 +61,8 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
   }
   lastUpdateTime =
       DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
-  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "shoptable");
+  var getLastUpdateTime =
+      global.syncFindLastUpdate(masterStatus, "restaurant-table");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
@@ -74,7 +73,7 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
               offset: offset, limit: limit, lastupdate: lastUpdateTime)
           .then((value) {
         if (value.success) {
-          var dataList = value.data["shoptable"];
+          var dataList = value.data["restaurant-table"];
           List<ItemRemoveModel> removeList = (dataList["remove"] as List)
               .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
               .toList();
@@ -84,8 +83,6 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
-            serviceLocator<Log>().trace(
-                "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
             syncTable(removeList, newDataList);
           }
         } else {
@@ -106,9 +103,10 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
         TableProcessHelper().insert(TableProcessObjectBoxStruct(
           guidfixed: table.guidfixed,
           number: table.number,
-          name1: table.name1,
+          names: table.names,
           zone: table.zone,
           table_status: 0,
+          order_count: 0,
           amount: 0,
           order_success: true,
           qr_code: "",

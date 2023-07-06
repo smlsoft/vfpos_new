@@ -50,4 +50,19 @@ class BuffetModeHelper {
   void deleteAll() {
     box.removeAll();
   }
+
+  void deleteByGuidFixedMany(List<String> guidfixed) {
+    Condition<BuffetModeObjectBoxStruct>? ids;
+    for (var guid in guidfixed) {
+      if (ids == null) {
+        ids = BuffetModeObjectBoxStruct_.guid_fixed.equals(guid);
+      } else {
+        ids = ids.or(BuffetModeObjectBoxStruct_.guid_fixed.equals(guid));
+      }
+    }
+    if (ids != null) {
+      final find = box.query(ids).build().find();
+      box.removeMany(find.map((data) => data.id).toList());
+    }
+  }
 }

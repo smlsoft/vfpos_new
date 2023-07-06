@@ -1,3 +1,4 @@
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'dart:async';
@@ -21,36 +22,25 @@ Future<saveBillResultClass> saveBill(
   result.docDate = docDate;
 
   // Header
+  PosHoldProcessModel posHoldProcess = global.posHoldProcessResult[
+      global.findPosHoldProcessResultIndex(global.posHoldActiveCode)];
   global.billHelper.insert(BillObjectBoxStruct(
-      date_time: docDate,
+      date_time: docDate,table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now(),
       doc_number: docNumber,
-      customer_code:
-          global.posHoldProcessResult[global.posHoldActiveNumber].customerCode,
-      customer_name:
-          global.posHoldProcessResult[global.posHoldActiveNumber].customerName,
+      customer_code: posHoldProcess.customerCode,
+      customer_name: posHoldProcess.customerName,
       customer_telephone: "",
-      sale_code:
-          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode,
-      sale_name:
-          global.posHoldProcessResult[global.posHoldActiveNumber].saleName,
-      total_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_amount,
+      sale_code: posHoldProcess.saleCode,
+      sale_name: posHoldProcess.saleName,
+      total_amount: posHoldProcess.posProcess.total_amount,
       cashier_code: global.userLoginCode,
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
       is_sync: false,
-      vat_rate: global
-          .posHoldProcessResult[global.posHoldActiveNumber].posProcess.vat_rate,
-      total_before_amount: global
-          .posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess
-          .total_before_amount,
-      total_except_amount: global
-          .posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess
-          .total_except_amount,
-      total_vat_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_vat_amount,
+      vat_rate: posHoldProcess.posProcess.vat_rate,
+      total_before_amount: posHoldProcess.posProcess.total_before_amount,
+      total_except_amount: posHoldProcess.posProcess.total_except_amount,
+      total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
       discount_formula: discountFormula,
       sum_discount: discountAmount,
       sum_coupon: sumCoupon(),
@@ -62,8 +52,7 @@ Future<saveBillResultClass> saveBill(
   // รายละเอียด
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
-  for (var value in global
-      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.details) {
+  for (var value in posHoldProcess.posProcess.details) {
     details.add(BillDetailObjectBoxStruct(
         doc_number: docNumber,
         line_number: lineNumber,

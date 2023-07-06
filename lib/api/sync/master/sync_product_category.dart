@@ -40,7 +40,7 @@ Future syncProductCategory(data) async {
     ProductCategoryObjectBoxStruct newProduct = ProductCategoryObjectBoxStruct(
       guid_fixed: newData.guidfixed,
       parent_guid_fixed: newData.parentguid,
-      names: [],
+      names: jsonEncode(newData.names),
       image_url: newData.imageuri,
       use_image_or_color: newData.useimageorcolor,
       colorselect: newData.colorselect,
@@ -49,12 +49,6 @@ Future syncProductCategory(data) async {
       xorder: newData.xsorts![0].xorder,
       category_count: newData.childcount,
     );
-    // ทดสอบ รูป
-    //newProduct.image_url = global.getImageForTest();
-
-    serviceLocator<Log>().debug(
-        "Sync Product Category : ${newData.guidfixed} ${newData.names![0].name} ${newData.parentguid}");
-    newProduct.names.add(newData.names![0].name);
     manyForInsert.add(newProduct);
   }
   if (removeMany.isNotEmpty) {
@@ -99,7 +93,6 @@ Future<void> syncProductCategoryCompare(
   var getLastUpdateTime =
       global.syncFindLastUpdate(masterStatus, "productcategory");
   if (lastUpdateTime != getLastUpdateTime) {
-    serviceLocator<Log>().debug("serverProductCategory Start");
     await apiRepository
         .serverProductCategory(
             offset: 0, limit: 1000, lastupdate: lastUpdateTime)
@@ -112,7 +105,5 @@ Future<void> syncProductCategoryCompare(
         });
       }
     });
-    serviceLocator<Log>().debug(
-        "serverProductCategory End : ${ProductCategoryHelper().count()}");
   }
 }

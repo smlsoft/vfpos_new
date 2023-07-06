@@ -38,8 +38,8 @@ Map<String, dynamic> _$LanguageSystemCodeModelToJson(
 PrinterLocalStrongDataModel _$PrinterLocalStrongDataModelFromJson(
         Map<String, dynamic> json) =>
     PrinterLocalStrongDataModel(
-      printerCashierType: json['printerCashierType'] as int? ?? 0,
-      connectType: json['connectType'] as int? ?? 0,
+      code: json['code'] as String? ?? "",
+      name: json['name'] as String? ?? "",
       ipAddress: json['ipAddress'] as String? ?? "",
       ipPort: json['ipPort'] as int? ?? 0,
       productName: json['productName'] as String? ?? "",
@@ -49,14 +49,22 @@ PrinterLocalStrongDataModel _$PrinterLocalStrongDataModelFromJson(
       vendorId: json['vendorId'] as String? ?? "",
       productId: json['productId'] as String? ?? "",
       paperSize: json['paperSize'] as int? ?? 2,
+      isReady: json['isReady'] as bool? ?? false,
+      isConfigConnectSuccess: json['isConfigConnectSuccess'] as bool? ?? false,
+      printerType:
+          $enumDecodeNullable(_$PrinterTypeEnumEnumMap, json['printerType']) ??
+              PrinterTypeEnum.thermal,
+      printerConnectType: $enumDecodeNullable(
+              _$PrinterConnectEnumEnumMap, json['printerConnectType']) ??
+          PrinterConnectEnum.ip,
       printBillAuto: json['printBillAuto'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PrinterLocalStrongDataModelToJson(
         PrinterLocalStrongDataModel instance) =>
     <String, dynamic>{
-      'printerCashierType': instance.printerCashierType,
-      'connectType': instance.connectType,
+      'code': instance.code,
+      'name': instance.name,
       'ipAddress': instance.ipAddress,
       'ipPort': instance.ipPort,
       'productName': instance.productName,
@@ -67,12 +75,33 @@ Map<String, dynamic> _$PrinterLocalStrongDataModelToJson(
       'productId': instance.productId,
       'paperSize': instance.paperSize,
       'printBillAuto': instance.printBillAuto,
+      'printerType': _$PrinterTypeEnumEnumMap[instance.printerType]!,
+      'printerConnectType':
+          _$PrinterConnectEnumEnumMap[instance.printerConnectType]!,
+      'isConfigConnectSuccess': instance.isConfigConnectSuccess,
+      'isReady': instance.isReady,
     };
+
+const _$PrinterTypeEnumEnumMap = {
+  PrinterTypeEnum.thermal: 'thermal',
+  PrinterTypeEnum.dot: 'dot',
+  PrinterTypeEnum.laser: 'laser',
+  PrinterTypeEnum.inkjet: 'inkjet',
+};
+
+const _$PrinterConnectEnumEnumMap = {
+  PrinterConnectEnum.ip: 'ip',
+  PrinterConnectEnum.bluetooth: 'bluetooth',
+  PrinterConnectEnum.usb: 'usb',
+  PrinterConnectEnum.windows: 'windows',
+  PrinterConnectEnum.sunmi1: 'sunmi1',
+};
 
 PosHoldProcessModel _$PosHoldProcessModelFromJson(Map<String, dynamic> json) =>
     PosHoldProcessModel(
-      holdNumber: json['holdNumber'] as int,
+      code: json['code'] as String,
     )
+      ..holdType = json['holdType'] as int
       ..logCount = json['logCount'] as int
       ..saleCode = json['saleCode'] as String
       ..saleName = json['saleName'] as String
@@ -82,12 +111,14 @@ PosHoldProcessModel _$PosHoldProcessModelFromJson(Map<String, dynamic> json) =>
       ..payScreenData =
           PosPayModel.fromJson(json['payScreenData'] as Map<String, dynamic>)
       ..posProcess =
-          PosProcessModel.fromJson(json['posProcess'] as Map<String, dynamic>);
+          PosProcessModel.fromJson(json['posProcess'] as Map<String, dynamic>)
+      ..tableNumber = json['tableNumber'] as String;
 
 Map<String, dynamic> _$PosHoldProcessModelToJson(
         PosHoldProcessModel instance) =>
     <String, dynamic>{
-      'holdNumber': instance.holdNumber,
+      'code': instance.code,
+      'holdType': instance.holdType,
       'logCount': instance.logCount,
       'saleCode': instance.saleCode,
       'saleName': instance.saleName,
@@ -96,6 +127,7 @@ Map<String, dynamic> _$PosHoldProcessModelToJson(
       'customerPhone': instance.customerPhone,
       'payScreenData': instance.payScreenData.toJson(),
       'posProcess': instance.posProcess.toJson(),
+      'tableNumber': instance.tableNumber,
     };
 
 HttpGetDataModel _$HttpGetDataModelFromJson(Map<String, dynamic> json) =>
@@ -116,7 +148,7 @@ HttpParameterModel _$HttpParameterModelFromJson(Map<String, dynamic> json) =>
       guid: json['guid'] as String? ?? "",
       barcode: json['barcode'] as String? ?? "",
       jsonData: json['jsonData'] as String? ?? "",
-      holdNumber: json['holdNumber'] as int? ?? 0,
+      holdCode: json['holdCode'] as String? ?? "",
       docMode: json['docMode'] as int? ?? 0,
     );
 
@@ -126,7 +158,7 @@ Map<String, dynamic> _$HttpParameterModelToJson(HttpParameterModel instance) =>
       'guid': instance.guid,
       'barcode': instance.barcode,
       'jsonData': instance.jsonData,
-      'holdNumber': instance.holdNumber,
+      'holdCode': instance.holdCode,
       'docMode': instance.docMode,
     };
 
@@ -140,4 +172,205 @@ Map<String, dynamic> _$LanguageDataModelToJson(LanguageDataModel instance) =>
     <String, dynamic>{
       'code': instance.code,
       'name': instance.name,
+    };
+
+ResponseDataModel _$ResponseDataModelFromJson(Map<String, dynamic> json) =>
+    ResponseDataModel(
+      data: json['data'] as List<dynamic>,
+    );
+
+Map<String, dynamic> _$ResponseDataModelToJson(ResponseDataModel instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
+OrderProductOptionModel _$OrderProductOptionModelFromJson(
+        Map<String, dynamic> json) =>
+    OrderProductOptionModel(
+      guid: json['guid'] as String,
+      choicetype: json['choicetype'] as int,
+      maxselect: json['maxselect'] as int,
+      minselect: json['minselect'] as int,
+      names: (json['names'] as List<dynamic>)
+          .map((e) =>
+              OrderProductLanguageNameModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      choices: (json['choices'] as List<dynamic>)
+          .map((e) =>
+              OrderProductOptionChoiceModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$OrderProductOptionModelToJson(
+        OrderProductOptionModel instance) =>
+    <String, dynamic>{
+      'guid': instance.guid,
+      'choicetype': instance.choicetype,
+      'maxselect': instance.maxselect,
+      'minselect': instance.minselect,
+      'names': instance.names.map((e) => e.toJson()).toList(),
+      'choices': instance.choices.map((e) => e.toJson()).toList(),
+    };
+
+OrderProductOptionChoiceModel _$OrderProductOptionChoiceModelFromJson(
+        Map<String, dynamic> json) =>
+    OrderProductOptionChoiceModel(
+      guid: json['guid'] as String,
+      names: (json['names'] as List<dynamic>)
+          .map((e) =>
+              OrderProductLanguageNameModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      price: json['price'] as String,
+      qty: (json['qty'] as num).toDouble(),
+      selected: json['selected'] as bool,
+      priceValue: (json['priceValue'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$OrderProductOptionChoiceModelToJson(
+        OrderProductOptionChoiceModel instance) =>
+    <String, dynamic>{
+      'guid': instance.guid,
+      'names': instance.names.map((e) => e.toJson()).toList(),
+      'price': instance.price,
+      'qty': instance.qty,
+      'selected': instance.selected,
+      'priceValue': instance.priceValue,
+    };
+
+OrderProductLanguageNameModel _$OrderProductLanguageNameModelFromJson(
+        Map<String, dynamic> json) =>
+    OrderProductLanguageNameModel(
+      code: json['code'] as String,
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$OrderProductLanguageNameModelToJson(
+        OrderProductLanguageNameModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'name': instance.name,
+    };
+
+PriceDataModel _$PriceDataModelFromJson(Map<String, dynamic> json) =>
+    PriceDataModel(
+      keynumber: json['keynumber'] as int,
+      price: (json['price'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$PriceDataModelToJson(PriceDataModel instance) =>
+    <String, dynamic>{
+      'keynumber': instance.keynumber,
+      'price': instance.price,
+    };
+
+ProfileSettingModel _$ProfileSettingModelFromJson(Map<String, dynamic> json) =>
+    ProfileSettingModel(
+      company: ProfileSettingCompanyModel.fromJson(
+          json['company'] as Map<String, dynamic>),
+      languagelist: (json['languagelist'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      configsystem: ProfileSettingConfigSystemModel.fromJson(
+          json['configsystem'] as Map<String, dynamic>),
+      branch: (json['branch'] as List<dynamic>)
+          .map((e) =>
+              ProfileSettingBranchModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$ProfileSettingModelToJson(
+        ProfileSettingModel instance) =>
+    <String, dynamic>{
+      'company': instance.company.toJson(),
+      'languagelist': instance.languagelist,
+      'configsystem': instance.configsystem.toJson(),
+      'branch': instance.branch.map((e) => e.toJson()).toList(),
+    };
+
+ProfileSettingBranchModel _$ProfileSettingBranchModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileSettingBranchModel(
+      code: json['code'] as String,
+      names: (json['names'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$ProfileSettingBranchModelToJson(
+        ProfileSettingBranchModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'names': instance.names.map((e) => e.toJson()).toList(),
+    };
+
+ProfileSettingConfigSystemModel _$ProfileSettingConfigSystemModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileSettingConfigSystemModel(
+      vatrate: (json['vatrate'] as num).toDouble(),
+      vattypesale: json['vattypesale'] as int,
+      vattypepurchase: json['vattypepurchase'] as int,
+      inquirytypesale: json['inquirytypesale'] as int,
+      inquirytypepurchase: json['inquirytypepurchase'] as int,
+      headerreceiptpos: json['headerreceiptpos'] as String,
+      footerreciptpos: json['footerreciptpos'] as String,
+    );
+
+Map<String, dynamic> _$ProfileSettingConfigSystemModelToJson(
+        ProfileSettingConfigSystemModel instance) =>
+    <String, dynamic>{
+      'vatrate': instance.vatrate,
+      'vattypesale': instance.vattypesale,
+      'vattypepurchase': instance.vattypepurchase,
+      'inquirytypesale': instance.inquirytypesale,
+      'inquirytypepurchase': instance.inquirytypepurchase,
+      'headerreceiptpos': instance.headerreceiptpos,
+      'footerreciptpos': instance.footerreciptpos,
+    };
+
+ProfileSettingCompanyModel _$ProfileSettingCompanyModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileSettingCompanyModel(
+      names: (json['names'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      taxID: json['taxID'] as String,
+      branchNames: (json['branchNames'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      addresses: (json['addresses'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      phones:
+          (json['phones'] as List<dynamic>).map((e) => e as String).toList(),
+      emailOwners: (json['emailOwners'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      emailStaffs: (json['emailStaffs'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      latitude: json['latitude'] as String,
+      longitude: json['longitude'] as String,
+      usebranch: json['usebranch'] as bool,
+      usedepartment: json['usedepartment'] as bool,
+      images:
+          (json['images'] as List<dynamic>).map((e) => e as String).toList(),
+      logo: json['logo'] as String,
+    );
+
+Map<String, dynamic> _$ProfileSettingCompanyModelToJson(
+        ProfileSettingCompanyModel instance) =>
+    <String, dynamic>{
+      'names': instance.names.map((e) => e.toJson()).toList(),
+      'taxID': instance.taxID,
+      'branchNames': instance.branchNames.map((e) => e.toJson()).toList(),
+      'addresses': instance.addresses.map((e) => e.toJson()).toList(),
+      'phones': instance.phones,
+      'emailOwners': instance.emailOwners,
+      'emailStaffs': instance.emailStaffs,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+      'usebranch': instance.usebranch,
+      'usedepartment': instance.usedepartment,
+      'images': instance.images,
+      'logo': instance.logo,
     };

@@ -99,6 +99,24 @@ class SyncProductOptionModel {
   Map<String, dynamic> toJson() => _$SyncProductOptionModelToJson(this);
 }
 
+@JsonSerializable(explicitToJson: true)
+class ProductOrderTypeFromServerModel {
+  final String code;
+  final List<LanguageDataModel> names;
+  final double price;
+
+  ProductOrderTypeFromServerModel({
+    required this.code,
+    required this.names,
+    required this.price,
+  });
+
+  factory ProductOrderTypeFromServerModel.fromJson(Map<String, dynamic> json) =>
+      _$ProductOrderTypeFromServerModelFromJson(json);
+  Map<String, dynamic> toJson() =>
+      _$ProductOrderTypeFromServerModelToJson(this);
+}
+
 @JsonSerializable()
 class SyncProductBarcodeModel {
   /// guid ฐานข้อมูล
@@ -142,6 +160,10 @@ class SyncProductBarcodeModel {
 
   List<SyncPriceDataModel>? prices;
 
+  bool? isalacarte;
+
+  List<ProductOrderTypeFromServerModel>? ordertypes;
+
   SyncProductBarcodeModel({
     required this.guidfixed,
     required this.groupcode,
@@ -157,6 +179,8 @@ class SyncProductBarcodeModel {
     required this.colorselect,
     required this.colorselecthex,
     required this.prices,
+    required this.isalacarte,
+    required this.ordertypes,
   });
 
   factory SyncProductBarcodeModel.fromJson(Map<String, dynamic> json) =>

@@ -4,32 +4,40 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_process.dart';
 
 Future<PosProcessResultModel> posCompileProcess(
-    {required int holdNumber, required int docMode}) async {
+    {required String holdCode, required int docMode}) async {
   PosProcessResultModel processResult = PosProcessResultModel();
-
-  serviceLocator<Log>().debug("posCompileProcess()");
   {
     // คำนวณของ Terminal หลัก
     PosProcess posProcess = PosProcess();
-    global.posHoldProcessResult[holdNumber].posProcess =
-        await posProcess.process(holdNumber: holdNumber, docMode: docMode);
+    global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)]
+            .posProcess =
+        await posProcess.process(holdCode: holdCode, docMode: docMode);
     posProcess.sumCategoryCount(
-        value: global.posHoldProcessResult[holdNumber].posProcess);
+        value: global
+            .posHoldProcessResult[
+                global.findPosHoldProcessResultIndex(holdCode)]
+            .posProcess);
     processResult = posProcess.result;
   }
   {
     // คำนวณของ Client
     for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
       if (global.posRemoteDeviceList[index].processSuccess == false) {
-        int getHoldNumber = global.posRemoteDeviceList[index].holdNumberActive;
+        String getHoldCode = global.posRemoteDeviceList[index].holdCodeActive;
         int getDocMode = global.posRemoteDeviceList[index].docModeActive;
-        if (holdNumber != getHoldNumber) {
+        if (holdCode != getHoldCode) {
           PosProcess posProcess = PosProcess();
-          global.posHoldProcessResult[getHoldNumber].posProcess =
+          global
+                  .posHoldProcessResult[
+                      global.findPosHoldProcessResultIndex(getHoldCode)]
+                  .posProcess =
               await posProcess.process(
-                  holdNumber: getHoldNumber, docMode: getDocMode);
+                  holdCode: getHoldCode, docMode: getDocMode);
           posProcess.sumCategoryCount(
-              value: global.posHoldProcessResult[getHoldNumber].posProcess);
+              value: global
+                  .posHoldProcessResult[
+                      global.findPosHoldProcessResultIndex(getHoldCode)]
+                  .posProcess);
         }
         global.posRemoteDeviceList[index].processSuccess = true;
       }

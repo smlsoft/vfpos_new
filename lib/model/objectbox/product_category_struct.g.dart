@@ -11,7 +11,7 @@ ProductCategoryObjectBoxStruct _$ProductCategoryObjectBoxStructFromJson(
     ProductCategoryObjectBoxStruct(
       guid_fixed: json['guid_fixed'] as String,
       parent_guid_fixed: json['parent_guid_fixed'] as String,
-      names: (json['names'] as List<dynamic>).map((e) => e as String).toList(),
+      names: json['names'] as String,
       image_url: json['image_url'] as String,
       category_count: json['category_count'] as int,
       use_image_or_color: json['use_image_or_color'] as bool,

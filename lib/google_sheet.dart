@@ -19,12 +19,10 @@ const googleCredentials = r'''
 }
 ''';
 
-int googleMultilanguageRowMax = 0;
-
 Future<void> googleMultiLanguageSheetAppendRow(List<String> values) async {
   try {
     bool found = false;
-    for (var i = 0; i < global.languageSystemCode.length; i++) {
+    for (var i = 1; i < global.languageSystemCode.length; i++) {
       if (global.languageSystemCode[i].code == values[1]) {
         found = true;
         break;
@@ -41,7 +39,7 @@ Future<void> googleMultiLanguageSheetAppendRow(List<String> values) async {
       final spreadsheet = await gsheets
           .spreadsheet("1HpttLpbcDTHCBhPWw1tuiLmsoap1LFgPS94JarThNoU");
       Worksheet sheet = spreadsheet.worksheetByTitle("pos_language")!;
-      await sheet.values.insertRow(++googleMultilanguageRowMax, values);
+      await sheet.values.appendRow(values);
     }
   } catch (e) {
     print(e);
@@ -57,7 +55,6 @@ Future<void> googleMultiLanguageSheetLoad() async {
     print('Google Sheet Successfully Load');
     global.languageSystemCode = [];
     final values = await sheet.values.allRows();
-    googleMultilanguageRowMax = values.length;
     for (var i = 0; i < values.length; i++) {
       global.googleLanguageCode.add(values[i][1]);
       int index = 2;

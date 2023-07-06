@@ -20,7 +20,7 @@ class PosBillVatDetailScreen extends StatefulWidget {
 }
 
 class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now());
+  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now(),table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now());
   List<BillDetailObjectBoxStruct> billDetails = [];
   TextEditingController taxIdController = TextEditingController();
   TextEditingController customerCodeController = TextEditingController();
@@ -169,7 +169,11 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
                                                   customerAddressController
                                                       .text,
                                             );
-                                            printBill(bill.date_time, bill.doc_number);
+                                            printBill(
+                                                docDate: bill.date_time,
+                                                docNo: bill.doc_number,
+                                                languageCode:
+                                                    global.userScreenLanguage);
                                             Navigator.pop(context);
                                             Navigator.pop(context);
                                             Navigator.pop(context);

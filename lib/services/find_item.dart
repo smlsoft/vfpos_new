@@ -129,8 +129,14 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                   Expanded(
                       flex: 3,
                       child: Text("${detail.barcode}/${detail.item_code}")),
-                  Expanded(flex: 6, child: Text(detail.item_names[0])),
-                  Expanded(flex: 2, child: Text(detail.unit_names[0])),
+                  Expanded(
+                      flex: 6,
+                      child: Text(
+                          global.getNameFromJsonLanguage(detail.item_names,global.userScreenLanguage))),
+                  Expanded(
+                      flex: 2,
+                      child: Text(
+                          global.getNameFromJsonLanguage(detail.unit_names,global.userScreenLanguage))),
                   Expanded(
                       flex: 2,
                       child: Align(
@@ -222,9 +228,9 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                         data: BarcodeModel(
                                             barcode: detail.barcode,
                                             item_code: detail.item_code,
-                                            item_name: detail.item_names[0],
+                                            item_name: detail.item_names,
                                             unit_code: detail.unit_code,
-                                            unit_name: detail.unit_names[0])));
+                                            unit_name: detail.unit_names)));
                               },
                               child: const Icon(Icons.save))))
                 ]);

@@ -1,3 +1,4 @@
+import 'package:dedepos/global.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,8 @@ class SyncMasterStatusModel {
 
 @JsonSerializable(explicitToJson: true)
 class PrinterLocalStrongDataModel {
-  int printerCashierType;
-  int connectType;
+  String code;
+  String name;
   String ipAddress;
   int ipPort;
   String productName;
@@ -54,10 +55,14 @@ class PrinterLocalStrongDataModel {
   String productId;
   int paperSize; // 1 = 58mm, 2 = 80mm
   bool printBillAuto;
+  PrinterTypeEnum printerType;
+  PrinterConnectEnum printerConnectType;
+  bool isConfigConnectSuccess;
+  bool isReady;
 
   PrinterLocalStrongDataModel(
-      {this.printerCashierType = 0,
-      this.connectType = 0,
+      {this.code = "",
+      this.name = "",
       this.ipAddress = "",
       this.ipPort = 0,
       this.productName = "",
@@ -67,6 +72,10 @@ class PrinterLocalStrongDataModel {
       this.vendorId = "",
       this.productId = "",
       this.paperSize = 2,
+      this.isReady = false,
+      this.isConfigConnectSuccess = false,
+      this.printerType = PrinterTypeEnum.thermal,
+      this.printerConnectType = PrinterConnectEnum.ip,
       this.printBillAuto = false});
 
   factory PrinterLocalStrongDataModel.fromJson(Map<String, dynamic> json) =>
@@ -84,7 +93,8 @@ class PrinterDeviceModel {
   String productId;
   String ipAddress;
   int ipPort;
-  global.PrinterCashierConnectEnum connectType;
+  global.PrinterConnectEnum connectType;
+  global.PrinterTypeEnum printerType;
   // 1 = 58mm, 2 = 80mm
   int paperSize;
 
@@ -99,22 +109,45 @@ class PrinterDeviceModel {
       this.ipAddress = "",
       this.ipPort = 0,
       this.paperSize = 0,
-      this.connectType = global.PrinterCashierConnectEnum.ip});
+      this.printerType = global.PrinterTypeEnum.thermal,
+      this.connectType = global.PrinterConnectEnum.ip});
 }
 
 @JsonSerializable(explicitToJson: true)
 class PosHoldProcessModel {
-  int holdNumber;
+  /// รหัสการ Hold
+  String code;
+
+  /// 1=POS,2=ร้านอาหาร (โต๊ะ)
+  int holdType = 1;
+
+  /// จำนวน Log
   int logCount = 0;
+
+  /// รหัส Sale
   String saleCode = "";
+
+  /// ชื่อ Sale
   String saleName = "";
+
+  /// รหัสลูกค้า
   String customerCode = "";
+
+  /// ชื่อลูกค้า
   String customerName = "";
+
+  /// เบอร์โทรลูกค้า
   String customerPhone = "";
+
+  /// การชำระเงิน
   PosPayModel payScreenData = PosPayModel();
+
+  /// รายการสินค้า
   PosProcessModel posProcess = PosProcessModel();
 
-  PosHoldProcessModel({required this.holdNumber});
+  String tableNumber = "";
+
+  PosHoldProcessModel({required this.code});
 
   factory PosHoldProcessModel.fromJson(Map<String, dynamic> json) =>
       _$PosHoldProcessModelFromJson(json);
@@ -155,7 +188,7 @@ class HttpParameterModel {
   String guid;
   String barcode;
   String jsonData;
-  int holdNumber;
+  String holdCode;
   int docMode;
 
   HttpParameterModel(
@@ -163,7 +196,7 @@ class HttpParameterModel {
       this.guid = "",
       this.barcode = "",
       this.jsonData = "",
-      this.holdNumber = 0,
+      this.holdCode = "",
       this.docMode = 0});
 
   factory HttpParameterModel.fromJson(Map<String, dynamic> json) =>
@@ -254,3 +287,201 @@ class LanguageSystemModel {
   Map<String, dynamic> toJson() => _$LanguageSystemModelToJson(this);
 }
 */
+
+@JsonSerializable()
+class ResponseDataModel {
+  final List<dynamic> data;
+
+  ResponseDataModel({
+    required this.data,
+  });
+
+  factory ResponseDataModel.fromJson(Map<String, dynamic> json) =>
+      _$ResponseDataModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ResponseDataModelToJson(this);
+}
+
+class OrderTempDataModel {
+  final String orderGuid;
+  final String barcode;
+  final double qty;
+  final String optionSelected;
+  final String remark;
+
+  OrderTempDataModel({
+    required this.orderGuid,
+    required this.barcode,
+    required this.qty,
+    required this.remark,
+    required this.optionSelected,
+  });
+}
+
+@JsonSerializable(explicitToJson: true)
+class OrderProductOptionModel {
+  final String guid;
+  final int choicetype;
+  final int maxselect;
+  final int minselect;
+  final List<OrderProductLanguageNameModel> names;
+  final List<OrderProductOptionChoiceModel> choices;
+
+  OrderProductOptionModel({
+    required this.guid,
+    required this.choicetype,
+    required this.maxselect,
+    required this.minselect,
+    required this.names,
+    required this.choices,
+  });
+
+  factory OrderProductOptionModel.fromJson(Map<String, dynamic> json) =>
+      _$OrderProductOptionModelFromJson(json);
+  Map<String, dynamic> toJson() => _$OrderProductOptionModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class OrderProductOptionChoiceModel {
+  final String guid;
+  final List<OrderProductLanguageNameModel> names;
+  final String price;
+  final double qty;
+  final bool selected;
+  final double priceValue;
+
+  OrderProductOptionChoiceModel({
+    required this.guid,
+    required this.names,
+    required this.price,
+    required this.qty,
+    required this.selected,
+    required this.priceValue,
+  });
+
+  factory OrderProductOptionChoiceModel.fromJson(Map<String, dynamic> json) =>
+      _$OrderProductOptionChoiceModelFromJson(json);
+  Map<String, dynamic> toJson() => _$OrderProductOptionChoiceModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class OrderProductLanguageNameModel {
+  final String code;
+  final String name;
+
+  OrderProductLanguageNameModel({
+    required this.code,
+    required this.name,
+  });
+
+  factory OrderProductLanguageNameModel.fromJson(Map<String, dynamic> json) =>
+      _$OrderProductLanguageNameModelFromJson(json);
+  Map<String, dynamic> toJson() => _$OrderProductLanguageNameModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PriceDataModel {
+  int keynumber;
+  double price;
+
+  PriceDataModel({required this.keynumber, required this.price});
+
+  factory PriceDataModel.fromJson(Map<String, dynamic> json) =>
+      _$PriceDataModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PriceDataModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileSettingModel {
+  ProfileSettingCompanyModel company;
+  List<String> languagelist;
+  ProfileSettingConfigSystemModel configsystem;
+  List<ProfileSettingBranchModel> branch;
+
+  ProfileSettingModel(
+      {required this.company,
+      required this.languagelist,
+      required this.configsystem,
+      required this.branch});
+
+  factory ProfileSettingModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileSettingModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileSettingModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileSettingBranchModel {
+  String code;
+  List<LanguageDataModel> names;
+
+  ProfileSettingBranchModel({
+    required this.code,
+    required this.names,
+  });
+
+  factory ProfileSettingBranchModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileSettingBranchModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileSettingBranchModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileSettingConfigSystemModel {
+  double vatrate;
+  int vattypesale;
+  int vattypepurchase;
+  int inquirytypesale;
+  int inquirytypepurchase;
+  String headerreceiptpos;
+  String footerreciptpos;
+
+  ProfileSettingConfigSystemModel(
+      {required this.vatrate,
+      required this.vattypesale,
+      required this.vattypepurchase,
+      required this.inquirytypesale,
+      required this.inquirytypepurchase,
+      required this.headerreceiptpos,
+      required this.footerreciptpos});
+
+  factory ProfileSettingConfigSystemModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileSettingConfigSystemModelFromJson(json);
+  Map<String, dynamic> toJson() =>
+      _$ProfileSettingConfigSystemModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileSettingCompanyModel {
+  List<LanguageDataModel> names;
+  String taxID;
+  List<LanguageDataModel> branchNames;
+  List<LanguageDataModel> addresses;
+  List<String> phones;
+  List<String> emailOwners;
+  List<String> emailStaffs;
+  String latitude;
+  String longitude;
+  bool usebranch;
+  bool usedepartment;
+  List<String> images;
+  String logo;
+
+  ProfileSettingCompanyModel(
+      {required this.names,
+      required this.taxID,
+      required this.branchNames,
+      required this.addresses,
+      required this.phones,
+      required this.emailOwners,
+      required this.emailStaffs,
+      required this.latitude,
+      required this.longitude,
+      required this.usebranch,
+      required this.usedepartment,
+      required this.images,
+      required this.logo});
+
+  factory ProfileSettingCompanyModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileSettingCompanyModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProfileSettingCompanyModelToJson(this);
+}

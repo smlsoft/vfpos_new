@@ -85,7 +85,8 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                   });
                 },
                 decoration: InputDecoration(
-                  hintText: global.language("partial_text"), // "ข้อความบางส่วน (ชื่อ,รหัส)",
+                  hintText: global.language(
+                      "partial_text"), // "ข้อความบางส่วน (ชื่อ,รหัส)",
                   suffixIcon: IconButton(
                     onPressed: () => setState(() {
                       _findByCodeNameLastResult.clear();
@@ -129,8 +130,14 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                   Expanded(
                       flex: 3,
                       child: Text("${detail.barcode}/${detail.item_code}")),
-                  Expanded(flex: 6, child: Text(detail.item_names[0])),
-                  Expanded(flex: 2, child: Text(detail.unit_names[0])),
+                  Expanded(
+                      flex: 6,
+                      child: Text(
+                          global.getNameFromJsonLanguage(detail.item_names,global.userScreenLanguage))),
+                  Expanded(
+                      flex: 2,
+                      child: Text(
+                          global.getNameFromJsonLanguage(detail.unit_names,global.userScreenLanguage))),
                   Expanded(
                       flex: 2,
                       child: Align(
@@ -170,7 +177,7 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                               height: 240,
                                               child: NumberPad(
                                                   title: Text(
-                                                      '${detail.item_names[0]} qty ${global.moneyFormat.format(detail.qty)} ${detail.unit_names[0]}'),
+                                                      '${global.getNameFromJsonLanguage(detail.item_names,global.userScreenLanguage)} qty ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_names,global.userScreenLanguage)}'),
                                                   onChange: (qty) => {
                                                         if (qty.isNotEmpty &&
                                                             double.parse(qty) >
@@ -220,9 +227,9 @@ class _FindItemState extends State<FindItem> with TickerProviderStateMixin {
                                         data: BarcodeModel(
                                             barcode: detail.barcode,
                                             item_code: detail.item_code,
-                                            item_name: detail.item_names[0],
+                                            item_name: detail.item_names,
                                             unit_code: detail.unit_code,
-                                            unit_name: detail.unit_names[0])));
+                                            unit_name: detail.unit_names)));
                               },
                               child: const Icon(Icons.save))))
                 ]);

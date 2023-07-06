@@ -66,6 +66,33 @@ class ApiRepository {
     }
   }
 
+  Future<ApiResponse> serverKitchenGetData({
+    int limit = 0,
+    int offset = 0,
+    String lastupdate = '',
+  }) async {
+    Dio client = Client().init();
+
+    try {
+      String query =
+          "/master-sync/list?lastupdate=$lastupdate&module=restaurant-kitchen&offset=$offset&limit=$limit&action=all";
+      final response = await client.get(query);
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
   Future<ApiResponse> serverTableGetData({
     int limit = 0,
     int offset = 0,
@@ -75,7 +102,34 @@ class ApiRepository {
 
     try {
       String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=shoptable&offset=$offset&limit=$limit&action=all";
+          "/master-sync/list?lastupdate=$lastupdate&module=restaurant-table&offset=$offset&limit=$limit&action=all";
+      final response = await client.get(query);
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<ApiResponse> serverOrderTypeGetData({
+    int limit = 0,
+    int offset = 0,
+    String lastupdate = '',
+  }) async {
+    Dio client = Client().init();
+
+    try {
+      String query =
+          "/master-sync/list?lastupdate=$lastupdate&module=ordertype&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -569,6 +623,90 @@ class ApiRepository {
     }
     return result;
   }
+
+  Future<ApiResponse> getProfileShop() async {
+    Dio client = Client().init();
+
+    try {
+      final response = await client.get('/profileshop');
+      try {
+        final rawData = json.decode(response.toString());
+
+        //   print(rawData);
+
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<ApiResponse> getProfileSetting() async {
+    Dio client = Client().init();
+
+    try {
+      final response = await client.get('/restaurant/settings');
+      try {
+        final rawData = json.decode(response.toString());
+
+        //   print(rawData);
+
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<ApiResponse> getProfileSBranch() async {
+    Dio client = Client().init();
+
+    try {
+      final response = await client.get('/organization/branch');
+      try {
+        final rawData = json.decode(response.toString());
+
+        print(rawData);
+
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
 }
 
 class RestApiFindItemByCodeNameBarcode {
@@ -583,21 +721,15 @@ class RestApiFindItemByCodeNameBarcode {
               word: word.toString(), limit: limit, offset: offset, order: "");
       for (int index = 0; index < select.length; index++) {
         ProductBarcodeObjectBoxStruct source = select[index];
-        List<double> packPrices = [];
-        for (int priceIndex = 0;
-            priceIndex < source.prices.length;
-            priceIndex++) {
-          packPrices.add(double.tryParse(source.prices[priceIndex]) ?? 0.0);
-        }
         result.add(FindItemModel(
             barcode: source.barcode,
-            item_code: "", // _source.code,
+            item_code: source.item_code,
             item_names: source.names,
             unit_code: source.unit_code,
             unit_names: source.unit_names,
             unit_type: 0,
             qty: 1.0,
-            prices: packPrices,
+            prices: source.prices,
             images_guid_list: []));
       }
     }

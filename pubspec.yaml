@@ -98,6 +98,8 @@ dependencies:
   flutter_pos_printer_platform: ^1.1.0
   gsheets: ^0.4.2
   permission_handler: ^10.3.0
+  slider_captcha: ^1.0.0
+  animated_icon: ^0.0.5
 
 dev_dependencies:
   flutter_driver:

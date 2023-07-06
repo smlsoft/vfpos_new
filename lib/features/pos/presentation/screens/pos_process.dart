@@ -1,5 +1,7 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'dart:convert';
+
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
@@ -90,13 +92,12 @@ class PosProcess {
   }
 
   Future<PosProcessModel> process(
-      {required int holdNumber, required int docMode}) async {
-    serviceLocator<Log>().trace("****** Process : ${DateTime.now()}");
+      {required String holdCode, required int docMode}) async {
     double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
-        .selectByHoldNumberIsVoidSuccess(
-            holdNumber: holdNumber, isVoid: 0, success: 0, docMode: docMode);
+        .selectByHoldCodeIsVoidSuccess(
+            holdCode: holdCode, isVoid: 0, success: 0, docMode: docMode);
     /*print('Total Log ' + _valueLog.length.toString());
     for (int _index = _valueLog.length - 1; _index > 0; _index--) {
       switch (_valueLog[_index].command_code) {
@@ -190,11 +191,11 @@ class PosProcess {
                   .selectByBarcodeFirst(logData.barcode) ??
               ProductBarcodeObjectBoxStruct(
                 barcode: "",
-                names: [],
+                names: "",
                 name_all: "",
-                prices: [],
+                prices: "",
                 unit_code: "",
-                unit_names: [],
+                unit_names: "",
                 new_line: 0,
                 color_select: "",
                 image_or_color: true,
@@ -203,9 +204,11 @@ class PosProcess {
                 guid_fixed: "",
                 item_code: "",
                 item_guid: "",
-                descriptions: [],
+                descriptions: "",
                 item_unit_code: "",
                 options_json: "",
+                isalacarte: true,
+                ordertypes: "",
                 product_count: 0,
               );
           // productBarcode.new_line = 1 (ทดสอบขึ้นบรรทัดใหม่ทุกครั้ง)
@@ -221,7 +224,7 @@ class PosProcess {
             findIndex = -1;
           } else {
             // กรณีมี Extra ให้เพิ่มบรรทัดใหม่
-            var valueOption = productBarcode.options();
+            var valueOption = jsonDecode(productBarcode.options_json);
             if (valueOption.isNotEmpty) {
               findIndex = -1;
             } else {
@@ -445,8 +448,6 @@ class PosProcess {
     }
     processResult.total_piece = totalPiece;
     processResult.total_amount = totalAmount;
-
-    serviceLocator<Log>().trace("------ Process : ${DateTime.now()}");
     return processResult;
   }
 }

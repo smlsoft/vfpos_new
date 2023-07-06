@@ -19,10 +19,9 @@ class PosLogHelper {
     }
   }
 
-  Future<int> holdCount(int holdNumber) async {
+  Future<int> holdCount(String holdCode) async {
     if (global.appMode == global.AppModeEnum.posRemote) {
-      HttpParameterModel jsonParameter =
-          HttpParameterModel(holdNumber: holdNumber);
+      HttpParameterModel jsonParameter = HttpParameterModel(holdCode: holdCode);
       HttpGetDataModel json = HttpGetDataModel(
           code: "PosLogHelper.holdCount",
           json: jsonEncode(jsonParameter.toJson()));
@@ -32,19 +31,19 @@ class PosLogHelper {
     } else {
       return global.objectBoxStore
           .box<PosLogObjectBoxStruct>()
-          .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+          .query(PosLogObjectBoxStruct_.hold_code.equals(holdCode))
           .build()
           .count();
     }
   }
 
-  List<PosLogObjectBoxStruct> selectByHoldNumberIsVoidSuccess(
-      {required int holdNumber,
+  List<PosLogObjectBoxStruct> selectByHoldCodeIsVoidSuccess(
+      {required String holdCode,
       int isVoid = 0,
       int success = 0,
       required int docMode}) {
     return (global.objectBoxStore.box<PosLogObjectBoxStruct>().query(
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.hold_code.equals(holdCode) &
                 PosLogObjectBoxStruct_.is_void.equals(isVoid) &
                 PosLogObjectBoxStruct_.doc_mode.equals(docMode) &
                 PosLogObjectBoxStruct_.success.equals(success))
@@ -75,28 +74,28 @@ class PosLogHelper {
     }
   }
 
-  List<PosLogObjectBoxStruct> selectByGuidRefHoldNumberCommandCode(
+  List<PosLogObjectBoxStruct> selectByGuidRefHoldCodeCommandCode(
       {required String guidRef,
       required int commandCode,
-      required int holdNumber}) {
+      required String holdCode}) {
     return global.objectBoxStore
         .box<PosLogObjectBoxStruct>()
         .query(PosLogObjectBoxStruct_.guid_ref.equals(guidRef) &
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.hold_code.equals(holdCode) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .find();
   }
 
-  bool deleteByGuidRefHoldNumberCommandCode(
+  bool deleteByGuidRefHoldCodeCommandCode(
       {required String guidRef,
       required int commandCode,
-      required int holdNumber}) {
+      required String holdCode}) {
     bool result = false;
     final find = global.objectBoxStore
         .box<PosLogObjectBoxStruct>()
         .query(PosLogObjectBoxStruct_.guid_ref.equals(guidRef) &
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.hold_code.equals(holdCode) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .findFirst();
@@ -107,15 +106,15 @@ class PosLogHelper {
     return result;
   }
 
-  bool deleteByGuidCodeRefHoldNumberCommandCode(
+  bool deleteByGuidCodeRefHoldCodeCommandCode(
       {required String guidCode,
       required int commandCode,
-      required int holdNumber}) {
+      required String holdCode}) {
     bool result = false;
     final find = global.objectBoxStore
         .box<PosLogObjectBoxStruct>()
         .query(PosLogObjectBoxStruct_.guid_code_ref.equals(guidCode) &
-            PosLogObjectBoxStruct_.hold_number.equals(holdNumber) &
+            PosLogObjectBoxStruct_.hold_code.equals(holdCode) &
             PosLogObjectBoxStruct_.command_code.equals(commandCode))
         .build()
         .findFirst();
@@ -126,11 +125,11 @@ class PosLogHelper {
     return result;
   }
 
-  Future<int> deleteByHoldNumber({required int holdNumber}) async {
+  Future<int> deleteByHoldCode({required String holdCode}) async {
     if (global.appMode == global.AppModeEnum.posRemote) {
       HttpPost json = HttpPost(
-          command: "PosLogHelper.deleteByHoldNumber",
-          data: holdNumber.toString());
+          command: "PosLogHelper.deleteByHoldCode",
+          data: holdCode.toString());
       String result = await global.postToServerAndWait(
           ip: "${global.targetDeviceIpAddress}:${global.targetDeviceIpPort}",
           jsonData: jsonEncode(json.toJson()));
@@ -138,7 +137,7 @@ class PosLogHelper {
     } else {
       final ids = global.objectBoxStore
           .box<PosLogObjectBoxStruct>()
-          .query(PosLogObjectBoxStruct_.hold_number.equals(holdNumber))
+          .query(PosLogObjectBoxStruct_.hold_code.equals(holdCode))
           .build()
           .findIds();
       return global.objectBoxStore.box<PosLogObjectBoxStruct>().removeMany(ids);

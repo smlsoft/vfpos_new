@@ -22,7 +22,7 @@ class PosSecondaryScreen extends StatefulWidget {
 }
 
 class PosSecondaryScreenState extends State<PosSecondaryScreen> {
-  PosHoldProcessModel processResult = PosHoldProcessModel(holdNumber: 0);
+  PosHoldProcessModel processResult = PosHoldProcessModel(code: "");
   final ScrollController detailScrollController = ScrollController();
   int changeScreenDelaySecond = 1;
   late Timer syncInformationTimer;

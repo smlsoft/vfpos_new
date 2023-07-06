@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -119,32 +117,57 @@ class BillObjectBoxStruct {
   /// วันที่พิมพ์ใบเสร็จ (สำเนา)
   List<String> print_copy_bill_date_time;
 
+  // หมายเลขโต๊ะ
+  String table_number;
+
+  /// จำนวนคน ชาย
+  int man_count;
+
+  /// จำนวนคน หญิง
+  int woman_count;
+
+  /// จำนวนเด็ก
+  int child_count;
+
+  /// False=สั่งแบบอลาคาร์ทไม่ได้,True=สั่งแบบอลาคาร์ทได้
+  bool table_al_la_crate_mode;
+
+  String buffet_code;
+
+  /// เวลาเปิดโต๊ะ
+  DateTime table_open_date_time;
+
+  /// เวลาปิดโต๊ะ
+  DateTime table_close_date_time;
+
   BillObjectBoxStruct(
-      {required this.date_time, // Sync
-      this.doc_number = "", // Sync
+      {required this.date_time,
+      required this.table_open_date_time,
+      required this.table_close_date_time,
+      this.doc_number = "",
       this.doc_mode = 1,
-      this.customer_code = "", // Sync
-      this.customer_name = "", // Sync
+      this.customer_code = "",
+      this.customer_name = "",
       this.customer_telephone = "",
-      this.vat_rate = 0.0, // Sync
-      this.total_amount = 0.0, // Sync
-      this.total_before_amount = 0.0, // Sync
-      this.total_vat_amount = 0.0, // Sync
-      this.total_except_amount = 0.0, // Sync
-      this.cashier_code = "", // Sync
-      this.cashier_name = "", // Sync
-      this.sale_code = "", // Sync
-      this.sale_name = "", // Sync
+      this.vat_rate = 0.0,
+      this.total_amount = 0.0,
+      this.total_before_amount = 0.0,
+      this.total_vat_amount = 0.0,
+      this.total_except_amount = 0.0,
+      this.cashier_code = "",
+      this.cashier_name = "",
+      this.sale_code = "",
+      this.sale_name = "",
       this.is_sync = false,
-      this.discount_formula = "", // Sync
-      this.pay_cash_amount = 0.0, // Sync
-      this.sum_discount = 0.0, // Sync
+      this.discount_formula = "",
+      this.pay_cash_amount = 0.0,
+      this.sum_discount = 0.0,
       this.sum_qr_code = 0.0,
       this.sum_credit_card = 0.0,
       this.sum_money_transfer = 0.0,
       this.sum_coupon = 0.0,
       this.sum_cheque = 0.0,
-      this.is_cancel = false, // Sync
+      this.is_cancel = false,
       this.cancel_date_time = "",
       this.cancel_user_code = "",
       this.cancel_user_name = "",
@@ -156,6 +179,12 @@ class BillObjectBoxStruct {
       this.full_vat_address = "",
       this.full_vat_tax_id = "",
       this.full_vat_branch_number = "",
+      this.table_number = "",
+      this.child_count = 0,
+      this.woman_count = 0,
+      this.man_count = 0,
+      this.table_al_la_crate_mode = false,
+      this.buffet_code = "",
       this.print_copy_bill_date_time = const []});
 }
 
@@ -207,19 +236,19 @@ class BillDetailObjectBoxStruct {
 
   BillDetailObjectBoxStruct({
     this.id = 0,
-    this.line_number = 0, // Sync
+    this.line_number = 0,
     this.doc_mode = 1,
-    this.barcode = "", // Sync
-    this.item_code = "", // Sync
-    this.item_name = "", // Sync
-    this.unit_code = "", // Sync
-    this.unit_name = "", // Sync
+    this.barcode = "",
+    this.item_code = "",
+    this.item_name = "",
+    this.unit_code = "",
+    this.unit_name = "",
     this.sku = "",
-    this.qty = 0, // Sync
+    this.qty = 0,
     this.doc_number = "",
-    this.price = 0, // Sync
-    this.discount_text = "", // Sync
-    this.discount = 0, // Sync
+    this.price = 0,
+    this.discount_text = "",
+    this.discount = 0,
     this.total_amount = 0,
   });
 }

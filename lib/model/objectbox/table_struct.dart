@@ -1,6 +1,7 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'table_struct.g.dart';
 
 @Entity()
 class TableObjectBoxStruct {
@@ -8,30 +9,34 @@ class TableObjectBoxStruct {
   @Unique()
   String guidfixed;
   String number;
-  String name1;
+  String names;
   String zone;
 
   TableObjectBoxStruct({
     required this.guidfixed,
     required this.number,
-    required this.name1,
+    required this.names,
     required this.zone,
   });
 }
 
+@JsonSerializable()
 @Entity()
 class TableProcessObjectBoxStruct {
   int id = 0;
   @Unique()
   String guidfixed;
   String number;
-  String name1;
+  String names;
   String zone;
 
-  /// 0=ว่าง,1=เปิดโต๊ะแล้ว,2=ปิดโต๊ะแล้ว
+  /// 0=เปิดโต๊ะ,1=ปิดโต๊ะ
   int table_status;
 
-  /// ยอดเงิน
+  /// จำนวนที่สั่ง
+  double order_count;
+
+  /// ยอดเงินทั้งหมด
   double amount;
 
   /// สถานะการสั่งอาหาร (False=ยังได้ไม่ครบ, True=ครบแล้ว)
@@ -61,9 +66,10 @@ class TableProcessObjectBoxStruct {
   TableProcessObjectBoxStruct({
     required this.guidfixed,
     required this.number,
-    required this.name1,
+    required this.names,
     required this.zone,
     required this.table_status,
+    required this.order_count,
     required this.amount,
     required this.order_success,
     required this.qr_code,
@@ -74,4 +80,8 @@ class TableProcessObjectBoxStruct {
     required this.table_al_la_crate_mode,
     required this.buffet_code,
   });
+
+  factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
+      _$TableProcessObjectBoxStructFromJson(json);
+  Map<String, dynamic> toJson() => _$TableProcessObjectBoxStructToJson(this);
 }

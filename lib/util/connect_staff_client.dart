@@ -16,7 +16,7 @@ class ConnectStaffClientPage extends StatefulWidget {
 class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
   late Timer timer;
   String connectCode =
-      global.apiShopID + "/" + global.ipAddress + "/" + global.connectGuid;
+      "${global.apiShopID}/${global.ipAddress}/${global.connectGuid}";
   late String connectSecureCode;
 
   @override
@@ -55,7 +55,7 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
             Expanded(
                 flex: 1,
                 child: Container(
-                    margin: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Colors.black),
@@ -81,8 +81,8 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
             Expanded(
                 flex: 1,
                 child: Container(
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Colors.black),
@@ -97,7 +97,7 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
                       ],
                     ),
                     child: Column(children: [
-                      Text(
+                      const Text(
                         "Staff Scan QR Code to Connect",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
@@ -113,12 +113,12 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
                       )))),
                       Text(
                         "IP Address : " + global.ipAddress,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "Connect Code : " + connectSecureCode,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ])))

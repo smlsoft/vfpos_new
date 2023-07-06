@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -28,9 +26,9 @@ class PosLogObjectBoxStruct {
   @Property(type: PropertyType.date)
   DateTime log_date_time;
 
-  /// ลำดับการพักบิล
+  /// รหัสการพักบิล
   @Index()
-  int hold_number;
+  String hold_code;
 
   /// คำสั่ง (หมายเหตุด้านล่าง)
   int command_code;
@@ -101,7 +99,7 @@ class PosLogObjectBoxStruct {
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,
-    required this.hold_number,
+    required this.hold_code,
     required this.command_code,
     this.barcode = "",
     this.is_void = 0,

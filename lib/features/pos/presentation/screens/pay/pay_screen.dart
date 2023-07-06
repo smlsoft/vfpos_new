@@ -3,6 +3,8 @@
 import 'dart:developer' as dev;
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/model/objectbox/table_struct.dart';
+import 'package:dedepos/objectbox.g.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';
@@ -82,16 +84,24 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
       dev.log(
           "sendPayScreenCommandToCustomerDisplay : ${global.customerDisplayDeviceList[index].ip}");
       var url = "${global.customerDisplayDeviceList[index].ip}:5041";
-      global.posHoldProcessResult[global.posHoldActiveNumber].posProcess
+      global
+              .posHoldProcessResult[global
+                  .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
+              .posProcess
               .qr_code =
           PromptPay.generateQRData("0899223131",
-              amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-                  .posProcess.total_amount
+              amount: global
+                  .posHoldProcessResult[global
+                      .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
+                  .posProcess
+                  .total_amount
                   .toDouble());
       var jsonData = HttpPost(
           command: "pay_screen",
           data: jsonEncode(global
-              .posHoldProcessResult[global.posHoldActiveNumber].posProcess
+              .posHoldProcessResult[global
+                  .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
+              .posProcess
               .toJson()));
       global.postToServer(
           ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
@@ -487,7 +497,21 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             discountAmount: global.payScreenData.discount_amount)
         .then((value) async {
       if (value.docNumber.isNotEmpty) {
-        printBill(value.docDate, value.docNumber);
+        printBill(
+            docDate: value.docDate,
+            docNo: value.docNumber,
+            languageCode: global.userScreenLanguage);
+        // ร้านอาหาร update โต๊ะ
+        final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+        final result = box
+            .query(TableProcessObjectBoxStruct_.number
+                .equals(global.tableNumberSelected))
+            .build()
+            .findFirst();
+        if (result != null) {
+          result.table_status = 0;
+          box.put(result);
+        }
         syncBillProcess();
         paySuccessDialog();
       }

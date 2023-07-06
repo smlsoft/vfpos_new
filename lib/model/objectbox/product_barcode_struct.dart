@@ -19,7 +19,7 @@ class ProductBarcodeObjectBoxStruct {
   String barcode;
 
   /// ชื่อสินค้า
-  List<String> names;
+  String names;
 
   /// ชื่อสินค้าทั้งหมด (เอาไว้ค้นหา)
   String name_all;
@@ -31,7 +31,7 @@ class ProductBarcodeObjectBoxStruct {
   String item_guid;
 
   /// รายละเอียดสินค้า
-  List<String> descriptions;
+  String descriptions;
 
   /// รหัสสินค้า
   String item_code;
@@ -43,10 +43,10 @@ class ProductBarcodeObjectBoxStruct {
   String unit_code = "";
 
   /// ชื่อหน่วยนับ
-  List<String> unit_names;
+  String unit_names;
 
   /// ราคาขายสินค้า
-  List<String> prices;
+  String prices;
 
   /// ขึ้นบรรทัดใหม่
   int new_line;
@@ -69,6 +69,12 @@ class ProductBarcodeObjectBoxStruct {
   /// สีที่เลือก (Hex)
   String color_select_hex;
 
+  /// สินค้าแบบอลาคาร์ท
+  late bool isalacarte;
+
+  /// ประเภท (Buffet) JSON
+  late String ordertypes;
+
   ProductBarcodeObjectBoxStruct(
       {required this.barcode,
       required this.names,
@@ -87,18 +93,9 @@ class ProductBarcodeObjectBoxStruct {
       required this.image_or_color,
       required this.color_select,
       required this.color_select_hex,
+      required this.isalacarte,
+      required this.ordertypes,
       required this.product_count});
-
-  List<ProductOptionModel> options() {
-    try {
-      return jsonDecode(options_json)
-          .map<ProductOptionModel>((e) => ProductOptionModel.fromJson(e))
-          .toList();
-    } catch (e) {
-      serviceLocator<Log>().error(e);
-      return [];
-    }
-  }
 
   factory ProductBarcodeObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
       _$ProductBarcodeObjectBoxStructFromJson(json);

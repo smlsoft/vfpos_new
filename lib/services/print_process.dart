@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
-import 'package:image/image.dart' as im;
 import 'dart:ui' as ui;
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:charset_converter/charset_converter.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:collection/collection.dart';
-import 'package:sunmi_printer_plus/column_maker.dart';
-import 'package:sunmi_printer_plus/enums.dart';
-import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
-import 'package:sunmi_printer_plus/sunmi_style.dart';
 
 enum PrintColumnAlign { left, right, center }
 
@@ -29,10 +19,13 @@ class PrintColumn {
 }
 
 class PrintProcess {
+  final int printerIndex;
   List<PrintColumn> column = [];
   List<double> columnWidth = [];
 
-  PrintProcess();
+  PrintProcess({
+    required this.printerIndex,
+  });
 
   /*Future<int> thaiCount(String word) async {
     int result = 0;
@@ -235,20 +228,22 @@ class PrintProcess {
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(), 10000.0),
+        Rect.fromLTWH(
+            0.0, 0.0, global.printerWidthByPixel(printerIndex), 10000.0),
         backgroundPaint);
 
     for (int loop = 0; loop < columnWidth.length; loop++) {
       columnPositionList.add(position);
       double calc =
-          (global.printerWidthByPixel() * columnWidth[loop]) / sumColumnWidth;
+          (global.printerWidthByPixel(printerIndex) * columnWidth[loop]) /
+              sumColumnWidth;
       calc = calc / style.width.value;
       columnWidthList.add(calc);
       position += columnWidthList[loop];
     }
     if (columnWidthList.length > 1) {
       columnWidthList[columnWidthList.length - 1] +=
-          global.printerWidthByPixel() - columnWidthList.sum;
+          global.printerWidthByPixel(printerIndex) - columnWidthList.sum;
     }
     // Build Row
     for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
@@ -343,8 +338,7 @@ class PrintProcess {
       maxHeight += rowHeight;
     }
     column.clear();
-    return await recorder
-        .endRecording()
-        .toImage(global.printerWidthByPixel().toInt(), maxHeight + 1);
+    return await recorder.endRecording().toImage(
+        global.printerWidthByPixel(printerIndex).toInt(), maxHeight + 1);
   }
 }

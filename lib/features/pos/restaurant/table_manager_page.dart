@@ -1,17 +1,22 @@
+import 'package:dedepos/features/shop/shop.dart';
+import 'package:slider_captcha/slider_captcha.dart';
+import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/db/table_process_helper.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/services/print_process.dart';
-import 'package:dedepos/util/printer.dart';
+import 'package:dedepos/util/printer.dart' as printer;
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/utils.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class TableManagerPage extends StatefulWidget {
-  global.TableManagerEnum tableManagerMode;
-  TableManagerPage({Key? key, required this.tableManagerMode})
+  final global.TableManagerEnum tableManagerMode;
+
+  const TableManagerPage({Key? key, required this.tableManagerMode})
       : super(key: key);
 
   @override
@@ -24,6 +29,7 @@ class _TableManagerPageState extends State<TableManagerPage> {
   int manCount = 0;
   int womanCount = 0;
   int childCount = 0;
+  SliderController sliderController = SliderController();
 
   @override
   void initState() {
@@ -72,10 +78,230 @@ class _TableManagerPageState extends State<TableManagerPage> {
     ]);
   }
 
+  Future<void> tableOpen(int tableIndex) async {
+    if (tableList[tableIndex].table_status == 0) {
+      // เปิดโต๊ะใหม่
+      tableList[tableIndex].table_al_la_crate_mode = false;
+    }
+    // ถามีการเปิดโต๊ะไปแล้ว แก้ไขจำนวนคน
+    manCount = tableList[tableIndex].man_count;
+    womanCount = tableList[tableIndex].woman_count;
+    childCount = tableList[tableIndex].child_count;
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("เปิดโต๊ะ ${tableList[tableIndex].number}"),
+            content: StatefulBuilder(
+                // You need this, notice the parameters below:
+                builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                  child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            (tableList[tableIndex].table_al_la_crate_mode)
+                                ? Colors.blue
+                                : Colors.grey,
+                      ),
+                      onPressed: () {
+                        if (tableList[tableIndex].table_status == 0) {
+                          setState(() {
+                            tableList[tableIndex].table_al_la_crate_mode =
+                                !tableList[tableIndex].table_al_la_crate_mode;
+                          });
+                        }
+                      },
+                      child: (tableList[tableIndex].table_al_la_crate_mode)
+                          ? const Row(
+                              children: [
+                                Text("สั่งแบบอลาคาร์ทได้"),
+                                Spacer(),
+                                Icon(Icons.check),
+                              ],
+                            )
+                          : const Row(
+                              children: [
+                                Text("สั่งแบบอลาคาร์ทไม่ได้"),
+                                Spacer(),
+                                Icon(Icons.cancel),
+                              ],
+                            )),
+                  for (var buffet in global.buffetModeLists)
+                    Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  (tableList[tableIndex].buffet_code ==
+                                          buffet.code)
+                                      ? Colors.blue
+                                      : Colors.grey,
+                            ),
+                            onPressed: () {
+                              if (tableList[tableIndex].table_status == 0) {
+                                setState(() {
+                                  tableList[tableIndex].buffet_code =
+                                      buffet.code;
+                                });
+                              }
+                            },
+                            child: Row(children: [
+                              Text(buffet.names[0]),
+                              const Spacer(),
+                              (tableList[tableIndex].buffet_code == buffet.code)
+                                  ? const Icon(Icons.check)
+                                  : const Icon(Icons.cancel),
+                            ]))),
+                  const SizedBox(height: 10),
+                  peopleCount(
+                      "ลูกค้าผู้ชาย",
+                      manCount,
+                      (value) => {
+                            setState(() {
+                              manCount = value;
+                            })
+                          }),
+                  peopleCount(
+                      "ลูกค้าผู้หญิง",
+                      womanCount,
+                      (value) => {
+                            setState(() {
+                              womanCount = value;
+                            })
+                          }),
+                  peopleCount(
+                      "ลูกค้าเด็ก",
+                      childCount,
+                      (value) => {
+                            setState(() {
+                              childCount = value;
+                            })
+                          })
+                ],
+              ));
+            }),
+            actions: [
+              TextButton(
+                  child: const Text("ยกเลิก"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              TextButton(
+                  child: const Text("ตกลง"),
+                  onPressed: () {
+                    if (manCount + womanCount + childCount > 0) {
+                      tableList[tableIndex].man_count = manCount;
+                      tableList[tableIndex].woman_count = womanCount;
+                      tableList[tableIndex].child_count = childCount;
+                      if (tableList[tableIndex].table_status == 0) {
+                        tableList[tableIndex].table_open_datetime =
+                            DateTime.now();
+                        tableList[tableIndex].qr_code =
+                            Uuid().v4().replaceAll("-", "");
+                      }
+                      tableList[tableIndex].table_status = 1;
+                      TableProcessHelper()
+                          .updateByTableNumber(tableList[tableIndex]);
+                      clickHouseUpdateTable(tableList[tableIndex]);
+                      for (int copy = 0; copy < 2; copy++) {
+                        printer.printTableQrCode(
+                            tableManagerMode: widget.tableManagerMode,
+                            table: tableList[tableIndex],
+                            qrCode: "https://dedefoodorder.web.app/?shop=" +
+                                global.shopId +
+                                "&ticket=" +
+                                tableList[tableIndex].qr_code);
+                      }
+                      Navigator.pop(context);
+                    }
+                  }),
+            ],
+          );
+        });
+  }
+
+  Future<void> tableClose(int tableIndex) async {
+    bool confirmDisable = false;
+
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("ปิดโต๊ะ ${tableList[tableIndex].number}"),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return SingleChildScrollView(
+                  child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SliderCaptcha(
+                    controller: sliderController,
+                    image: Image.asset(
+                      'assets/images/captcha.png',
+                      fit: BoxFit.fitWidth,
+                    ),
+                    colorBar: Colors.blue,
+                    colorCaptChar: Colors.blue,
+                    onConfirm: (value) =>
+                        Future.delayed(const Duration(seconds: 1)).then(
+                      (_) {
+                        if (value == false) {
+                          sliderController.create();
+                        } else {
+                          setState(() {
+                            confirmDisable = true;
+                          });
+                        }
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("ยกเลิก")),
+                      Spacer(),
+                      ElevatedButton(
+                          onPressed: (confirmDisable)
+                              ? () {
+                                  printer.printTableQrCode(
+                                    tableManagerMode: widget.tableManagerMode,
+                                    table: tableList[tableIndex],
+                                  );
+                                  tableList[tableIndex].table_status = 2;
+                                  TableProcessHelper().updateByTableNumber(
+                                      tableList[tableIndex]);
+                                  clickHouseUpdateTable(tableList[tableIndex]);
+                                  Navigator.pop(context);
+                                }
+                              : null,
+                          child: Text("ปิดโต๊ะ"))
+                    ],
+                  )
+                ],
+              ));
+            }),
+          );
+        });
+  }
+
   Widget table(String zone) {
     List<String> tableWhere = [];
     for (var table in tableList.where((element) => element.zone == zone)) {
-      tableWhere.add(table.number);
+      if (widget.tableManagerMode == global.TableManagerEnum.openTable ||
+          widget.tableManagerMode == global.TableManagerEnum.informationTable) {
+        tableWhere.add(table.number);
+      } else {
+        if (table.table_status == 1) {
+          tableWhere.add(table.number);
+        }
+      }
     }
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -106,8 +332,17 @@ class _TableManagerPageState extends State<TableManagerPage> {
                     ]));
             int tableListIndex = tableList
                 .indexWhere((element) => element.number == tableWhere[index]);
+            switch (tableList[tableListIndex].table_status) {
+              case 0: // ว่าง
+                color = Colors.green;
+                break;
+              case 1: // มีลูกค้า
+                color = Colors.red;
+                break;
+              case 2: // รอชำระเงิน
+                color = Colors.orange;
+            }
             if (tableList[tableListIndex].table_status == 1) {
-              color = Colors.red;
               int maxTimeMinute = 120;
               Duration diff = tableList[tableListIndex]
                   .table_open_datetime
@@ -146,7 +381,7 @@ class _TableManagerPageState extends State<TableManagerPage> {
                           style: TextStyle(color: Colors.white, fontSize: 12)),
                     if (findBuffetIndex != -1)
                       Text(
-                          "ประเภท : ${global.buffetModeList[findBuffetIndex].names[0]}",
+                          "ประเภท : ${global.buffetModeLists[findBuffetIndex].names[0]}",
                           style: const TextStyle(
                               color: Colors.white, fontSize: 12)),
                     if (tableList[tableListIndex].man_count != 0)
@@ -191,158 +426,18 @@ class _TableManagerPageState extends State<TableManagerPage> {
                     textStyle: const TextStyle(fontSize: 20)),
                 child: tableStatus,
                 onPressed: () async {
-                  if (widget.tableManagerMode ==
-                      global.TableManagerEnum.openTable) {
-                    // ถามีการเปิดโต๊ะไปแล้ว แก้ไขจำนวนคน
-                    manCount = tableList[tableListIndex].man_count;
-                    womanCount = tableList[tableListIndex].woman_count;
-                    childCount = tableList[tableListIndex].child_count;
-                    await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text("เปิดโต๊ะ ${tableWhere[index]}"),
-                            content: StatefulBuilder(
-                                // You need this, notice the parameters below:
-                                builder: (BuildContext context,
-                                    StateSetter setState) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            (tableList[tableListIndex]
-                                                    .table_al_la_crate_mode)
-                                                ? Colors.blue
-                                                : Colors.grey,
-                                      ),
-                                      onPressed: () {
-                                        if (tableList[tableListIndex]
-                                                .table_status ==
-                                            0) {
-                                          setState(() {
-                                            tableList[tableListIndex]
-                                                    .table_al_la_crate_mode =
-                                                !tableList[tableListIndex]
-                                                    .table_al_la_crate_mode;
-                                          });
-                                        }
-                                      },
-                                      child: (tableList[tableListIndex]
-                                              .table_al_la_crate_mode)
-                                          ? const Row(
-                                              children: [
-                                                Text("สั่งแบบอลาคาร์ทได้"),
-                                                Spacer(),
-                                                Icon(Icons.check),
-                                              ],
-                                            )
-                                          : const Row(
-                                              children: [
-                                                Text("สั่งแบบอลาคาร์ทไม่ได้"),
-                                                Spacer(),
-                                                Icon(Icons.cancel),
-                                              ],
-                                            )),
-                                  for (var buffet in global.buffetModeList)
-                                    Padding(
-                                        padding: const EdgeInsets.only(top: 5),
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  (tableList[tableListIndex]
-                                                              .buffet_code ==
-                                                          buffet.code)
-                                                      ? Colors.blue
-                                                      : Colors.grey,
-                                            ),
-                                            onPressed: () {
-                                              if (tableList[tableListIndex]
-                                                      .table_status ==
-                                                  0) {
-                                                setState(() {
-                                                  tableList[tableListIndex]
-                                                          .buffet_code =
-                                                      buffet.code;
-                                                });
-                                              }
-                                            },
-                                            child: Row(children: [
-                                              Text(buffet.names[0]),
-                                              const Spacer(),
-                                              (tableList[tableListIndex]
-                                                          .buffet_code ==
-                                                      buffet.code)
-                                                  ? const Icon(Icons.check)
-                                                  : const Icon(Icons.cancel),
-                                            ]))),
-                                  const SizedBox(height: 10),
-                                  peopleCount(
-                                      "ลูกค้าผู้ชาย",
-                                      manCount,
-                                      (value) => {
-                                            setState(() {
-                                              manCount = value;
-                                            })
-                                          }),
-                                  peopleCount(
-                                      "ลูกค้าผู้หญิง",
-                                      womanCount,
-                                      (value) => {
-                                            setState(() {
-                                              womanCount = value;
-                                            })
-                                          }),
-                                  peopleCount(
-                                      "ลูกค้าเด็ก",
-                                      childCount,
-                                      (value) => {
-                                            setState(() {
-                                              childCount = value;
-                                            })
-                                          })
-                                ],
-                              );
-                            }),
-                            actions: [
-                              TextButton(
-                                  child: const Text("ยกเลิก"),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  }),
-                              TextButton(
-                                  child: const Text("ตกลง"),
-                                  onPressed: () {
-                                    if (manCount + womanCount + childCount >
-                                        0) {
-                                      tableList[tableListIndex].man_count =
-                                          manCount;
-                                      tableList[tableListIndex].woman_count =
-                                          womanCount;
-                                      tableList[tableListIndex].child_count =
-                                          childCount;
-                                      if (tableList[tableListIndex]
-                                              .table_status ==
-                                          0) {
-                                        tableList[tableListIndex]
-                                                .table_open_datetime =
-                                            DateTime.now();
-                                      }
-                                      tableList[tableListIndex].table_status =
-                                          1;
-                                      TableProcessHelper().updateByTableNumber(
-                                          tableList[tableListIndex]);
-                                      printTableQrCode(
-                                          tableList[tableListIndex]);
-                                      Navigator.pop(context);
-                                    }
-                                  }),
-                            ],
-                          );
-                        });
-                    setState(() {});
+                  switch (widget.tableManagerMode) {
+                    case global.TableManagerEnum.openTable:
+                      {
+                        await tableOpen(tableListIndex);
+                      }
+                      break;
+                    case global.TableManagerEnum.closeTable:
+                      {
+                        await tableClose(tableListIndex);
+                      }
                   }
+                  setState(() {});
                 });
           },
         ),
@@ -350,96 +445,35 @@ class _TableManagerPageState extends State<TableManagerPage> {
     });
   }
 
-  void printTableQrCode(TableProcessObjectBoxStruct table) {
-    PrinterClass printer = PrinterClass();
-    // Reset Printer
-    printer.addCommand(PosPrintBillCommandModel(mode: 0));
-    printer.addCommand(PosPrintBillCommandModel(
-        mode: 2,
-        posStyles: PosStyles(bold: true),
-        columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 80,
-              width: 1,
-              text: "โต๊ะ : " + table.number,
-              align: PrintColumnAlign.center)
-        ]));
-
-    printer.addCommand(PosPrintBillCommandModel(
-        mode: 2,
-        posStyles: PosStyles(bold: true),
-        columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
-              width: 1,
-              text: "เวลาเปิดโต๊ะ : " +
-                  DateFormat("HH:mm").format(table.table_open_datetime),
-              align: PrintColumnAlign.center)
-        ]));
-    printer.addCommand(PosPrintBillCommandModel(
-        mode: 2,
-        posStyles: PosStyles(bold: true),
-        columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
-              width: 1,
-              text:
-                  "จำนวนนาที : ${global.moneyFormat.format(global.buffetMaxMinute)} นาที",
-              align: PrintColumnAlign.center)
-        ]));
-    String endTime = DateFormat("HH:mm").format(table.table_open_datetime
-        .add(Duration(minutes: global.buffetMaxMinute)));
-    printer.addCommand(PosPrintBillCommandModel(
-        mode: 2,
-        posStyles: PosStyles(bold: true),
-        columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
-              width: 1,
-              text: "เวลาปิดโต๊ะ : $endTime",
-              align: PrintColumnAlign.center)
-        ]));
-    printer.addCommand(PosPrintBillCommandModel(
-        mode: 2,
-        posStyles: PosStyles(bold: true),
-        columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
-              width: 1,
-              text: (table.table_al_la_crate_mode)
-                  ? "สั่งแบบอาราคัสได้"
-                  : "สั่งแบบอาราคัสไม่ได้",
-              align: PrintColumnAlign.center)
-        ]));
-    int buffetIndex = global.buffetModeList
-        .indexWhere((element) => element.code == table.buffet_code);
-    if (buffetIndex != -1) {
-      printer.addCommand(PosPrintBillCommandModel(
-          mode: 2,
-          posStyles: PosStyles(bold: true),
-          columns: [
-            PosPrintBillCommandColumnModel(
-                fontSize: 40,
-                width: 1,
-                text:
-                    "เงื่อนไข : " + global.buffetModeList[buffetIndex].names[0],
-                align: PrintColumnAlign.center)
-          ]));
-    }
-    printer.addCommand(PosPrintBillCommandModel(
-      mode: 4,
-      value: 80,
-    ));
-    // Qr Code
-    printer.qrCode = "234234987234897234892734892734897234";
-    printer.sendToPrinter();
-  }
-
   @override
   Widget build(BuildContext context) {
+    late String title;
+    switch (widget.tableManagerMode) {
+      case global.TableManagerEnum.openTable:
+        title = "table_open";
+        break;
+      case global.TableManagerEnum.closeTable:
+        title = "table_close";
+        break;
+      case global.TableManagerEnum.moveTable:
+        title = "table_move";
+        break;
+      case global.TableManagerEnum.mergeTable:
+        title = "table_merge";
+        break;
+      case global.TableManagerEnum.splitTable:
+        title = "table_split";
+        break;
+      case global.TableManagerEnum.informationTable:
+        title = "table_information";
+        break;
+      default:
+        title = "";
+        break;
+    }
     return Scaffold(
         appBar: AppBar(
-          title: const Text("TableOpenPage"),
+          title: Text(title),
         ),
         body: SingleChildScrollView(
             child: Column(

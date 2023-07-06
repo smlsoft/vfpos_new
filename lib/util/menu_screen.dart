@@ -1,24 +1,21 @@
+import 'dart:convert';
+
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
-import 'package:dedepos/core/logger/logger.dart';
-import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/buffet_mode_helper.dart';
-import 'package:dedepos/db/printer_helper.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/pos/restaurant/table_manager_page.dart';
-import 'package:dedepos/features/receive_money/receive_money.dart';
 import 'package:dedepos/flavors.dart';
-import 'package:dedepos/model/objectbox/printer_struct.dart';
-import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/connect_staff_client.dart';
 import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/util/shift_and_money.dart';
-import 'package:dedepos/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
@@ -34,11 +31,11 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  ApiRepository apiRepository = ApiRepository();
   List<Widget> menuPosList = [];
   List<Widget> menuShiftList = [];
   List<Widget> menuVisitList = [];
   List<Widget> menuUtilList = [];
-  List<Widget> menuRestaurantList = [];
   TextEditingController receiveAmount = TextEditingController();
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
@@ -121,25 +118,25 @@ class _MenuScreenState extends State<MenuScreen> {
           icon: Icons.request_quote,
           title: global.language("open_shift"), // 'เปิดกะ/รับเงินทอน',
           callBack: () {
-            showDialogShiftAndMoney(0);
+            showDialogShiftAndMoney(1);
           }),
       menuItem(
           icon: Icons.request_quote,
           title: global.language("add_change_money"), // 'รับเงินทอนเพิ่ม',
           callBack: () {
-            showDialogShiftAndMoney(2);
+            showDialogShiftAndMoney(3);
           }),
       menuItem(
           icon: Icons.request_quote,
           title: global.language("withdraw_money"), // 'นำเงินออก',
           callBack: () {
-            showDialogShiftAndMoney(3);
+            showDialogShiftAndMoney(4);
           }),
       menuItem(
           icon: Icons.list_alt_outlined,
           title: global.language("close_shift"), // 'ปิดกะ/ส่งเงิน',
           callBack: () {
-            showDialogShiftAndMoney(1);
+            showDialogShiftAndMoney(2);
           }),
     ];
   }
@@ -155,23 +152,6 @@ class _MenuScreenState extends State<MenuScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => const ConnectStaffClientPage(),
-              ),
-            );
-          }),
-    ];
-  }
-
-  List<Widget> menuRestaurant() {
-    return [
-      menuItem(
-          icon: Icons.request_quote,
-          title: global.language("table_open"),
-          callBack: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TableManagerPage(
-                    tableManagerMode: global.TableManagerEnum.openTable),
               ),
             );
           }),
@@ -222,30 +202,86 @@ class _MenuScreenState extends State<MenuScreen> {
     menuPosList = menuPos();
     menuShiftList = menuShift();
     menuUtilList = menuUtil();
-    menuRestaurantList = menuRestaurant();
     if (F.appFlavor == Flavor.SMLMOBILESALES) {
       menuVisitList = menuForVisit();
     }
   }
 
+  Future<void> getProfile() async {
+    {
+      var value = await apiRepository.getProfileShop();
+      global.shopId = value.data["guidfixed"];
+    }
+    try {
+      ProfileSettingCompanyModel company = ProfileSettingCompanyModel(
+        names: [],
+        taxID: "",
+        branchNames: [],
+        addresses: [],
+        phones: [],
+        emailOwners: [],
+        emailStaffs: [],
+        latitude: "",
+        longitude: "",
+        usebranch: false,
+        usedepartment: false,
+        images: [],
+        logo: "",
+      );
+      List<String> languageList = [];
+      ProfileSettingConfigSystemModel configSystem =
+          ProfileSettingConfigSystemModel(
+        vatrate: 0,
+        vattypesale: 0,
+        vattypepurchase: 0,
+        inquirytypesale: 0,
+        inquirytypepurchase: 0,
+        headerreceiptpos: "",
+        footerreciptpos: "",
+      );
+
+      var value = await apiRepository.getProfileSetting();
+      var jsonData = value.data;
+      for (var data in jsonData) {
+        String code = data["code"];
+        String body = data["body"];
+        if (code == "company") {
+          company = ProfileSettingCompanyModel.fromJson(jsonDecode(body));
+        } else if (code == "ConfigLanguage") {
+          var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
+          languageList = List<String>.from(jsonDecodeBody["languageList"]);
+        } else if (code == "ConfigSystem") {
+          configSystem =
+              ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+        }
+      }
+      var branchValue = await apiRepository.getProfileSBranch();
+      List<ProfileSettingBranchModel> branchs =
+          List<ProfileSettingBranchModel>.from(branchValue.data
+              .map((e) => ProfileSettingBranchModel.fromJson(e)));
+
+      global.profileSetting = ProfileSettingModel(
+        company: company,
+        languagelist: languageList,
+        configsystem: configSystem,
+        branch: branchs,
+      );
+      global.appStorage.write('profile', global.profileSetting.toJson());
+    } catch (e) {
+      print(e);
+    }
+    var getProfile = await global.appStorage.read('profile');
+    global.profileSetting = ProfileSettingModel.fromJson(getProfile);
+    await global.loadConfig();
+  }
+
   @override
   void initState() {
     super.initState();
-    List<PrinterObjectBoxStruct> printers = (PrinterHelper()).selectAll();
-    global.printerList.clear();
-    for (var printer in printers) {
-      PrinterModel newPrinter = PrinterModel(
-          guidfixed: printer.guid_fixed,
-          printer_ip_address: printer.print_ip_address,
-          printer_port: printer.printer_port,
-          code: printer.code,
-          name: printer.name1,
-          printer_type: printer.type);
-      global.printerList.add(newPrinter);
-    }
     rebuildScreen();
     syncBillProcess();
-    global.buffetModeList = BuffetModeHelper().getAll();
+    global.buffetModeLists = BuffetModeHelper().getAll();
+    getProfile();
   }
 
   @override
@@ -355,8 +391,9 @@ class _MenuScreenState extends State<MenuScreen> {
             appBar: AppBar(
                 centerTitle: true,
                 foregroundColor: Colors.white,
-                title: Text(
-                    "${global.language('dashboard')} : ${(global.appMode == global.AppModeEnum.posTerminal) ? global.language("pos_terminal") : global.language("pos_remote")}"),
+                title: Text((global.appMode == global.AppModeEnum.posTerminal)
+                    ? global.language("pos_terminal")
+                    : global.language("pos_remote")),
                 actions: [
                   IconButton(
                     icon: Container(
@@ -379,14 +416,15 @@ class _MenuScreenState extends State<MenuScreen> {
                     elevation: 2,
                     icon: const Icon(Icons.more_vert),
                     offset: Offset(0.0, appBarHeight),
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == 1) {
+                        await global.loadPrinter();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const PrinterConfigScreen(),
                           ),
-                        );
+                        ).then((value) async => {await global.loadPrinter()});
                       }
                     },
                     shape: const RoundedRectangleBorder(
@@ -536,28 +574,6 @@ class _MenuScreenState extends State<MenuScreen> {
                                   ),
                                 ),
                               ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: menuRestaurantList.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        MediaQuery.of(context).size.width ~/
-                                            150,
-                                    crossAxisSpacing: 5.0,
-                                    mainAxisSpacing: 5.0,
-                                  ),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return menuRestaurantList[index];
-                                  },
-                                ),
-                              ),
-                            ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SizedBox(
