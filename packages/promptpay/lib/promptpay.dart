@@ -7,7 +7,14 @@ import 'package:crclib/crclib.dart';
 import 'package:either_option/either_option.dart';
 import 'package:promptpay/promptpay_data.dart';
 
+///
+/// 00
+///
 const versionID = "00";
+
+///
+/// 01
+///
 const qrTypeID = "01";
 const merchantAccountID = "29";
 
@@ -22,12 +29,27 @@ const subMerchantAccountIdentityID = "02";
 
 /// 03
 const subMerchantAccountEWalletID = "03";
+
+///
+/// Country ID : 58
+///
 const countryID = "58";
+
+///
+/// Currency ID: 53
+///
 const currencyID = "53";
 const amountID = "54";
 const checksumID = "63";
 
+///
+/// 02
+///
 const versionLength = "02";
+
+///
+/// 02
+///
 const qrTypeLength = "02";
 const merchantAccountLength = "37";
 const subMerchantApplicationIDLength = "16";
@@ -38,6 +60,10 @@ const checksumLength = "04";
 
 /// Version Data "01"
 const versionData = "01";
+
+///
+/// 11
+///
 const qrMultipleTypeData = "11";
 const qrOneTimeTypeData = "12";
 const applicationIDData = "A000000677010111";
