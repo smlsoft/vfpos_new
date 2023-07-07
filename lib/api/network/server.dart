@@ -1,11 +1,9 @@
 import "dart:developer" as dev;
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:dedepos/core/core.dart';
-import 'package:dedepos/db/order_temp_helper.dart';
 import 'package:dedepos/db/pos_log_helper.dart';
 import 'package:dedepos/db/product_barcode_status_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
@@ -26,8 +24,6 @@ import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/util/network.dart' as network;
 import 'package:dedepos/util/printer.dart' as printer;
-import 'package:get/state_manager.dart';
-import 'package:uuid/uuid.dart';
 
 double orderCalcSumAmount(OrderTempObjectBoxStruct order) {
   double amount = order.qty * order.price;

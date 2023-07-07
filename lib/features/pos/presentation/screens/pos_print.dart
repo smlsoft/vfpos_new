@@ -6,7 +6,6 @@ import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pos_printer_platform/flutter_pos_printer_platform.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +23,7 @@ Future<void> printBill(
   if (global.posTicket.print_mode == 0) {
     PosPrintBillClass posPrintBill = PosPrintBillClass(
         docDate: docDate, docNo: docNo, languageCode: languageCode);
-    //posPrintBill.printBill();
+    posPrintBill.printBill();
   } else {
     //printBillImage(docNo);
   }
