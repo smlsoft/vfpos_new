@@ -45,7 +45,6 @@ Future<void> sendToKitchen(
         if (orderTempUpdate != null) {
           orderTempUpdate.kdsId = kitchen.code;
           orderTempUpdate.kdsSuccess = false;
-          orderTempUpdate.kdsCancel = false;
           orderTempUpdate.kdsSuccessTime = DateTime.now();
           box.put(orderTempUpdate, mode: PutMode.update);
         }

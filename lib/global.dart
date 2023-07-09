@@ -1389,10 +1389,14 @@ Future<void> checkOrderOnline() async {
     List<OrderTempDataModel> orderTemp = [];
     List<String> orderIdList = [];
     try {
-      // เรียกรายการที่ยังไม่ส่ง Order ไปที่ครัว ทุกโต๊ะ
+      // เรียกรายการที่ยังไม่ส่ง Order ไปที่ครัว ทุกโต๊ะ (isOrder=False Order เสร็จแล้ว and isOrderSuccess=False ที่ยังไม่ได้ถือเป็นการรับเงิน)
       final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
-      final getData =
-          box.query(OrderTempObjectBoxStruct_.isClose.equals(1)).build().find();
+      final getData = box
+          .query(OrderTempObjectBoxStruct_.isOrder
+              .equals(false)
+              .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+          .build()
+          .find();
       for (var data in getData) {
         if (!orderIdList.contains(data.orderId)) {
           orderIdList.add(data.orderId);
@@ -1402,9 +1406,9 @@ Future<void> checkOrderOnline() async {
       for (var orderId in orderIdList) {
         // เลือกรายการ Order ทีละโต๊ะ
         final getData = box
-            .query(OrderTempObjectBoxStruct_.orderId
-                .equals(orderId)
-                .and(OrderTempObjectBoxStruct_.isClose.equals(1)))
+            .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
+                OrderTempObjectBoxStruct_.isOrder.equals(false).and(
+                    OrderTempObjectBoxStruct_.isOrderSuccess.equals(false))))
             .build()
             .find();
         for (var data in getData) {
@@ -1433,8 +1437,11 @@ Future<void> checkOrderOnline() async {
             .build()
             .find();
         for (var data in orderTempUpdate) {
-          // ปรับปรุง ว่าส่ง order แล้ว
-          data.isClose = 2;
+          // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
+          data.isOrder = false;
+          data.isOrderSuccess = true;
+          // ถือว่ายังไม่ส่งครัว
+          data.isOrderSendKdsSuccess = false;
         }
         box.putMany(orderTempUpdate, mode: PutMode.update);
       }

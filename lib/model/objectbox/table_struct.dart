@@ -24,44 +24,76 @@ class TableObjectBoxStruct {
 @Entity()
 class TableProcessObjectBoxStruct {
   int id = 0;
+
   @Unique()
-  String guidfixed;
-  String number;
-  String names;
-  String zone;
+  final String guidfixed;
 
-  /// 0=เปิดโต๊ะ,1=ปิดโต๊ะ
-  int table_status;
+  final String number;
+  final String names;
+  late String zone;
 
-  /// จำนวนที่สั่ง
-  double order_count;
+  /// 0=ว่าง,1=เปิดโต๊ะแล้ว,2=ปิดโต๊ะแล้วรอคิดเงิน,3=รับชำระเงินแล้ว
+  late int table_status;
 
-  /// ยอดเงินทั้งหมด
-  double amount;
+  /// จำนวนรายการที่สั่ง
+  late double order_count;
+
+  /// ยอดเงิน (รวมทั้งหมด)
+  late double amount;
 
   /// สถานะการสั่งอาหาร (False=ยังได้ไม่ครบ, True=ครบแล้ว)
-  bool order_success;
+  late bool order_success;
 
   /// เวลาเปิดโต๊ะ
-  DateTime table_open_datetime;
+  late DateTime table_open_datetime;
 
   /// Qr Code ล่าสุด
-  String qr_code;
+  late String qr_code;
 
   /// จำนวนคน ชาย
-  int man_count;
+  late int man_count;
 
   /// จำนวนคน หญิง
-  int woman_count;
+  late int woman_count;
 
   /// จำนวนเด็ก
-  int child_count;
+  late int child_count;
 
   /// False=สั่งแบบอลาคาร์ทไม่ได้,True=สั่งแบบอลาคาร์ทได้
-  bool table_al_la_crate_mode;
+  late bool table_al_la_crate_mode;
 
   /// Buffet ที่เลือก
-  String buffet_code;
+  late String buffet_code;
+
+  /// รหัสหรือเบอร์โทรศัพท์ลูกค้า
+  late String customer_code_or_telephone;
+
+  /// ชื่อลูกค้า
+  late String customer_name;
+
+  /// ที่อยู่ลูกค้า
+  late String customer_address;
+
+  /// Delivery ที่เลือก
+  late String delivery_code;
+
+  /// Delivery Ticket Number
+  late String delivery_ticket_number;
+
+  /// Delivery Number
+  late String delivery_number;
+
+  /// Remark
+  late String remark;
+
+  /// พนักงานที่เปิดโต๊ะ
+  late String open_by_staff_code;
+
+  /// ทำอาหารทันที
+  late bool make_food_immediately;
+
+  /// is Delivery
+  late bool is_delivery;
 
   TableProcessObjectBoxStruct({
     required this.guidfixed,
@@ -79,6 +111,16 @@ class TableProcessObjectBoxStruct {
     required this.child_count,
     required this.table_al_la_crate_mode,
     required this.buffet_code,
+    required this.customer_code_or_telephone,
+    required this.customer_name,
+    required this.customer_address,
+    required this.delivery_code,
+    required this.delivery_number,
+    required this.delivery_ticket_number,
+    required this.remark,
+    required this.open_by_staff_code,
+    required this.make_food_immediately,
+    required this.is_delivery,
   });
 
   factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

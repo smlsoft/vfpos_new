@@ -1158,7 +1158,7 @@
     },
     {
       "id": "18:2798929453371134862",
-      "lastPropertyId": "20:176469185807426556",
+      "lastPropertyId": "31:2285475427650852090",
       "name": "TableProcessObjectBoxStruct",
       "properties": [
         {
@@ -1243,6 +1243,56 @@
           "id": "20:176469185807426556",
           "name": "order_count",
           "type": 8
+        },
+        {
+          "id": "21:8985529451822913462",
+          "name": "customer_code_or_telephone",
+          "type": 9
+        },
+        {
+          "id": "22:6823703838362136593",
+          "name": "customer_name",
+          "type": 9
+        },
+        {
+          "id": "23:5133502442246364447",
+          "name": "customer_address",
+          "type": 9
+        },
+        {
+          "id": "24:5229167772911947857",
+          "name": "delivery_code",
+          "type": 9
+        },
+        {
+          "id": "26:2869169682897372307",
+          "name": "remark",
+          "type": 9
+        },
+        {
+          "id": "27:7328342374093569995",
+          "name": "open_by_staff_code",
+          "type": 9
+        },
+        {
+          "id": "28:207297085791992695",
+          "name": "make_food_immediately",
+          "type": 1
+        },
+        {
+          "id": "29:1525236354915606718",
+          "name": "is_delivery",
+          "type": 1
+        },
+        {
+          "id": "30:4003200328585061100",
+          "name": "delivery_number",
+          "type": 9
+        },
+        {
+          "id": "31:2285475427650852090",
+          "name": "delivery_ticket_number",
+          "type": 9
         }
       ],
       "relations": []
@@ -1297,7 +1347,7 @@
     },
     {
       "id": "22:1593243704545833045",
-      "lastPropertyId": "24:2433925935161313700",
+      "lastPropertyId": "34:6133382173566264329",
       "name": "OrderTempObjectBoxStruct",
       "properties": [
         {
@@ -1377,11 +1427,6 @@
           "type": 9
         },
         {
-          "id": "20:4588881187511296155",
-          "name": "isClose",
-          "type": 6
-        },
-        {
           "id": "21:8757486528172593206",
           "name": "kdsSuccessTime",
           "type": 10
@@ -1392,14 +1437,59 @@
           "type": 1
         },
         {
-          "id": "23:2608694628300361350",
-          "name": "kdsCancel",
-          "type": 1
-        },
-        {
           "id": "24:2433925935161313700",
           "name": "kdsId",
           "type": 9
+        },
+        {
+          "id": "25:7589579544003947360",
+          "name": "takeAway",
+          "type": 1
+        },
+        {
+          "id": "26:1998522777189307948",
+          "name": "deliveryNumber",
+          "type": 9
+        },
+        {
+          "id": "27:8860133218359971973",
+          "name": "deliveryCode",
+          "type": 9
+        },
+        {
+          "id": "28:2261719518297614626",
+          "name": "deliveryName",
+          "type": 9
+        },
+        {
+          "id": "29:1343234187593225362",
+          "name": "cancelQty",
+          "type": 8
+        },
+        {
+          "id": "30:673816517692570012",
+          "name": "orderQty",
+          "type": 8
+        },
+        {
+          "id": "31:2323569360020567975",
+          "name": "isOrder",
+          "type": 1
+        },
+        {
+          "id": "32:7277291291179119177",
+          "name": "isOrderSuccess",
+          "type": 1
+        },
+        {
+          "id": "33:90819867391211256",
+          "name": "isOrderSendKdsSuccess",
+          "type": 1
+        },
+        {
+          "id": "34:6133382173566264329",
+          "name": "lastUpdateDateTime",
+          "type": 10
         }
       ],
       "relations": []
@@ -1753,7 +1843,10 @@
     5235405778777209391,
     8061769850907075896,
     3886119394820363955,
-    1644985707331018481
+    1644985707331018481,
+    7209550344035022058,
+    4588881187511296155,
+    2608694628300361350
   ],
   "retiredRelationUids": [],
   "version": 1

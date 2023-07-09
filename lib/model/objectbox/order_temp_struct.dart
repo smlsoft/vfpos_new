@@ -35,24 +35,51 @@ class OrderTempObjectBoxStruct {
   String machineId;
   DateTime orderDateTime;
   String barcode;
+
+  /// จำนวนสั่ง (เมื่อจากกดส่งแล้ว)
+  double orderQty;
+
+  /// จำนวนจริง หลังจากหักยกเลิก
   double qty;
+
+  /// จำนวนยกเลิก (เมื่อกดส่งแล้วมีการยกเลิก)
+  double cancelQty;
+
   double price;
   double amount;
 
-  /// สถานะล่าสุด 0=กำลังรับ Order,1=กำลังส่ง Order,2=ส่ง Order แล้ว (ไปครัว)
-  int isClose;
+  /// สถานะล่าสุด True=กำลังรับ Order,False=จบการรับ Order
+  bool isOrder;
+
+  /// สั่งเรียบร้อย (รอคิดเงิน)
+  bool isOrderSuccess;
+
+  /// ส่งเข้าครัวเรียบร้อย
+  bool isOrderSendKdsSuccess;
+
+  /// ข้อเลือกพิเศษ
   String optionSelected;
   String remark;
   String names;
   String unitCode;
   String unitName;
   String imageUri;
+  bool takeAway;
 
   /// KDS System
   DateTime kdsSuccessTime;
+
+  /// ครัวปรุงเสร็จ
   bool kdsSuccess;
-  bool kdsCancel;
   String kdsId;
+
+  // Delivery
+  String deliveryNumber;
+  String deliveryCode;
+  String deliveryName;
+
+  /// วันที่เวลาแก้ไขล่าสุด เพื่อให้ระบบอื่นนำไปใช้เป็นตัวเช็คว่ามีการแก้ไขหรือยัง
+  DateTime lastUpdateDateTime;
 
   OrderTempObjectBoxStruct({
     required this.id,
@@ -64,17 +91,25 @@ class OrderTempObjectBoxStruct {
     required this.qty,
     required this.price,
     required this.amount,
-    required this.isClose,
+    required this.isOrder,
     required this.optionSelected,
     required this.remark,
     required this.names,
+    required this.takeAway,
     required this.unitCode,
     required this.unitName,
     required this.imageUri,
     required this.kdsSuccessTime,
     required this.kdsSuccess,
-    required this.kdsCancel,
+    required this.isOrderSuccess,
+    required this.isOrderSendKdsSuccess,
     required this.kdsId,
+    required this.cancelQty,
+    required this.orderQty,
+    required this.deliveryNumber,
+    required this.deliveryCode,
+    required this.deliveryName,
+    required this.lastUpdateDateTime,
   });
 
   factory OrderTempObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

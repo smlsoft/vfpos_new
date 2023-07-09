@@ -25,6 +25,16 @@ TableProcessObjectBoxStruct _$TableProcessObjectBoxStructFromJson(
       child_count: json['child_count'] as int,
       table_al_la_crate_mode: json['table_al_la_crate_mode'] as bool,
       buffet_code: json['buffet_code'] as String,
+      customer_code_or_telephone: json['customer_code_or_telephone'] as String,
+      customer_name: json['customer_name'] as String,
+      customer_address: json['customer_address'] as String,
+      delivery_code: json['delivery_code'] as String,
+      delivery_number: json['delivery_number'] as String,
+      delivery_ticket_number: json['delivery_ticket_number'] as String,
+      remark: json['remark'] as String,
+      open_by_staff_code: json['open_by_staff_code'] as String,
+      make_food_immediately: json['make_food_immediately'] as bool,
+      is_delivery: json['is_delivery'] as bool,
     )..id = json['id'] as int;
 
 Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
@@ -46,4 +56,14 @@ Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
       'child_count': instance.child_count,
       'table_al_la_crate_mode': instance.table_al_la_crate_mode,
       'buffet_code': instance.buffet_code,
+      'customer_code_or_telephone': instance.customer_code_or_telephone,
+      'customer_name': instance.customer_name,
+      'customer_address': instance.customer_address,
+      'delivery_code': instance.delivery_code,
+      'delivery_ticket_number': instance.delivery_ticket_number,
+      'delivery_number': instance.delivery_number,
+      'remark': instance.remark,
+      'open_by_staff_code': instance.open_by_staff_code,
+      'make_food_immediately': instance.make_food_immediately,
+      'is_delivery': instance.is_delivery,
     };

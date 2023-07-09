@@ -1179,7 +1179,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(18, 2798929453371134862),
       name: 'TableProcessObjectBoxStruct',
-      lastPropertyId: const IdUid(20, 176469185807426556),
+      lastPropertyId: const IdUid(31, 2285475427650852090),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1262,6 +1262,56 @@ final _entities = <ModelEntity>[
             id: const IdUid(20, 176469185807426556),
             name: 'order_count',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(21, 8985529451822913462),
+            name: 'customer_code_or_telephone',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(22, 6823703838362136593),
+            name: 'customer_name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(23, 5133502442246364447),
+            name: 'customer_address',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(24, 5229167772911947857),
+            name: 'delivery_code',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(26, 2869169682897372307),
+            name: 'remark',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(27, 7328342374093569995),
+            name: 'open_by_staff_code',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 207297085791992695),
+            name: 'make_food_immediately',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(29, 1525236354915606718),
+            name: 'is_delivery',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(30, 4003200328585061100),
+            name: 'delivery_number',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(31, 2285475427650852090),
+            name: 'delivery_ticket_number',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1315,7 +1365,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(22, 1593243704545833045),
       name: 'OrderTempObjectBoxStruct',
-      lastPropertyId: const IdUid(24, 2433925935161313700),
+      lastPropertyId: const IdUid(34, 6133382173566264329),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1394,11 +1444,6 @@ final _entities = <ModelEntity>[
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(20, 4588881187511296155),
-            name: 'isClose',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(21, 8757486528172593206),
             name: 'kdsSuccessTime',
             type: 10,
@@ -1409,14 +1454,59 @@ final _entities = <ModelEntity>[
             type: 1,
             flags: 0),
         ModelProperty(
-            id: const IdUid(23, 2608694628300361350),
-            name: 'kdsCancel',
-            type: 1,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(24, 2433925935161313700),
             name: 'kdsId',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(25, 7589579544003947360),
+            name: 'takeAway',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(26, 1998522777189307948),
+            name: 'deliveryNumber',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(27, 8860133218359971973),
+            name: 'deliveryCode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(28, 2261719518297614626),
+            name: 'deliveryName',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(29, 1343234187593225362),
+            name: 'cancelQty',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(30, 673816517692570012),
+            name: 'orderQty',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(31, 2323569360020567975),
+            name: 'isOrder',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(32, 7277291291179119177),
+            name: 'isOrderSuccess',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(33, 90819867391211256),
+            name: 'isOrderSendKdsSuccess',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(34, 6133382173566264329),
+            name: 'lastUpdateDateTime',
+            type: 10,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1786,7 +1876,10 @@ ModelDefinition getObjectBoxModel() {
         5235405778777209391,
         8061769850907075896,
         3886119394820363955,
-        1644985707331018481
+        1644985707331018481,
+        7209550344035022058,
+        4588881187511296155,
+        2608694628300361350
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2739,7 +2832,19 @@ ModelDefinition getObjectBoxModel() {
           final qr_codeOffset = fbb.writeString(object.qr_code);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final namesOffset = fbb.writeString(object.names);
-          fbb.startTable(21);
+          final customer_code_or_telephoneOffset =
+              fbb.writeString(object.customer_code_or_telephone);
+          final customer_nameOffset = fbb.writeString(object.customer_name);
+          final customer_addressOffset =
+              fbb.writeString(object.customer_address);
+          final delivery_codeOffset = fbb.writeString(object.delivery_code);
+          final remarkOffset = fbb.writeString(object.remark);
+          final open_by_staff_codeOffset =
+              fbb.writeString(object.open_by_staff_code);
+          final delivery_numberOffset = fbb.writeString(object.delivery_number);
+          final delivery_ticket_numberOffset =
+              fbb.writeString(object.delivery_ticket_number);
+          fbb.startTable(32);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
@@ -2756,6 +2861,16 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(16, buffet_codeOffset);
           fbb.addOffset(18, namesOffset);
           fbb.addFloat64(19, object.order_count);
+          fbb.addOffset(20, customer_code_or_telephoneOffset);
+          fbb.addOffset(21, customer_nameOffset);
+          fbb.addOffset(22, customer_addressOffset);
+          fbb.addOffset(23, delivery_codeOffset);
+          fbb.addOffset(25, remarkOffset);
+          fbb.addOffset(26, open_by_staff_codeOffset);
+          fbb.addBool(27, object.make_food_immediately);
+          fbb.addBool(28, object.is_delivery);
+          fbb.addOffset(29, delivery_numberOffset);
+          fbb.addOffset(30, delivery_ticket_numberOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2787,7 +2902,17 @@ ModelDefinition getObjectBoxModel() {
               woman_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0),
               child_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0),
               table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false),
-              buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''))
+              buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
+              customer_code_or_telephone: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
+              customer_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
+              customer_address: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 48, ''),
+              delivery_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''),
+              delivery_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 62, ''),
+              delivery_ticket_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 64, ''),
+              remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
+              open_by_staff_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
+              make_food_immediately: const fb.BoolReader().vTableGet(buffer, rootOffset, 58, false),
+              is_delivery: const fb.BoolReader().vTableGet(buffer, rootOffset, 60, false))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2859,7 +2984,10 @@ ModelDefinition getObjectBoxModel() {
           final namesOffset = fbb.writeString(object.names);
           final unitNameOffset = fbb.writeString(object.unitName);
           final kdsIdOffset = fbb.writeString(object.kdsId);
-          fbb.startTable(25);
+          final deliveryNumberOffset = fbb.writeString(object.deliveryNumber);
+          final deliveryCodeOffset = fbb.writeString(object.deliveryCode);
+          final deliveryNameOffset = fbb.writeString(object.deliveryName);
+          fbb.startTable(35);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, orderIdOffset);
           fbb.addOffset(2, orderGuidOffset);
@@ -2875,11 +3003,19 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(15, imageUriOffset);
           fbb.addOffset(16, namesOffset);
           fbb.addOffset(17, unitNameOffset);
-          fbb.addInt64(19, object.isClose);
           fbb.addInt64(20, object.kdsSuccessTime.millisecondsSinceEpoch);
           fbb.addBool(21, object.kdsSuccess);
-          fbb.addBool(22, object.kdsCancel);
           fbb.addOffset(23, kdsIdOffset);
+          fbb.addBool(24, object.takeAway);
+          fbb.addOffset(25, deliveryNumberOffset);
+          fbb.addOffset(26, deliveryCodeOffset);
+          fbb.addOffset(27, deliveryNameOffset);
+          fbb.addFloat64(28, object.cancelQty);
+          fbb.addFloat64(29, object.orderQty);
+          fbb.addBool(30, object.isOrder);
+          fbb.addBool(31, object.isOrderSuccess);
+          fbb.addBool(32, object.isOrderSendKdsSuccess);
+          fbb.addInt64(33, object.lastUpdateDateTime.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2905,17 +3041,25 @@ ModelDefinition getObjectBoxModel() {
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
               amount:
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              isClose: const fb.Int64Reader().vTableGet(buffer, rootOffset, 42, 0),
+              isOrder: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false),
               optionSelected: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
               remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               names: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
+              takeAway: const fb.BoolReader().vTableGet(buffer, rootOffset, 52, false),
               unitCode: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
               unitName: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
               imageUri: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
               kdsSuccessTime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 44, 0)),
               kdsSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false),
-              kdsCancel: const fb.BoolReader().vTableGet(buffer, rootOffset, 48, false),
-              kdsId: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''));
+              isOrderSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false),
+              isOrderSendKdsSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false),
+              kdsId: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''),
+              cancelQty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 60, 0),
+              orderQty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 62, 0),
+              deliveryNumber: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
+              deliveryCode: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
+              deliveryName: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 58, ''),
+              lastUpdateDateTime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 70, 0)));
 
           return object;
         }),
@@ -4012,6 +4156,52 @@ class TableProcessObjectBoxStruct_ {
   /// see [TableProcessObjectBoxStruct.order_count]
   static final order_count = QueryDoubleProperty<TableProcessObjectBoxStruct>(
       _entities[14].properties[15]);
+
+  /// see [TableProcessObjectBoxStruct.customer_code_or_telephone]
+  static final customer_code_or_telephone =
+      QueryStringProperty<TableProcessObjectBoxStruct>(
+          _entities[14].properties[16]);
+
+  /// see [TableProcessObjectBoxStruct.customer_name]
+  static final customer_name = QueryStringProperty<TableProcessObjectBoxStruct>(
+      _entities[14].properties[17]);
+
+  /// see [TableProcessObjectBoxStruct.customer_address]
+  static final customer_address =
+      QueryStringProperty<TableProcessObjectBoxStruct>(
+          _entities[14].properties[18]);
+
+  /// see [TableProcessObjectBoxStruct.delivery_code]
+  static final delivery_code = QueryStringProperty<TableProcessObjectBoxStruct>(
+      _entities[14].properties[19]);
+
+  /// see [TableProcessObjectBoxStruct.remark]
+  static final remark = QueryStringProperty<TableProcessObjectBoxStruct>(
+      _entities[14].properties[20]);
+
+  /// see [TableProcessObjectBoxStruct.open_by_staff_code]
+  static final open_by_staff_code =
+      QueryStringProperty<TableProcessObjectBoxStruct>(
+          _entities[14].properties[21]);
+
+  /// see [TableProcessObjectBoxStruct.make_food_immediately]
+  static final make_food_immediately =
+      QueryBooleanProperty<TableProcessObjectBoxStruct>(
+          _entities[14].properties[22]);
+
+  /// see [TableProcessObjectBoxStruct.is_delivery]
+  static final is_delivery = QueryBooleanProperty<TableProcessObjectBoxStruct>(
+      _entities[14].properties[23]);
+
+  /// see [TableProcessObjectBoxStruct.delivery_number]
+  static final delivery_number =
+      QueryStringProperty<TableProcessObjectBoxStruct>(
+          _entities[14].properties[24]);
+
+  /// see [TableProcessObjectBoxStruct.delivery_ticket_number]
+  static final delivery_ticket_number =
+      QueryStringProperty<TableProcessObjectBoxStruct>(
+          _entities[14].properties[25]);
 }
 
 /// [BuffetModeObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4107,25 +4297,59 @@ class OrderTempObjectBoxStruct_ {
   static final unitName = QueryStringProperty<OrderTempObjectBoxStruct>(
       _entities[16].properties[14]);
 
-  /// see [OrderTempObjectBoxStruct.isClose]
-  static final isClose = QueryIntegerProperty<OrderTempObjectBoxStruct>(
-      _entities[16].properties[15]);
-
   /// see [OrderTempObjectBoxStruct.kdsSuccessTime]
   static final kdsSuccessTime = QueryIntegerProperty<OrderTempObjectBoxStruct>(
-      _entities[16].properties[16]);
+      _entities[16].properties[15]);
 
   /// see [OrderTempObjectBoxStruct.kdsSuccess]
   static final kdsSuccess = QueryBooleanProperty<OrderTempObjectBoxStruct>(
-      _entities[16].properties[17]);
-
-  /// see [OrderTempObjectBoxStruct.kdsCancel]
-  static final kdsCancel = QueryBooleanProperty<OrderTempObjectBoxStruct>(
-      _entities[16].properties[18]);
+      _entities[16].properties[16]);
 
   /// see [OrderTempObjectBoxStruct.kdsId]
   static final kdsId = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[17]);
+
+  /// see [OrderTempObjectBoxStruct.takeAway]
+  static final takeAway = QueryBooleanProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[18]);
+
+  /// see [OrderTempObjectBoxStruct.deliveryNumber]
+  static final deliveryNumber = QueryStringProperty<OrderTempObjectBoxStruct>(
       _entities[16].properties[19]);
+
+  /// see [OrderTempObjectBoxStruct.deliveryCode]
+  static final deliveryCode = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[20]);
+
+  /// see [OrderTempObjectBoxStruct.deliveryName]
+  static final deliveryName = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[21]);
+
+  /// see [OrderTempObjectBoxStruct.cancelQty]
+  static final cancelQty = QueryDoubleProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[22]);
+
+  /// see [OrderTempObjectBoxStruct.orderQty]
+  static final orderQty = QueryDoubleProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[23]);
+
+  /// see [OrderTempObjectBoxStruct.isOrder]
+  static final isOrder = QueryBooleanProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[24]);
+
+  /// see [OrderTempObjectBoxStruct.isOrderSuccess]
+  static final isOrderSuccess = QueryBooleanProperty<OrderTempObjectBoxStruct>(
+      _entities[16].properties[25]);
+
+  /// see [OrderTempObjectBoxStruct.isOrderSendKdsSuccess]
+  static final isOrderSendKdsSuccess =
+      QueryBooleanProperty<OrderTempObjectBoxStruct>(
+          _entities[16].properties[26]);
+
+  /// see [OrderTempObjectBoxStruct.lastUpdateDateTime]
+  static final lastUpdateDateTime =
+      QueryIntegerProperty<OrderTempObjectBoxStruct>(
+          _entities[16].properties[27]);
 }
 
 /// [ShiftObjectBoxStruct] entity fields to define ObjectBox queries.

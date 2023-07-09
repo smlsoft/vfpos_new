@@ -116,6 +116,16 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
           table_al_la_crate_mode: true,
           buffet_code: "",
           table_open_datetime: DateTime.now(),
+          customer_code_or_telephone: "",
+          customer_name: "",
+          customer_address: "",
+          delivery_code: "",
+          delivery_number: "",
+          delivery_ticket_number: "",
+          remark: "",
+          open_by_staff_code: "",
+          make_food_immediately: true,
+          is_delivery: false,
         ));
       }
     }
