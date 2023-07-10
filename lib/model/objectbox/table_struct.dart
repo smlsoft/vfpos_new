@@ -95,6 +95,14 @@ class TableProcessObjectBoxStruct {
   /// is Delivery
   late bool is_delivery;
 
+  /// อาหารเสร็จแล้ว พร้อมเวลา
+  late bool delivery_cook_success;
+  late DateTime delivery_cook_success_datetime;
+
+  /// ส่งอาหารแล้ว พร้อมเวลา
+  late bool delivery_send_success;
+  late DateTime delivery_send_success_datetime;
+
   TableProcessObjectBoxStruct({
     required this.guidfixed,
     required this.number,
@@ -121,6 +129,10 @@ class TableProcessObjectBoxStruct {
     required this.open_by_staff_code,
     required this.make_food_immediately,
     required this.is_delivery,
+    required this.delivery_cook_success,
+    required this.delivery_cook_success_datetime,
+    required this.delivery_send_success,
+    required this.delivery_send_success_datetime,
   });
 
   factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

@@ -57,6 +57,9 @@ class OrderTempObjectBoxStruct {
   /// ส่งเข้าครัวเรียบร้อย
   bool isOrderSendKdsSuccess;
 
+  /// รายการนี้รอส่งเข้าครัว
+  bool isOrderReadySendKds;
+
   /// ข้อเลือกพิเศษ
   String optionSelected;
   String remark;
@@ -108,6 +111,7 @@ class OrderTempObjectBoxStruct {
     required this.orderQty,
     required this.deliveryNumber,
     required this.deliveryCode,
+    required this.isOrderReadySendKds,
     required this.deliveryName,
     required this.lastUpdateDateTime,
   });

@@ -126,6 +126,10 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
           open_by_staff_code: "",
           make_food_immediately: true,
           is_delivery: false,
+          delivery_cook_success: false,
+          delivery_cook_success_datetime: DateTime.now(),
+          delivery_send_success: false,
+          delivery_send_success_datetime: DateTime.now(),
         ));
       }
     }

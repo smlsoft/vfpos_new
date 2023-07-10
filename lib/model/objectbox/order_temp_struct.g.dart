@@ -50,6 +50,7 @@ OrderTempObjectBoxStruct _$OrderTempObjectBoxStructFromJson(
       orderQty: (json['orderQty'] as num).toDouble(),
       deliveryNumber: json['deliveryNumber'] as String,
       deliveryCode: json['deliveryCode'] as String,
+      isOrderReadySendKds: json['isOrderReadySendKds'] as bool,
       deliveryName: json['deliveryName'] as String,
       lastUpdateDateTime: DateTime.parse(json['lastUpdateDateTime'] as String),
     );
@@ -71,6 +72,7 @@ Map<String, dynamic> _$OrderTempObjectBoxStructToJson(
       'isOrder': instance.isOrder,
       'isOrderSuccess': instance.isOrderSuccess,
       'isOrderSendKdsSuccess': instance.isOrderSendKdsSuccess,
+      'isOrderReadySendKds': instance.isOrderReadySendKds,
       'optionSelected': instance.optionSelected,
       'remark': instance.remark,
       'names': instance.names,

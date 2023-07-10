@@ -1,6 +1,7 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
+import 'package:dedepos/api/network/server.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
@@ -1385,11 +1386,9 @@ Future<void> checkOrderOnline() async {
   }
   {
     // Order Staff สั่ง
-    List<OrderTempObjectBoxStruct> orderSave = [];
-    List<OrderTempDataModel> orderTemp = [];
     List<String> orderIdList = [];
     try {
-      // เรียกรายการที่ยังไม่ส่ง Order ไปที่ครัว ทุกโต๊ะ (isOrder=False Order เสร็จแล้ว and isOrderSuccess=False ที่ยังไม่ได้ถือเป็นการรับเงิน)
+      // update isOrderSuccess และคำนวนณยอดรวม
       final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
       final getData = box
           .query(OrderTempObjectBoxStruct_.isOrder
@@ -1404,34 +1403,6 @@ Future<void> checkOrderOnline() async {
       }
 
       for (var orderId in orderIdList) {
-        // เลือกรายการ Order ทีละโต๊ะ
-        final getData = box
-            .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
-                OrderTempObjectBoxStruct_.isOrder.equals(false).and(
-                    OrderTempObjectBoxStruct_.isOrderSuccess.equals(false))))
-            .build()
-            .find();
-        for (var data in getData) {
-          print("Order ID " + orderId);
-          orderTemp.add(OrderTempDataModel(
-            orderGuid: data.orderGuid,
-            barcode: data.barcode,
-            qty: data.qty,
-            optionSelected: data.optionSelected,
-            remark: data.remark,
-          ));
-          orderSave.add(data);
-        }
-        if (orderToKitchenPrintMode == 0) {
-          // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
-          await sendToKitchen(orderId: orderId, orderList: orderTemp);
-          orderTemp.clear();
-        }
-        if (orderTemp.isNotEmpty) {
-          // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
-          await sendToKitchen(orderId: orderId, orderList: orderTemp);
-        }
-        // ปรับปรุงสถานะ ว่าส่ง order แล้ว
         var orderTempUpdate = box
             .query(OrderTempObjectBoxStruct_.orderId.equals(orderId))
             .build()
@@ -1440,15 +1411,76 @@ Future<void> checkOrderOnline() async {
           // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
           data.isOrder = false;
           data.isOrderSuccess = true;
-          // ถือว่ายังไม่ส่งครัว
+          // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
           data.isOrderSendKdsSuccess = false;
         }
         box.putMany(orderTempUpdate, mode: PutMode.update);
+        // คำนวณ
+        orderSumAndUpdateTable(orderId);
       }
+      saveOrderToHoldBill(getData);
     } catch (e) {
       serviceLocator<Log>().error(e.toString());
     }
-    saveOrderToHoldBill(orderSave);
+  }
+  {
+    // ประมวลผลส่งครัว
+    List<String> orderIdList = [];
+    final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
+
+    /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
+    /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
+    /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
+    final getDataOrderId = box
+        .query(OrderTempObjectBoxStruct_.isOrder
+            .equals(false)
+            .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+            .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
+    for (var data in getDataOrderId) {
+      if (!orderIdList.contains(data.orderId)) {
+        orderIdList.add(data.orderId);
+      }
+    }
+    for (var orderId in orderIdList) {
+      // เลือกรายการ Order ทีละโต๊ะ
+      List<OrderTempDataModel> orderTemp = [];
+
+      final getData = box
+          .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
+              OrderTempObjectBoxStruct_.isOrder
+                  .equals(false)
+                  .and(OrderTempObjectBoxStruct_.isOrderReadySendKds
+                      .equals(true))
+                  .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess
+                      .equals(false))
+                  .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
+          .build()
+          .find();
+      for (var data in getData) {
+        orderTemp.add(OrderTempDataModel(
+          orderGuid: data.orderGuid,
+          barcode: data.barcode,
+          qty: data.qty,
+          optionSelected: data.optionSelected,
+          remark: data.remark,
+        ));
+        // update สถานะ
+        data.isOrderSendKdsSuccess = true;
+      }
+      box.putMany(getData, mode: PutMode.update);
+      if (orderToKitchenPrintMode == 0) {
+        // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
+        await sendToKitchen(orderId: orderId, orderList: orderTemp);
+        orderTemp.clear();
+      }
+      if (orderTemp.isNotEmpty) {
+        // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
+        await sendToKitchen(orderId: orderId, orderList: orderTemp);
+      }
+    }
   }
   checkOrderActive = false;
 }
@@ -1486,4 +1518,33 @@ double getProductPrice(String prices, int keyNumber) {
     }
   }
   return 0;
+}
+
+Future<void> orderSumAndUpdateTable(String tableNumber) async {
+  double orderCount = 0;
+  double amount = 0.0;
+  {
+    // รวมจาก OrderTemp ส่งรายการแล้ว
+    final result = global.objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.orderId
+            .equals(tableNumber)
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
+    for (var order in result) {
+      orderCount += order.qty;
+      amount += orderCalcSumAmount(order);
+    }
+  }
+  final boxTable = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+  final resultTable = boxTable
+      .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
+      .build()
+      .findFirst();
+  if (resultTable != null) {
+    resultTable.order_count = orderCount;
+    resultTable.amount = amount;
+    boxTable.put(resultTable, mode: PutMode.update);
+  }
 }

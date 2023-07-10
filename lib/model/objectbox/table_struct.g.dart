@@ -35,6 +35,12 @@ TableProcessObjectBoxStruct _$TableProcessObjectBoxStructFromJson(
       open_by_staff_code: json['open_by_staff_code'] as String,
       make_food_immediately: json['make_food_immediately'] as bool,
       is_delivery: json['is_delivery'] as bool,
+      delivery_cook_success: json['delivery_cook_success'] as bool,
+      delivery_cook_success_datetime:
+          DateTime.parse(json['delivery_cook_success_datetime'] as String),
+      delivery_send_success: json['delivery_send_success'] as bool,
+      delivery_send_success_datetime:
+          DateTime.parse(json['delivery_send_success_datetime'] as String),
     )..id = json['id'] as int;
 
 Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
@@ -66,4 +72,10 @@ Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
       'open_by_staff_code': instance.open_by_staff_code,
       'make_food_immediately': instance.make_food_immediately,
       'is_delivery': instance.is_delivery,
+      'delivery_cook_success': instance.delivery_cook_success,
+      'delivery_cook_success_datetime':
+          instance.delivery_cook_success_datetime.toIso8601String(),
+      'delivery_send_success': instance.delivery_send_success,
+      'delivery_send_success_datetime':
+          instance.delivery_send_success_datetime.toIso8601String(),
     };
