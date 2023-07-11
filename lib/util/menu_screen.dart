@@ -439,7 +439,7 @@ class _MenuScreenState extends State<MenuScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const RegisterPosTerminal(),
+                                    const RegisterPosTerminalPage(),
                               ),
                             ).then(
                                 (value) async => {await global.loadPrinter()});

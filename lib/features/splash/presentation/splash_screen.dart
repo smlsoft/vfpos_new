@@ -5,6 +5,7 @@ import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
 import 'package:dedepos/features/splash/domain/usecase/check_user_login_status.dart';
+import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +25,15 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
-      serviceLocator<CheckUserLoginStatus>().checkIfUserLoggedIn().then((isUserLoggedIn) async {
+      serviceLocator<CheckUserLoginStatus>()
+          .checkIfUserLoggedIn()
+          .then((isUserLoggedIn) async {
         if (isUserLoggedIn) {
           final user = await serviceLocator<UserCacheService>().getUser();
 
-          context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user!));
+          context
+              .read<AuthenticationBloc>()
+              .add(AuthenticationEvent.authenticated(user: user!));
 
           await global.appStorage.write("token", user.token);
           global.apiConnected = true;
@@ -36,18 +41,36 @@ class _SplashScreenState extends State<SplashScreen> {
           global.loginProcess = true;
           // global.apiConnected = true;
 
-          serviceLocator<CheckUserLoginStatus>().checkIfUserSelectedShop().then((userSelectedShop) {
+          serviceLocator<CheckUserLoginStatus>()
+              .checkIfUserSelectedShop()
+              .then((userSelectedShop) {
             if (userSelectedShop != null) {
               global.apiShopID = userSelectedShop.guidfixed;
-              context.read<SelectShopBloc>().add(SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
-
-              context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
+              context.read<SelectShopBloc>().add(
+                  SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
+              if (F.appFlavor == Flavor.DEDEPOS) {
+                context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
+                    predicate: (route) => false);
+                return;
+              } else {
+                context.router.pushAndPopUntil(const InitShopRoute(),
+                    predicate: (route) => false);
+              }
             } else {
-              context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
+              context.router.pushAndPopUntil(const SelectShopRoute(),
+                  predicate: (route) => false);
             }
           });
         } else {
-          context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
+          // check flavor is dedepos
+          if (F.appFlavor == Flavor.DEDEPOS) {
+            context.router.pushAndPopUntil(const RegisterPosTerminalRoute(),
+                predicate: (route) => false);
+            return;
+          } else {
+            context.router.pushAndPopUntil(const AuthenticationRoute(),
+                predicate: (route) => false);
+          }
         }
       });
     });

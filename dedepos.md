@@ -22,3 +22,8 @@ void main() async {
 }
 
 ```
+
+```
+
+flutter build appbundle --flavor dedepos -t lib/main_dedepos.dart --release --dart-define=ENVIRONMENT=PROD
+```

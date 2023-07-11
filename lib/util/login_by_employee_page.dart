@@ -40,6 +40,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
+                        // check login
                         context.router.pushAndPopUntil(const MenuRoute(),
                             predicate: (route) => false);
                       },
@@ -47,7 +48,10 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                     ),
                     const SizedBox(height: 100),
                     Text(
-                        "กรณีลืมรหัสผ่าน ติดต่อเจ้าหน้าที่ Merchant เพื่อขอรหัสผ่านใหม่")
+                        "กรณีลืมรหัสผ่าน ติดต่อเจ้าหน้าที่ Merchant เพื่อขอรหัสผ่านใหม่"),
+                    ElevatedButton(
+                        onPressed: () {},
+                        child: const Text('ลงทะเบียนเครื่องใหม่')),
                   ]),
             ))));
   }

@@ -2,20 +2,27 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
+import 'package:dedepos/core/request.dart';
+import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/features/authentication/auth.dart';
+import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
+import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class RegisterPosTerminal extends StatefulWidget {
-  const RegisterPosTerminal({Key? key}) : super(key: key);
+@RoutePage()
+class RegisterPosTerminalPage extends StatefulWidget {
+  const RegisterPosTerminalPage({Key? key}) : super(key: key);
   @override
-  _RegisterPosTerminalScreenState createState() =>
-      _RegisterPosTerminalScreenState();
+  _RegisterPosTerminalPageState createState() =>
+      _RegisterPosTerminalPageState();
 }
 
-class _RegisterPosTerminalScreenState extends State<RegisterPosTerminal> {
+class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
   late Timer findTerminalTimer;
 
   @override
@@ -29,22 +36,59 @@ class _RegisterPosTerminalScreenState extends State<RegisterPosTerminal> {
     findTerminalTimer =
         Timer.periodic(const Duration(seconds: 5), (timer) async {
       var responseData = await clickHouseSelect(
-          "SELECT status,token,deviceid FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
+          "SELECT status,token,deviceid,access_token,shipid FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
       ResponseDataModel result = ResponseDataModel.fromJson(responseData);
       if (result.data.isNotEmpty) {
         if (result.data[0]['status'] == 1) {
           global.posTerminalPinTokenId = result.data[0]['token'];
           global.deviceId = result.data[0]['deviceid'];
+
           SharedPreferences sharedPreferences =
               await SharedPreferences.getInstance();
           sharedPreferences.setString(
               'pos_terminal_token', global.posTerminalPinTokenId);
           sharedPreferences.setString('pos_device_id', global.deviceId);
-          if (mounted) {
-            context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
-                predicate: (route) => false);
-          }
-          
+
+          // do authen with token
+          String accessToken = result.data[0]['access_token'];
+          String shopId = result.data[0]['shipid'];
+          serviceLocator<Request>().updateAuthorization(accessToken);
+
+          serviceLocator<LoginUserRepository>()
+              .profile()
+              .then((response) async {
+            if (response.isRight()) {
+              // save user cache
+              User remoteUser = response.getOrElse(() => User());
+              remoteUser = remoteUser.copyWith(token: accessToken);
+
+              await serviceLocator<UserCacheService>().saveUser(remoteUser);
+              // select shop
+              serviceLocator<ShopAuthenticationRepository>()
+                  .selectShop(shopid: shopId)
+                  .then((selectShopResponse) async {
+                if (selectShopResponse.isRight()) {
+                  global.loginSuccess = true;
+                  // add user autenticate bloc
+                  context
+                      .read<AuthenticationBloc>()
+                      .add(AuthenticationEvent.authenticated(user: remoteUser));
+
+                  if (mounted) {
+                    context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
+                        predicate: (route) => false);
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Failed Not Selected Shop"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              });
+            }
+          });
         }
       }
     });

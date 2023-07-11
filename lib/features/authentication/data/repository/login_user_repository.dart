@@ -16,4 +16,9 @@ class LoginUserRepositoryImpl extends LoginUserRepository {
     return serviceLocator<LoginRemoteDataSource>()
         .loginWithUserPassword(username: username, password: password);
   }
+
+  @override
+  Future<Either<Failure, User>> profile() {
+    return serviceLocator<LoginRemoteDataSource>().profile();
+  }
 }
