@@ -48,9 +48,15 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                     ),
                     const SizedBox(height: 100),
                     Text(
-                        "กรณีลืมรหัสผ่าน ติดต่อเจ้าหน้าที่ Merchant เพื่อขอรหัสผ่านใหม่"),
+                        "กรณีต้องการลงทะเบียนเครื่องใหม่ เพื่อใช้กับฐานข้อมูลใหม่"),
+                    const SizedBox(height: 10),
                     ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // check login
+                          context.router.pushAndPopUntil(
+                              const RegisterPosTerminalRoute(),
+                              predicate: (route) => false);
+                        },
                         child: const Text('ลงทะเบียนเครื่องใหม่')),
                   ]),
             ))));

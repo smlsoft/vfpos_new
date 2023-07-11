@@ -334,7 +334,7 @@ Future<void> loadPrinter() async {
       sharedPreferences.getString('pos_terminal_pin_code') ?? "";
   posTerminalPinTokenId =
       sharedPreferences.getString('pos_terminal_token') ?? "";
-      deviceId = sharedPreferences.getString('pos_device_id') ?? "";
+  deviceId = sharedPreferences.getString('pos_device_id') ?? "";
 }
 
 int posScreenToInt() {
@@ -1399,8 +1399,8 @@ Future<void> checkOrderOnline() async {
     List<String> orderIdList = [];
     try {
       // update isOrderSuccess และคำนวนณยอดรวม
-      final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
-      final getData = box
+      final getData = global.objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.isOrder
               .equals(false)
               .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
@@ -1413,8 +1413,11 @@ Future<void> checkOrderOnline() async {
       }
 
       for (var orderId in orderIdList) {
-        var orderTempUpdate = box
-            .query(OrderTempObjectBoxStruct_.orderId.equals(orderId))
+        var orderTempUpdate = global.objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .query(OrderTempObjectBoxStruct_.orderId
+                .equals(orderId)
+                .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
             .build()
             .find();
         for (var data in orderTempUpdate) {
@@ -1424,7 +1427,9 @@ Future<void> checkOrderOnline() async {
           // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
           data.isOrderSendKdsSuccess = false;
         }
-        box.putMany(orderTempUpdate, mode: PutMode.update);
+        global.objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .putMany(orderTempUpdate, mode: PutMode.update);
         // คำนวณ
         orderSumAndUpdateTable(orderId);
       }
@@ -1436,12 +1441,12 @@ Future<void> checkOrderOnline() async {
   {
     // ประมวลผลส่งครัว
     List<String> orderIdList = [];
-    final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
 
     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
-    final getDataOrderId = box
+    final getDataOrderId = global.objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.isOrder
             .equals(false)
             .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
@@ -1457,8 +1462,8 @@ Future<void> checkOrderOnline() async {
     for (var orderId in orderIdList) {
       // เลือกรายการ Order ทีละโต๊ะ
       List<OrderTempDataModel> orderTemp = [];
-
-      final getData = box
+      final getData = global.objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
               OrderTempObjectBoxStruct_.isOrder
                   .equals(false)
@@ -1479,16 +1484,20 @@ Future<void> checkOrderOnline() async {
         ));
         // update สถานะ
         data.isOrderSendKdsSuccess = true;
+        global.objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .put(data, mode: PutMode.update);
       }
-      box.putMany(getData, mode: PutMode.update);
       if (orderToKitchenPrintMode == 0) {
         // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
         await sendToKitchen(orderId: orderId, orderList: orderTemp);
+        print("sendToKitchen 1 : " + orderTemp.length.toString());
         orderTemp.clear();
       }
       if (orderTemp.isNotEmpty) {
         // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
         await sendToKitchen(orderId: orderId, orderList: orderTemp);
+        print("sendToKitchen 2 : " + orderTemp.length.toString());
       }
     }
   }
