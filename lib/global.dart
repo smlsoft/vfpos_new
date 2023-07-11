@@ -24,6 +24,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:presentation_displays/displays_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
@@ -207,6 +208,8 @@ String printerConfigTicketCode = "printer_config_ticket";
 String shopId = "";
 bool checkOrderActive = false;
 int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
+String posTerminalPinCode = "";
+String posTerminalPinTokenId = "";
 
 enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
@@ -326,6 +329,12 @@ Future<void> loadPrinter() async {
           name: printerNames[printerCodes.indexOf(printerCode)]));
     }
   }
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  posTerminalPinCode =
+      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+  posTerminalPinTokenId =
+      sharedPreferences.getString('pos_terminal_token') ?? "";
+      deviceId = sharedPreferences.getString('pos_device_id') ?? "";
 }
 
 int posScreenToInt() {
@@ -1548,4 +1557,13 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
     resultTable.amount = amount;
     boxTable.put(resultTable, mode: PutMode.update);
   }
+}
+
+String generateRandomPin(int pinLength) {
+  String pin = "";
+  var rnd = new Random();
+  for (var i = 0; i < pinLength; i++) {
+    pin += rnd.nextInt(10).toString();
+  }
+  return pin;
 }

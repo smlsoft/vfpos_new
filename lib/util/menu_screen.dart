@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -14,8 +13,10 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/connect_staff_client.dart';
+import 'package:dedepos/util/register_pos_terminal.dart';
 import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/util/shift_and_money.dart';
+import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
@@ -417,14 +418,33 @@ class _MenuScreenState extends State<MenuScreen> {
                     icon: const Icon(Icons.more_vert),
                     offset: Offset(0.0, appBarHeight),
                     onSelected: (value) async {
-                      if (value == 1) {
-                        await global.loadPrinter();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PrinterConfigScreen(),
-                          ),
-                        ).then((value) async => {await global.loadPrinter()});
+                      switch (value) {
+                        case 1:
+                          // ตั้งค่าเครื่องพิมพ์
+                          await global.loadPrinter();
+                          if (mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const PrinterConfigScreen(),
+                              ),
+                            ).then(
+                                (value) async => {await global.loadPrinter()});
+                          }
+                          break;
+                        case 2:
+                          if (mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RegisterPosTerminal(),
+                              ),
+                            ).then(
+                                (value) async => {await global.loadPrinter()});
+                          }
+                          break;
                       }
                     },
                     shape: const RoundedRectangleBorder(
@@ -440,6 +460,11 @@ class _MenuScreenState extends State<MenuScreen> {
                         title: global.language('printer_config'),
                         valueCode: 1,
                         iconData: Icons.print_rounded,
+                      ),
+                      buildPopupMenuItem(
+                        title: global.language('pos_register'),
+                        valueCode: 2,
+                        iconData: Icons.app_registration,
                       ),
                       buildPopupMenuItem(
                         title: global.language('logout'),

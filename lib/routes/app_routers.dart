@@ -7,6 +7,7 @@ import 'package:dedepos/features/splash/presentation/splash_screen.dart';
 import 'package:dedepos/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/services/printer_config.dart';
+import 'package:dedepos/util/login_by_employee_page.dart';
 import 'package:dedepos/util/menu_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -29,5 +30,6 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: InitShopRoute.page),
         AutoRoute(page: PosSecondaryRoute.page),
         AutoRoute(page: MenuRoute.page),
+        AutoRoute(page: LoginByEmployeeRoute.page),
       ];
 }

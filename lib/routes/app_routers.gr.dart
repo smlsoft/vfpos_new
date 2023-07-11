@@ -85,6 +85,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const MenuScreen(),
       );
     },
+    LoginByEmployeeRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LoginByEmployeePage(),
+      );
+    },
   };
 }
 
@@ -261,6 +267,20 @@ class MenuRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'MenuRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [LoginByEmployeePage]
+class LoginByEmployeeRoute extends PageRouteInfo<void> {
+  const LoginByEmployeeRoute({List<PageRouteInfo>? children})
+      : super(
+          LoginByEmployeeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginByEmployeeRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
