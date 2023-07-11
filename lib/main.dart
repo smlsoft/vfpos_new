@@ -13,12 +13,11 @@ import 'app/app_view.dart';
 import 'flavors.dart';
 
 void main() async {
-  F.appFlavor = Flavor.VFPOS;
+  F.appFlavor = Flavor.DEDEPOS;
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
   initializeDateFormatting();
-  await setUpServiceLocator();
   await initializeApp();
   runApp(App());
 }

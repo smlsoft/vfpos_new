@@ -48,6 +48,13 @@ Future<void> initializeApp() async {
 
 Future<void> initializeEnvironmentConfig() async {
   // Storage
+  const String environment = String.fromEnvironment(
+    'ENVIRONMENT',
+    defaultValue: Environment.DEV,
+  );
+
+  Environment().initConfig(environment);
+
   await GetStorage.init();
   global.appStorage = GetStorage();
   //
@@ -56,12 +63,7 @@ Future<void> initializeEnvironmentConfig() async {
   } catch (ex) {
     global.userScreenLanguage = "th";
   }
-  //
-  const String environment = String.fromEnvironment(
-    'ENVIRONMENT',
-    defaultValue: Environment.DEV,
-  );
-  Environment().initConfig(environment);
+
   //
   if (global.developerMode && kIsWeb == false) {
     // Developer Mode
