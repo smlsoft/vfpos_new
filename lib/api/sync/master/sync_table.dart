@@ -130,6 +130,7 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
           delivery_cook_success_datetime: DateTime.now(),
           delivery_send_success: false,
           delivery_send_success_datetime: DateTime.now(),
+          delivery_status: 0,
         ));
       }
     }

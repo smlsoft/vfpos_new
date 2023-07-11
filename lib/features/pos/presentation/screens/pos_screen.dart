@@ -2997,10 +2997,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   child: Center(
                       child: Text(
                     (global.tableSelected)
-                        ? "โต๊ะ : " + global.tableNumberSelected.toString()
+                        ? (global.tableProcessSelected.isDelivery)
+                            ? "กลับบ้าน : ${global.tableProcessSelected.deliveryNumber}"
+                            : "โต๊ะ : ${global.tableNumberSelected}"
                         : global.posHoldActiveCode.toString(),
-                    style: TextStyle(
-                        fontSize: 20,
+                    style: const TextStyle(
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.white),
                   )))
@@ -3849,7 +3851,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void holdBill({required int holdType}) async {
     // พักบิล
-    var result = await Navigator.push(
+    PosHoldProcessModel result = await Navigator.push(
       context,
       PageTransition(
         type: PageTransitionType.rightToLeft,
@@ -3857,40 +3859,39 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       ),
     );
 
-    if (result != null) {
-      if (holdType == 2) {
-        // เลือกโต๊ะ
-        global.tableSelected = true;
-        global.tableNumberSelected = result;
-        global.posHoldActiveCode = "T-" + result;
-      } else {
-        global.tableSelected = false;
-        global.posHoldActiveCode = result;
-      }
-      processEvent(barcode: "", holdCode: global.posHoldActiveCode);
-      global.playSound(sound: global.SoundEnum.beep);
-      findActiveLineByGuid = "";
-      activeLineNumber = -1;
-      if (global.appMode == global.AppModeEnum.posTerminal) {
-        posCompileProcess(
-                holdCode: global.posHoldActiveCode,
-                docMode: global.posScreenToInt())
-            .then((_) {
-          PosProcess().sumCategoryCount(
-              value: global
-                  .posHoldProcessResult[global
-                      .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-                  .posProcess);
-        });
-      } else {
-        await getProcessFromTerminal();
-      }
-      global.payScreenData = global
-          .posHoldProcessResult[
-              global.findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-          .payScreenData;
-      setState(() {});
+    if (holdType == 2) {
+      // เลือกโต๊ะ
+      global.tableSelected = true;
+      global.tableNumberSelected = result.code;
+      global.posHoldActiveCode = "T-${result.code}";
+      global.tableProcessSelected = result;
+    } else {
+      global.tableSelected = false;
+      global.posHoldActiveCode = result.code;
     }
+    processEvent(barcode: "", holdCode: global.posHoldActiveCode);
+    global.playSound(sound: global.SoundEnum.beep);
+    findActiveLineByGuid = "";
+    activeLineNumber = -1;
+    if (global.appMode == global.AppModeEnum.posTerminal) {
+      posCompileProcess(
+              holdCode: global.posHoldActiveCode,
+              docMode: global.posScreenToInt())
+          .then((_) {
+        PosProcess().sumCategoryCount(
+            value: global
+                .posHoldProcessResult[global
+                    .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
+                .posProcess);
+      });
+    } else {
+      await getProcessFromTerminal();
+    }
+    global.payScreenData = global
+        .posHoldProcessResult[
+            global.findPosHoldProcessResultIndex(global.posHoldActiveCode)]
+        .payScreenData;
+    setState(() {});
   }
 
   Widget promotionWidget() {
@@ -4148,7 +4149,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget posLayoutBottomPhone() {
     return Container(
-        margin: EdgeInsets.all(2),
+        margin: const EdgeInsets.all(2),
         width: double.infinity,
         child: Row(children: [
           if (Platform.isAndroid || Platform.isIOS)

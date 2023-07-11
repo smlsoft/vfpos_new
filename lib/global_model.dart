@@ -147,6 +147,11 @@ class PosHoldProcessModel {
 
   String tableNumber = "";
 
+  /// เป็นรายการกลับบ้านหรือไม่
+  bool isDelivery = false;
+
+  String deliveryNumber = "";
+
   PosHoldProcessModel({required this.code});
 
   factory PosHoldProcessModel.fromJson(Map<String, dynamic> json) =>

@@ -1528,7 +1528,7 @@
     },
     {
       "id": "28:6807013238340886010",
-      "lastPropertyId": "30:7792260989356301113",
+      "lastPropertyId": "31:2886526464000284121",
       "name": "TableProcessObjectBoxStruct",
       "properties": [
         {
@@ -1683,6 +1683,11 @@
           "id": "30:7792260989356301113",
           "name": "delivery_send_success_datetime",
           "type": 10
+        },
+        {
+          "id": "31:2886526464000284121",
+          "name": "delivery_status",
+          "type": 6
         }
       ],
       "relations": []

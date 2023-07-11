@@ -49,10 +49,13 @@ class _PosHoldBillState extends State<PosHoldBill>
         if (table.table_status == 2) {
           PosHoldProcessModel hold = PosHoldProcessModel(code: table.number);
           hold.holdType = 2;
+          hold.isDelivery = table.is_delivery;
+          hold.deliveryNumber = table.delivery_number;
           holds.add(hold);
         }
       }
     }
+    
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
@@ -61,15 +64,15 @@ class _PosHoldBillState extends State<PosHoldBill>
             mainAxisSpacing: 10),
         itemCount: holds.length,
         itemBuilder: (BuildContext ctx, index) {
-          return holdButton(holds[index].code);
+          return holdButton(holds[index]);
         });
   }
 
-  Widget holdButton(String number) {
+  Widget holdButton(PosHoldProcessModel hold) {
     late Color backgroundColor;
 
     if (global
-            .posHoldProcessResult[global.findPosHoldProcessResultIndex(number)]
+            .posHoldProcessResult[global.findPosHoldProcessResultIndex(hold.code)]
             .logCount !=
         0) {
       backgroundColor = Colors.cyan;
@@ -82,17 +85,17 @@ class _PosHoldBillState extends State<PosHoldBill>
       tableStatus = Text(
           (global
                       .posHoldProcessResult[
-                          global.findPosHoldProcessResultIndex(number)]
+                          global.findPosHoldProcessResultIndex(hold.code)]
                       .logCount ==
                   0)
               ? global.language("blank")
-              : "${global.language('qty')} ${global.posHoldProcessResult[global.findPosHoldProcessResultIndex(number)].logCount} รายการ",
+              : "${global.language('qty')} ${global.posHoldProcessResult[global.findPosHoldProcessResultIndex(hold.code)].logCount} รายการ",
           style: const TextStyle(color: Colors.white, fontSize: 16));
     }
     if (widget.holdType == 2) {
       TableProcessObjectBoxStruct tableInfo = global.objectBoxStore
           .box<TableProcessObjectBoxStruct>()
-          .query(TableProcessObjectBoxStruct_.number.equals(number))
+          .query(TableProcessObjectBoxStruct_.number.equals(hold.code))
           .build()
           .findFirst()!;
 
@@ -135,11 +138,11 @@ class _PosHoldBillState extends State<PosHoldBill>
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          backgroundColor: (global.posHoldActiveCode == number)
+          backgroundColor: (global.posHoldActiveCode == hold.code)
               ? global.posTheme.secondary
               : backgroundColor),
       onPressed: () async {
-        Navigator.pop(context, number);
+        Navigator.pop(context,hold);
       },
       child: Column(
         children: [
@@ -151,7 +154,7 @@ class _PosHoldBillState extends State<PosHoldBill>
               ),
               padding: const EdgeInsets.all(10),
               width: double.infinity,
-              child: Center(child: Text(number.toString()))),
+              child: Center(child: Text((hold.isDelivery)  ? hold.deliveryNumber : hold.code))),
           Expanded(
               child: Center(
             child: tableStatus,

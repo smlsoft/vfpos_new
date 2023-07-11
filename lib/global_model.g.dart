@@ -112,7 +112,9 @@ PosHoldProcessModel _$PosHoldProcessModelFromJson(Map<String, dynamic> json) =>
           PosPayModel.fromJson(json['payScreenData'] as Map<String, dynamic>)
       ..posProcess =
           PosProcessModel.fromJson(json['posProcess'] as Map<String, dynamic>)
-      ..tableNumber = json['tableNumber'] as String;
+      ..tableNumber = json['tableNumber'] as String
+      ..isDelivery = json['isDelivery'] as bool
+      ..deliveryNumber = json['deliveryNumber'] as String;
 
 Map<String, dynamic> _$PosHoldProcessModelToJson(
         PosHoldProcessModel instance) =>
@@ -128,6 +130,8 @@ Map<String, dynamic> _$PosHoldProcessModelToJson(
       'payScreenData': instance.payScreenData.toJson(),
       'posProcess': instance.posProcess.toJson(),
       'tableNumber': instance.tableNumber,
+      'isDelivery': instance.isDelivery,
+      'deliveryNumber': instance.deliveryNumber,
     };
 
 HttpGetDataModel _$HttpGetDataModelFromJson(Map<String, dynamic> json) =>

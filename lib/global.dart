@@ -86,6 +86,7 @@ var httpClient = http.Client();
 late BuildContext globalContext;
 bool tableSelected = false;
 String tableNumberSelected = "";
+late PosHoldProcessModel tableProcessSelected;
 void posProcessRefresh = () {};
 String ipAddress = "";
 List<String> errorMessage = [];

@@ -103,6 +103,9 @@ class TableProcessObjectBoxStruct {
   late bool delivery_send_success;
   late DateTime delivery_send_success_datetime;
 
+  /// สถานะ 0=รับที่ร้านรอคิดเงิน,1=คิดเงินแล้ว ทำส่ง Delivery
+  late int delivery_status;
+
   TableProcessObjectBoxStruct({
     required this.guidfixed,
     required this.number,
@@ -133,6 +136,7 @@ class TableProcessObjectBoxStruct {
     required this.delivery_cook_success_datetime,
     required this.delivery_send_success,
     required this.delivery_send_success_datetime,
+    required this.delivery_status,
   });
 
   factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

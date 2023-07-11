@@ -1544,7 +1544,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(28, 6807013238340886010),
       name: 'TableProcessObjectBoxStruct',
-      lastPropertyId: const IdUid(30, 7792260989356301113),
+      lastPropertyId: const IdUid(31, 2886526464000284121),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1697,6 +1697,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(30, 7792260989356301113),
             name: 'delivery_send_success_datetime',
             type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(31, 2886526464000284121),
+            name: 'delivery_status',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -3207,7 +3212,7 @@ ModelDefinition getObjectBoxModel() {
           final remarkOffset = fbb.writeString(object.remark);
           final open_by_staff_codeOffset =
               fbb.writeString(object.open_by_staff_code);
-          fbb.startTable(31);
+          fbb.startTable(32);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
@@ -3240,6 +3245,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(28, object.delivery_send_success);
           fbb.addInt64(
               29, object.delivery_send_success_datetime.millisecondsSinceEpoch);
+          fbb.addInt64(30, object.delivery_status);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3284,7 +3290,8 @@ ModelDefinition getObjectBoxModel() {
               delivery_cook_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false),
               delivery_cook_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0)),
               delivery_send_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 60, false),
-              delivery_send_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0)))
+              delivery_send_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0)),
+              delivery_status: const fb.Int64Reader().vTableGet(buffer, rootOffset, 64, 0))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -4569,4 +4576,9 @@ class TableProcessObjectBoxStruct_ {
   static final delivery_send_success_datetime =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
           _entities[19].properties[29]);
+
+  /// see [TableProcessObjectBoxStruct.delivery_status]
+  static final delivery_status =
+      QueryIntegerProperty<TableProcessObjectBoxStruct>(
+          _entities[19].properties[30]);
 }
