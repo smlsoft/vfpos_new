@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/api/sync/master/sync_master.dart';
+import 'package:dedepos/routes/app_routers.dart';
+import 'package:dedepos/util/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -32,7 +35,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
       timerSwitchToMenu =
           Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
-          Navigator.of(context).pushReplacementNamed('menu');
+          if (mounted) {
+            context.router.pushAndPopUntil(const MenuRoute(),
+                predicate: (route) => false);
+          }
         }
         setState(() {});
       });

@@ -1197,14 +1197,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             guidCodeRef: detail.guid,
             commandCode: 101,
             guidRef: findActiveLineByGuid,
-            barcode: detail.barcode!,
+            barcode: detail.barcode ?? "",
             price: double.tryParse(detail.price) ?? 0.0,
             qty: detail.qty.toString(),
             extraCode: "",
             closeExtra: false,
             name: jsonEncode(detail.names),
             codeDefault: "",
-            selected: detail.selected!);
+            selected: detail.selected ?? false);
         global.playSound(
             sound: global.SoundEnum.beep,
             word: global.getNameFromLanguage(

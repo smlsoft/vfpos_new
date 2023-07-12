@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -310,46 +311,42 @@ class _MenuScreenState extends State<MenuScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              ElevatedButton(
-                  onPressed: () {
-                    posLoginDialog();
-                  },
-                  child: (global.userLoginCode.isEmpty)
-                      ? const Row(children: [
-                          Icon(
-                            Icons.key,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            "Login",
-                            overflow: TextOverflow.clip,
-                          ),
-                        ])
-                      : Row(children: [
-                          const Icon(
-                            Icons.verified_user,
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "${global.userLoginCode} : ${global.userLoginName}",
-                            overflow: TextOverflow.clip,
-                          ),
-                        ])),
+              (global.userLoginCode.isEmpty)
+                  ? const Row(children: [
+                      Icon(
+                        Icons.key,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        "Login",
+                        overflow: TextOverflow.clip,
+                      ),
+                    ])
+                  : Row(children: [
+                      const Icon(
+                        Icons.verified_user,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        "${global.userLoginCode} : ${global.userLoginName}",
+                        overflow: TextOverflow.clip,
+                      ),
+                    ]),
               const Spacer(),
               ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      global.loginSuccess = false;
-                      global.userLoginCode = "";
-                      global.userLoginName = "";
-                    });
-                    context
-                        .read<AuthenticationBloc>()
-                        .add(const UserLogoutEvent());
+                    global.loginSuccess = false;
+                    global.userLoginCode = "";
+                    global.userLoginName = "";
+                    if (mounted) {
+                      context.router.pushAndPopUntil(
+                          const LoginByEmployeeRoute(),
+                          predicate: (route) => false);
+                    }
                   },
                   child: const Icon(Icons.logout)),
             ],
@@ -377,256 +374,195 @@ class _MenuScreenState extends State<MenuScreen> {
           ])),
     ]);
 
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
-      listener: (context, state) {
-        if (state is AuthenticationInitialState) {
-          context.router.pushAndPopUntil(const AuthenticationRoute(),
-              predicate: (route) => false);
-        }
-      },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: SafeArea(
-          child: Scaffold(
-            backgroundColor: Colors.blue[100],
-            appBar: AppBar(
-                centerTitle: true,
-                foregroundColor: Colors.white,
-                title: Text((global.appMode == global.AppModeEnum.posTerminal)
-                    ? global.language("pos_terminal")
-                    : global.language("pos_remote")),
-                actions: [
-                  IconButton(
-                    icon: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green, width: 2),
-                        ),
-                        child: Image.asset(
-                            'assets/flags/${global.userScreenLanguage}.png')),
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SelectLanguageScreen(),
-                        ),
-                      );
-                      setState(() {});
-                    },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.blue[100],
+          appBar: AppBar(
+              centerTitle: true,
+              foregroundColor: Colors.white,
+              title: Text((global.appMode == global.AppModeEnum.posTerminal)
+                  ? global.language("pos_terminal")
+                  : global.language("pos_remote")),
+              actions: [
+                IconButton(
+                  icon: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.green, width: 2),
+                      ),
+                      child: Image.asset(
+                          'assets/flags/${global.userScreenLanguage}.png')),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SelectLanguageScreen(),
+                      ),
+                    );
+                    setState(() {});
+                  },
+                ),
+                PopupMenuButton(
+                  elevation: 2,
+                  icon: const Icon(Icons.more_vert),
+                  offset: Offset(0.0, appBarHeight),
+                  onSelected: (value) async {
+                    switch (value) {
+                      case 1:
+                        // ตั้งค่าเครื่องพิมพ์
+                        await global.loadPrinter();
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PrinterConfigScreen(),
+                            ),
+                          ).then((value) async => {await global.loadPrinter()});
+                        }
+                        break;
+                      case 2:
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const RegisterPosTerminalPage(),
+                            ),
+                          ).then((value) async => {await global.loadPrinter()});
+                        }
+                        break;
+                      case 9:
+                        if (Platform.isAndroid) {
+                          SystemNavigator.pop();
+                        } else if (Platform.isIOS) {
+                          exit(0);
+                        } else {
+                          exit(0);
+                        }
+                        break;
+                    }
+                  },
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(8.0),
+                      bottomRight: Radius.circular(8.0),
+                      topLeft: Radius.circular(8.0),
+                      topRight: Radius.circular(8.0),
+                    ),
                   ),
-                  PopupMenuButton(
-                    elevation: 2,
-                    icon: const Icon(Icons.more_vert),
-                    offset: Offset(0.0, appBarHeight),
-                    onSelected: (value) async {
-                      switch (value) {
-                        case 1:
-                          // ตั้งค่าเครื่องพิมพ์
-                          await global.loadPrinter();
-                          if (mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const PrinterConfigScreen(),
-                              ),
-                            ).then(
-                                (value) async => {await global.loadPrinter()});
-                          }
-                          break;
-                        case 2:
-                          if (mounted) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegisterPosTerminalPage(),
-                              ),
-                            ).then(
-                                (value) async => {await global.loadPrinter()});
-                          }
-                          break;
-                      }
-                    },
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(8.0),
-                        bottomRight: Radius.circular(8.0),
-                        topLeft: Radius.circular(8.0),
-                        topRight: Radius.circular(8.0),
-                      ),
+                  itemBuilder: (ctx) => [
+                    buildPopupMenuItem(
+                      title: global.language('printer_config'),
+                      valueCode: 1,
+                      iconData: Icons.print_rounded,
                     ),
-                    itemBuilder: (ctx) => [
-                      buildPopupMenuItem(
-                        title: global.language('printer_config'),
-                        valueCode: 1,
-                        iconData: Icons.print_rounded,
-                      ),
-                      buildPopupMenuItem(
-                        title: global.language('pos_register'),
-                        valueCode: 2,
-                        iconData: Icons.app_registration,
-                      ),
-                      buildPopupMenuItem(
-                        title: global.language('logout'),
-                        valueCode: 9,
-                        iconData: Icons.logout,
-                      ),
-                    ],
-                  )
-                ]),
-            resizeToAvoidBottomInset: false,
-            body: (global.userLoginCode.isEmpty)
-                ? Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.25), BlendMode.dstATop),
-                        image: const AssetImage('assets/images/login.png'),
-                        fit: BoxFit.cover,
-                      ),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 7,
-                          offset:
-                              const Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
+                    buildPopupMenuItem(
+                      title: global.language('pos_register'),
+                      valueCode: 2,
+                      iconData: Icons.app_registration,
                     ),
-                    margin: const EdgeInsets.all(10),
-                    child: SizedBox(
-                        width: double.infinity,
-                        child: Center(
-                          child: Container(
-                              width: 200,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 10,
-                                    blurRadius: 7,
-                                    offset: const Offset(
-                                        0, 3), // changes position of shadow
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  posLoginDialog();
-                                },
-                                child: Text(
-                                  global.language("login"),
-                                  overflow: TextOverflow.clip,
-                                ),
-                              )),
-                        )))
-                : Column(children: [
-                    infoWidget,
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: menuPosList.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        MediaQuery.of(context).size.width ~/
-                                            150,
-                                    crossAxisSpacing: 5.0,
-                                    mainAxisSpacing: 5.0,
-                                  ),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return menuPosList[index];
-                                  },
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: menuShiftList.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        MediaQuery.of(context).size.width ~/
-                                            150,
-                                    crossAxisSpacing: 5.0,
-                                    mainAxisSpacing: 5.0,
-                                  ),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return menuShiftList[index];
-                                  },
-                                ),
-                              ),
-                            ),
-                            if (menuVisitList.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  child: GridView.builder(
-                                    shrinkWrap: true,
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: menuVisitList.length,
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          MediaQuery.of(context).size.width ~/
-                                              150,
-                                      crossAxisSpacing: 5.0,
-                                      mainAxisSpacing: 5.0,
-                                    ),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return menuVisitList[index];
-                                    },
-                                  ),
-                                ),
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: const BouncingScrollPhysics(),
-                                  itemCount: menuUtilList.length,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount:
-                                        MediaQuery.of(context).size.width ~/
-                                            150,
-                                    crossAxisSpacing: 5.0,
-                                    mainAxisSpacing: 5.0,
-                                  ),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return menuUtilList[index];
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
+                    buildPopupMenuItem(
+                      title: global.language('logout'),
+                      valueCode: 9,
+                      iconData: Icons.logout,
+                    ),
+                  ],
+                )
+              ]),
+          resizeToAvoidBottomInset: false,
+          body: Column(children: [
+            infoWidget,
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: menuPosList.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                MediaQuery.of(context).size.width ~/ 150,
+                            crossAxisSpacing: 5.0,
+                            mainAxisSpacing: 5.0,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return menuPosList[index];
+                          },
                         ),
                       ),
-                    )
-                  ]),
-          ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: menuShiftList.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                MediaQuery.of(context).size.width ~/ 150,
+                            crossAxisSpacing: 5.0,
+                            mainAxisSpacing: 5.0,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return menuShiftList[index];
+                          },
+                        ),
+                      ),
+                    ),
+                    if (menuVisitList.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: menuVisitList.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount:
+                                  MediaQuery.of(context).size.width ~/ 150,
+                              crossAxisSpacing: 5.0,
+                              mainAxisSpacing: 5.0,
+                            ),
+                            itemBuilder: (BuildContext context, int index) {
+                              return menuVisitList[index];
+                            },
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: menuUtilList.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                MediaQuery.of(context).size.width ~/ 150,
+                            crossAxisSpacing: 5.0,
+                            mainAxisSpacing: 5.0,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return menuUtilList[index];
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ]),
         ),
       ),
     );
@@ -649,90 +585,6 @@ class _MenuScreenState extends State<MenuScreen> {
         ],
       ),
     );
-  }
-
-  void posLoginDialog() {
-    showDialog(
-        barrierDismissible: true,
-        barrierColor: Colors.black.withOpacity(0.5),
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Form(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    constraints: const BoxConstraints(maxWidth: 500),
-                    width: (MediaQuery.of(context).size.width / 100) * 40,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            global.language("login"),
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            autofocus: true,
-                            controller: userCode,
-                            decoration: InputDecoration(
-                              icon: const Icon(Icons.person),
-                              hintText: global.language('emp_code'),
-                              labelText: global.language('emp_code'),
-                            ),
-                            readOnly: false,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            controller: password,
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              icon: const Icon(Icons.password),
-                              hintText: global.language('password'),
-                              labelText: global.language('password'),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.amber.shade600),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text(global.language("cancel")),
-                              ),
-                              const Spacer(),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green.shade600),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text(global.language("login")),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        });
   }
 
   // void showMsgDialog(

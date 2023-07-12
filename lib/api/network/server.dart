@@ -185,7 +185,8 @@ Future<void> startServer() async {
                           .and(TableProcessObjectBoxStruct_
                               .delivery_send_success
                               .equals(sendSuccess)))
-                      .order(TableProcessObjectBoxStruct_.table_open_datetime)
+                      .order(TableProcessObjectBoxStruct_.table_open_datetime,
+                          flags: Order.descending)
                       .build()
                       .find();
                   response.write(

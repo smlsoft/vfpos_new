@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/routes/app_routers.dart';
+import 'package:dedepos/util/loading_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:dedepos/global.dart' as global;
 
 @RoutePage()
 class LoginByEmployeePage extends StatefulWidget {
@@ -11,6 +13,18 @@ class LoginByEmployeePage extends StatefulWidget {
 }
 
 class _LoginByEmployeeState extends State<LoginByEmployeePage> {
+  TextEditingController userController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    global.loginSuccess = false;
+    global.syncDataSuccess = false;
+    userController.text = 'admin';
+    passController.text = '1234';
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,6 +39,8 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextFormField(
+                      autofocus: true,
+                      controller: userController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'รหัสพนักงาน',
@@ -32,6 +48,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: passController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'รหัสผ่าน',
@@ -41,8 +58,14 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                     ElevatedButton(
                       onPressed: () {
                         // check login
-                        context.router.pushAndPopUntil(const MenuRoute(),
-                            predicate: (route) => false);
+                        global.userLoginCode = userController.text;
+                        global.userLoginName = 'ทดสอบ';
+                        global.loginSuccess = true;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoadingScreen()),
+                        );
                       },
                       child: const Text('เข้าสู่ระบบ'),
                     ),
