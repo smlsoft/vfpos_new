@@ -218,7 +218,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     }
     deviceTimer = Timer.periodic(const Duration(seconds: 15), (timer) async {
       // ตรวจการเชื่อมต่อกับเครื่องพิมพ์
-      global.testPrinterConnect();
+      //global.testPrinterConnect();
     });
     messageTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
       if (global.errorMessage.isNotEmpty) {

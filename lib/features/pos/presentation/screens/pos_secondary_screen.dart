@@ -76,7 +76,9 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
             children: <Widget>[
               Expanded(
                   flex: 5,
-                  child: Text("$index.${detail.item_name}", style: textStyle)),
+                  child: Text(
+                      "$index.${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}",
+                      style: textStyle)),
               Expanded(
                   flex: 1,
                   child: Align(
