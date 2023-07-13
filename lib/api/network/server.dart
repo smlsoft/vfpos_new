@@ -566,21 +566,6 @@ Future<void> startServer() async {
                       }
                     }
                     break;
-                  case "staff.order_temp_init":
-                    var jsonData = jsonDecode(httpPost.data);
-                    String orderId = jsonData["orderId"];
-                    final box =
-                        global.objectBoxStore.box<OrderTempObjectBoxStruct>();
-                    // ตรวจสอบว่าไม่มี Option และเคยสั่งไปแล้ว จะได้เพิ่ม Qty
-                    box
-                        .query(OrderTempObjectBoxStruct_.orderId
-                            .equals(orderId)
-                            .and(
-                                OrderTempObjectBoxStruct_.isOrder.equals(true)))
-                        .build()
-                        .remove();
-                    global.orderSumAndUpdateTable(orderId);
-                    break;
                   case "staff.order_temp_delete_by_barcode":
                     var jsonData = jsonDecode(httpPost.data);
                     String orderId = jsonData["orderId"];

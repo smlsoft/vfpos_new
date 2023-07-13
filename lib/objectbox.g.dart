@@ -19,6 +19,7 @@ import 'model/objectbox/bill_struct.dart';
 import 'model/objectbox/buffet_mode_struct.dart';
 import 'model/objectbox/config_struct.dart';
 import 'model/objectbox/employees_struct.dart';
+import 'model/objectbox/form_design_struct.dart';
 import 'model/objectbox/kitchen_struct.dart';
 import 'model/objectbox/order_temp_struct.dart';
 import 'model/objectbox/pos_log_struct.dart';
@@ -1705,6 +1706,72 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(29, 6792595191811775261),
+      name: 'FormDesignObjectBoxStruct',
+      lastPropertyId: const IdUid(12, 7497203689950258476),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 613221489269965851),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 4405471993612711596),
+            name: 'guid_fixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(35, 2143982210722394925)),
+        ModelProperty(
+            id: const IdUid(3, 5550613547582748493),
+            name: 'code',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(36, 4249010379526982022)),
+        ModelProperty(
+            id: const IdUid(5, 677388877116863205),
+            name: 'header_json',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 3208617791083525605),
+            name: 'detail_json',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 4642095601605103935),
+            name: 'detail_footer_json',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 1528751755365772755),
+            name: 'footer_json',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 6283983733478487922),
+            name: 'names_json',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 7379806192158204431),
+            name: 'detail_extra_json',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 4328362953661362414),
+            name: 'type',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 7497203689950258476),
+            name: 'detail_total_json',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -1728,8 +1795,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(28, 6807013238340886010),
-      lastIndexId: const IdUid(34, 6093330093234142526),
+      lastEntityId: const IdUid(29, 6792595191811775261),
+      lastIndexId: const IdUid(36, 4249010379526982022),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -1943,7 +2010,8 @@ ModelDefinition getObjectBoxModel() {
         207297085791992695,
         1525236354915606718,
         4003200328585061100,
-        2285475427650852090
+        2285475427650852090,
+        5685532584583007002
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -3295,6 +3363,69 @@ ModelDefinition getObjectBoxModel() {
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
+        }),
+    FormDesignObjectBoxStruct: EntityDefinition<FormDesignObjectBoxStruct>(
+        model: _entities[20],
+        toOneRelations: (FormDesignObjectBoxStruct object) => [],
+        toManyRelations: (FormDesignObjectBoxStruct object) => {},
+        getId: (FormDesignObjectBoxStruct object) => object.id,
+        setId: (FormDesignObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (FormDesignObjectBoxStruct object, fb.Builder fbb) {
+          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+          final codeOffset = fbb.writeString(object.code);
+          final header_jsonOffset = fbb.writeString(object.header_json);
+          final detail_jsonOffset = fbb.writeString(object.detail_json);
+          final detail_footer_jsonOffset =
+              fbb.writeString(object.detail_footer_json);
+          final footer_jsonOffset = fbb.writeString(object.footer_json);
+          final names_jsonOffset = fbb.writeString(object.names_json);
+          final detail_extra_jsonOffset =
+              fbb.writeString(object.detail_extra_json);
+          final detail_total_jsonOffset =
+              fbb.writeString(object.detail_total_json);
+          fbb.startTable(13);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, guid_fixedOffset);
+          fbb.addOffset(2, codeOffset);
+          fbb.addOffset(4, header_jsonOffset);
+          fbb.addOffset(5, detail_jsonOffset);
+          fbb.addOffset(6, detail_footer_jsonOffset);
+          fbb.addOffset(7, footer_jsonOffset);
+          fbb.addOffset(8, names_jsonOffset);
+          fbb.addOffset(9, detail_extra_jsonOffset);
+          fbb.addInt64(10, object.type);
+          fbb.addOffset(11, detail_total_jsonOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = FormDesignObjectBoxStruct(
+              guid_fixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, ''),
+              type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0),
+              names_json: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 20, ''),
+              header_json: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''),
+              detail_json: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
+              detail_extra_json: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 22, ''),
+              detail_total_json: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 26, ''),
+              detail_footer_json:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''),
+              footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 18, ''))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
         })
   };
 
@@ -4581,4 +4712,54 @@ class TableProcessObjectBoxStruct_ {
   static final delivery_status =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
           _entities[19].properties[30]);
+}
+
+/// [FormDesignObjectBoxStruct] entity fields to define ObjectBox queries.
+class FormDesignObjectBoxStruct_ {
+  /// see [FormDesignObjectBoxStruct.id]
+  static final id = QueryIntegerProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[0]);
+
+  /// see [FormDesignObjectBoxStruct.guid_fixed]
+  static final guid_fixed = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[1]);
+
+  /// see [FormDesignObjectBoxStruct.code]
+  static final code = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[2]);
+
+  /// see [FormDesignObjectBoxStruct.header_json]
+  static final header_json = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[3]);
+
+  /// see [FormDesignObjectBoxStruct.detail_json]
+  static final detail_json = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[4]);
+
+  /// see [FormDesignObjectBoxStruct.detail_footer_json]
+  static final detail_footer_json =
+      QueryStringProperty<FormDesignObjectBoxStruct>(
+          _entities[20].properties[5]);
+
+  /// see [FormDesignObjectBoxStruct.footer_json]
+  static final footer_json = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[6]);
+
+  /// see [FormDesignObjectBoxStruct.names_json]
+  static final names_json = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[7]);
+
+  /// see [FormDesignObjectBoxStruct.detail_extra_json]
+  static final detail_extra_json =
+      QueryStringProperty<FormDesignObjectBoxStruct>(
+          _entities[20].properties[8]);
+
+  /// see [FormDesignObjectBoxStruct.type]
+  static final type = QueryIntegerProperty<FormDesignObjectBoxStruct>(
+      _entities[20].properties[9]);
+
+  /// see [FormDesignObjectBoxStruct.detail_total_json]
+  static final detail_total_json =
+      QueryStringProperty<FormDesignObjectBoxStruct>(
+          _entities[20].properties[10]);
 }

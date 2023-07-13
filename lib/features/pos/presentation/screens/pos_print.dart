@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/core/core.dart';
+import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/services/print_process.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
@@ -71,7 +73,315 @@ class PosPrintBillClass {
   PosPrintBillClass(
       {required this.docDate, required this.docNo, required this.languageCode});
 
+  String findValueBillDetail(BillDetailObjectBoxStruct detail, String source) {
+    String result = source;
+    result =
+        result.replaceAll("&item_qty&", global.moneyFormat.format(detail.qty));
+    result = result.replaceAll("&item_name&",
+        global.getNameFromJsonLanguage(detail.item_name, languageCode));
+    result = result.replaceAll("&item_unit_name&",
+        global.getNameFromJsonLanguage(detail.unit_name, languageCode));
+    // ส่วนลด
+    String discountValue = "";
+    if (detail.discount_text.isNotEmpty) {
+      discountValue = global.language("discount");
+      if (detail.discount_text.contains("%") ||
+          detail.discount_text.contains(",")) {
+        discountValue = "$discountValue ${detail.discount_text}=";
+      }
+      discountValue =
+          "$discountValue ${global.moneyFormat.format(detail.discount)}";
+      discountValue =
+          "$discountValue ${global.language("money_symbol")}/${detail.unit_name}";
+    }
+    result = result.replaceAll("&item_discount&", discountValue);
+    {
+      // ราคา
+      String priceValue = "";
+      if (detail.price != detail.total_amount) {
+        if (detail.price != 0) {
+          priceValue = global.moneyFormat.format(detail.price);
+        }
+      }
+      result = result.replaceAll("&item_price&", priceValue);
+    }
+    {
+      // ราคา+สัญลักษณ์
+      String priceValue = "";
+      if (detail.price != detail.total_amount) {
+        if (detail.price != 0) {
+          priceValue = "@${global.moneyFormat.format(detail.price)}";
+        }
+      }
+      result = result.replaceAll("&item_price_and_symbol&", priceValue);
+    }
+    result = result.replaceAll(
+        "&item_total_amount&",
+        (detail.total_amount == 0)
+            ? ""
+            : global.moneyFormat.format(detail.total_amount));
+
+    return result.trim().replaceAll("  ", " ").replaceAll("  ", " ");
+  }
+
+  String findValueBillDetailExtra(
+      BillDetailExtraObjectBoxStruct detailExtra, String source) {
+    String result = source;
+    result = result.replaceAll(
+        "&item_extra_qty&", global.moneyFormat.format(detailExtra.qty));
+    result = result.replaceAll("&item_extra_name&",
+        global.getNameFromJsonLanguage(detailExtra.item_name, languageCode));
+    result = result.replaceAll("&item_extra_unit_name&",
+        global.getNameFromJsonLanguage(detailExtra.unit_name, languageCode));
+    // ราคา
+    String priceValue = "";
+    if (detailExtra.price != detailExtra.total_amount) {
+      if (detailExtra.price != 0) {
+        priceValue = "@${global.moneyFormat.format(detailExtra.price)}";
+      }
+    }
+    result = result.replaceAll("&item_extra_price&", priceValue);
+
+    result = result.replaceAll(
+        "&item_extra_total_amount&",
+        (detailExtra.total_amount == 0)
+            ? ""
+            : global.moneyFormat.format(detailExtra.total_amount));
+
+    return result.trim().replaceAll("  ", " ").replaceAll("  ", " ");
+  }
+
+  String findValueBillDetailTotal(
+      BillDetailObjectBoxStruct detail, String source) {
+    String result = source;
+    result = result.replaceAll(
+        "&total_piece&", global.moneyFormat.format(detail.qty));
+    result = result.replaceAll("&item_name&",
+        global.getNameFromJsonLanguage(detail.item_name, languageCode));
+    result = result.replaceAll(
+        "&total_amount&",
+        (detail.total_amount == 0)
+            ? ""
+            : global.moneyFormat.format(detail.total_amount));
+
+    return result.trim().replaceAll("  ", " ").replaceAll("  ", " ");
+  }
+
   Future<List<PosPrintBillCommandModel>> buildCommand() async {
+    FormDesignObjectBoxStruct formDesign = global.formDesignList[0];
+    List<PosPrintBillCommandModel> commandList = [];
+
+    // Reset Printer
+    commandList.add(PosPrintBillCommandModel(mode: 0));
+
+    if (global.posTicket.logo) {
+      // พิมพ์ Logo
+      ByteData data = await rootBundle.load('assets/logo.jpg');
+      Uint8List bytes = data.buffer.asUint8List();
+      commandList.add(PosPrintBillCommandModel(mode: 1, image: bytes));
+    }
+
+    if (global.posTicket.shop_name) {
+      // พิมพ์ชื่อร้าน
+      commandList.add(PosPrintBillCommandModel(
+          mode: 2,
+          columns: [
+            PosPrintBillCommandColumnModel(
+                width: 1,
+                text: global.getNameFromLanguage(
+                    global.profileSetting.company.names, languageCode),
+                align: PrintColumnAlign.center)
+          ],
+          posTextSize: PosTextSize.size2));
+    }
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      PosPrintBillCommandColumnModel(
+          width: 1,
+          text: global.getNameFromLanguage(
+              global.profileSetting.branch[0].names, languageCode),
+          align: PrintColumnAlign.center)
+    ]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      PosPrintBillCommandColumnModel(
+          width: 1,
+          text: "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)",
+          align: PrintColumnAlign.center)
+    ]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      PosPrintBillCommandColumnModel(
+          width: 1,
+          text: global.getNameFromJsonLanguage(
+              formDesign.names_json, languageCode),
+          align: PrintColumnAlign.center)
+    ]));
+    //
+    if (global.posTicket.shop_tax_id) {
+      // พิมพ์ เลขที่ผู้เสียภาษี
+      if (global.profileSetting.company.taxID.trim().isNotEmpty) {
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+          PosPrintBillCommandColumnModel(
+              width: 1,
+              text:
+                  "เลขประจำตัวผู้เสียภาษี : ${global.profileSetting.company.taxID}",
+              align: PrintColumnAlign.center)
+        ]));
+      }
+    }
+    //
+    if (global.posTicket.shop_tel) {
+      // พิมพ์ เบอร์โทรศัพท์
+      String phone = "";
+      for (var item in global.profileSetting.company.phones) {
+        if (phone.isNotEmpty) {
+          phone += ",";
+        }
+        phone += item;
+      }
+      if (phone.isNotEmpty) {
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+          PosPrintBillCommandColumnModel(
+              width: 1,
+              text: "โทรศัพท์ : " + phone,
+              align: PrintColumnAlign.center)
+        ]));
+      }
+    }
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      PosPrintBillCommandColumnModel(
+          width: 1,
+          text: "หมายเลขเครื่อง POS : 11231220899223131",
+          align: PrintColumnAlign.center)
+    ]));
+    // Header
+    FormDesignHeaderModel headerDescriptionList =
+        FormDesignHeaderModel.fromJson(jsonDecode(formDesign.header_json));
+    for (var headerDescription in headerDescriptionList.description) {
+      commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+        PosPrintBillCommandColumnModel(
+            width: 1,
+            text: global.getNameFromLanguage(headerDescription, languageCode),
+            align: PrintColumnAlign.center)
+      ]));
+    }
+    // Detail
+    BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
+        docNumber: docNo, posScreenMode: global.posScreenToInt());
+    if (bill != null) {
+      List<BillDetailObjectBoxStruct> billDetails =
+          global.billDetailHelper.selectByDocNumber(docNumber: docNo);
+      List<FormDesignColumnModel> formDetailList =
+          (jsonDecode(formDesign.detail_json) as List)
+              .map((e) => FormDesignColumnModel.fromJson(e))
+              .toList();
+      List<FormDesignColumnModel> formDetailExtraList =
+          (jsonDecode(formDesign.detail_extra_json) as List)
+              .map((e) => FormDesignColumnModel.fromJson(e))
+              .toList();
+      List<FormDesignColumnModel> formDetailTotalList =
+          (jsonDecode(formDesign.detail_total_json) as List)
+              .map((e) => FormDesignColumnModel.fromJson(e))
+              .toList();
+      // พิมพ์ หัว Column
+      // Line
+      commandList.add(PosPrintBillCommandModel(mode: 3));
+      {
+        List<PosPrintBillCommandColumnModel> columns = [];
+        for (var formDetail in formDetailList) {
+          columns.add(
+            PosPrintBillCommandColumnModel(
+                width: formDetail.width,
+                text: global.getNameFromLanguage(
+                    formDetail.header_names, languageCode),
+                align: formDetail.text_align),
+          );
+        }
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+      }
+      // Line
+      commandList.add(PosPrintBillCommandModel(mode: 3));
+      for (var detail in billDetails) {
+        {
+          // รายละเอียดสินค้า
+          List<PosPrintBillCommandColumnModel> columns = [];
+          for (var formDetail in formDetailList) {
+            {
+              columns.add(
+                PosPrintBillCommandColumnModel(
+                    width: formDetail.width,
+                    text: findValueBillDetail(detail, formDetail.command),
+                    align: formDetail.text_align),
+              );
+            }
+          }
+          commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+        }
+        {
+          // ส่วนเพิ่มเติม
+          List<BillDetailExtraObjectBoxStruct> extraList =
+              global.billDetailExtraHelper.selectByDocNumberAndLineNumber(
+                  docNumber: detail.doc_number, lineNumber: detail.line_number);
+          for (var extra in extraList) {
+            List<PosPrintBillCommandColumnModel> columns = [];
+            for (var formDetailExtra in formDetailExtraList) {
+              columns.add(
+                PosPrintBillCommandColumnModel(
+                    width: formDetailExtra.width,
+                    text: findValueBillDetailExtra(
+                        extra, formDetailExtra.command),
+                    align: formDetailExtra.text_align),
+              );
+            }
+            // commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+          }
+        }
+      }
+      // Line
+      commandList.add(PosPrintBillCommandModel(mode: 3));
+      {
+        double sumQty = 0;
+        for (var detail in billDetails) {
+          sumQty += detail.qty;
+        }
+        // พิมพ์ยอดรวม
+        List<BillDetailObjectBoxStruct> totalList = [
+          BillDetailObjectBoxStruct(
+              item_name:
+                  '[{"code":"th","name":"${global.language("total_amount")}"}]',
+              qty: sumQty,
+              total_amount: bill.total_amount),
+        ];
+        for (var total in totalList) {
+          List<PosPrintBillCommandColumnModel> columns = [];
+          for (var formDetailTotal in formDetailTotalList) {
+            columns.add(
+              PosPrintBillCommandColumnModel(
+                  width: formDetailTotal.width,
+                  text:
+                      findValueBillDetailTotal(total, formDetailTotal.command),
+                  align: formDetailTotal.text_align),
+            );
+          }
+          commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+        }
+      }
+      // Line
+      commandList.add(PosPrintBillCommandModel(mode: 3));
+      // Header
+      FormDesignHeaderModel footerDescriptionList =
+          FormDesignHeaderModel.fromJson(jsonDecode(formDesign.footer_json));
+      for (var footerDescription in footerDescriptionList.description) {
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+          PosPrintBillCommandColumnModel(
+              width: 1,
+              text: global.getNameFromLanguage(footerDescription, languageCode),
+              align: PrintColumnAlign.center)
+        ]));
+      }
+    }
+    return commandList;
+  }
+
+  /*Future<List<PosPrintBillCommandModel>> buildCommand() async {
     List<PosPrintBillCommandModel> commandList = [];
 
     // Reset Printer
@@ -312,7 +622,7 @@ class PosPrintBillClass {
           "Printer Connect fail.${global.printerLocalStrongData[0].ipAddress}:${global.printerLocalStrongData[0].ipPort}");
     }
     return commandList;
-  }
+  }*/
 
   void printBillByBluetoothImageMode() async {
     await PrintBluetoothThermal.connect(
@@ -447,7 +757,6 @@ class PosPrintBillClass {
                   Offset(0 + global.printerWidthByPixel(0), maxHeight),
                   ui.Paint());
               maxHeight += 1;
-
               break;
           }
         }
@@ -471,7 +780,9 @@ class PosPrintBillClass {
         }
         saveImageToJpgFile(docDate, docNo, imageBuffer);
       });
+      sleep(const Duration(milliseconds: 100));
       printer.cut();
+      sleep(const Duration(milliseconds: 100));
       printer.drawer();
       printer.disconnect();
     }

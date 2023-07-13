@@ -241,10 +241,6 @@ class PrintProcess {
       columnWidthList.add(calc);
       position += columnWidthList[loop];
     }
-    if (columnWidthList.length > 1) {
-      columnWidthList[columnWidthList.length - 1] +=
-          global.printerWidthByPixel(printerIndex) - columnWidthList.sum;
-    }
     // Build Row
     for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
       List<PrintColumn> columnList = [];
@@ -306,6 +302,7 @@ class PrintProcess {
         rowList.removeAt(rowIndex);
       }
     }
+    double dx = 0;
     for (int rowIndex = 0; rowIndex < rowList.length; rowIndex++) {
       int rowHeight = 0;
       for (int columnIndex = 0; columnIndex < column.length; columnIndex++) {
@@ -327,10 +324,8 @@ class PrintProcess {
         tp.layout(
           minWidth: columnWidthList[columnIndex],
         );
-        tp.paint(
-            canvas,
-            Offset((columnIndex == 0) ? 0 : columnWidthList[columnIndex - 1],
-                maxHeight.toDouble()));
+        tp.paint(canvas, Offset(dx, maxHeight.toDouble()));
+        dx += columnWidthList[columnIndex];
         if (tp.height > rowHeight) {
           rowHeight = tp.height.toInt();
         }

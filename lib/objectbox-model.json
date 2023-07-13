@@ -1691,10 +1691,78 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "29:6792595191811775261",
+      "lastPropertyId": "12:7497203689950258476",
+      "name": "FormDesignObjectBoxStruct",
+      "properties": [
+        {
+          "id": "1:613221489269965851",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4405471993612711596",
+          "name": "guid_fixed",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "35:2143982210722394925"
+        },
+        {
+          "id": "3:5550613547582748493",
+          "name": "code",
+          "type": 9,
+          "flags": 2080,
+          "indexId": "36:4249010379526982022"
+        },
+        {
+          "id": "5:677388877116863205",
+          "name": "header_json",
+          "type": 9
+        },
+        {
+          "id": "6:3208617791083525605",
+          "name": "detail_json",
+          "type": 9
+        },
+        {
+          "id": "7:4642095601605103935",
+          "name": "detail_footer_json",
+          "type": 9
+        },
+        {
+          "id": "8:1528751755365772755",
+          "name": "footer_json",
+          "type": 9
+        },
+        {
+          "id": "9:6283983733478487922",
+          "name": "names_json",
+          "type": 9
+        },
+        {
+          "id": "10:7379806192158204431",
+          "name": "detail_extra_json",
+          "type": 9
+        },
+        {
+          "id": "11:4328362953661362414",
+          "name": "type",
+          "type": 6
+        },
+        {
+          "id": "12:7497203689950258476",
+          "name": "detail_total_json",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "28:6807013238340886010",
-  "lastIndexId": "34:6093330093234142526",
+  "lastEntityId": "29:6792595191811775261",
+  "lastIndexId": "36:4249010379526982022",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -1910,7 +1978,8 @@
     207297085791992695,
     1525236354915606718,
     4003200328585061100,
-    2285475427650852090
+    2285475427650852090,
+    5685532584583007002
   ],
   "retiredRelationUids": [],
   "version": 1

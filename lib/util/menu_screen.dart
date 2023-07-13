@@ -42,7 +42,7 @@ class _MenuScreenState extends State<MenuScreen> {
   TextEditingController empCode = TextEditingController();
   TextEditingController userCode = TextEditingController();
   TextEditingController password = TextEditingController();
-
+  bool loadConfigSuccess = false;
   var appBarHeight = AppBar().preferredSize.height;
 
   List<Widget> menuForVisit() {
@@ -283,7 +283,9 @@ class _MenuScreenState extends State<MenuScreen> {
     rebuildScreen();
     syncBillProcess();
     global.buffetModeLists = BuffetModeHelper().getAll();
-    getProfile();
+    getProfile().then((value) => setState(() {
+          loadConfigSuccess = true;
+        }));
   }
 
   @override
@@ -374,6 +376,9 @@ class _MenuScreenState extends State<MenuScreen> {
           ])),
     ]);
 
+    String companyName = (loadConfigSuccess == false)
+        ? ""
+        : "${global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage)} : ${global.getNameFromLanguage(global.profileSetting.company.branchNames, global.userScreenLanguage)}";
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
@@ -383,8 +388,8 @@ class _MenuScreenState extends State<MenuScreen> {
               centerTitle: true,
               foregroundColor: Colors.white,
               title: Text((global.appMode == global.AppModeEnum.posTerminal)
-                  ? global.language("pos_terminal")
-                  : global.language("pos_remote")),
+                  ? "${global.language("pos_terminal")} : $companyName"
+                  : "${global.language("pos_remote")} : $companyName"),
               actions: [
                 IconButton(
                   icon: Container(

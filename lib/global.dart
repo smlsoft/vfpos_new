@@ -17,6 +17,7 @@ import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:dedepos/model/objectbox/staff_client_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/services/print_process.dart';
+import 'package:dedepos/util/load_form_design.dart';
 import 'package:dedepos/util/print_kitchen.dart';
 import 'package:dedepos/util/printer.dart';
 import 'package:flutter/foundation.dart';
@@ -66,7 +67,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 
+import 'model/objectbox/form_design_struct.dart';
+
 late ProfileSettingModel profileSetting;
+List<FormDesignObjectBoxStruct> formDesignList = [];
 bool developerMode = true;
 List<String> countryNames = [
   "English",
@@ -210,6 +214,8 @@ bool checkOrderActive = false;
 int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
 String posTerminalPinCode = "";
 String posTerminalPinTokenId = "";
+String formBillDefaultCode = "DEDE-01"; // ใบเสร็จรับเงิน
+String formSummeryDefaultCode = "DEDE-02"; // ใบสรุปยอด
 
 enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
@@ -892,6 +898,7 @@ void posScreenListHeightSet(double value) {
 
 Future<void> loadConfig() async {
   await loadPrinter();
+  loadFormDesign();
 }
 
 Future<void> registerRemoteToTerminal() async {
@@ -1505,15 +1512,17 @@ Future<void> checkOrderOnline() async {
 }
 
 String getNameFromJsonLanguage(String jsonNames, String languageCode) {
-  List<LanguageDataModel> names =
-      jsonDecode(jsonNames).map<LanguageDataModel>((item) {
-    return LanguageDataModel.fromJson(item);
-  }).toList();
-  for (var item in names) {
-    if (item.code == languageCode) {
-      return item.name;
+  try {
+    List<LanguageDataModel> names =
+        jsonDecode(jsonNames).map<LanguageDataModel>((item) {
+      return LanguageDataModel.fromJson(item);
+    }).toList();
+    for (var item in names) {
+      if (item.code == languageCode) {
+        return item.name;
+      }
     }
-  }
+  } catch (_) {}
   return "*";
 }
 
