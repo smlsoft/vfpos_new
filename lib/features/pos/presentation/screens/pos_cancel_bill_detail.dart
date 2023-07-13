@@ -19,8 +19,10 @@ class PosCancelBillDetailScreen extends StatefulWidget {
 }
 
 class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now(),table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now());
-  List<BillDetailObjectBoxStruct> billDetails = [];
+  BillObjectBoxStruct bill = BillObjectBoxStruct(
+      date_time: DateTime.now(),
+      table_close_date_time: DateTime.now(),
+      table_open_date_time: DateTime.now());
   TextEditingController cancelDescriptionController = TextEditingController();
 
   @override
@@ -44,7 +46,6 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
         if (state is BillLoadByDocNumberSuccess) {
           if (state.bill != null) {
             bill = state.bill!;
-            billDetails = state.billDetails;
           }
           context.read<BillBloc>().add(BillLoadByDocNumberFinish());
         }
@@ -126,7 +127,7 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                                     },
                                   ))
                             ])),
-                    posBillDetail(bill, billDetails),
+                    posBillDetail(bill),
                   ],
                 ),
               )),

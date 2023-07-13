@@ -268,7 +268,30 @@ class PosPrintBillClass {
         docNumber: docNo, posScreenMode: global.posScreenToInt());
     if (bill != null) {
       List<BillDetailObjectBoxStruct> billDetails =
-          global.billDetailHelper.selectByDocNumber(docNumber: docNo);
+          (jsonDecode(bill.details_json) as List)
+              .map((e) => BillDetailObjectBoxStruct.fromJson(e))
+              .toList();
+      if (1 == 2) {
+        // กรณีพิมพ์บิลแบบรวมรายการ
+        List<BillDetailObjectBoxStruct> billDetailSum = [];
+        for (var billDetail in billDetails) {
+          bool isFound = false;
+          for (var billDetailSumItem in billDetailSum) {
+            if (billDetailSumItem.barcode == billDetail.barcode &&
+                billDetailSumItem.extra_json == billDetail.extra_json) {
+              billDetailSumItem.qty += billDetail.qty;
+              billDetailSumItem.total_amount += billDetail.total_amount;
+              isFound = true;
+              break;
+            }
+          }
+          if (!isFound) {
+            billDetailSum.add(billDetail);
+          }
+        }
+        billDetails = billDetailSum;
+      }
+
       List<FormDesignColumnModel> formDetailList =
           (jsonDecode(formDesign.detail_json) as List)
               .map((e) => FormDesignColumnModel.fromJson(e))
@@ -318,8 +341,9 @@ class PosPrintBillClass {
         {
           // ส่วนเพิ่มเติม
           List<BillDetailExtraObjectBoxStruct> extraList =
-              global.billDetailExtraHelper.selectByDocNumberAndLineNumber(
-                  docNumber: detail.doc_number, lineNumber: detail.line_number);
+              (jsonDecode(detail.extra_json) as List)
+                  .map((e) => BillDetailExtraObjectBoxStruct.fromJson(e))
+                  .toList();
           for (var extra in extraList) {
             List<PosPrintBillCommandColumnModel> columns = [];
             for (var formDetailExtra in formDetailExtraList) {

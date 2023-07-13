@@ -22,7 +22,6 @@ class PosReprintBillDetailScreen extends StatefulWidget {
 class _PosReprintBillDetailScreenState
     extends State<PosReprintBillDetailScreen> {
   BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now(),table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now());
-  List<BillDetailObjectBoxStruct> billDetails = [];
 
   @override
   void initState() {
@@ -39,7 +38,6 @@ class _PosReprintBillDetailScreenState
         if (state is BillLoadByDocNumberSuccess) {
           if (state.bill != null) {
             bill = state.bill!;
-            billDetails = state.billDetails;
           }
           context.read<BillBloc>().add(BillLoadByDocNumberFinish());
         }
@@ -89,7 +87,7 @@ class _PosReprintBillDetailScreenState
                           },
                         )),
                     const SizedBox(height: 10),
-                    posBillDetail(bill, billDetails),
+                    posBillDetail(bill),
                   ],
                 ),
               )),

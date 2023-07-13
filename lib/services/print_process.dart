@@ -302,8 +302,8 @@ class PrintProcess {
         rowList.removeAt(rowIndex);
       }
     }
-    double dx = 0;
     for (int rowIndex = 0; rowIndex < rowList.length; rowIndex++) {
+      double dx = 0;
       int rowHeight = 0;
       for (int columnIndex = 0; columnIndex < column.length; columnIndex++) {
         String text = rowList[rowIndex][columnIndex].text;

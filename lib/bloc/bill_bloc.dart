@@ -1,5 +1,4 @@
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/db/bill_detail_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';
@@ -18,9 +17,7 @@ class BillLoadSuccess extends BillState {
 
 class BillLoadByDocNumberSuccess extends BillState {
   BillObjectBoxStruct? bill;
-  List<BillDetailObjectBoxStruct> billDetails = [];
-
-  BillLoadByDocNumberSuccess({required this.bill, this.billDetails = const []});
+  BillLoadByDocNumberSuccess({required this.bill});
 }
 
 class BillBloc extends Bloc<BillEvent, BillState> {
@@ -43,13 +40,7 @@ class BillBloc extends Bloc<BillEvent, BillState> {
     emit(BillLoadingByDocNumber());
     BillObjectBoxStruct? bill = BillHelper().selectByDocNumber(
         docNumber: event.docNumber, posScreenMode: global.posScreenToInt());
-    if (bill != null) {
-      List<BillDetailObjectBoxStruct> billDetails =
-          BillDetailHelper().selectByDocNumber(docNumber: bill.doc_number);
-      emit(BillLoadByDocNumberSuccess(bill: bill, billDetails: billDetails));
-    } else {
-      emit(BillLoadByDocNumberSuccess(bill: bill, billDetails: []));
-    }
+    emit(BillLoadByDocNumberSuccess(bill: bill));
   }
 
   void billLoadFinish(BillLoadFinish event, Emitter<BillState> emit) async {

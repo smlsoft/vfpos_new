@@ -209,81 +209,13 @@ class _MenuScreenState extends State<MenuScreen> {
     }
   }
 
-  Future<void> getProfile() async {
-    {
-      var value = await apiRepository.getProfileShop();
-      global.shopId = value.data["guidfixed"];
-    }
-    try {
-      ProfileSettingCompanyModel company = ProfileSettingCompanyModel(
-        names: [],
-        taxID: "",
-        branchNames: [],
-        addresses: [],
-        phones: [],
-        emailOwners: [],
-        emailStaffs: [],
-        latitude: "",
-        longitude: "",
-        usebranch: false,
-        usedepartment: false,
-        images: [],
-        logo: "",
-      );
-      List<String> languageList = [];
-      ProfileSettingConfigSystemModel configSystem =
-          ProfileSettingConfigSystemModel(
-        vatrate: 0,
-        vattypesale: 0,
-        vattypepurchase: 0,
-        inquirytypesale: 0,
-        inquirytypepurchase: 0,
-        headerreceiptpos: "",
-        footerreciptpos: "",
-      );
-
-      var value = await apiRepository.getProfileSetting();
-      var jsonData = value.data;
-      for (var data in jsonData) {
-        String code = data["code"];
-        String body = data["body"];
-        if (code == "company") {
-          company = ProfileSettingCompanyModel.fromJson(jsonDecode(body));
-        } else if (code == "ConfigLanguage") {
-          var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
-          languageList = List<String>.from(jsonDecodeBody["languageList"]);
-        } else if (code == "ConfigSystem") {
-          configSystem =
-              ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
-        }
-      }
-      var branchValue = await apiRepository.getProfileSBranch();
-      List<ProfileSettingBranchModel> branchs =
-          List<ProfileSettingBranchModel>.from(branchValue.data
-              .map((e) => ProfileSettingBranchModel.fromJson(e)));
-
-      global.profileSetting = ProfileSettingModel(
-        company: company,
-        languagelist: languageList,
-        configsystem: configSystem,
-        branch: branchs,
-      );
-      global.appStorage.write('profile', global.profileSetting.toJson());
-    } catch (e) {
-      print(e);
-    }
-    var getProfile = await global.appStorage.read('profile');
-    global.profileSetting = ProfileSettingModel.fromJson(getProfile);
-    await global.loadConfig();
-  }
-
   @override
   void initState() {
     super.initState();
     rebuildScreen();
     syncBillProcess();
     global.buffetModeLists = BuffetModeHelper().getAll();
-    getProfile().then((value) => setState(() {
+    global.getProfile().then((value) => setState(() {
           loadConfigSuccess = true;
         }));
   }
@@ -405,6 +337,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         builder: (context) => const SelectLanguageScreen(),
                       ),
                     );
+                    rebuildScreen();
                     setState(() {});
                   },
                 ),

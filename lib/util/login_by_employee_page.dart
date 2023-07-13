@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/util/loading_screen.dart';
+import 'package:dedepos/util/select_language_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 
@@ -31,6 +32,25 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
         child: Scaffold(
             appBar: AppBar(
               title: const Text('Login by Employee'),
+              actions: [
+                IconButton(
+                  icon: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.green, width: 2),
+                      ),
+                      child: Image.asset(
+                          'assets/flags/${global.userScreenLanguage}.png')),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SelectLanguageScreen(),
+                      ),
+                    );
+                    setState(() {});
+                  },
+                ),
+              ],
             ),
             body: Center(
                 child: ConstrainedBox(
@@ -38,6 +58,12 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Text(
+                        global.getNameFromLanguage(
+                            global.profileSetting.company.names,
+                            global.userScreenLanguage),
+                        style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 10),
                     TextFormField(
                       autofocus: true,
                       controller: userController,

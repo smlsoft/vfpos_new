@@ -24,7 +24,9 @@ Future syncBillData() async {
     ];
 
     List<BillDetailObjectBoxStruct> billDetails =
-        (global.billDetailHelper.selectByDocNumber(docNumber: bill.doc_number));
+        (jsonDecode(bill.details_json) as List)
+            .map((e) => BillDetailObjectBoxStruct.fromJson(e))
+            .toList();
     List<TransDetailModel> details = [];
     for (var detail in billDetails) {
       details.add(TransDetailModel(
@@ -87,7 +89,9 @@ Future syncBillData() async {
       ));
     }
     List<BillPayObjectBoxStruct> payDetails =
-        global.billPayHelper.selectByDocNumber(docNumber: bill.doc_number);
+        (jsonDecode(bill.pay_json) as List)
+            .map((e) => BillPayObjectBoxStruct.fromJson(e))
+            .toList();
     List<TransPaymentCreditCardModel> paymentCreditCards = [];
     List<TransPaymentTransferModel> paymentTransfers = [];
     for (var payDetail in payDetails) {

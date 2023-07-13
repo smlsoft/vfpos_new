@@ -36,167 +36,9 @@ export 'package:objectbox/objectbox.dart'; // so that callers only have to impor
 
 final _entities = <ModelEntity>[
   ModelEntity(
-      id: const IdUid(2, 5035133149351921342),
-      name: 'BillDetailExtraObjectBoxStruct',
-      lastPropertyId: const IdUid(13, 2992093116338670712),
-      flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 4239738525701679098),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 4737365283377504240),
-            name: 'doc_number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 1157028304764440004),
-            name: 'ref_line_number',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 8675408437274099435),
-            name: 'line_number',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 7529431725980821240),
-            name: 'barcode',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 915209875599924290),
-            name: 'item_code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 8469390973759139464),
-            name: 'item_name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 145193774253669790),
-            name: 'unit_code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 6256222853074739179),
-            name: 'unit_name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 3275526030269492261),
-            name: 'qty',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 8551988644639145117),
-            name: 'price',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 6597758841446847175),
-            name: 'total_amount',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 2992093116338670712),
-            name: 'doc_mode',
-            type: 6,
-            flags: 0)
-      ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(3, 8200473711235576786),
-      name: 'BillDetailObjectBoxStruct',
-      lastPropertyId: const IdUid(15, 390254661974416422),
-      flags: 0,
-      properties: <ModelProperty>[
-        ModelProperty(
-            id: const IdUid(1, 7802945613114588797),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 8332650095147136072),
-            name: 'doc_number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 5597006969350660657),
-            name: 'line_number',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 4768966917068054444),
-            name: 'barcode',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 661025456042724616),
-            name: 'item_code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 1622373353092901714),
-            name: 'item_name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 8904602737830523717),
-            name: 'unit_code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 4608698135749053796),
-            name: 'unit_name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 2881155224631238642),
-            name: 'qty',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 5757444345518915894),
-            name: 'price',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 5832876287284566707),
-            name: 'discount_text',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 6448865193232325067),
-            name: 'discount',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 7905978071712598234),
-            name: 'total_amount',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 2405522170662206015),
-            name: 'sku',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 390254661974416422),
-            name: 'doc_mode',
-            type: 6,
-            flags: 0)
-      ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(48, 1177222554456037894),
+      lastPropertyId: const IdUid(50, 1793824541169848359),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -429,125 +271,16 @@ final _entities = <ModelEntity>[
             id: const IdUid(48, 1177222554456037894),
             name: 'table_close_date_time',
             type: 10,
-            flags: 0)
-      ],
-      relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[]),
-  ModelEntity(
-      id: const IdUid(5, 7075751635639607639),
-      name: 'BillPayObjectBoxStruct',
-      lastPropertyId: const IdUid(25, 1893061376291493828),
-      flags: 0,
-      properties: <ModelProperty>[
+            flags: 0),
         ModelProperty(
-            id: const IdUid(1, 1596410271388201319),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        ModelProperty(
-            id: const IdUid(2, 6407742153308264929),
-            name: 'doc_number',
+            id: const IdUid(49, 1326802297042048720),
+            name: 'details_json',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(3, 5936006177150495079),
-            name: 'trans_flag',
-            type: 6,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(4, 3837067549274503457),
-            name: 'bank_code',
+            id: const IdUid(50, 1793824541169848359),
+            name: 'pay_json',
             type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 8685486442910976564),
-            name: 'bank_name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 5952661843983270685),
-            name: 'bank_account_no',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(7, 7269180737591199430),
-            name: 'card_number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 5118011203391952312),
-            name: 'approved_code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(9, 2846400664675873176),
-            name: 'doc_date_time',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(10, 844933491981772691),
-            name: 'branch_number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(12, 1426124240551915374),
-            name: 'due_date',
-            type: 10,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(13, 6517542959853641305),
-            name: 'cheque_number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(14, 6750031327279932549),
-            name: 'code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(15, 4304442135148479917),
-            name: 'description',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(16, 1026101520946121867),
-            name: 'number',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(19, 3279654424233188732),
-            name: 'provider_code',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(20, 9209986603392056802),
-            name: 'provider_name',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(21, 277199354269320237),
-            name: 'amount',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 1449855984252910006),
-            name: 'bank_reference',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(23, 3130475303615156068),
-            name: 'reference_one',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(24, 1437739751485947506),
-            name: 'reference_two',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(25, 1893061376291493828),
-            name: 'doc_mode',
-            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1083,16 +816,6 @@ final _entities = <ModelEntity>[
             id: const IdUid(41, 3532597229745275329),
             name: 'customer_tax_id',
             type: 1,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(42, 4854922200972291274),
-            name: 'description_width',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(43, 2211796248495353026),
-            name: 'amount_width',
-            type: 8,
             flags: 0),
         ModelProperty(
             id: const IdUid(44, 8467953157124772464),
@@ -1807,7 +1530,10 @@ ModelDefinition getObjectBoxModel() {
         6893961381326252544,
         6135587021504179585,
         3443028984694321207,
-        2798929453371134862
+        2798929453371134862,
+        5035133149351921342,
+        8200473711235576786,
+        7075751635639607639
       ],
       retiredIndexUids: const [
         9219344176730085609,
@@ -2011,7 +1737,59 @@ ModelDefinition getObjectBoxModel() {
         1525236354915606718,
         4003200328585061100,
         2285475427650852090,
-        5685532584583007002
+        5685532584583007002,
+        4854922200972291274,
+        2211796248495353026,
+        4239738525701679098,
+        4737365283377504240,
+        1157028304764440004,
+        8675408437274099435,
+        7529431725980821240,
+        915209875599924290,
+        8469390973759139464,
+        145193774253669790,
+        6256222853074739179,
+        3275526030269492261,
+        8551988644639145117,
+        6597758841446847175,
+        2992093116338670712,
+        7802945613114588797,
+        8332650095147136072,
+        5597006969350660657,
+        4768966917068054444,
+        661025456042724616,
+        1622373353092901714,
+        8904602737830523717,
+        4608698135749053796,
+        2881155224631238642,
+        5757444345518915894,
+        5832876287284566707,
+        6448865193232325067,
+        7905978071712598234,
+        2405522170662206015,
+        390254661974416422,
+        1596410271388201319,
+        6407742153308264929,
+        5936006177150495079,
+        3837067549274503457,
+        8685486442910976564,
+        5952661843983270685,
+        7269180737591199430,
+        5118011203391952312,
+        2846400664675873176,
+        844933491981772691,
+        1426124240551915374,
+        6517542959853641305,
+        6750031327279932549,
+        4304442135148479917,
+        1026101520946121867,
+        3279654424233188732,
+        9209986603392056802,
+        277199354269320237,
+        1449855984252910006,
+        3130475303615156068,
+        1437739751485947506,
+        1893061376291493828
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2019,141 +1797,8 @@ ModelDefinition getObjectBoxModel() {
       version: 1);
 
   final bindings = <Type, EntityDefinition>{
-    BillDetailExtraObjectBoxStruct: EntityDefinition<
-            BillDetailExtraObjectBoxStruct>(
-        model: _entities[0],
-        toOneRelations: (BillDetailExtraObjectBoxStruct object) => [],
-        toManyRelations: (BillDetailExtraObjectBoxStruct object) => {},
-        getId: (BillDetailExtraObjectBoxStruct object) => object.id,
-        setId: (BillDetailExtraObjectBoxStruct object, int id) {
-          object.id = id;
-        },
-        objectToFB: (BillDetailExtraObjectBoxStruct object, fb.Builder fbb) {
-          final doc_numberOffset = fbb.writeString(object.doc_number);
-          final barcodeOffset = fbb.writeString(object.barcode);
-          final item_codeOffset = fbb.writeString(object.item_code);
-          final item_nameOffset = fbb.writeString(object.item_name);
-          final unit_codeOffset = fbb.writeString(object.unit_code);
-          final unit_nameOffset = fbb.writeString(object.unit_name);
-          fbb.startTable(14);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, doc_numberOffset);
-          fbb.addInt64(2, object.ref_line_number);
-          fbb.addInt64(3, object.line_number);
-          fbb.addOffset(4, barcodeOffset);
-          fbb.addOffset(5, item_codeOffset);
-          fbb.addOffset(6, item_nameOffset);
-          fbb.addOffset(7, unit_codeOffset);
-          fbb.addOffset(8, unit_nameOffset);
-          fbb.addFloat64(9, object.qty);
-          fbb.addFloat64(10, object.price);
-          fbb.addFloat64(11, object.total_amount);
-          fbb.addInt64(12, object.doc_mode);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-
-          final object = BillDetailExtraObjectBoxStruct(
-              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
-              line_number:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
-              doc_mode:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0),
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              item_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              item_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              unit_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              unit_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, ''),
-              qty:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              doc_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              price:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
-              ref_line_number: const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
-              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0));
-
-          return object;
-        }),
-    BillDetailObjectBoxStruct: EntityDefinition<BillDetailObjectBoxStruct>(
-        model: _entities[1],
-        toOneRelations: (BillDetailObjectBoxStruct object) => [],
-        toManyRelations: (BillDetailObjectBoxStruct object) => {},
-        getId: (BillDetailObjectBoxStruct object) => object.id,
-        setId: (BillDetailObjectBoxStruct object, int id) {
-          object.id = id;
-        },
-        objectToFB: (BillDetailObjectBoxStruct object, fb.Builder fbb) {
-          final doc_numberOffset = fbb.writeString(object.doc_number);
-          final barcodeOffset = fbb.writeString(object.barcode);
-          final item_codeOffset = fbb.writeString(object.item_code);
-          final item_nameOffset = fbb.writeString(object.item_name);
-          final unit_codeOffset = fbb.writeString(object.unit_code);
-          final unit_nameOffset = fbb.writeString(object.unit_name);
-          final discount_textOffset = fbb.writeString(object.discount_text);
-          final skuOffset = fbb.writeString(object.sku);
-          fbb.startTable(16);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, doc_numberOffset);
-          fbb.addInt64(2, object.line_number);
-          fbb.addOffset(3, barcodeOffset);
-          fbb.addOffset(4, item_codeOffset);
-          fbb.addOffset(5, item_nameOffset);
-          fbb.addOffset(6, unit_codeOffset);
-          fbb.addOffset(7, unit_nameOffset);
-          fbb.addFloat64(8, object.qty);
-          fbb.addFloat64(9, object.price);
-          fbb.addOffset(10, discount_textOffset);
-          fbb.addFloat64(11, object.discount);
-          fbb.addFloat64(12, object.total_amount);
-          fbb.addOffset(13, skuOffset);
-          fbb.addInt64(14, object.doc_mode);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-
-          final object = BillDetailObjectBoxStruct(
-              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
-              line_number:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
-              doc_mode:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0),
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              item_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              item_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              unit_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              unit_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              sku: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 30, ''),
-              qty:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              doc_number:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, ''),
-              price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              discount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0),
-              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0));
-
-          return object;
-        }),
     BillObjectBoxStruct: EntityDefinition<BillObjectBoxStruct>(
-        model: _entities[2],
+        model: _entities[0],
         toOneRelations: (BillObjectBoxStruct object) => [],
         toManyRelations: (BillObjectBoxStruct object) => {},
         getId: (BillObjectBoxStruct object) => object.id,
@@ -2195,7 +1840,9 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.cancel_description);
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
-          fbb.startTable(49);
+          final details_jsonOffset = fbb.writeString(object.details_json);
+          final pay_jsonOffset = fbb.writeString(object.pay_json);
+          fbb.startTable(51);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -2242,6 +1889,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(45, buffet_codeOffset);
           fbb.addInt64(46, object.table_open_date_time.millisecondsSinceEpoch);
           fbb.addInt64(47, object.table_close_date_time.millisecondsSinceEpoch);
+          fbb.addOffset(48, details_jsonOffset);
+          fbb.addOffset(49, pay_jsonOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2302,104 +1951,15 @@ ModelDefinition getObjectBoxModel() {
               man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 86, 0),
               table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false),
               buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 94, ''),
+              details_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 100, ''),
+              pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 102, ''),
               print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
         }),
-    BillPayObjectBoxStruct: EntityDefinition<BillPayObjectBoxStruct>(
-        model: _entities[3],
-        toOneRelations: (BillPayObjectBoxStruct object) => [],
-        toManyRelations: (BillPayObjectBoxStruct object) => {},
-        getId: (BillPayObjectBoxStruct object) => object.id,
-        setId: (BillPayObjectBoxStruct object, int id) {
-          object.id = id;
-        },
-        objectToFB: (BillPayObjectBoxStruct object, fb.Builder fbb) {
-          final doc_numberOffset = fbb.writeString(object.doc_number);
-          final bank_codeOffset = fbb.writeString(object.bank_code);
-          final bank_nameOffset = fbb.writeString(object.bank_name);
-          final bank_account_noOffset = fbb.writeString(object.bank_account_no);
-          final card_numberOffset = fbb.writeString(object.card_number);
-          final approved_codeOffset = fbb.writeString(object.approved_code);
-          final branch_numberOffset = fbb.writeString(object.branch_number);
-          final cheque_numberOffset = fbb.writeString(object.cheque_number);
-          final codeOffset = fbb.writeString(object.code);
-          final descriptionOffset = fbb.writeString(object.description);
-          final numberOffset = fbb.writeString(object.number);
-          final provider_codeOffset = fbb.writeString(object.provider_code);
-          final provider_nameOffset = fbb.writeString(object.provider_name);
-          final bank_referenceOffset = fbb.writeString(object.bank_reference);
-          final reference_oneOffset = fbb.writeString(object.reference_one);
-          final reference_twoOffset = fbb.writeString(object.reference_two);
-          fbb.startTable(26);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, doc_numberOffset);
-          fbb.addInt64(2, object.trans_flag);
-          fbb.addOffset(3, bank_codeOffset);
-          fbb.addOffset(4, bank_nameOffset);
-          fbb.addOffset(5, bank_account_noOffset);
-          fbb.addOffset(6, card_numberOffset);
-          fbb.addOffset(7, approved_codeOffset);
-          fbb.addInt64(8, object.doc_date_time.millisecondsSinceEpoch);
-          fbb.addOffset(9, branch_numberOffset);
-          fbb.addInt64(11, object.due_date.millisecondsSinceEpoch);
-          fbb.addOffset(12, cheque_numberOffset);
-          fbb.addOffset(13, codeOffset);
-          fbb.addOffset(14, descriptionOffset);
-          fbb.addOffset(15, numberOffset);
-          fbb.addOffset(18, provider_codeOffset);
-          fbb.addOffset(19, provider_nameOffset);
-          fbb.addFloat64(20, object.amount);
-          fbb.addOffset(21, bank_referenceOffset);
-          fbb.addOffset(22, reference_oneOffset);
-          fbb.addOffset(23, reference_twoOffset);
-          fbb.addInt64(24, object.doc_mode);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-
-          final object = BillPayObjectBoxStruct(
-              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
-              doc_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              doc_mode:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 52, 0),
-              trans_flag:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
-              bank_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              card_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              approved_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              bank_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              bank_account_no: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              branch_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 22, ''),
-              bank_reference: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
-              cheque_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, ''),
-              code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
-              description: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''),
-              number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
-              reference_one: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 48, ''),
-              reference_two: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''),
-              provider_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 40, ''),
-              provider_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, ''),
-              amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0))
-            ..doc_date_time = DateTime.fromMillisecondsSinceEpoch(
-                const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0))
-            ..due_date = DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0));
-
-          return object;
-        }),
     ConfigObjectBoxStruct: EntityDefinition<ConfigObjectBoxStruct>(
-        model: _entities[4],
+        model: _entities[1],
         toOneRelations: (ConfigObjectBoxStruct object) => [],
         toManyRelations: (ConfigObjectBoxStruct object) => {},
         getId: (ConfigObjectBoxStruct object) => object.id,
@@ -2430,7 +1990,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     EmployeeObjectBoxStruct: EntityDefinition<EmployeeObjectBoxStruct>(
-        model: _entities[5],
+        model: _entities[2],
         toOneRelations: (EmployeeObjectBoxStruct object) => [],
         toManyRelations: (EmployeeObjectBoxStruct object) => {},
         getId: (EmployeeObjectBoxStruct object) => object.id,
@@ -2476,7 +2036,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     PosLogObjectBoxStruct: EntityDefinition<PosLogObjectBoxStruct>(
-        model: _entities[6],
+        model: _entities[3],
         toOneRelations: (PosLogObjectBoxStruct object) => [],
         toManyRelations: (PosLogObjectBoxStruct object) => {},
         getId: (PosLogObjectBoxStruct object) => object.id,
@@ -2565,7 +2125,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     PrinterObjectBoxStruct: EntityDefinition<PrinterObjectBoxStruct>(
-        model: _entities[7],
+        model: _entities[4],
         toOneRelations: (PrinterObjectBoxStruct object) => [],
         toManyRelations: (PrinterObjectBoxStruct object) => {},
         getId: (PrinterObjectBoxStruct object) => object.id,
@@ -2611,7 +2171,7 @@ ModelDefinition getObjectBoxModel() {
         }),
     ProductBarcodeObjectBoxStruct:
         EntityDefinition<ProductBarcodeObjectBoxStruct>(
-            model: _entities[8],
+            model: _entities[5],
             toOneRelations: (ProductBarcodeObjectBoxStruct object) => [],
             toManyRelations: (ProductBarcodeObjectBoxStruct object) => {},
             getId: (ProductBarcodeObjectBoxStruct object) => object.id,
@@ -2700,7 +2260,7 @@ ModelDefinition getObjectBoxModel() {
             }),
     ProductCategoryObjectBoxStruct:
         EntityDefinition<ProductCategoryObjectBoxStruct>(
-            model: _entities[9],
+            model: _entities[6],
             toOneRelations: (ProductCategoryObjectBoxStruct object) => [],
             toManyRelations: (ProductCategoryObjectBoxStruct object) => {},
             getId: (ProductCategoryObjectBoxStruct object) => object.id,
@@ -2761,7 +2321,7 @@ ModelDefinition getObjectBoxModel() {
               return object;
             }),
     BankObjectBoxStruct: EntityDefinition<BankObjectBoxStruct>(
-        model: _entities[10],
+        model: _entities[7],
         toOneRelations: (BankObjectBoxStruct object) => [],
         toManyRelations: (BankObjectBoxStruct object) => {},
         getId: (BankObjectBoxStruct object) => object.id,
@@ -2803,7 +2363,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     PosTicketObjectBoxStruct: EntityDefinition<PosTicketObjectBoxStruct>(
-        model: _entities[11],
+        model: _entities[8],
         toOneRelations: (PosTicketObjectBoxStruct object) => [],
         toManyRelations: (PosTicketObjectBoxStruct object) => {},
         getId: (PosTicketObjectBoxStruct object) => object.id,
@@ -2828,8 +2388,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(38, object.customer_detail);
           fbb.addBool(39, object.customer_address);
           fbb.addBool(40, object.customer_tax_id);
-          fbb.addFloat64(41, object.description_width);
-          fbb.addFloat64(42, object.amount_width);
           fbb.addBool(43, object.sale_detail);
           fbb.addBool(44, object.doc_no_qr_code);
           fbb.finish(fbb.endTable());
@@ -2863,8 +2421,6 @@ ModelDefinition getObjectBoxModel() {
               customer_detail: const fb.BoolReader().vTableGet(buffer, rootOffset, 80, false),
               customer_address: const fb.BoolReader().vTableGet(buffer, rootOffset, 82, false),
               customer_tax_id: const fb.BoolReader().vTableGet(buffer, rootOffset, 84, false),
-              description_width: const fb.Float64Reader().vTableGet(buffer, rootOffset, 86, 0),
-              amount_width: const fb.Float64Reader().vTableGet(buffer, rootOffset, 88, 0),
               sale_detail: const fb.BoolReader().vTableGet(buffer, rootOffset, 90, false),
               doc_no_qr_code: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
@@ -2872,7 +2428,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     StaffClientObjectBoxStruct: EntityDefinition<StaffClientObjectBoxStruct>(
-        model: _entities[12],
+        model: _entities[9],
         toOneRelations: (StaffClientObjectBoxStruct object) => [],
         toManyRelations: (StaffClientObjectBoxStruct object) => {},
         getId: (StaffClientObjectBoxStruct object) => object.id,
@@ -2911,7 +2467,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     BuffetModeObjectBoxStruct: EntityDefinition<BuffetModeObjectBoxStruct>(
-        model: _entities[13],
+        model: _entities[10],
         toOneRelations: (BuffetModeObjectBoxStruct object) => [],
         toManyRelations: (BuffetModeObjectBoxStruct object) => {},
         getId: (BuffetModeObjectBoxStruct object) => object.id,
@@ -2958,7 +2514,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     OrderTempObjectBoxStruct: EntityDefinition<OrderTempObjectBoxStruct>(
-        model: _entities[14],
+        model: _entities[11],
         toOneRelations: (OrderTempObjectBoxStruct object) => [],
         toManyRelations: (OrderTempObjectBoxStruct object) => {},
         getId: (OrderTempObjectBoxStruct object) => object.id,
@@ -3059,7 +2615,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     ShiftObjectBoxStruct: EntityDefinition<ShiftObjectBoxStruct>(
-        model: _entities[15],
+        model: _entities[12],
         toOneRelations: (ShiftObjectBoxStruct object) => [],
         toManyRelations: (ShiftObjectBoxStruct object) => {},
         getId: (ShiftObjectBoxStruct object) => object.id,
@@ -3119,7 +2675,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     KitchenObjectBoxStruct: EntityDefinition<KitchenObjectBoxStruct>(
-        model: _entities[16],
+        model: _entities[13],
         toOneRelations: (KitchenObjectBoxStruct object) => [],
         toManyRelations: (KitchenObjectBoxStruct object) => {},
         getId: (KitchenObjectBoxStruct object) => object.id,
@@ -3169,7 +2725,7 @@ ModelDefinition getObjectBoxModel() {
         }),
     ProductBarcodeStatusObjectBoxStruct: EntityDefinition<
             ProductBarcodeStatusObjectBoxStruct>(
-        model: _entities[17],
+        model: _entities[14],
         toOneRelations: (ProductBarcodeStatusObjectBoxStruct object) => [],
         toManyRelations: (ProductBarcodeStatusObjectBoxStruct object) => {},
         getId: (ProductBarcodeStatusObjectBoxStruct object) => object.id,
@@ -3215,7 +2771,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     TableObjectBoxStruct: EntityDefinition<TableObjectBoxStruct>(
-        model: _entities[18],
+        model: _entities[15],
         toOneRelations: (TableObjectBoxStruct object) => [],
         toManyRelations: (TableObjectBoxStruct object) => {},
         getId: (TableObjectBoxStruct object) => object.id,
@@ -3254,7 +2810,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     TableProcessObjectBoxStruct: EntityDefinition<TableProcessObjectBoxStruct>(
-        model: _entities[19],
+        model: _entities[16],
         toOneRelations: (TableProcessObjectBoxStruct object) => [],
         toManyRelations: (TableProcessObjectBoxStruct object) => {},
         getId: (TableProcessObjectBoxStruct object) => object.id,
@@ -3365,7 +2921,7 @@ ModelDefinition getObjectBoxModel() {
           return object;
         }),
     FormDesignObjectBoxStruct: EntityDefinition<FormDesignObjectBoxStruct>(
-        model: _entities[20],
+        model: _entities[17],
         toOneRelations: (FormDesignObjectBoxStruct object) => [],
         toManyRelations: (FormDesignObjectBoxStruct object) => {},
         getId: (FormDesignObjectBoxStruct object) => object.id,
@@ -3432,1334 +2988,1121 @@ ModelDefinition getObjectBoxModel() {
   return ModelDefinition(model, bindings);
 }
 
-/// [BillDetailExtraObjectBoxStruct] entity fields to define ObjectBox queries.
-class BillDetailExtraObjectBoxStruct_ {
-  /// see [BillDetailExtraObjectBoxStruct.id]
-  static final id = QueryIntegerProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[0]);
-
-  /// see [BillDetailExtraObjectBoxStruct.doc_number]
-  static final doc_number = QueryStringProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[1]);
-
-  /// see [BillDetailExtraObjectBoxStruct.ref_line_number]
-  static final ref_line_number =
-      QueryIntegerProperty<BillDetailExtraObjectBoxStruct>(
-          _entities[0].properties[2]);
-
-  /// see [BillDetailExtraObjectBoxStruct.line_number]
-  static final line_number =
-      QueryIntegerProperty<BillDetailExtraObjectBoxStruct>(
-          _entities[0].properties[3]);
-
-  /// see [BillDetailExtraObjectBoxStruct.barcode]
-  static final barcode = QueryStringProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[4]);
-
-  /// see [BillDetailExtraObjectBoxStruct.item_code]
-  static final item_code = QueryStringProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[5]);
-
-  /// see [BillDetailExtraObjectBoxStruct.item_name]
-  static final item_name = QueryStringProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[6]);
-
-  /// see [BillDetailExtraObjectBoxStruct.unit_code]
-  static final unit_code = QueryStringProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[7]);
-
-  /// see [BillDetailExtraObjectBoxStruct.unit_name]
-  static final unit_name = QueryStringProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[8]);
-
-  /// see [BillDetailExtraObjectBoxStruct.qty]
-  static final qty = QueryDoubleProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[9]);
-
-  /// see [BillDetailExtraObjectBoxStruct.price]
-  static final price = QueryDoubleProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[10]);
-
-  /// see [BillDetailExtraObjectBoxStruct.total_amount]
-  static final total_amount =
-      QueryDoubleProperty<BillDetailExtraObjectBoxStruct>(
-          _entities[0].properties[11]);
-
-  /// see [BillDetailExtraObjectBoxStruct.doc_mode]
-  static final doc_mode = QueryIntegerProperty<BillDetailExtraObjectBoxStruct>(
-      _entities[0].properties[12]);
-}
-
-/// [BillDetailObjectBoxStruct] entity fields to define ObjectBox queries.
-class BillDetailObjectBoxStruct_ {
-  /// see [BillDetailObjectBoxStruct.id]
-  static final id = QueryIntegerProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[0]);
-
-  /// see [BillDetailObjectBoxStruct.doc_number]
-  static final doc_number = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[1]);
-
-  /// see [BillDetailObjectBoxStruct.line_number]
-  static final line_number = QueryIntegerProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[2]);
-
-  /// see [BillDetailObjectBoxStruct.barcode]
-  static final barcode = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[3]);
-
-  /// see [BillDetailObjectBoxStruct.item_code]
-  static final item_code = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[4]);
-
-  /// see [BillDetailObjectBoxStruct.item_name]
-  static final item_name = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[5]);
-
-  /// see [BillDetailObjectBoxStruct.unit_code]
-  static final unit_code = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[6]);
-
-  /// see [BillDetailObjectBoxStruct.unit_name]
-  static final unit_name = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[7]);
-
-  /// see [BillDetailObjectBoxStruct.qty]
-  static final qty = QueryDoubleProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[8]);
-
-  /// see [BillDetailObjectBoxStruct.price]
-  static final price = QueryDoubleProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[9]);
-
-  /// see [BillDetailObjectBoxStruct.discount_text]
-  static final discount_text = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[10]);
-
-  /// see [BillDetailObjectBoxStruct.discount]
-  static final discount = QueryDoubleProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[11]);
-
-  /// see [BillDetailObjectBoxStruct.total_amount]
-  static final total_amount = QueryDoubleProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[12]);
-
-  /// see [BillDetailObjectBoxStruct.sku]
-  static final sku = QueryStringProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[13]);
-
-  /// see [BillDetailObjectBoxStruct.doc_mode]
-  static final doc_mode = QueryIntegerProperty<BillDetailObjectBoxStruct>(
-      _entities[1].properties[14]);
-}
-
 /// [BillObjectBoxStruct] entity fields to define ObjectBox queries.
 class BillObjectBoxStruct_ {
   /// see [BillObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[0]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[0]);
 
   /// see [BillObjectBoxStruct.doc_number]
   static final doc_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[1]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[1]);
 
   /// see [BillObjectBoxStruct.date_time]
   static final date_time =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[2]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[2]);
 
   /// see [BillObjectBoxStruct.customer_code]
   static final customer_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[3]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[3]);
 
   /// see [BillObjectBoxStruct.customer_name]
   static final customer_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[4]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[4]);
 
   /// see [BillObjectBoxStruct.customer_telephone]
   static final customer_telephone =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[5]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[5]);
 
   /// see [BillObjectBoxStruct.total_amount]
   static final total_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[6]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[6]);
 
   /// see [BillObjectBoxStruct.sale_code]
   static final sale_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[7]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[7]);
 
   /// see [BillObjectBoxStruct.sale_name]
   static final sale_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[8]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[8]);
 
   /// see [BillObjectBoxStruct.is_sync]
   static final is_sync =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[2].properties[9]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[9]);
 
   /// see [BillObjectBoxStruct.cashier_code]
   static final cashier_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[10]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[10]);
 
   /// see [BillObjectBoxStruct.cashier_name]
   static final cashier_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[11]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[11]);
 
   /// see [BillObjectBoxStruct.pay_cash_amount]
   static final pay_cash_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[12]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[12]);
 
   /// see [BillObjectBoxStruct.discount_formula]
   static final discount_formula =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[13]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[13]);
 
   /// see [BillObjectBoxStruct.sum_discount]
   static final sum_discount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[14]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[14]);
 
   /// see [BillObjectBoxStruct.sum_credit_card]
   static final sum_credit_card =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[15]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[15]);
 
   /// see [BillObjectBoxStruct.sum_money_transfer]
   static final sum_money_transfer =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[16]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[16]);
 
   /// see [BillObjectBoxStruct.sum_cheque]
   static final sum_cheque =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[17]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[17]);
 
   /// see [BillObjectBoxStruct.sum_coupon]
   static final sum_coupon =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[18]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[18]);
 
   /// see [BillObjectBoxStruct.sum_qr_code]
   static final sum_qr_code =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[19]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[19]);
 
   /// see [BillObjectBoxStruct.total_before_amount]
   static final total_before_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[20]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[20]);
 
   /// see [BillObjectBoxStruct.total_vat_amount]
   static final total_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[21]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[21]);
 
   /// see [BillObjectBoxStruct.vat_rate]
   static final vat_rate =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[22]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[22]);
 
   /// see [BillObjectBoxStruct.total_except_amount]
   static final total_except_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[2].properties[23]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[23]);
 
   /// see [BillObjectBoxStruct.full_vat_name]
   static final full_vat_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[24]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[24]);
 
   /// see [BillObjectBoxStruct.full_vat_address]
   static final full_vat_address =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[25]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[25]);
 
   /// see [BillObjectBoxStruct.full_vat_tax_id]
   static final full_vat_tax_id =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[26]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[26]);
 
   /// see [BillObjectBoxStruct.full_vat_branch_number]
   static final full_vat_branch_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[27]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[27]);
 
   /// see [BillObjectBoxStruct.print_copy_bill_date_time]
   static final print_copy_bill_date_time =
       QueryStringVectorProperty<BillObjectBoxStruct>(
-          _entities[2].properties[28]);
+          _entities[0].properties[28]);
 
   /// see [BillObjectBoxStruct.is_cancel]
   static final is_cancel =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[2].properties[29]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[29]);
 
   /// see [BillObjectBoxStruct.cancel_date_time]
   static final cancel_date_time =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[30]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[30]);
 
   /// see [BillObjectBoxStruct.cancel_user_code]
   static final cancel_user_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[31]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[31]);
 
   /// see [BillObjectBoxStruct.cancel_user_name]
   static final cancel_user_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[32]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[32]);
 
   /// see [BillObjectBoxStruct.cancel_reason]
   static final cancel_reason =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[33]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[33]);
 
   /// see [BillObjectBoxStruct.full_vat_print]
   static final full_vat_print =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[2].properties[34]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[34]);
 
   /// see [BillObjectBoxStruct.full_vat_doc_number]
   static final full_vat_doc_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[35]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[35]);
 
   /// see [BillObjectBoxStruct.cancel_description]
   static final cancel_description =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[36]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[36]);
 
   /// see [BillObjectBoxStruct.doc_mode]
   static final doc_mode =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[37]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[37]);
 
   /// see [BillObjectBoxStruct.table_number]
   static final table_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[38]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[38]);
 
   /// see [BillObjectBoxStruct.man_count]
   static final man_count =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[39]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[39]);
 
   /// see [BillObjectBoxStruct.woman_count]
   static final woman_count =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[40]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[40]);
 
   /// see [BillObjectBoxStruct.child_count]
   static final child_count =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[41]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[41]);
 
   /// see [BillObjectBoxStruct.table_al_la_crate_mode]
   static final table_al_la_crate_mode =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[2].properties[42]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[42]);
 
   /// see [BillObjectBoxStruct.buffet_code]
   static final buffet_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[2].properties[43]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[43]);
 
   /// see [BillObjectBoxStruct.table_open_date_time]
   static final table_open_date_time =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[44]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[44]);
 
   /// see [BillObjectBoxStruct.table_close_date_time]
   static final table_close_date_time =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[2].properties[45]);
-}
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[45]);
 
-/// [BillPayObjectBoxStruct] entity fields to define ObjectBox queries.
-class BillPayObjectBoxStruct_ {
-  /// see [BillPayObjectBoxStruct.id]
-  static final id =
-      QueryIntegerProperty<BillPayObjectBoxStruct>(_entities[3].properties[0]);
+  /// see [BillObjectBoxStruct.details_json]
+  static final details_json =
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
 
-  /// see [BillPayObjectBoxStruct.doc_number]
-  static final doc_number =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[1]);
-
-  /// see [BillPayObjectBoxStruct.trans_flag]
-  static final trans_flag =
-      QueryIntegerProperty<BillPayObjectBoxStruct>(_entities[3].properties[2]);
-
-  /// see [BillPayObjectBoxStruct.bank_code]
-  static final bank_code =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[3]);
-
-  /// see [BillPayObjectBoxStruct.bank_name]
-  static final bank_name =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[4]);
-
-  /// see [BillPayObjectBoxStruct.bank_account_no]
-  static final bank_account_no =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[5]);
-
-  /// see [BillPayObjectBoxStruct.card_number]
-  static final card_number =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[6]);
-
-  /// see [BillPayObjectBoxStruct.approved_code]
-  static final approved_code =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[7]);
-
-  /// see [BillPayObjectBoxStruct.doc_date_time]
-  static final doc_date_time =
-      QueryIntegerProperty<BillPayObjectBoxStruct>(_entities[3].properties[8]);
-
-  /// see [BillPayObjectBoxStruct.branch_number]
-  static final branch_number =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[9]);
-
-  /// see [BillPayObjectBoxStruct.due_date]
-  static final due_date =
-      QueryIntegerProperty<BillPayObjectBoxStruct>(_entities[3].properties[10]);
-
-  /// see [BillPayObjectBoxStruct.cheque_number]
-  static final cheque_number =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[11]);
-
-  /// see [BillPayObjectBoxStruct.code]
-  static final code =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[12]);
-
-  /// see [BillPayObjectBoxStruct.description]
-  static final description =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[13]);
-
-  /// see [BillPayObjectBoxStruct.number]
-  static final number =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[14]);
-
-  /// see [BillPayObjectBoxStruct.provider_code]
-  static final provider_code =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[15]);
-
-  /// see [BillPayObjectBoxStruct.provider_name]
-  static final provider_name =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[16]);
-
-  /// see [BillPayObjectBoxStruct.amount]
-  static final amount =
-      QueryDoubleProperty<BillPayObjectBoxStruct>(_entities[3].properties[17]);
-
-  /// see [BillPayObjectBoxStruct.bank_reference]
-  static final bank_reference =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[18]);
-
-  /// see [BillPayObjectBoxStruct.reference_one]
-  static final reference_one =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[19]);
-
-  /// see [BillPayObjectBoxStruct.reference_two]
-  static final reference_two =
-      QueryStringProperty<BillPayObjectBoxStruct>(_entities[3].properties[20]);
-
-  /// see [BillPayObjectBoxStruct.doc_mode]
-  static final doc_mode =
-      QueryIntegerProperty<BillPayObjectBoxStruct>(_entities[3].properties[21]);
+  /// see [BillObjectBoxStruct.pay_json]
+  static final pay_json =
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
 }
 
 /// [ConfigObjectBoxStruct] entity fields to define ObjectBox queries.
 class ConfigObjectBoxStruct_ {
   /// see [ConfigObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<ConfigObjectBoxStruct>(_entities[4].properties[0]);
+      QueryIntegerProperty<ConfigObjectBoxStruct>(_entities[1].properties[0]);
 
   /// see [ConfigObjectBoxStruct.last_doc_number]
   static final last_doc_number =
-      QueryStringProperty<ConfigObjectBoxStruct>(_entities[4].properties[1]);
+      QueryStringProperty<ConfigObjectBoxStruct>(_entities[1].properties[1]);
 
   /// see [ConfigObjectBoxStruct.device_id]
   static final device_id =
-      QueryStringProperty<ConfigObjectBoxStruct>(_entities[4].properties[2]);
+      QueryStringProperty<ConfigObjectBoxStruct>(_entities[1].properties[2]);
 }
 
 /// [EmployeeObjectBoxStruct] entity fields to define ObjectBox queries.
 class EmployeeObjectBoxStruct_ {
   /// see [EmployeeObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<EmployeeObjectBoxStruct>(_entities[5].properties[0]);
+      QueryIntegerProperty<EmployeeObjectBoxStruct>(_entities[2].properties[0]);
 
   /// see [EmployeeObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[5].properties[1]);
+      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[1]);
 
   /// see [EmployeeObjectBoxStruct.name]
   static final name =
-      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[5].properties[2]);
+      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[2]);
 
   /// see [EmployeeObjectBoxStruct.email]
   static final email =
-      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[5].properties[3]);
+      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[3]);
 
   /// see [EmployeeObjectBoxStruct.guidfixed]
   static final guidfixed =
-      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[5].properties[4]);
+      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[4]);
 
   /// see [EmployeeObjectBoxStruct.is_enabled]
   static final is_enabled =
-      QueryBooleanProperty<EmployeeObjectBoxStruct>(_entities[5].properties[5]);
+      QueryBooleanProperty<EmployeeObjectBoxStruct>(_entities[2].properties[5]);
 
   /// see [EmployeeObjectBoxStruct.profile_picture]
   static final profile_picture =
-      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[5].properties[6]);
+      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[6]);
 }
 
 /// [PosLogObjectBoxStruct] entity fields to define ObjectBox queries.
 class PosLogObjectBoxStruct_ {
   /// see [PosLogObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[0]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[3].properties[0]);
 
   /// see [PosLogObjectBoxStruct.guid_auto_fixed]
   static final guid_auto_fixed =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[1]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[1]);
 
   /// see [PosLogObjectBoxStruct.guid_ref]
   static final guid_ref =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[2]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[2]);
 
   /// see [PosLogObjectBoxStruct.guid_code_ref]
   static final guid_code_ref =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[3]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[3]);
 
   /// see [PosLogObjectBoxStruct.log_date_time]
   static final log_date_time =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[4]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[3].properties[4]);
 
   /// see [PosLogObjectBoxStruct.command_code]
   static final command_code =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[5]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[3].properties[5]);
 
   /// see [PosLogObjectBoxStruct.is_void]
   static final is_void =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[6]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[3].properties[6]);
 
   /// see [PosLogObjectBoxStruct.success]
   static final success =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[7]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[3].properties[7]);
 
   /// see [PosLogObjectBoxStruct.extra_code]
   static final extra_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[8]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[8]);
 
   /// see [PosLogObjectBoxStruct.remark]
   static final remark =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[9]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[9]);
 
   /// see [PosLogObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[10]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[10]);
 
   /// see [PosLogObjectBoxStruct.price]
   static final price =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[6].properties[11]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[3].properties[11]);
 
   /// see [PosLogObjectBoxStruct.name]
   static final name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[12]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[12]);
 
   /// see [PosLogObjectBoxStruct.qty]
   static final qty =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[6].properties[13]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[3].properties[13]);
 
   /// see [PosLogObjectBoxStruct.qty_fixed]
   static final qty_fixed =
-      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[6].properties[14]);
+      QueryDoubleProperty<PosLogObjectBoxStruct>(_entities[3].properties[14]);
 
   /// see [PosLogObjectBoxStruct.default_code]
   static final default_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[15]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[15]);
 
   /// see [PosLogObjectBoxStruct.selected]
   static final selected =
-      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[6].properties[16]);
+      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[3].properties[16]);
 
   /// see [PosLogObjectBoxStruct.unit_code]
   static final unit_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[17]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[17]);
 
   /// see [PosLogObjectBoxStruct.unit_name]
   static final unit_name =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[18]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[18]);
 
   /// see [PosLogObjectBoxStruct.barcode]
   static final barcode =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[19]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[19]);
 
   /// see [PosLogObjectBoxStruct.discount_text]
   static final discount_text =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[20]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[20]);
 
   /// see [PosLogObjectBoxStruct.doc_mode]
   static final doc_mode =
-      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[6].properties[21]);
+      QueryIntegerProperty<PosLogObjectBoxStruct>(_entities[3].properties[21]);
 
   /// see [PosLogObjectBoxStruct.hold_code]
   static final hold_code =
-      QueryStringProperty<PosLogObjectBoxStruct>(_entities[6].properties[22]);
+      QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[22]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.
 class PrinterObjectBoxStruct_ {
   /// see [PrinterObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[7].properties[0]);
+      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[4].properties[0]);
 
   /// see [PrinterObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[1]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[4].properties[1]);
 
   /// see [PrinterObjectBoxStruct.guid_fixed]
   static final guid_fixed =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[2]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[4].properties[2]);
 
   /// see [PrinterObjectBoxStruct.name1]
   static final name1 =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[3]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[4].properties[3]);
 
   /// see [PrinterObjectBoxStruct.type]
   static final type =
-      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[7].properties[4]);
+      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[4].properties[4]);
 
   /// see [PrinterObjectBoxStruct.print_ip_address]
   static final print_ip_address =
-      QueryStringProperty<PrinterObjectBoxStruct>(_entities[7].properties[5]);
+      QueryStringProperty<PrinterObjectBoxStruct>(_entities[4].properties[5]);
 
   /// see [PrinterObjectBoxStruct.printer_port]
   static final printer_port =
-      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[7].properties[6]);
+      QueryIntegerProperty<PrinterObjectBoxStruct>(_entities[4].properties[6]);
 }
 
 /// [ProductBarcodeObjectBoxStruct] entity fields to define ObjectBox queries.
 class ProductBarcodeObjectBoxStruct_ {
   /// see [ProductBarcodeObjectBoxStruct.id]
   static final id = QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[0]);
+      _entities[5].properties[0]);
 
   /// see [ProductBarcodeObjectBoxStruct.barcode]
   static final barcode = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[1]);
+      _entities[5].properties[1]);
 
   /// see [ProductBarcodeObjectBoxStruct.names]
   static final names = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[2]);
+      _entities[5].properties[2]);
 
   /// see [ProductBarcodeObjectBoxStruct.name_all]
   static final name_all = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[3]);
+      _entities[5].properties[3]);
 
   /// see [ProductBarcodeObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[4]);
+      _entities[5].properties[4]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_guid]
   static final item_guid = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[5]);
+      _entities[5].properties[5]);
 
   /// see [ProductBarcodeObjectBoxStruct.descriptions]
   static final descriptions =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[6]);
+          _entities[5].properties[6]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_code]
   static final item_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[7]);
+      _entities[5].properties[7]);
 
   /// see [ProductBarcodeObjectBoxStruct.item_unit_code]
   static final item_unit_code =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[8]);
+          _entities[5].properties[8]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_code]
   static final unit_code = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[9]);
+      _entities[5].properties[9]);
 
   /// see [ProductBarcodeObjectBoxStruct.unit_names]
   static final unit_names = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[10]);
+      _entities[5].properties[10]);
 
   /// see [ProductBarcodeObjectBoxStruct.new_line]
   static final new_line = QueryIntegerProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[11]);
+      _entities[5].properties[11]);
 
   /// see [ProductBarcodeObjectBoxStruct.product_count]
   static final product_count =
       QueryDoubleProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[12]);
+          _entities[5].properties[12]);
 
   /// see [ProductBarcodeObjectBoxStruct.options_json]
   static final options_json =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[13]);
+          _entities[5].properties[13]);
 
   /// see [ProductBarcodeObjectBoxStruct.images_url]
   static final images_url = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[14]);
+      _entities[5].properties[14]);
 
   /// see [ProductBarcodeObjectBoxStruct.color_select]
   static final color_select =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[15]);
+          _entities[5].properties[15]);
 
   /// see [ProductBarcodeObjectBoxStruct.color_select_hex]
   static final color_select_hex =
       QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[16]);
+          _entities[5].properties[16]);
 
   /// see [ProductBarcodeObjectBoxStruct.image_or_color]
   static final image_or_color =
       QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
-          _entities[8].properties[17]);
+          _entities[5].properties[17]);
 
   /// see [ProductBarcodeObjectBoxStruct.prices]
   static final prices = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[18]);
+      _entities[5].properties[18]);
 
   /// see [ProductBarcodeObjectBoxStruct.isalacarte]
   static final isalacarte = QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[19]);
+      _entities[5].properties[19]);
 
   /// see [ProductBarcodeObjectBoxStruct.ordertypes]
   static final ordertypes = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
-      _entities[8].properties[20]);
+      _entities[5].properties[20]);
 }
 
 /// [ProductCategoryObjectBoxStruct] entity fields to define ObjectBox queries.
 class ProductCategoryObjectBoxStruct_ {
   /// see [ProductCategoryObjectBoxStruct.id]
   static final id = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[0]);
+      _entities[6].properties[0]);
 
   /// see [ProductCategoryObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[1]);
+      _entities[6].properties[1]);
 
   /// see [ProductCategoryObjectBoxStruct.image_url]
   static final image_url = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[2]);
+      _entities[6].properties[2]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselect]
   static final colorselect =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[3]);
+          _entities[6].properties[3]);
 
   /// see [ProductCategoryObjectBoxStruct.colorselecthex]
   static final colorselecthex =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[4]);
+          _entities[6].properties[4]);
 
   /// see [ProductCategoryObjectBoxStruct.codelist]
   static final codelist = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[5]);
+      _entities[6].properties[5]);
 
   /// see [ProductCategoryObjectBoxStruct.parent_guid_fixed]
   static final parent_guid_fixed =
       QueryStringProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[6]);
+          _entities[6].properties[6]);
 
   /// see [ProductCategoryObjectBoxStruct.use_image_or_color]
   static final use_image_or_color =
       QueryBooleanProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[7]);
+          _entities[6].properties[7]);
 
   /// see [ProductCategoryObjectBoxStruct.xorder]
   static final xorder = QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[8]);
+      _entities[6].properties[8]);
 
   /// see [ProductCategoryObjectBoxStruct.category_count]
   static final category_count =
       QueryIntegerProperty<ProductCategoryObjectBoxStruct>(
-          _entities[9].properties[9]);
+          _entities[6].properties[9]);
 
   /// see [ProductCategoryObjectBoxStruct.names]
   static final names = QueryStringProperty<ProductCategoryObjectBoxStruct>(
-      _entities[9].properties[10]);
+      _entities[6].properties[10]);
 }
 
 /// [BankObjectBoxStruct] entity fields to define ObjectBox queries.
 class BankObjectBoxStruct_ {
   /// see [BankObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<BankObjectBoxStruct>(_entities[10].properties[0]);
+      QueryIntegerProperty<BankObjectBoxStruct>(_entities[7].properties[0]);
 
   /// see [BankObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<BankObjectBoxStruct>(_entities[10].properties[1]);
+      QueryStringProperty<BankObjectBoxStruct>(_entities[7].properties[1]);
 
   /// see [BankObjectBoxStruct.logo]
   static final logo =
-      QueryStringProperty<BankObjectBoxStruct>(_entities[10].properties[2]);
+      QueryStringProperty<BankObjectBoxStruct>(_entities[7].properties[2]);
 
   /// see [BankObjectBoxStruct.names]
   static final names = QueryStringVectorProperty<BankObjectBoxStruct>(
-      _entities[10].properties[3]);
+      _entities[7].properties[3]);
 
   /// see [BankObjectBoxStruct.guidfixed]
   static final guidfixed =
-      QueryStringProperty<BankObjectBoxStruct>(_entities[10].properties[4]);
+      QueryStringProperty<BankObjectBoxStruct>(_entities[7].properties[4]);
 }
 
 /// [PosTicketObjectBoxStruct] entity fields to define ObjectBox queries.
 class PosTicketObjectBoxStruct_ {
   /// see [PosTicketObjectBoxStruct.id]
   static final id = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[0]);
+      _entities[8].properties[0]);
 
   /// see [PosTicketObjectBoxStruct.guidfixed]
-  static final guidfixed = QueryStringProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[1]);
+  static final guidfixed =
+      QueryStringProperty<PosTicketObjectBoxStruct>(_entities[8].properties[1]);
 
   /// see [PosTicketObjectBoxStruct.logo]
   static final logo = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[2]);
+      _entities[8].properties[2]);
 
   /// see [PosTicketObjectBoxStruct.ticket_name]
-  static final ticket_name = QueryStringProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[3]);
+  static final ticket_name =
+      QueryStringProperty<PosTicketObjectBoxStruct>(_entities[8].properties[3]);
 
   /// see [PosTicketObjectBoxStruct.print_mode]
   static final print_mode = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[4]);
+      _entities[8].properties[4]);
 
   /// see [PosTicketObjectBoxStruct.printer_width]
   static final printer_width = QueryIntegerProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[5]);
+      _entities[8].properties[5]);
 
   /// see [PosTicketObjectBoxStruct.shop_name]
   static final shop_name = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[6]);
+      _entities[8].properties[6]);
 
   /// see [PosTicketObjectBoxStruct.shop_address]
   static final shop_address = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[7]);
+      _entities[8].properties[7]);
 
   /// see [PosTicketObjectBoxStruct.shop_tax_id]
   static final shop_tax_id = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[8]);
+      _entities[8].properties[8]);
 
   /// see [PosTicketObjectBoxStruct.shop_tel]
   static final shop_tel = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[9]);
+      _entities[8].properties[9]);
 
   /// see [PosTicketObjectBoxStruct.cashier_detail]
   static final cashier_detail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[10]);
+      _entities[8].properties[10]);
 
   /// see [PosTicketObjectBoxStruct.customer_detail]
   static final customer_detail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[11]);
+      _entities[8].properties[11]);
 
   /// see [PosTicketObjectBoxStruct.customer_address]
   static final customer_address =
       QueryBooleanProperty<PosTicketObjectBoxStruct>(
-          _entities[11].properties[12]);
+          _entities[8].properties[12]);
 
   /// see [PosTicketObjectBoxStruct.customer_tax_id]
   static final customer_tax_id = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[13]);
-
-  /// see [PosTicketObjectBoxStruct.description_width]
-  static final description_width =
-      QueryDoubleProperty<PosTicketObjectBoxStruct>(
-          _entities[11].properties[14]);
-
-  /// see [PosTicketObjectBoxStruct.amount_width]
-  static final amount_width = QueryDoubleProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[15]);
+      _entities[8].properties[13]);
 
   /// see [PosTicketObjectBoxStruct.sale_detail]
   static final sale_detail = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[16]);
+      _entities[8].properties[14]);
 
   /// see [PosTicketObjectBoxStruct.doc_no_qr_code]
   static final doc_no_qr_code = QueryBooleanProperty<PosTicketObjectBoxStruct>(
-      _entities[11].properties[17]);
+      _entities[8].properties[15]);
 }
 
 /// [StaffClientObjectBoxStruct] entity fields to define ObjectBox queries.
 class StaffClientObjectBoxStruct_ {
   /// see [StaffClientObjectBoxStruct.id]
   static final id = QueryIntegerProperty<StaffClientObjectBoxStruct>(
-      _entities[12].properties[0]);
+      _entities[9].properties[0]);
 
   /// see [StaffClientObjectBoxStruct.guid]
   static final guid = QueryStringProperty<StaffClientObjectBoxStruct>(
-      _entities[12].properties[1]);
+      _entities[9].properties[1]);
 
   /// see [StaffClientObjectBoxStruct.name]
   static final name = QueryStringProperty<StaffClientObjectBoxStruct>(
-      _entities[12].properties[2]);
+      _entities[9].properties[2]);
 
   /// see [StaffClientObjectBoxStruct.device_guid]
   static final device_guid = QueryStringProperty<StaffClientObjectBoxStruct>(
-      _entities[12].properties[3]);
+      _entities[9].properties[3]);
 
   /// see [StaffClientObjectBoxStruct.device_ip]
   static final device_ip = QueryStringProperty<StaffClientObjectBoxStruct>(
-      _entities[12].properties[4]);
+      _entities[9].properties[4]);
 }
 
 /// [BuffetModeObjectBoxStruct] entity fields to define ObjectBox queries.
 class BuffetModeObjectBoxStruct_ {
   /// see [BuffetModeObjectBoxStruct.id]
   static final id = QueryIntegerProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[0]);
+      _entities[10].properties[0]);
 
   /// see [BuffetModeObjectBoxStruct.code]
   static final code = QueryStringProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[1]);
+      _entities[10].properties[1]);
 
   /// see [BuffetModeObjectBoxStruct.adultPrice]
   static final adultPrice = QueryDoubleProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[2]);
+      _entities[10].properties[2]);
 
   /// see [BuffetModeObjectBoxStruct.childPrice]
   static final childPrice = QueryDoubleProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[3]);
+      _entities[10].properties[3]);
 
   /// see [BuffetModeObjectBoxStruct.maxMinute]
   static final maxMinute = QueryIntegerProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[4]);
+      _entities[10].properties[4]);
 
   /// see [BuffetModeObjectBoxStruct.names]
   static final names = QueryStringVectorProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[5]);
+      _entities[10].properties[5]);
 
   /// see [BuffetModeObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<BuffetModeObjectBoxStruct>(
-      _entities[13].properties[6]);
+      _entities[10].properties[6]);
 }
 
 /// [OrderTempObjectBoxStruct] entity fields to define ObjectBox queries.
 class OrderTempObjectBoxStruct_ {
   /// see [OrderTempObjectBoxStruct.id]
   static final id = QueryIntegerProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[0]);
+      _entities[11].properties[0]);
 
   /// see [OrderTempObjectBoxStruct.orderId]
   static final orderId = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[1]);
+      _entities[11].properties[1]);
 
   /// see [OrderTempObjectBoxStruct.orderGuid]
   static final orderGuid = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[2]);
+      _entities[11].properties[2]);
 
   /// see [OrderTempObjectBoxStruct.machineId]
   static final machineId = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[3]);
+      _entities[11].properties[3]);
 
   /// see [OrderTempObjectBoxStruct.orderDateTime]
   static final orderDateTime = QueryIntegerProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[4]);
+      _entities[11].properties[4]);
 
   /// see [OrderTempObjectBoxStruct.barcode]
   static final barcode = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[5]);
+      _entities[11].properties[5]);
 
   /// see [OrderTempObjectBoxStruct.qty]
   static final qty = QueryDoubleProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[6]);
+      _entities[11].properties[6]);
 
   /// see [OrderTempObjectBoxStruct.price]
   static final price = QueryDoubleProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[7]);
+      _entities[11].properties[7]);
 
   /// see [OrderTempObjectBoxStruct.amount]
   static final amount = QueryDoubleProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[8]);
+      _entities[11].properties[8]);
 
   /// see [OrderTempObjectBoxStruct.optionSelected]
   static final optionSelected = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[9]);
+      _entities[11].properties[9]);
 
   /// see [OrderTempObjectBoxStruct.remark]
   static final remark = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[10]);
+      _entities[11].properties[10]);
 
   /// see [OrderTempObjectBoxStruct.unitCode]
   static final unitCode = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[11]);
+      _entities[11].properties[11]);
 
   /// see [OrderTempObjectBoxStruct.imageUri]
   static final imageUri = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[12]);
+      _entities[11].properties[12]);
 
   /// see [OrderTempObjectBoxStruct.names]
   static final names = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[13]);
+      _entities[11].properties[13]);
 
   /// see [OrderTempObjectBoxStruct.unitName]
   static final unitName = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[14]);
+      _entities[11].properties[14]);
 
   /// see [OrderTempObjectBoxStruct.kdsSuccessTime]
   static final kdsSuccessTime = QueryIntegerProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[15]);
+      _entities[11].properties[15]);
 
   /// see [OrderTempObjectBoxStruct.kdsSuccess]
   static final kdsSuccess = QueryBooleanProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[16]);
+      _entities[11].properties[16]);
 
   /// see [OrderTempObjectBoxStruct.kdsId]
   static final kdsId = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[17]);
+      _entities[11].properties[17]);
 
   /// see [OrderTempObjectBoxStruct.takeAway]
   static final takeAway = QueryBooleanProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[18]);
+      _entities[11].properties[18]);
 
   /// see [OrderTempObjectBoxStruct.deliveryNumber]
   static final deliveryNumber = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[19]);
+      _entities[11].properties[19]);
 
   /// see [OrderTempObjectBoxStruct.deliveryCode]
   static final deliveryCode = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[20]);
+      _entities[11].properties[20]);
 
   /// see [OrderTempObjectBoxStruct.deliveryName]
   static final deliveryName = QueryStringProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[21]);
+      _entities[11].properties[21]);
 
   /// see [OrderTempObjectBoxStruct.cancelQty]
   static final cancelQty = QueryDoubleProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[22]);
+      _entities[11].properties[22]);
 
   /// see [OrderTempObjectBoxStruct.orderQty]
   static final orderQty = QueryDoubleProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[23]);
+      _entities[11].properties[23]);
 
   /// see [OrderTempObjectBoxStruct.isOrder]
   static final isOrder = QueryBooleanProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[24]);
+      _entities[11].properties[24]);
 
   /// see [OrderTempObjectBoxStruct.isOrderSuccess]
   static final isOrderSuccess = QueryBooleanProperty<OrderTempObjectBoxStruct>(
-      _entities[14].properties[25]);
+      _entities[11].properties[25]);
 
   /// see [OrderTempObjectBoxStruct.isOrderSendKdsSuccess]
   static final isOrderSendKdsSuccess =
       QueryBooleanProperty<OrderTempObjectBoxStruct>(
-          _entities[14].properties[26]);
+          _entities[11].properties[26]);
 
   /// see [OrderTempObjectBoxStruct.lastUpdateDateTime]
   static final lastUpdateDateTime =
       QueryIntegerProperty<OrderTempObjectBoxStruct>(
-          _entities[14].properties[27]);
+          _entities[11].properties[27]);
 
   /// see [OrderTempObjectBoxStruct.isOrderReadySendKds]
   static final isOrderReadySendKds =
       QueryBooleanProperty<OrderTempObjectBoxStruct>(
-          _entities[14].properties[28]);
+          _entities[11].properties[28]);
 }
 
 /// [ShiftObjectBoxStruct] entity fields to define ObjectBox queries.
 class ShiftObjectBoxStruct_ {
   /// see [ShiftObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[15].properties[0]);
+      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[12].properties[0]);
 
   /// see [ShiftObjectBoxStruct.guidfixed]
   static final guidfixed =
-      QueryStringProperty<ShiftObjectBoxStruct>(_entities[15].properties[1]);
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[12].properties[1]);
 
   /// see [ShiftObjectBoxStruct.usercode]
   static final usercode =
-      QueryStringProperty<ShiftObjectBoxStruct>(_entities[15].properties[2]);
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[12].properties[2]);
 
   /// see [ShiftObjectBoxStruct.username]
   static final username =
-      QueryStringProperty<ShiftObjectBoxStruct>(_entities[15].properties[3]);
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[12].properties[3]);
 
   /// see [ShiftObjectBoxStruct.amount]
   static final amount =
-      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[15].properties[4]);
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[12].properties[4]);
 
   /// see [ShiftObjectBoxStruct.docdate]
   static final docdate =
-      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[15].properties[5]);
+      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[12].properties[5]);
 
   /// see [ShiftObjectBoxStruct.doctype]
   static final doctype =
-      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[15].properties[6]);
+      QueryIntegerProperty<ShiftObjectBoxStruct>(_entities[12].properties[6]);
 
   /// see [ShiftObjectBoxStruct.remark]
   static final remark =
-      QueryStringProperty<ShiftObjectBoxStruct>(_entities[15].properties[7]);
+      QueryStringProperty<ShiftObjectBoxStruct>(_entities[12].properties[7]);
 
   /// see [ShiftObjectBoxStruct.creditcard]
   static final creditcard =
-      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[15].properties[8]);
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[12].properties[8]);
 
   /// see [ShiftObjectBoxStruct.promptpay]
   static final promptpay =
-      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[15].properties[9]);
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[12].properties[9]);
 
   /// see [ShiftObjectBoxStruct.transfer]
   static final transfer =
-      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[15].properties[10]);
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[12].properties[10]);
 
   /// see [ShiftObjectBoxStruct.cheque]
   static final cheque =
-      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[15].properties[11]);
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[12].properties[11]);
 
   /// see [ShiftObjectBoxStruct.coupon]
   static final coupon =
-      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[15].properties[12]);
+      QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[12].properties[12]);
 }
 
 /// [KitchenObjectBoxStruct] entity fields to define ObjectBox queries.
 class KitchenObjectBoxStruct_ {
   /// see [KitchenObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<KitchenObjectBoxStruct>(_entities[16].properties[0]);
+      QueryIntegerProperty<KitchenObjectBoxStruct>(_entities[13].properties[0]);
 
   /// see [KitchenObjectBoxStruct.guidfixed]
   static final guidfixed =
-      QueryStringProperty<KitchenObjectBoxStruct>(_entities[16].properties[1]);
+      QueryStringProperty<KitchenObjectBoxStruct>(_entities[13].properties[1]);
 
   /// see [KitchenObjectBoxStruct.names]
   static final names =
-      QueryStringProperty<KitchenObjectBoxStruct>(_entities[16].properties[2]);
+      QueryStringProperty<KitchenObjectBoxStruct>(_entities[13].properties[2]);
 
   /// see [KitchenObjectBoxStruct.code]
   static final code =
-      QueryStringProperty<KitchenObjectBoxStruct>(_entities[16].properties[3]);
+      QueryStringProperty<KitchenObjectBoxStruct>(_entities[13].properties[3]);
 
   /// see [KitchenObjectBoxStruct.products]
   static final products = QueryStringVectorProperty<KitchenObjectBoxStruct>(
-      _entities[16].properties[4]);
+      _entities[13].properties[4]);
 
   /// see [KitchenObjectBoxStruct.zones]
   static final zones = QueryStringVectorProperty<KitchenObjectBoxStruct>(
-      _entities[16].properties[5]);
+      _entities[13].properties[5]);
 }
 
 /// [ProductBarcodeStatusObjectBoxStruct] entity fields to define ObjectBox queries.
 class ProductBarcodeStatusObjectBoxStruct_ {
   /// see [ProductBarcodeStatusObjectBoxStruct.id]
   static final id = QueryIntegerProperty<ProductBarcodeStatusObjectBoxStruct>(
-      _entities[17].properties[0]);
+      _entities[14].properties[0]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.barcode]
   static final barcode =
       QueryStringProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[1]);
+          _entities[14].properties[1]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.qtyStart]
   static final qtyStart =
       QueryDoubleProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[2]);
+          _entities[14].properties[2]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.qtyBalance]
   static final qtyBalance =
       QueryDoubleProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[3]);
+          _entities[14].properties[3]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.qtyMin]
   static final qtyMin =
       QueryDoubleProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[4]);
+          _entities[14].properties[4]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.orderDisable]
   static final orderDisable =
       QueryBooleanProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[5]);
+          _entities[14].properties[5]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.orderStatus]
   static final orderStatus =
       QueryIntegerProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[6]);
+          _entities[14].properties[6]);
 
   /// see [ProductBarcodeStatusObjectBoxStruct.orderAutoStock]
   static final orderAutoStock =
       QueryBooleanProperty<ProductBarcodeStatusObjectBoxStruct>(
-          _entities[17].properties[7]);
+          _entities[14].properties[7]);
 }
 
 /// [TableObjectBoxStruct] entity fields to define ObjectBox queries.
 class TableObjectBoxStruct_ {
   /// see [TableObjectBoxStruct.id]
   static final id =
-      QueryIntegerProperty<TableObjectBoxStruct>(_entities[18].properties[0]);
+      QueryIntegerProperty<TableObjectBoxStruct>(_entities[15].properties[0]);
 
   /// see [TableObjectBoxStruct.guidfixed]
   static final guidfixed =
-      QueryStringProperty<TableObjectBoxStruct>(_entities[18].properties[1]);
+      QueryStringProperty<TableObjectBoxStruct>(_entities[15].properties[1]);
 
   /// see [TableObjectBoxStruct.number]
   static final number =
-      QueryStringProperty<TableObjectBoxStruct>(_entities[18].properties[2]);
+      QueryStringProperty<TableObjectBoxStruct>(_entities[15].properties[2]);
 
   /// see [TableObjectBoxStruct.names]
   static final names =
-      QueryStringProperty<TableObjectBoxStruct>(_entities[18].properties[3]);
+      QueryStringProperty<TableObjectBoxStruct>(_entities[15].properties[3]);
 
   /// see [TableObjectBoxStruct.zone]
   static final zone =
-      QueryStringProperty<TableObjectBoxStruct>(_entities[18].properties[4]);
+      QueryStringProperty<TableObjectBoxStruct>(_entities[15].properties[4]);
 }
 
 /// [TableProcessObjectBoxStruct] entity fields to define ObjectBox queries.
 class TableProcessObjectBoxStruct_ {
   /// see [TableProcessObjectBoxStruct.id]
   static final id = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[0]);
+      _entities[16].properties[0]);
 
   /// see [TableProcessObjectBoxStruct.guidfixed]
   static final guidfixed = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[1]);
+      _entities[16].properties[1]);
 
   /// see [TableProcessObjectBoxStruct.number]
   static final number = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[2]);
+      _entities[16].properties[2]);
 
   /// see [TableProcessObjectBoxStruct.names]
   static final names = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[3]);
+      _entities[16].properties[3]);
 
   /// see [TableProcessObjectBoxStruct.zone]
   static final zone = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[4]);
+      _entities[16].properties[4]);
 
   /// see [TableProcessObjectBoxStruct.table_status]
   static final table_status = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[5]);
+      _entities[16].properties[5]);
 
   /// see [TableProcessObjectBoxStruct.order_count]
   static final order_count = QueryDoubleProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[6]);
+      _entities[16].properties[6]);
 
   /// see [TableProcessObjectBoxStruct.amount]
   static final amount = QueryDoubleProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[7]);
+      _entities[16].properties[7]);
 
   /// see [TableProcessObjectBoxStruct.order_success]
   static final order_success =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[8]);
+          _entities[16].properties[8]);
 
   /// see [TableProcessObjectBoxStruct.table_open_datetime]
   static final table_open_datetime =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[9]);
+          _entities[16].properties[9]);
 
   /// see [TableProcessObjectBoxStruct.qr_code]
   static final qr_code = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[10]);
+      _entities[16].properties[10]);
 
   /// see [TableProcessObjectBoxStruct.man_count]
   static final man_count = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[11]);
+      _entities[16].properties[11]);
 
   /// see [TableProcessObjectBoxStruct.woman_count]
   static final woman_count = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[12]);
+      _entities[16].properties[12]);
 
   /// see [TableProcessObjectBoxStruct.child_count]
   static final child_count = QueryIntegerProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[13]);
+      _entities[16].properties[13]);
 
   /// see [TableProcessObjectBoxStruct.table_al_la_crate_mode]
   static final table_al_la_crate_mode =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[14]);
+          _entities[16].properties[14]);
 
   /// see [TableProcessObjectBoxStruct.buffet_code]
   static final buffet_code = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[15]);
+      _entities[16].properties[15]);
 
   /// see [TableProcessObjectBoxStruct.customer_code_or_telephone]
   static final customer_code_or_telephone =
       QueryStringProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[16]);
+          _entities[16].properties[16]);
 
   /// see [TableProcessObjectBoxStruct.customer_name]
   static final customer_name = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[17]);
+      _entities[16].properties[17]);
 
   /// see [TableProcessObjectBoxStruct.customer_address]
   static final customer_address =
       QueryStringProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[18]);
+          _entities[16].properties[18]);
 
   /// see [TableProcessObjectBoxStruct.delivery_code]
   static final delivery_code = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[19]);
+      _entities[16].properties[19]);
 
   /// see [TableProcessObjectBoxStruct.delivery_ticket_number]
   static final delivery_ticket_number =
       QueryStringProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[20]);
+          _entities[16].properties[20]);
 
   /// see [TableProcessObjectBoxStruct.delivery_number]
   static final delivery_number =
       QueryStringProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[21]);
+          _entities[16].properties[21]);
 
   /// see [TableProcessObjectBoxStruct.remark]
   static final remark = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[22]);
+      _entities[16].properties[22]);
 
   /// see [TableProcessObjectBoxStruct.open_by_staff_code]
   static final open_by_staff_code =
       QueryStringProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[23]);
+          _entities[16].properties[23]);
 
   /// see [TableProcessObjectBoxStruct.make_food_immediately]
   static final make_food_immediately =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[24]);
+          _entities[16].properties[24]);
 
   /// see [TableProcessObjectBoxStruct.is_delivery]
   static final is_delivery = QueryBooleanProperty<TableProcessObjectBoxStruct>(
-      _entities[19].properties[25]);
+      _entities[16].properties[25]);
 
   /// see [TableProcessObjectBoxStruct.delivery_cook_success]
   static final delivery_cook_success =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[26]);
+          _entities[16].properties[26]);
 
   /// see [TableProcessObjectBoxStruct.delivery_cook_success_datetime]
   static final delivery_cook_success_datetime =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[27]);
+          _entities[16].properties[27]);
 
   /// see [TableProcessObjectBoxStruct.delivery_send_success]
   static final delivery_send_success =
       QueryBooleanProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[28]);
+          _entities[16].properties[28]);
 
   /// see [TableProcessObjectBoxStruct.delivery_send_success_datetime]
   static final delivery_send_success_datetime =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[29]);
+          _entities[16].properties[29]);
 
   /// see [TableProcessObjectBoxStruct.delivery_status]
   static final delivery_status =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
-          _entities[19].properties[30]);
+          _entities[16].properties[30]);
 }
 
 /// [FormDesignObjectBoxStruct] entity fields to define ObjectBox queries.
 class FormDesignObjectBoxStruct_ {
   /// see [FormDesignObjectBoxStruct.id]
   static final id = QueryIntegerProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[0]);
+      _entities[17].properties[0]);
 
   /// see [FormDesignObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[1]);
+      _entities[17].properties[1]);
 
   /// see [FormDesignObjectBoxStruct.code]
   static final code = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[2]);
+      _entities[17].properties[2]);
 
   /// see [FormDesignObjectBoxStruct.header_json]
   static final header_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[3]);
+      _entities[17].properties[3]);
 
   /// see [FormDesignObjectBoxStruct.detail_json]
   static final detail_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[4]);
+      _entities[17].properties[4]);
 
   /// see [FormDesignObjectBoxStruct.detail_footer_json]
   static final detail_footer_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
-          _entities[20].properties[5]);
+          _entities[17].properties[5]);
 
   /// see [FormDesignObjectBoxStruct.footer_json]
   static final footer_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[6]);
+      _entities[17].properties[6]);
 
   /// see [FormDesignObjectBoxStruct.names_json]
   static final names_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[7]);
+      _entities[17].properties[7]);
 
   /// see [FormDesignObjectBoxStruct.detail_extra_json]
   static final detail_extra_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
-          _entities[20].properties[8]);
+          _entities[17].properties[8]);
 
   /// see [FormDesignObjectBoxStruct.type]
   static final type = QueryIntegerProperty<FormDesignObjectBoxStruct>(
-      _entities[20].properties[9]);
+      _entities[17].properties[9]);
 
   /// see [FormDesignObjectBoxStruct.detail_total_json]
   static final detail_total_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
-          _entities[20].properties[10]);
+          _entities[17].properties[10]);
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
@@ -21,11 +23,98 @@ Future<saveBillResultClass> saveBill(
   result.docNumber = docNumber;
   result.docDate = docDate;
 
-  // Header
   PosHoldProcessModel posHoldProcess = global.posHoldProcessResult[
       global.findPosHoldProcessResultIndex(global.posHoldActiveCode)];
+
+  // จ่าย
+  List<BillPayObjectBoxStruct> pays = [];
+  // บัตรเครดิต
+  for (var value in global.payScreenData.credit_card) {
+    pays.add(BillPayObjectBoxStruct(
+      trans_flag: 1,
+      bank_code: value.bank_code,
+      bank_name: value.bank_name,
+      card_number: value.card_number,
+      amount: value.amount,
+    ));
+  }
+  // เงินโอน
+  for (var value in global.payScreenData.transfer) {
+    pays.add(BillPayObjectBoxStruct(
+      trans_flag: 2,
+      bank_code: value.bank_code,
+      bank_name: value.bank_name,
+      bank_account_no: value.account_number,
+      amount: value.amount,
+    ));
+  }
+  // เช็ค
+  for (var value in global.payScreenData.cheque) {
+    BillPayObjectBoxStruct data = BillPayObjectBoxStruct(
+      trans_flag: 3,
+      bank_code: value.bank_code,
+      bank_name: value.bank_name,
+      cheque_number: value.cheque_number,
+      branch_number: value.branch_number,
+      amount: value.amount,
+    );
+    data.due_date = value.due_date;
+    pays.add(data);
+  }
+  // คูปอง
+  for (var value in global.payScreenData.coupon) {
+    pays.add(BillPayObjectBoxStruct(
+      trans_flag: 4,
+      number: value.number,
+      description: value.description,
+      amount: value.amount,
+    ));
+  }
+  // จ่ายด้วย QR
+  for (var value in global.payScreenData.qr) {
+    pays.add(BillPayObjectBoxStruct(
+      trans_flag: 5,
+      provider_code: value.provider_code,
+      provider_name: value.provider_name,
+      description: value.description,
+      amount: value.amount,
+    ));
+  }
+
+  // รายละเอียด
+  int lineNumber = 1;
+  List<BillDetailObjectBoxStruct> details = [];
+  for (var value in posHoldProcess.posProcess.details) {
+    details.add(BillDetailObjectBoxStruct(
+        line_number: lineNumber,
+        barcode: value.barcode,
+        item_code: value.item_code,
+        item_name: value.item_name,
+        unit_code: value.unit_code,
+        unit_name: value.unit_name,
+        qty: value.qty,
+        price: value.price,
+        discount_text: value.discount_text,
+        discount: value.discount,
+        total_amount: value.total_amount));
+    List<BillDetailExtraObjectBoxStruct> detailExtras = [];
+    for (var element in value.extra) {
+      detailExtras.add(BillDetailExtraObjectBoxStruct(
+          barcode: element.barcode,
+          item_code: element.item_code,
+          item_name: element.item_name,
+          unit_code: element.unit_code,
+          unit_name: element.unit_name,
+          qty: element.qty,
+          total_amount: element.total_amount));
+    }
+    lineNumber++;
+  }
+  // Header
   global.billHelper.insert(BillObjectBoxStruct(
-      date_time: docDate,table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now(),
+      date_time: docDate,
+      table_close_date_time: DateTime.now(),
+      table_open_date_time: DateTime.now(),
       doc_number: docNumber,
       customer_code: posHoldProcess.customerCode,
       customer_name: posHoldProcess.customerName,
@@ -43,111 +132,14 @@ Future<saveBillResultClass> saveBill(
       total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
       discount_formula: discountFormula,
       sum_discount: discountAmount,
+      details_json: jsonEncode(details),
+      pay_json: jsonEncode(pays),
       sum_coupon: sumCoupon(),
       sum_qr_code: sumQr(),
       sum_credit_card: sumCreditCard(),
       sum_money_transfer: sumTransfer(),
       sum_cheque: sumCheque()));
 
-  // รายละเอียด
-  int lineNumber = 1;
-  List<BillDetailObjectBoxStruct> details = [];
-  for (var value in posHoldProcess.posProcess.details) {
-    details.add(BillDetailObjectBoxStruct(
-        doc_number: docNumber,
-        line_number: lineNumber,
-        barcode: value.barcode,
-        item_code: value.item_code,
-        item_name: value.item_name,
-        unit_code: value.unit_code,
-        unit_name: value.unit_name,
-        qty: value.qty,
-        price: value.price,
-        discount_text: value.discount_text,
-        discount: value.discount,
-        total_amount: value.total_amount));
-    List<BillDetailExtraObjectBoxStruct> detailExtras = [];
-    int extraLineNumber = 1;
-    for (var element in value.extra) {
-      detailExtras.add(BillDetailExtraObjectBoxStruct(
-          doc_number: docNumber,
-          line_number: extraLineNumber++,
-          ref_line_number: lineNumber,
-          barcode: element.barcode,
-          item_code: element.item_code,
-          item_name: element.item_name,
-          unit_code: element.unit_code,
-          unit_name: element.unit_name,
-          qty: element.qty,
-          total_amount: element.total_amount));
-    }
-    if (detailExtras.isNotEmpty) {
-      global.billDetailExtraHelper.insertMany(detailExtras);
-    }
-    lineNumber++;
-  }
-  global.billDetailHelper.insertMany(details);
-  // จ่าย
-  List<BillPayObjectBoxStruct> pays = [];
-  // บัตรเครดิต
-  for (var value in global.payScreenData.credit_card) {
-    pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
-      trans_flag: 1,
-      bank_code: value.bank_code,
-      bank_name: value.bank_name,
-      card_number: value.card_number,
-      amount: value.amount,
-    ));
-  }
-  // เงินโอน
-  for (var value in global.payScreenData.transfer) {
-    pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
-      trans_flag: 2,
-      bank_code: value.bank_code,
-      bank_name: value.bank_name,
-      bank_account_no: value.account_number,
-      amount: value.amount,
-    ));
-  }
-  // เช็ค
-  for (var value in global.payScreenData.cheque) {
-    BillPayObjectBoxStruct data = BillPayObjectBoxStruct(
-      doc_number: docNumber,
-      trans_flag: 3,
-      bank_code: value.bank_code,
-      bank_name: value.bank_name,
-      cheque_number: value.cheque_number,
-      branch_number: value.branch_number,
-      amount: value.amount,
-    );
-    data.due_date = value.due_date;
-    pays.add(data);
-  }
-  // คูปอง
-  for (var value in global.payScreenData.coupon) {
-    pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
-      trans_flag: 4,
-      number: value.number,
-      description: value.description,
-      amount: value.amount,
-    ));
-  }
-  // จ่ายด้วย QR
-  for (var value in global.payScreenData.qr) {
-    pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
-      trans_flag: 5,
-      provider_code: value.provider_code,
-      provider_name: value.provider_name,
-      description: value.description,
-      amount: value.amount,
-    ));
-  }
-
-  global.billPayHelper.insertMany(pays);
   // Running เลขที่ใบเสร็จ
   global.configHelper.update(ConfigObjectBoxStruct(
       device_id: global.deviceId, last_doc_number: docNumber));
@@ -238,8 +230,11 @@ Widget posBill(BillObjectBoxStruct bill) {
       ));
 }
 
-Widget posBillDetail(
-    BillObjectBoxStruct bill, List<BillDetailObjectBoxStruct> billDetails) {
+Widget posBillDetail(BillObjectBoxStruct bill) {
+  List<BillDetailObjectBoxStruct> billDetails =
+      (jsonEncode(bill.details_json) as List<dynamic>)
+          .map((e) => BillDetailObjectBoxStruct.fromJson(e))
+          .toList();
   return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(

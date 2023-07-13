@@ -6,6 +6,7 @@ import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
 import 'package:dedepos/features/splash/domain/usecase/check_user_login_status.dart';
 import 'package:dedepos/flavors.dart';
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
@@ -43,9 +44,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
           serviceLocator<CheckUserLoginStatus>()
               .checkIfUserSelectedShop()
-              .then((userSelectedShop) {
+              .then((userSelectedShop) async {
             if (userSelectedShop != null) {
               global.apiShopID = userSelectedShop.guidfixed;
+              await global.getProfile();
               context.read<SelectShopBloc>().add(
                   SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
               if (F.appFlavor == Flavor.DEDEPOS) {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dedepos/bloc/bill_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
@@ -20,8 +22,10 @@ class PosBillVatDetailScreen extends StatefulWidget {
 }
 
 class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now(),table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now());
-  List<BillDetailObjectBoxStruct> billDetails = [];
+  BillObjectBoxStruct bill = BillObjectBoxStruct(
+      date_time: DateTime.now(),
+      table_close_date_time: DateTime.now(),
+      table_open_date_time: DateTime.now());
   TextEditingController taxIdController = TextEditingController();
   TextEditingController customerCodeController = TextEditingController();
   TextEditingController branchNumberController = TextEditingController();
@@ -53,7 +57,6 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
         if (state is BillLoadByDocNumberSuccess) {
           if (state.bill != null) {
             bill = state.bill!;
-            billDetails = state.billDetails;
             taxIdController.text = bill.full_vat_tax_id;
             customerCodeController.text = bill.customer_code;
             branchNumberController.text = bill.full_vat_branch_number;
@@ -188,7 +191,7 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    posBillDetail(bill, billDetails),
+                    posBillDetail(bill),
                   ],
                 ),
               )),

@@ -1,5 +1,6 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dartz/dartz.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
 import 'package:dedepos/core/logger/logger.dart';
@@ -35,9 +36,6 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
-import 'package:dedepos/db/bill_detail_extra_helper.dart';
-import 'package:dedepos/db/bill_detail_helper.dart';
-import 'package:dedepos/db/bill_pay_helper.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/global.dart' as global;
@@ -105,9 +103,6 @@ ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 EmployeeHelper employeeHelper = EmployeeHelper();
 PosLogHelper posLogHelper = PosLogHelper();
 BillHelper billHelper = BillHelper();
-BillDetailHelper billDetailHelper = BillDetailHelper();
-BillDetailExtraHelper billDetailExtraHelper = BillDetailExtraHelper();
-BillPayHelper billPayHelper = BillPayHelper();
 ConfigHelper configHelper = ConfigHelper();
 PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
@@ -579,7 +574,15 @@ double calcTextToNumber(String text) {
 }
 
 Future<String> billRunning() async {
-  // Format : DEVICE-DATE-#####
+  // Type 0=คริสต์ศักราช,1=พุทธศักราช
+  // YYYY = ปี
+  // MM = เดือน
+  // DD = วัน
+  // ###### = ลำดับ
+  // ตัวอย่าง 001################ สำหรับ Tax ABB เครื่อง POS (001=รหัสเครื่อง POS)
+  // ตัวอย่าง 002YYMMDD########## สำหรับ Tax ABB เครื่อง POS (002=รหัสเครื่อง POS)
+  // ตัวอย่าง SO-YYMMDD-###### สำหรับขาย
+  // ตัวอย่าง PO-YYMMDD-###### สำหรับซื้อ
   String dateNow = DateFormat('yyMMdd').format(DateTime.now());
   String result = "";
   bool success = false;
@@ -588,13 +591,16 @@ Future<String> billRunning() async {
     List<ConfigObjectBoxStruct> configGet = configHelper.select();
     if (configGet.isNotEmpty) {
       ConfigObjectBoxStruct config = configGet[0];
-      List<String> split = config.last_doc_number.split("-");
+      List<String> split = config.last_doc_number.split(
+        "-",
+      );
       if (split.isNotEmpty) {
         number = int.tryParse(split[split.length - 1]) ?? 0;
         if (split.length > 1) {
-          String date = split[1];
+          String date = split[split.length - 2];
           if (date != dateNow) {
             number = 0;
+            success = true;
           }
         }
       }
@@ -1584,4 +1590,73 @@ String generateRandomPin(int pinLength) {
     pin += rnd.nextInt(10).toString();
   }
   return pin;
+}
+
+Future<void> getProfile() async {
+  ApiRepository apiRepository = ApiRepository();
+  {
+    var value = await apiRepository.getProfileShop();
+    global.shopId = value.data["guidfixed"];
+  }
+  try {
+    ProfileSettingCompanyModel company = ProfileSettingCompanyModel(
+      names: [],
+      taxID: "",
+      branchNames: [],
+      addresses: [],
+      phones: [],
+      emailOwners: [],
+      emailStaffs: [],
+      latitude: "",
+      longitude: "",
+      usebranch: false,
+      usedepartment: false,
+      images: [],
+      logo: "",
+    );
+    List<String> languageList = [];
+    ProfileSettingConfigSystemModel configSystem =
+        ProfileSettingConfigSystemModel(
+      vatrate: 0,
+      vattypesale: 0,
+      vattypepurchase: 0,
+      inquirytypesale: 0,
+      inquirytypepurchase: 0,
+      headerreceiptpos: "",
+      footerreciptpos: "",
+    );
+
+    var value = await apiRepository.getProfileSetting();
+    var jsonData = value.data;
+    for (var data in jsonData) {
+      String code = data["code"];
+      String body = data["body"];
+      if (code == "company") {
+        company = ProfileSettingCompanyModel.fromJson(jsonDecode(body));
+      } else if (code == "ConfigLanguage") {
+        var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
+        languageList = List<String>.from(jsonDecodeBody["languageList"]);
+      } else if (code == "ConfigSystem") {
+        configSystem =
+            ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+      }
+    }
+    var branchValue = await apiRepository.getProfileSBranch();
+    List<ProfileSettingBranchModel> branchs =
+        List<ProfileSettingBranchModel>.from(
+            branchValue.data.map((e) => ProfileSettingBranchModel.fromJson(e)));
+
+    global.profileSetting = ProfileSettingModel(
+      company: company,
+      languagelist: languageList,
+      configsystem: configSystem,
+      branch: branchs,
+    );
+    global.appStorage.write('profile', global.profileSetting.toJson());
+  } catch (e) {
+    print(e);
+  }
+  var getProfile = await global.appStorage.read('profile');
+  global.profileSetting = ProfileSettingModel.fromJson(getProfile);
+  await global.loadConfig();
 }
