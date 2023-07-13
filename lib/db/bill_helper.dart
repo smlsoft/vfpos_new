@@ -34,7 +34,7 @@ class BillHelper {
   }
 
   int insert(BillObjectBoxStruct value) {
-    return box.put(value);
+    return box.put(value, mode: PutMode.insert);
   }
 
   List<BillObjectBoxStruct> select(

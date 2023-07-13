@@ -6,42 +6,6 @@ part of 'bill_struct.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-BillDetailObjectBoxStruct _$BillDetailObjectBoxStructFromJson(
-        Map<String, dynamic> json) =>
-    BillDetailObjectBoxStruct(
-      line_number: json['line_number'] as int? ?? 0,
-      barcode: json['barcode'] as String? ?? "",
-      item_code: json['item_code'] as String? ?? "",
-      item_name: json['item_name'] as String? ?? "",
-      unit_code: json['unit_code'] as String? ?? "",
-      unit_name: json['unit_name'] as String? ?? "",
-      sku: json['sku'] as String? ?? "",
-      qty: (json['qty'] as num?)?.toDouble() ?? 0,
-      price: (json['price'] as num?)?.toDouble() ?? 0,
-      discount_text: json['discount_text'] as String? ?? "",
-      discount: (json['discount'] as num?)?.toDouble() ?? 0,
-      extra_json: json['extra_json'] as String? ?? "{}",
-      total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0,
-    );
-
-Map<String, dynamic> _$BillDetailObjectBoxStructToJson(
-        BillDetailObjectBoxStruct instance) =>
-    <String, dynamic>{
-      'line_number': instance.line_number,
-      'barcode': instance.barcode,
-      'item_code': instance.item_code,
-      'item_name': instance.item_name,
-      'unit_code': instance.unit_code,
-      'unit_name': instance.unit_name,
-      'sku': instance.sku,
-      'qty': instance.qty,
-      'price': instance.price,
-      'discount_text': instance.discount_text,
-      'discount': instance.discount,
-      'total_amount': instance.total_amount,
-      'extra_json': instance.extra_json,
-    };
-
 BillDetailExtraObjectBoxStruct _$BillDetailExtraObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     BillDetailExtraObjectBoxStruct(

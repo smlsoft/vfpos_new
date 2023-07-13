@@ -40,9 +40,9 @@ Future syncBuffetMode(List<ItemRemoveModel> removeList,
       guid_fixed: newData.guidfixed,
       code: newData.code,
       names: [newData.names[0].name],
-      adultPrice: newData.prices[0].price,
-      childPrice: newData.prices[1].price,
-      maxMinute: 120,
+      adult_price: newData.prices[0].price,
+      child_price: newData.prices[1].price,
+      max_minute: 120,
     );
     manyForInsert.add(newBuffetMode);
   }

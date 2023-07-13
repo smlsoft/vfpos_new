@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -12,17 +14,17 @@ class BuffetModeObjectBoxStruct {
   @Unique()
   String code;
   List<String> names;
-  double adultPrice;
-  double childPrice;
-  int maxMinute = 0;
+  double adult_price;
+  double child_price;
+  int max_minute = 0;
 
   BuffetModeObjectBoxStruct({
     required this.guid_fixed,
     required this.code,
     required this.names,
-    required this.adultPrice,
-    required this.childPrice,
-    required this.maxMinute,
+    required this.adult_price,
+    required this.child_price,
+    required this.max_minute,
   });
 
   factory BuffetModeObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

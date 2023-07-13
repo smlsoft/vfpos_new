@@ -12,9 +12,9 @@ BuffetModeObjectBoxStruct _$BuffetModeObjectBoxStructFromJson(
       guid_fixed: json['guid_fixed'] as String,
       code: json['code'] as String,
       names: (json['names'] as List<dynamic>).map((e) => e as String).toList(),
-      adultPrice: (json['adultPrice'] as num).toDouble(),
-      childPrice: (json['childPrice'] as num).toDouble(),
-      maxMinute: json['maxMinute'] as int,
+      adult_price: (json['adult_price'] as num).toDouble(),
+      child_price: (json['child_price'] as num).toDouble(),
+      max_minute: json['max_minute'] as int,
     )..id = json['id'] as int;
 
 Map<String, dynamic> _$BuffetModeObjectBoxStructToJson(
@@ -24,7 +24,7 @@ Map<String, dynamic> _$BuffetModeObjectBoxStructToJson(
       'guid_fixed': instance.guid_fixed,
       'code': instance.code,
       'names': instance.names,
-      'adultPrice': instance.adultPrice,
-      'childPrice': instance.childPrice,
-      'maxMinute': instance.maxMinute,
+      'adult_price': instance.adult_price,
+      'child_price': instance.child_price,
+      'max_minute': instance.max_minute,
     };

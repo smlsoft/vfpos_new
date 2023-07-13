@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(50, 1793824541169848359),
+      lastPropertyId: const IdUid(51, 8128154748436428662),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -273,12 +273,7 @@ final _entities = <ModelEntity>[
             type: 10,
             flags: 0),
         ModelProperty(
-            id: const IdUid(49, 1326802297042048720),
-            name: 'details_json',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(50, 1793824541169848359),
+            id: const IdUid(51, 8128154748436428662),
             name: 'pay_json',
             type: 9,
             flags: 0)
@@ -868,7 +863,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(19, 902662215410189876),
       name: 'BuffetModeObjectBoxStruct',
-      lastPropertyId: const IdUid(8, 8295315638924899374),
+      lastPropertyId: const IdUid(11, 3067221248207172867),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -883,21 +878,6 @@ final _entities = <ModelEntity>[
             flags: 2080,
             indexId: const IdUid(26, 4964376486402589352)),
         ModelProperty(
-            id: const IdUid(4, 1059936091951539085),
-            name: 'adultPrice',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(5, 3689734830323953667),
-            name: 'childPrice',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(6, 4405532620165712495),
-            name: 'maxMinute',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(7, 712436512051069427),
             name: 'names',
             type: 30,
@@ -907,7 +887,22 @@ final _entities = <ModelEntity>[
             name: 'guid_fixed',
             type: 9,
             flags: 2080,
-            indexId: const IdUid(27, 6987394566233339533))
+            indexId: const IdUid(27, 6987394566233339533)),
+        ModelProperty(
+            id: const IdUid(9, 1716823945046838846),
+            name: 'adult_price',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 8466769021562306946),
+            name: 'child_price',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 3067221248207172867),
+            name: 'max_minute',
+            type: 6,
+            flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -1495,6 +1490,90 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(30, 8931092861744922825),
+      name: 'BillDetailObjectBoxStruct',
+      lastPropertyId: const IdUid(15, 7911156860291555729),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 6315560148790061674),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 7890308360821672396),
+            name: 'doc_number',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 1018232328003610945),
+            name: 'line_number',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 1335553375364233206),
+            name: 'barcode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 7292490682460963740),
+            name: 'item_code',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 8975259707279577450),
+            name: 'item_name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 4510076289977236947),
+            name: 'unit_code',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 7783367498478852218),
+            name: 'unit_name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 8477157718023417657),
+            name: 'sku',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 4431024227622993583),
+            name: 'qty',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 2132618041532368205),
+            name: 'price',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 6003836707008934162),
+            name: 'discount_text',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 783854016165634282),
+            name: 'discount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 4967252553417717292),
+            name: 'total_amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 7911156860291555729),
+            name: 'extra_json',
+            type: 9,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -1518,7 +1597,7 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(29, 6792595191811775261),
+      lastEntityId: const IdUid(30, 8931092861744922825),
       lastIndexId: const IdUid(36, 4249010379526982022),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
@@ -1789,7 +1868,12 @@ ModelDefinition getObjectBoxModel() {
         1449855984252910006,
         3130475303615156068,
         1437739751485947506,
-        1893061376291493828
+        1893061376291493828,
+        1326802297042048720,
+        1793824541169848359,
+        1059936091951539085,
+        3689734830323953667,
+        4405532620165712495
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1840,9 +1924,8 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.cancel_description);
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
-          final details_jsonOffset = fbb.writeString(object.details_json);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(51);
+          fbb.startTable(52);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -1889,8 +1972,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(45, buffet_codeOffset);
           fbb.addInt64(46, object.table_open_date_time.millisecondsSinceEpoch);
           fbb.addInt64(47, object.table_close_date_time.millisecondsSinceEpoch);
-          fbb.addOffset(48, details_jsonOffset);
-          fbb.addOffset(49, pay_jsonOffset);
+          fbb.addOffset(50, pay_jsonOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1951,8 +2033,7 @@ ModelDefinition getObjectBoxModel() {
               man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 86, 0),
               table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false),
               buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 94, ''),
-              details_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 100, ''),
-              pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 102, ''),
+              pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 104, ''),
               print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -2479,14 +2560,14 @@ ModelDefinition getObjectBoxModel() {
           final namesOffset = fbb.writeList(
               object.names.map(fbb.writeString).toList(growable: false));
           final guid_fixedOffset = fbb.writeString(object.guid_fixed);
-          fbb.startTable(9);
+          fbb.startTable(12);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, codeOffset);
-          fbb.addFloat64(3, object.adultPrice);
-          fbb.addFloat64(4, object.childPrice);
-          fbb.addInt64(5, object.maxMinute);
           fbb.addOffset(6, namesOffset);
           fbb.addOffset(7, guid_fixedOffset);
+          fbb.addFloat64(8, object.adult_price);
+          fbb.addFloat64(9, object.child_price);
+          fbb.addInt64(10, object.max_minute);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2503,12 +2584,12 @@ ModelDefinition getObjectBoxModel() {
                       fb.StringReader(asciiOptimization: true),
                       lazy: false)
                   .vTableGet(buffer, rootOffset, 16, []),
-              adultPrice:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0),
-              childPrice:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0),
-              maxMinute:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0))
+              adult_price:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
+              child_price:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
+              max_minute:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2982,6 +3063,74 @@ ModelDefinition getObjectBoxModel() {
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
+        }),
+    BillDetailObjectBoxStruct: EntityDefinition<BillDetailObjectBoxStruct>(
+        model: _entities[18],
+        toOneRelations: (BillDetailObjectBoxStruct object) => [],
+        toManyRelations: (BillDetailObjectBoxStruct object) => {},
+        getId: (BillDetailObjectBoxStruct object) => object.id,
+        setId: (BillDetailObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (BillDetailObjectBoxStruct object, fb.Builder fbb) {
+          final doc_numberOffset = fbb.writeString(object.doc_number);
+          final barcodeOffset = fbb.writeString(object.barcode);
+          final item_codeOffset = fbb.writeString(object.item_code);
+          final item_nameOffset = fbb.writeString(object.item_name);
+          final unit_codeOffset = fbb.writeString(object.unit_code);
+          final unit_nameOffset = fbb.writeString(object.unit_name);
+          final skuOffset = fbb.writeString(object.sku);
+          final discount_textOffset = fbb.writeString(object.discount_text);
+          final extra_jsonOffset = fbb.writeString(object.extra_json);
+          fbb.startTable(16);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, doc_numberOffset);
+          fbb.addInt64(2, object.line_number);
+          fbb.addOffset(3, barcodeOffset);
+          fbb.addOffset(4, item_codeOffset);
+          fbb.addOffset(5, item_nameOffset);
+          fbb.addOffset(6, unit_codeOffset);
+          fbb.addOffset(7, unit_nameOffset);
+          fbb.addOffset(8, skuOffset);
+          fbb.addFloat64(9, object.qty);
+          fbb.addFloat64(10, object.price);
+          fbb.addOffset(11, discount_textOffset);
+          fbb.addFloat64(12, object.discount);
+          fbb.addFloat64(13, object.total_amount);
+          fbb.addOffset(14, extra_jsonOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = BillDetailObjectBoxStruct(
+              doc_number: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              line_number:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
+              barcode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, ''),
+              item_code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''),
+              item_name: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
+              unit_code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 16, ''),
+              unit_name: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 18, ''),
+              sku: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 20, ''),
+              qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
+              price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
+              discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
+              discount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
+              extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''),
+              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
         })
   };
 
@@ -3175,13 +3324,9 @@ class BillObjectBoxStruct_ {
   static final table_close_date_time =
       QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[45]);
 
-  /// see [BillObjectBoxStruct.details_json]
-  static final details_json =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
-
   /// see [BillObjectBoxStruct.pay_json]
   static final pay_json =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
 }
 
 /// [ConfigObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -3626,24 +3771,24 @@ class BuffetModeObjectBoxStruct_ {
   static final code = QueryStringProperty<BuffetModeObjectBoxStruct>(
       _entities[10].properties[1]);
 
-  /// see [BuffetModeObjectBoxStruct.adultPrice]
-  static final adultPrice = QueryDoubleProperty<BuffetModeObjectBoxStruct>(
-      _entities[10].properties[2]);
-
-  /// see [BuffetModeObjectBoxStruct.childPrice]
-  static final childPrice = QueryDoubleProperty<BuffetModeObjectBoxStruct>(
-      _entities[10].properties[3]);
-
-  /// see [BuffetModeObjectBoxStruct.maxMinute]
-  static final maxMinute = QueryIntegerProperty<BuffetModeObjectBoxStruct>(
-      _entities[10].properties[4]);
-
   /// see [BuffetModeObjectBoxStruct.names]
   static final names = QueryStringVectorProperty<BuffetModeObjectBoxStruct>(
-      _entities[10].properties[5]);
+      _entities[10].properties[2]);
 
   /// see [BuffetModeObjectBoxStruct.guid_fixed]
   static final guid_fixed = QueryStringProperty<BuffetModeObjectBoxStruct>(
+      _entities[10].properties[3]);
+
+  /// see [BuffetModeObjectBoxStruct.adult_price]
+  static final adult_price = QueryDoubleProperty<BuffetModeObjectBoxStruct>(
+      _entities[10].properties[4]);
+
+  /// see [BuffetModeObjectBoxStruct.child_price]
+  static final child_price = QueryDoubleProperty<BuffetModeObjectBoxStruct>(
+      _entities[10].properties[5]);
+
+  /// see [BuffetModeObjectBoxStruct.max_minute]
+  static final max_minute = QueryIntegerProperty<BuffetModeObjectBoxStruct>(
       _entities[10].properties[6]);
 }
 
@@ -4105,4 +4250,67 @@ class FormDesignObjectBoxStruct_ {
   static final detail_total_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
           _entities[17].properties[10]);
+}
+
+/// [BillDetailObjectBoxStruct] entity fields to define ObjectBox queries.
+class BillDetailObjectBoxStruct_ {
+  /// see [BillDetailObjectBoxStruct.id]
+  static final id = QueryIntegerProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[0]);
+
+  /// see [BillDetailObjectBoxStruct.doc_number]
+  static final doc_number = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[1]);
+
+  /// see [BillDetailObjectBoxStruct.line_number]
+  static final line_number = QueryIntegerProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[2]);
+
+  /// see [BillDetailObjectBoxStruct.barcode]
+  static final barcode = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[3]);
+
+  /// see [BillDetailObjectBoxStruct.item_code]
+  static final item_code = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[4]);
+
+  /// see [BillDetailObjectBoxStruct.item_name]
+  static final item_name = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[5]);
+
+  /// see [BillDetailObjectBoxStruct.unit_code]
+  static final unit_code = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[6]);
+
+  /// see [BillDetailObjectBoxStruct.unit_name]
+  static final unit_name = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[7]);
+
+  /// see [BillDetailObjectBoxStruct.sku]
+  static final sku = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[8]);
+
+  /// see [BillDetailObjectBoxStruct.qty]
+  static final qty = QueryDoubleProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[9]);
+
+  /// see [BillDetailObjectBoxStruct.price]
+  static final price = QueryDoubleProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[10]);
+
+  /// see [BillDetailObjectBoxStruct.discount_text]
+  static final discount_text = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[11]);
+
+  /// see [BillDetailObjectBoxStruct.discount]
+  static final discount = QueryDoubleProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[12]);
+
+  /// see [BillDetailObjectBoxStruct.total_amount]
+  static final total_amount = QueryDoubleProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[13]);
+
+  /// see [BillDetailObjectBoxStruct.extra_json]
+  static final extra_json = QueryStringProperty<BillDetailObjectBoxStruct>(
+      _entities[18].properties[14]);
 }

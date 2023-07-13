@@ -6,6 +6,7 @@ import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'dart:async';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/objectbox.g.dart';
 import 'package:flutter/material.dart';
 
 class saveBillResultClass {
@@ -110,8 +111,8 @@ Future<saveBillResultClass> saveBill(
     }
     lineNumber++;
   }
-  // Header
-  global.billHelper.insert(BillObjectBoxStruct(
+  // Save
+  BillObjectBoxStruct billData = BillObjectBoxStruct(
       date_time: docDate,
       table_close_date_time: DateTime.now(),
       table_open_date_time: DateTime.now(),
@@ -132,14 +133,15 @@ Future<saveBillResultClass> saveBill(
       total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
       discount_formula: discountFormula,
       sum_discount: discountAmount,
-      details_json: jsonEncode(details),
       pay_json: jsonEncode(pays),
       sum_coupon: sumCoupon(),
       sum_qr_code: sumQr(),
       sum_credit_card: sumCreditCard(),
       sum_money_transfer: sumTransfer(),
-      sum_cheque: sumCheque()));
+      sum_cheque: sumCheque());
 
+  global.billHelper.insert(billData);
+  global.objectBoxStore.box<BillDetailObjectBoxStruct>().putMany(details);
   // Running เลขที่ใบเสร็จ
   global.configHelper.update(ConfigObjectBoxStruct(
       device_id: global.deviceId, last_doc_number: docNumber));
@@ -231,10 +233,13 @@ Widget posBill(BillObjectBoxStruct bill) {
 }
 
 Widget posBillDetail(BillObjectBoxStruct bill) {
-  List<BillDetailObjectBoxStruct> billDetails =
-      (jsonEncode(bill.details_json) as List<dynamic>)
-          .map((e) => BillDetailObjectBoxStruct.fromJson(e))
-          .toList();
+  List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+      .box<BillDetailObjectBoxStruct>()
+      .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
+      .order(BillDetailObjectBoxStruct_.line_number)
+      .build()
+      .find();
+
   return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(

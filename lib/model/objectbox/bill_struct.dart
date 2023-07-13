@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -143,8 +145,6 @@ class BillObjectBoxStruct {
   /// เวลาปิดโต๊ะ
   DateTime table_close_date_time;
 
-  String details_json;
-
   String pay_json;
 
   BillObjectBoxStruct(
@@ -192,13 +192,16 @@ class BillObjectBoxStruct {
       this.man_count = 0,
       this.table_al_la_crate_mode = false,
       this.buffet_code = "",
-      this.details_json = "[{}]",
       this.pay_json = "{}",
       this.print_copy_bill_date_time = const []});
 }
 
-@JsonSerializable(explicitToJson: true)
+@Entity()
 class BillDetailObjectBoxStruct {
+  int id = 0;
+
+  String doc_number;
+
   /// ลำดับรายการ
   int line_number;
 
@@ -238,6 +241,7 @@ class BillDetailObjectBoxStruct {
   String extra_json;
 
   BillDetailObjectBoxStruct({
+    this.doc_number = "",
     this.line_number = 0,
     this.barcode = "",
     this.item_code = "",
@@ -252,10 +256,6 @@ class BillDetailObjectBoxStruct {
     this.extra_json = "[{}]",
     this.total_amount = 0,
   });
-
-  factory BillDetailObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$BillDetailObjectBoxStructFromJson(json);
-  Map<String, dynamic> toJson() => _$BillDetailObjectBoxStructToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)

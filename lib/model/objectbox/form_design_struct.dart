@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/services/print_process.dart';
 import 'package:objectbox/objectbox.dart';

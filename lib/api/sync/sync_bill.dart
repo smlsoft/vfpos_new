@@ -7,6 +7,7 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/objectbox.g.dart';
 import 'package:dio/dio.dart';
 import 'package:get/utils.dart';
 
@@ -23,10 +24,13 @@ Future syncBillData() async {
       )
     ];
 
-    List<BillDetailObjectBoxStruct> billDetails =
-        (jsonDecode(bill.details_json) as List)
-            .map((e) => BillDetailObjectBoxStruct.fromJson(e))
-            .toList();
+    List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+        .box<BillDetailObjectBoxStruct>()
+        .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
+        .order(BillDetailObjectBoxStruct_.line_number)
+        .build()
+        .find();
+
     List<TransDetailModel> details = [];
     for (var detail in billDetails) {
       details.add(TransDetailModel(

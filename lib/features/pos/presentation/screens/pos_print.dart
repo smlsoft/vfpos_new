@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/core/core.dart';
 import 'package:dedepos/model/objectbox/form_design_struct.dart';
+import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/services/print_process.dart';
 import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
@@ -267,10 +268,13 @@ class PosPrintBillClass {
     BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
         docNumber: docNo, posScreenMode: global.posScreenToInt());
     if (bill != null) {
-      List<BillDetailObjectBoxStruct> billDetails =
-          (jsonDecode(bill.details_json) as List)
-              .map((e) => BillDetailObjectBoxStruct.fromJson(e))
-              .toList();
+      List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+          .box<BillDetailObjectBoxStruct>()
+          .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
+          .order(BillDetailObjectBoxStruct_.line_number)
+          .build()
+          .find();
+
       if (1 == 2) {
         // กรณีพิมพ์บิลแบบรวมรายการ
         List<BillDetailObjectBoxStruct> billDetailSum = [];
