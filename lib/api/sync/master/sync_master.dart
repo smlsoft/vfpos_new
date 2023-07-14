@@ -3,7 +3,6 @@ import 'package:dedepos/api/client.dart';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/master/sync_bank.dart';
 import 'package:dedepos/api/sync/master/sync_buffet_mode.dart';
-import 'package:dedepos/api/sync/master/sync_employee.dart';
 import 'package:dedepos/api/sync/master/sync_kitchen.dart';
 import 'package:dedepos/api/sync/master/sync_product_barcode.dart';
 import 'package:dedepos/api/sync/master/sync_product_category.dart';
@@ -13,14 +12,10 @@ import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/db/product_barcode_status_helper.dart';
-import 'package:dedepos/db/product_category_helper.dart';
-import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
-import 'package:dedepos/api/sync/model/item_remove_model.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_status_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
-import 'package:intl/intl.dart';
 
 Future syncMasterData() async {
   ApiRepository apiRepository = ApiRepository();
@@ -30,7 +25,6 @@ Future syncMasterData() async {
         await apiRepository.serverMasterStatus();
     await syncProductCategoryCompare(masterStatus);
     await syncProductBarcodeCompare(masterStatus);
-    await syncEmployeeCompare(masterStatus);
     await syncBankCompare(masterStatus);
     await syncTableCompare(masterStatus);
     await syncBuffetModeCompare(masterStatus);

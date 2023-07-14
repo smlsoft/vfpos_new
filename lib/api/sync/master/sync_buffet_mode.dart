@@ -1,20 +1,13 @@
 import 'dart:async';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/model/sync_buffet_mode_model.dart';
-import 'package:dedepos/api/sync/model/sync_table_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/buffet_mode_helper.dart';
-import 'package:dedepos/db/employee_helper.dart';
-import 'package:dedepos/api/sync/model/sync_employee_model.dart';
 import 'package:dedepos/api/sync/model/item_remove_model.dart';
-import 'package:dedepos/db/table_helper.dart';
-import 'package:dedepos/db/table_process_helper.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
-import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:intl/intl.dart';
 
 Future syncBuffetMode(List<ItemRemoveModel> removeList,

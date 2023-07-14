@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-
 import 'app/app_view.dart';
 import 'bootstrap.dart';
 import 'features/pos/presentation/screens/pos_secondary_screen.dart';

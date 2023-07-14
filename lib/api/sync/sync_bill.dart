@@ -9,7 +9,6 @@ import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dio/dio.dart';
-import 'package:get/utils.dart';
 
 Future syncBillData() async {
   List<BillObjectBoxStruct> bills = (global.billHelper.selectSyncIsFalse());

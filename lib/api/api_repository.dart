@@ -11,7 +11,6 @@ import 'package:dedepos/model/find/find_employee_model.dart';
 import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
 import 'dart:async';
-import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 // GET {{host}}/master-sync/list?lastupdate=2010-01-02T15:04&module=productunit&limit=1&offset=0&action=new

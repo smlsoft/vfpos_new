@@ -8,7 +8,6 @@ import 'package:dedepos/api/sync/model/item_remove_model.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:intl/intl.dart';
 
 void syncProductBarcode(List<ItemRemoveModel> removeList,

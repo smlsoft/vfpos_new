@@ -1,13 +1,10 @@
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
-import 'package:dartz/dartz.dart';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
-import 'package:dedepos/db/shift_helper.dart';
-import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
@@ -17,10 +14,8 @@ import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:dedepos/model/objectbox/staff_client_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
-import 'package:dedepos/services/print_process.dart';
 import 'package:dedepos/util/load_form_design.dart';
 import 'package:dedepos/util/print_kitchen.dart';
-import 'package:dedepos/util/printer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
@@ -29,8 +24,6 @@ import 'package:presentation_displays/displays_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
@@ -171,7 +164,6 @@ String syncProductBarcodeTimeName = "lastSyncProductBarcode";
 String syncPrinterTimeName = "lastSyncPrinter";
 String syncInventoryTimeName = "lastSyncInventory";
 String syncMemberTimeName = "lastSyncMember";
-String syncEmployeeTimeName = "lastSyncEmployee";
 String syncBankTimeName = "lastSyncBank";
 String syncTableTimeName = "lastSyncTable";
 String syncBuffetModeTimeName = "lastSyncBuffetMode";
@@ -300,6 +292,10 @@ int findPosHoldProcessResultIndex(String code) {
     }
   }
   return 0;
+}
+
+Future<void> loadAndCompareEmployee() async {
+  
 }
 
 Future<void> loadPrinter() async {
@@ -914,7 +910,8 @@ void posScreenListHeightSet(double value) {
 
 Future<void> loadConfig() async {
   await loadPrinter();
-  loadFormDesign();
+  await loadFormDesign();
+  await loadAndCompareEmployee();
 }
 
 Future<void> registerRemoteToTerminal() async {

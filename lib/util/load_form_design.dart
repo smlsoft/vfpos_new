@@ -5,7 +5,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/services/print_process.dart';
 
-void loadFormDesign() {
+Future<void> loadFormDesign() async {
   global.formDesignList = [];
 
   FormDesignHeaderModel header = FormDesignHeaderModel(description: [
