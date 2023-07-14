@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(51, 8128154748436428662),
+      lastPropertyId: const IdUid(57, 2649055115574079493),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -276,6 +276,36 @@ final _entities = <ModelEntity>[
             id: const IdUid(51, 8128154748436428662),
             name: 'pay_json',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(52, 8483902652359216461),
+            name: 'total_qty',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(53, 1593835513190308362),
+            name: 'total_calc_amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(54, 1615262830312507733),
+            name: 'total_calc_vat_amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(55, 6996052209447947626),
+            name: 'total_calc_amount_before_round',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(56, 8998589021223372157),
+            name: 'total_calc_amount_round',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(57, 2649055115574079493),
+            name: 'pay_cash_change',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1428,7 +1458,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(29, 6792595191811775261),
       name: 'FormDesignObjectBoxStruct',
-      lastPropertyId: const IdUid(12, 7497203689950258476),
+      lastPropertyId: const IdUid(16, 2560715377767744935),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1487,6 +1517,26 @@ final _entities = <ModelEntity>[
             id: const IdUid(12, 7497203689950258476),
             name: 'detail_total_json',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 7099340140954139136),
+            name: 'sum_by_type',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 6216481631141985629),
+            name: 'sum_by_barcode',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 873777410466834794),
+            name: 'print_logo',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 2560715377767744935),
+            name: 'print_prompt_pay',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1925,7 +1975,7 @@ ModelDefinition getObjectBoxModel() {
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(52);
+          fbb.startTable(58);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -1973,6 +2023,12 @@ ModelDefinition getObjectBoxModel() {
           fbb.addInt64(46, object.table_open_date_time.millisecondsSinceEpoch);
           fbb.addInt64(47, object.table_close_date_time.millisecondsSinceEpoch);
           fbb.addOffset(50, pay_jsonOffset);
+          fbb.addFloat64(51, object.total_qty);
+          fbb.addFloat64(52, object.total_calc_amount);
+          fbb.addFloat64(53, object.total_calc_vat_amount);
+          fbb.addFloat64(54, object.total_calc_amount_before_round);
+          fbb.addFloat64(55, object.total_calc_amount_round);
+          fbb.addFloat64(56, object.pay_cash_change);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2006,6 +2062,11 @@ ModelDefinition getObjectBoxModel() {
               cashier_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               sale_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 18, ''),
               sale_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 20, ''),
+              total_calc_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 108, 0),
+              total_calc_amount_before_round: const fb.Float64Reader().vTableGet(buffer, rootOffset, 112, 0),
+              total_calc_amount_round: const fb.Float64Reader().vTableGet(buffer, rootOffset, 114, 0),
+              total_calc_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 110, 0),
+              total_qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 106, 0),
               is_sync: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
               discount_formula: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
               pay_cash_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
@@ -2019,6 +2080,7 @@ ModelDefinition getObjectBoxModel() {
               cancel_date_time: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 68, ''),
               cancel_user_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 70, ''),
               cancel_user_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 72, ''),
+              pay_cash_change: const fb.Float64Reader().vTableGet(buffer, rootOffset, 116, 0),
               cancel_reason: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 74, ''),
               cancel_description: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 80, ''),
               full_vat_print: const fb.BoolReader().vTableGet(buffer, rootOffset, 76, false),
@@ -3022,7 +3084,7 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.detail_extra_json);
           final detail_total_jsonOffset =
               fbb.writeString(object.detail_total_json);
-          fbb.startTable(13);
+          fbb.startTable(17);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_fixedOffset);
           fbb.addOffset(2, codeOffset);
@@ -3034,6 +3096,10 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(9, detail_extra_jsonOffset);
           fbb.addInt64(10, object.type);
           fbb.addOffset(11, detail_total_jsonOffset);
+          fbb.addBool(12, object.sum_by_type);
+          fbb.addBool(13, object.sum_by_barcode);
+          fbb.addBool(14, object.print_logo);
+          fbb.addBool(15, object.print_prompt_pay);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3047,18 +3113,23 @@ ModelDefinition getObjectBoxModel() {
               code: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
               type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0),
+              sum_by_type: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 28, false),
+              sum_by_barcode: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 30, false),
+              print_logo: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 32, false),
+              print_prompt_pay: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 34, false),
               names_json: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 20, ''),
               header_json: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 12, ''),
-              detail_json: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              detail_extra_json: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 22, ''),
-              detail_total_json: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 26, ''),
-              detail_footer_json:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''),
+              detail_json:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
+              detail_extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
+              detail_total_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
+              detail_footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''),
               footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 18, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -3327,6 +3398,30 @@ class BillObjectBoxStruct_ {
   /// see [BillObjectBoxStruct.pay_json]
   static final pay_json =
       QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
+
+  /// see [BillObjectBoxStruct.total_qty]
+  static final total_qty =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
+
+  /// see [BillObjectBoxStruct.total_calc_amount]
+  static final total_calc_amount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[48]);
+
+  /// see [BillObjectBoxStruct.total_calc_vat_amount]
+  static final total_calc_vat_amount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[49]);
+
+  /// see [BillObjectBoxStruct.total_calc_amount_before_round]
+  static final total_calc_amount_before_round =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[50]);
+
+  /// see [BillObjectBoxStruct.total_calc_amount_round]
+  static final total_calc_amount_round =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[51]);
+
+  /// see [BillObjectBoxStruct.pay_cash_change]
+  static final pay_cash_change =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[52]);
 }
 
 /// [ConfigObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4250,6 +4345,23 @@ class FormDesignObjectBoxStruct_ {
   static final detail_total_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
           _entities[17].properties[10]);
+
+  /// see [FormDesignObjectBoxStruct.sum_by_type]
+  static final sum_by_type = QueryBooleanProperty<FormDesignObjectBoxStruct>(
+      _entities[17].properties[11]);
+
+  /// see [FormDesignObjectBoxStruct.sum_by_barcode]
+  static final sum_by_barcode = QueryBooleanProperty<FormDesignObjectBoxStruct>(
+      _entities[17].properties[12]);
+
+  /// see [FormDesignObjectBoxStruct.print_logo]
+  static final print_logo = QueryBooleanProperty<FormDesignObjectBoxStruct>(
+      _entities[17].properties[13]);
+
+  /// see [FormDesignObjectBoxStruct.print_prompt_pay]
+  static final print_prompt_pay =
+      QueryBooleanProperty<FormDesignObjectBoxStruct>(
+          _entities[17].properties[14]);
 }
 
 /// [BillDetailObjectBoxStruct] entity fields to define ObjectBox queries.

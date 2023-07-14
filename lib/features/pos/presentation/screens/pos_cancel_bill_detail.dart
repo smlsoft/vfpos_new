@@ -19,10 +19,7 @@ class PosCancelBillDetailScreen extends StatefulWidget {
 }
 
 class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(
-      date_time: DateTime.now(),
-      table_close_date_time: DateTime.now(),
-      table_open_date_time: DateTime.now());
+  late BillObjectBoxStruct bill;
   TextEditingController cancelDescriptionController = TextEditingController();
 
   @override
@@ -127,7 +124,7 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                                     },
                                   ))
                             ])),
-                    posBillDetail(bill),
+                    posBillDetail(docNumber: widget.docNumber),
                   ],
                 ),
               )),

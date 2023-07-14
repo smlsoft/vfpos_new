@@ -29,6 +29,21 @@ class BillObjectBoxStruct {
   /// เบอร์โทรลูกค้า (สะสมแต้ม)
   String customer_telephone;
 
+  /// จำนวนชิ้น
+  double total_qty;
+
+  /// ยอดรวมก่อนคำนวณ
+  double total_calc_amount;
+
+  /// ยอดคำนวณภาษีมูลค่าเพิ่มโดยประมาณ
+  double total_calc_vat_amount;
+
+  /// ยอดก่อนปัดเศษ
+  double total_calc_amount_before_round;
+
+  /// ปัดเศษ
+  double total_calc_amount_round;
+
   /// ยอดรวมทั้งสิ้น
   double total_amount;
 
@@ -79,6 +94,9 @@ class BillObjectBoxStruct {
 
   /// ชำระเงินสด
   double pay_cash_amount;
+
+  /// เงินทอน
+  double pay_cash_change;
 
   /// สูตรส่วนลด
   String discount_formula;
@@ -151,49 +169,55 @@ class BillObjectBoxStruct {
       {required this.date_time,
       required this.table_open_date_time,
       required this.table_close_date_time,
-      this.doc_number = "",
-      this.doc_mode = 1,
-      this.customer_code = "",
-      this.customer_name = "",
-      this.customer_telephone = "",
-      this.vat_rate = 0.0,
-      this.total_amount = 0.0,
-      this.total_before_amount = 0.0,
-      this.total_vat_amount = 0.0,
-      this.total_except_amount = 0.0,
-      this.cashier_code = "",
-      this.cashier_name = "",
-      this.sale_code = "",
-      this.sale_name = "",
-      this.is_sync = false,
-      this.discount_formula = "",
-      this.pay_cash_amount = 0.0,
-      this.sum_discount = 0.0,
-      this.sum_qr_code = 0.0,
-      this.sum_credit_card = 0.0,
-      this.sum_money_transfer = 0.0,
-      this.sum_coupon = 0.0,
-      this.sum_cheque = 0.0,
-      this.is_cancel = false,
-      this.cancel_date_time = "",
-      this.cancel_user_code = "",
-      this.cancel_user_name = "",
-      this.cancel_reason = "",
-      this.cancel_description = "",
-      this.full_vat_print = false,
-      this.full_vat_doc_number = "",
-      this.full_vat_name = "",
-      this.full_vat_address = "",
-      this.full_vat_tax_id = "",
-      this.full_vat_branch_number = "",
-      this.table_number = "",
-      this.child_count = 0,
-      this.woman_count = 0,
-      this.man_count = 0,
-      this.table_al_la_crate_mode = false,
-      this.buffet_code = "",
-      this.pay_json = "{}",
-      this.print_copy_bill_date_time = const []});
+      required this.doc_number,
+      required this.doc_mode,
+      required this.customer_code,
+      required this.customer_name,
+      required this.customer_telephone,
+      required this.vat_rate,
+      required this.total_amount,
+      required this.total_before_amount,
+      required this.total_vat_amount,
+      required this.total_except_amount,
+      required this.cashier_code,
+      required this.cashier_name,
+      required this.sale_code,
+      required this.sale_name,
+      required this.total_calc_amount,
+      required this.total_calc_amount_before_round,
+      required this.total_calc_amount_round,
+      required this.total_calc_vat_amount,
+      required this.total_qty,
+      required this.is_sync,
+      required this.discount_formula,
+      required this.pay_cash_amount,
+      required this.sum_discount,
+      required this.sum_qr_code,
+      required this.sum_credit_card,
+      required this.sum_money_transfer,
+      required this.sum_coupon,
+      required this.sum_cheque,
+      required this.is_cancel,
+      required this.cancel_date_time,
+      required this.cancel_user_code,
+      required this.cancel_user_name,
+      required this.pay_cash_change,
+      required this.cancel_reason,
+      required this.cancel_description,
+      required this.full_vat_print,
+      required this.full_vat_doc_number,
+      required this.full_vat_name,
+      required this.full_vat_address,
+      required this.full_vat_tax_id,
+      required this.full_vat_branch_number,
+      required this.table_number,
+      required this.child_count,
+      required this.woman_count,
+      required this.man_count,
+      required this.table_al_la_crate_mode,
+      required this.buffet_code,
+      required this.pay_json,
+      required this.print_copy_bill_date_time});
 }
 
 @Entity()
@@ -241,20 +265,20 @@ class BillDetailObjectBoxStruct {
   String extra_json;
 
   BillDetailObjectBoxStruct({
-    this.doc_number = "",
-    this.line_number = 0,
-    this.barcode = "",
-    this.item_code = "",
-    this.item_name = "",
-    this.unit_code = "",
-    this.unit_name = "",
-    this.sku = "",
-    this.qty = 0,
-    this.price = 0,
-    this.discount_text = "",
-    this.discount = 0,
-    this.extra_json = "[{}]",
-    this.total_amount = 0,
+    required this.doc_number,
+    required this.line_number,
+    required this.barcode,
+    required this.item_code,
+    required this.item_name,
+    required this.unit_code,
+    required this.unit_name,
+    required this.sku,
+    required this.qty,
+    required this.price,
+    required this.discount_text,
+    required this.discount,
+    required this.extra_json,
+    required this.total_amount,
   });
 }
 

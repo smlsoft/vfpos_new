@@ -308,9 +308,15 @@ class _MenuScreenState extends State<MenuScreen> {
           ])),
     ]);
 
-    String companyName = (loadConfigSuccess == false)
-        ? ""
-        : "${global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage)} : ${global.getNameFromLanguage(global.profileSetting.company.branchNames, global.userScreenLanguage)}";
+    String companyName = "";
+    if (loadConfigSuccess == true) {
+      companyName =
+          "${global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage)}";
+      if (global.profileSetting.company.branchNames.isNotEmpty) {
+        companyName +=
+            " : ${global.getNameFromLanguage(global.profileSetting.company.branchNames, global.userScreenLanguage)}";
+      }
+    }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SafeArea(
@@ -319,6 +325,15 @@ class _MenuScreenState extends State<MenuScreen> {
           appBar: AppBar(
               centerTitle: true,
               foregroundColor: Colors.white,
+              leading: Container(
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.green, width: 2),
+                  ),
+                  child: Image.file(
+                    File(
+                        "${global.applicationDocumentsDirectory.path}/logo.png"),
+                  )),
               title: Text((global.appMode == global.AppModeEnum.posTerminal)
                   ? "${global.language("pos_terminal")} : $companyName"
                   : "${global.language("pos_remote")} : $companyName"),
@@ -524,51 +539,4 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
-
-  // void showMsgDialog(
-  //     {required String header,
-  //     required String msg,
-  //     required String type}) async {
-  //   return showDialog<void>(
-  //     context: context,
-  //     barrierDismissible: false, // user must tap button!
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text(header),
-  //         content: SingleChildScrollView(
-  //           child: ListBody(
-  //             children: <Widget>[
-  //               Text(msg),
-  //             ],
-  //           ),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: const Text('ตกลง'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void receiveMoneyDialog() {
-  //   //receiveAmount.text = "";
-  //   empCode.text = '${global.userLoginCode}/${global.userLoginName}';
-  //   showDialog(
-  //       barrierLabel: "",
-  //       barrierDismissible: false,
-  //       barrierColor: Colors.black.withOpacity(0.5),
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return ReceiveMoneyDialog();
-  //       });
-  // }
-
-  // void processEvent() async {
-  //   serviceLocator<Log>().debug('processEvent()');
-  // }
 }

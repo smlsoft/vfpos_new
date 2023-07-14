@@ -680,6 +680,34 @@ class ApiRepository {
     }
   }
 
+  Future<ApiResponse> getPosSetting() async {
+    Dio client = Client().init();
+
+    try {
+      final response = await client.get('/pos/settings');
+      try {
+        final rawData = json.decode(response.toString());
+
+        //   print(rawData);
+
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
   Future<ApiResponse> getProfileSBranch() async {
     Dio client = Client().init();
 

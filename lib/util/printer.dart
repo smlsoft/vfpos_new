@@ -64,6 +64,9 @@ class PrinterClass {
           case 0: // Reset
             break;
           case 1: // Logo Image
+            ui.Image result = await printProcess
+                .lineFeedImage(command.posStyles ?? const PosStyles());
+            canvas.drawImage(result, ui.Offset(0, maxHeight), ui.Paint());
             break;
           case 2: // Text
             printProcess.columnWidth.clear();

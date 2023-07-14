@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/util/loading_screen.dart';
@@ -108,6 +110,12 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Image.file(
+                              File(
+                                  "${global.applicationDocumentsDirectory.path}/logo.png"),
+                              width: 100,
+                              height: 100,
+                            ),
                             Text(
                                 global.getNameFromLanguage(
                                     global.profileSetting.company.names,

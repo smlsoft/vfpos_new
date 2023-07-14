@@ -64,9 +64,9 @@ import 'db/config_helper.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
-
 import 'model/objectbox/form_design_struct.dart';
 
+late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
 List<FormDesignObjectBoxStruct> formDesignList = [];
 bool developerMode = true;
@@ -109,10 +109,11 @@ PromotionTempHelper promotionTempHelper = PromotionTempHelper();
 int syncTimeIntervalMaxBySecond = 10;
 int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.##");
+final moneyFormatAndDot = NumberFormat("##,##0.00");
 final qtyShortFormat = NumberFormat("##,##0");
 String objectBoxDatabaseName = "smlposmobile.db";
-String deviceId = "POS01";
-String deviceName = "เครื่อง POS สำนักงานใหญ่ 1";
+String deviceId = "";
+String deviceName = "";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
 List<SyncDeviceModel> posRemoteDeviceList = [];
 //"http://192.168.1.4:8084";
@@ -741,6 +742,15 @@ String dateTimeFormat(DateTime dateTime, {bool showTime = true}) {
   } else {
     return formatter.formatInBuddhistCalendarThai(dateTime);
   }
+}
+
+String dateFormat(DateTime dateTime) {
+  var formatter = DateFormat.yMMMMEEEEd('th_TH');
+  return formatter.formatInBuddhistCalendarThai(dateTime);
+}
+
+String timeFormat(DateTime dateTime) {
+  return DateFormat.Hm().format(dateTime);
 }
 
 Future<void> systemProcess() async {
@@ -1529,7 +1539,7 @@ String getNameFromJsonLanguage(String jsonNames, String languageCode) {
       }
     }
   } catch (_) {}
-  return "*";
+  return "";
 }
 
 String getNameFromLanguage(List<LanguageDataModel> names, String languageCode) {
@@ -1593,70 +1603,86 @@ String generateRandomPin(int pinLength) {
 }
 
 Future<void> getProfile() async {
+  global.applicationDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
+  var file = File("${global.applicationDocumentsDirectory.path}/logo.png");
   ApiRepository apiRepository = ApiRepository();
   {
     var value = await apiRepository.getProfileShop();
     global.shopId = value.data["guidfixed"];
   }
-  try {
-    ProfileSettingCompanyModel company = ProfileSettingCompanyModel(
-      names: [],
-      taxID: "",
-      branchNames: [],
-      addresses: [],
-      phones: [],
-      emailOwners: [],
-      emailStaffs: [],
-      latitude: "",
-      longitude: "",
-      usebranch: false,
-      usedepartment: false,
-      images: [],
-      logo: "",
-    );
-    List<String> languageList = [];
-    ProfileSettingConfigSystemModel configSystem =
-        ProfileSettingConfigSystemModel(
-      vatrate: 0,
-      vattypesale: 0,
-      vattypepurchase: 0,
-      inquirytypesale: 0,
-      inquirytypepurchase: 0,
-      headerreceiptpos: "",
-      footerreciptpos: "",
-    );
+  {
+    try {
+      ProfileSettingCompanyModel company = ProfileSettingCompanyModel(
+        names: [],
+        taxID: "",
+        branchNames: [],
+        addresses: [],
+        phones: [],
+        emailOwners: [],
+        emailStaffs: [],
+        latitude: "",
+        longitude: "",
+        usebranch: false,
+        usedepartment: false,
+        images: [],
+        logo: "",
+      );
+      List<String> languageList = [];
+      ProfileSettingConfigSystemModel configSystem =
+          ProfileSettingConfigSystemModel(
+        vatrate: 0,
+        vattypesale: 0,
+        vattypepurchase: 0,
+        inquirytypesale: 0,
+        inquirytypepurchase: 0,
+        headerreceiptpos: "",
+        footerreciptpos: "",
+      );
 
-    var value = await apiRepository.getProfileSetting();
-    var jsonData = value.data;
-    for (var data in jsonData) {
-      String code = data["code"];
-      String body = data["body"];
-      if (code == "company") {
-        company = ProfileSettingCompanyModel.fromJson(jsonDecode(body));
-      } else if (code == "ConfigLanguage") {
-        var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
-        languageList = List<String>.from(jsonDecodeBody["languageList"]);
-      } else if (code == "ConfigSystem") {
-        configSystem =
-            ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+      var value = await apiRepository.getProfileSetting();
+      var jsonData = value.data;
+      for (var data in jsonData) {
+        String code = data["code"];
+        String body = data["body"];
+        if (code == "company") {
+          company = ProfileSettingCompanyModel.fromJson(jsonDecode(body));
+        } else if (code == "ConfigLanguage") {
+          var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
+          languageList = List<String>.from(jsonDecodeBody["languageList"]);
+        } else if (code == "ConfigSystem") {
+          configSystem =
+              ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+        }
       }
-    }
-    var branchValue = await apiRepository.getProfileSBranch();
-    List<ProfileSettingBranchModel> branchs =
-        List<ProfileSettingBranchModel>.from(
-            branchValue.data.map((e) => ProfileSettingBranchModel.fromJson(e)));
+      var branchValue = await apiRepository.getProfileSBranch();
+      List<ProfileSettingBranchModel> branchs =
+          List<ProfileSettingBranchModel>.from(branchValue.data
+              .map((e) => ProfileSettingBranchModel.fromJson(e)));
 
-    global.profileSetting = ProfileSettingModel(
-      company: company,
-      languagelist: languageList,
-      configsystem: configSystem,
-      branch: branchs,
-    );
-    global.appStorage.write('profile', global.profileSetting.toJson());
-  } catch (e) {
-    print(e);
+      global.profileSetting = ProfileSettingModel(
+        company: company,
+        languagelist: languageList,
+        configsystem: configSystem,
+        branch: branchs,
+      );
+      global.appStorage.write('profile', global.profileSetting.toJson());
+      // Download Logo
+      if (global.profileSetting.company.logo.isNotEmpty) {
+        var url = global.profileSetting.company.logo;
+        var response = await http.get(Uri.parse(url));
+        await file.writeAsBytes(response.bodyBytes);
+      }
+    } catch (e) {
+      print(e);
+    }
+    var getProfile = await global.appStorage.read('profile');
+    global.profileSetting = ProfileSettingModel.fromJson(getProfile);
   }
-  var getProfile = await global.appStorage.read('profile');
-  global.profileSetting = ProfileSettingModel.fromJson(getProfile);
+  {
+    // POS Setting
+    var value = await apiRepository.getPosSetting();
+    var jsonData = value.data;
+  }
   await global.loadConfig();
 }

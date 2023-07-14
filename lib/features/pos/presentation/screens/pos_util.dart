@@ -86,18 +86,6 @@ Future<saveBillResultClass> saveBill(
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
   for (var value in posHoldProcess.posProcess.details) {
-    details.add(BillDetailObjectBoxStruct(
-        line_number: lineNumber,
-        barcode: value.barcode,
-        item_code: value.item_code,
-        item_name: value.item_name,
-        unit_code: value.unit_code,
-        unit_name: value.unit_name,
-        qty: value.qty,
-        price: value.price,
-        discount_text: value.discount_text,
-        discount: value.discount,
-        total_amount: value.total_amount));
     List<BillDetailExtraObjectBoxStruct> detailExtras = [];
     for (var element in value.extra) {
       detailExtras.add(BillDetailExtraObjectBoxStruct(
@@ -109,10 +97,50 @@ Future<saveBillResultClass> saveBill(
           qty: element.qty,
           total_amount: element.total_amount));
     }
+    details.add(BillDetailObjectBoxStruct(
+        doc_number: docNumber,
+        line_number: lineNumber,
+        barcode: value.barcode,
+        item_code: value.item_code,
+        item_name: value.item_name,
+        unit_code: value.unit_code,
+        unit_name: value.unit_name,
+        sku: "",
+        qty: value.qty,
+        price: value.price,
+        discount_text: value.discount_text,
+        discount: value.discount,
+        extra_json: jsonEncode(detailExtras),
+        total_amount: value.total_amount));
     lineNumber++;
   }
   // Save
   BillObjectBoxStruct billData = BillObjectBoxStruct(
+      doc_mode: 1, // 1=ขาย,2=คืน
+      is_cancel: false,
+      cancel_date_time: "",
+      cancel_user_code: "",
+      cancel_user_name: "",
+      cancel_description: "",
+      cancel_reason: "",
+      full_vat_address: "",
+      full_vat_branch_number: "",
+      full_vat_name: "",
+      full_vat_doc_number: "",
+      full_vat_print: false,
+      full_vat_tax_id: "",
+      table_al_la_crate_mode: false,
+      table_number: global.tableNumberSelected,
+      child_count: 0,
+      woman_count: 0,
+      man_count: 0,
+      buffet_code: "",
+      total_calc_amount: 0,
+      total_qty: posHoldProcess.posProcess.total_piece,
+      total_calc_vat_amount: 0,
+      total_calc_amount_before_round: 0,
+      total_calc_amount_round: 0,
+      print_copy_bill_date_time: [],
       date_time: docDate,
       table_close_date_time: DateTime.now(),
       table_open_date_time: DateTime.now(),
@@ -126,6 +154,7 @@ Future<saveBillResultClass> saveBill(
       cashier_code: global.userLoginCode,
       cashier_name: global.userLoginName,
       pay_cash_amount: cashAmount,
+      pay_cash_change: 0,
       is_sync: false,
       vat_rate: posHoldProcess.posProcess.vat_rate,
       total_before_amount: posHoldProcess.posProcess.total_before_amount,
@@ -193,6 +222,7 @@ Future<void> processPromotionTemp() async {
 
 Widget posBill(BillObjectBoxStruct bill) {
   return Container(
+      width: 300,
       padding: const EdgeInsets.all(4),
       child: Table(
         columnWidths: const {
@@ -210,7 +240,14 @@ Widget posBill(BillObjectBoxStruct bill) {
           TableRow(children: [
             Text(global.language("doc_date")),
             Text(
-              global.dateTimeFormat(bill.date_time),
+              global.dateFormat(bill.date_time),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ]),
+          TableRow(children: [
+            Text(global.language("doc_time")),
+            Text(
+              global.timeFormat(bill.date_time),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
@@ -232,7 +269,12 @@ Widget posBill(BillObjectBoxStruct bill) {
       ));
 }
 
-Widget posBillDetail(BillObjectBoxStruct bill) {
+Widget posBillDetail({required String docNumber}) {
+  BillObjectBoxStruct? bill = global.billHelper
+      .selectByDocNumber(docNumber: docNumber, posScreenMode: 1);
+  if (bill == null) {
+    return Text("Bill {$docNumber} not found");
+  }
   List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
       .box<BillDetailObjectBoxStruct>()
       .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
@@ -348,10 +390,14 @@ Widget posBillDetail(BillObjectBoxStruct bill) {
                             textAlign: TextAlign.center)),
                     Padding(
                         padding: const EdgeInsets.all(4),
-                        child: Text(billDetails[i].item_name)),
+                        child: Text(global.getNameFromJsonLanguage(
+                            billDetails[i].item_name,
+                            global.userScreenLanguage))),
                     Padding(
                         padding: const EdgeInsets.all(4),
-                        child: Text(billDetails[i].unit_name)),
+                        child: Text(global.getNameFromJsonLanguage(
+                            billDetails[i].unit_name,
+                            global.userScreenLanguage))),
                     Padding(
                         padding: const EdgeInsets.all(4),
                         child: Text(

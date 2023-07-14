@@ -15,8 +15,22 @@ class FormDesignObjectBoxStruct {
   String guid_fixed;
   @Unique()
   String code;
-  // 0=ใบเสร็จรับเงิน,1=ใบสรุปยอด,2=ใบกำกับภาษีแบบเต็ม
+
+  /// 0=ใบเสร็จรับเงิน,1=ใบสรุปยอด,2=ใบกำกับภาษีแบบเต็ม
   int type;
+
+  /// True=รวมรายการตามประเภท, False=ไม่รวมตามประเภท  (อาหาร,เครื่องดื่ม,อื่นๆ)
+  bool sum_by_type;
+
+  /// True=รวมรายการตามบาร์โค้ด, False=ไม่รวมตามบาร์โค้ด
+  bool sum_by_barcode;
+
+  /// พิมพ์ LOGO
+  bool print_logo;
+
+  /// พิมพ์ Prompt Pay
+  bool print_prompt_pay;
+
   String names_json;
   String header_json;
   String detail_json;
@@ -29,6 +43,10 @@ class FormDesignObjectBoxStruct {
     required this.guid_fixed,
     required this.code,
     required this.type,
+    required this.sum_by_type,
+    required this.sum_by_barcode,
+    required this.print_logo,
+    required this.print_prompt_pay,
     required this.names_json,
     required this.header_json,
     required this.detail_json,
@@ -91,7 +109,7 @@ class FormDesignColumnModel {
     required this.command,
     this.width = 1,
     this.header_names = const [],
-    this.font_size = 12,
+    this.font_size = 24,
     this.font_family = "Arial",
     this.font_weight_bold = false,
     this.font_style_italic = false,

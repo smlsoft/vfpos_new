@@ -21,7 +21,7 @@ class PosReprintBillDetailScreen extends StatefulWidget {
 
 class _PosReprintBillDetailScreenState
     extends State<PosReprintBillDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(date_time: DateTime.now(),table_close_date_time:  DateTime.now(), table_open_date_time: DateTime.now());
+  late BillObjectBoxStruct bill;
 
   @override
   void initState() {
@@ -72,7 +72,11 @@ class _PosReprintBillDetailScreenState
                                               Text(global.language("cancel"))),
                                       TextButton(
                                           onPressed: () {
-                                            printBill(docDate:  bill.date_time,docNo:  bill.doc_number, languageCode: global.userScreenLanguage);
+                                            printBill(
+                                                docDate: bill.date_time,
+                                                docNo: bill.doc_number,
+                                                languageCode:
+                                                    global.userScreenLanguage);
                                             BillHelper().updateRePrintBill(
                                                 bill.doc_number);
                                             Navigator.pop(context);
@@ -87,7 +91,7 @@ class _PosReprintBillDetailScreenState
                           },
                         )),
                     const SizedBox(height: 10),
-                    posBillDetail(bill),
+                    posBillDetail(docNumber: widget.docNumber),
                   ],
                 ),
               )),

@@ -37,16 +37,12 @@ class _PosBillVatScreenState extends State<PosBillVatScreen> {
             ),
             body: Padding(
               padding: const EdgeInsets.all(10),
-              child: GridView.builder(
-                itemCount: dataList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).size.width ~/ 250,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 2,
-                ),
-                itemBuilder: (context, index) {
-                  return ElevatedButton(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: List.generate(
+                  dataList.length,
+                  (index) => ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
                       backgroundColor: (dataList[index].is_cancel)
@@ -63,8 +59,8 @@ class _PosBillVatScreenState extends State<PosBillVatScreen> {
                       );
                     },
                     child: posBill(dataList[index]),
-                  );
-                },
+                  ),
+                ),
               ),
             ));
       },

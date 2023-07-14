@@ -11,11 +11,13 @@ class PrintColumn {
   late String text;
   late PrintColumnAlign align;
   late double fontSize;
+  late bool bold;
 
   PrintColumn(
       {required this.text,
       this.align = PrintColumnAlign.left,
-      this.fontSize = 24});
+      this.fontSize = 24,
+      this.bold = false});
 }
 
 class PrintProcess {
@@ -311,6 +313,7 @@ class PrintProcess {
             style: TextStyle(
                 color: Colors.black,
                 fontSize: column[columnIndex].fontSize,
+                fontWeight: (column[columnIndex].bold) ? FontWeight.bold : null,
                 fontFamily: 'Prompt'),
             text: text);
         TextPainter tp = TextPainter(

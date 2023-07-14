@@ -22,10 +22,7 @@ class PosBillVatDetailScreen extends StatefulWidget {
 }
 
 class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
-  BillObjectBoxStruct bill = BillObjectBoxStruct(
-      date_time: DateTime.now(),
-      table_close_date_time: DateTime.now(),
-      table_open_date_time: DateTime.now());
+  late BillObjectBoxStruct bill;
   TextEditingController taxIdController = TextEditingController();
   TextEditingController customerCodeController = TextEditingController();
   TextEditingController branchNumberController = TextEditingController();
@@ -191,7 +188,7 @@ class _PosBillVatDetailScreenState extends State<PosBillVatDetailScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    posBillDetail(bill),
+                    posBillDetail(docNumber: widget.docNumber),
                   ],
                 ),
               )),

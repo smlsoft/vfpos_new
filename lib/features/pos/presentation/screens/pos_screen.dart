@@ -475,13 +475,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               global.playSound(
                   sound: global.SoundEnum.beep, word: productNameStr);
               widgetMessage = [
-                Text(productNameStr,
+                Text(
+                    global.getNameFromJsonLanguage(
+                        productNameStr, global.userScreenLanguage),
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold)),
                 Text(
                     overflow: TextOverflow.ellipsis,
-                    "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} $unitNameStr",
+                    "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} ${global.getNameFromJsonLanguage(unitNameStr, global.userScreenLanguage)}",
                     style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -2414,7 +2416,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               child: NumberPad(
                                   header: global.language("qty"),
                                   title: Text(
-                                      '${detail.item_name} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${detail.unit_name}',
+                                      '${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)}',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -2461,7 +2463,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 child: NumberPad(
                                     header: global.language("price"),
                                     title: Text(
-                                      '${detail.item_name} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')}',
+                                      '${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')}',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -2493,7 +2495,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 child: DiscountPad(
                                     header: global.language("discount"),
                                     title: Text(
-                                        '${detail.item_name} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${detail.unit_name} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')}',
+                                        '${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')}',
                                         style: const TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -3354,14 +3356,23 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget transScreen({required int mode, String barcode = ""}) {
+    late Widget logo;
+    var file = File("${global.applicationDocumentsDirectory.path}/logo.png");
+    if (file.existsSync()) {
+      logo = Image.file(
+        file,
+      );
+    } else {
+      logo = const Icon(Icons.barcode_reader, color: Colors.grey, size: 200);
+    }
+
     return (global
             .posHoldProcessResult[
                 global.findPosHoldProcessResultIndex(global.posHoldActiveCode)]
             .posProcess
             .details
             .isEmpty)
-        ? const Center(
-            child: Icon(Icons.barcode_reader, color: Colors.grey, size: 200))
+        ? Center(child: logo)
         : MediaQuery.removePadding(
             context: context,
             removeTop: true,

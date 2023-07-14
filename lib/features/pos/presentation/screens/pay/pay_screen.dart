@@ -345,7 +345,7 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
         Future.delayed(const Duration(seconds: 30), () {
           try {
             // ปิดหน้าจอเตือน
-            Navigator.of(context).pop(true);
+            Navigator.pop(context);
             // ปิดหน้าจอ pay และ Clear ข้อมูล เริ่มขายใหม่
             Navigator.pop(context, true);
           } catch (e) {

@@ -26,6 +26,7 @@ void loadFormDesign() {
           LanguageDataModel(code: "th", name: "รายละเอียด"),
           LanguageDataModel(code: "en", name: "Description"),
         ],
+        font_weight_bold: true,
         width: 5),
     FormDesignColumnModel(
         command: "&item_total_amount&",
@@ -34,6 +35,7 @@ void loadFormDesign() {
           LanguageDataModel(code: "th", name: "รวม"),
           LanguageDataModel(code: "en", name: "Amount"),
         ],
+        font_weight_bold: true,
         width: 2),
   ];
   List<FormDesignColumnModel> detailExtraColumn = [
@@ -49,14 +51,101 @@ void loadFormDesign() {
         text_align: PrintColumnAlign.right,
         width: 2),
   ];
-  List<FormDesignColumnModel> detailTotalColumn = [
-    FormDesignColumnModel(command: "&item_name&", width: 5),
-    FormDesignColumnModel(
-        command: "&total_piece&", text_align: PrintColumnAlign.right, width: 1),
-    FormDesignColumnModel(
-        command: "&total_amount&",
-        text_align: PrintColumnAlign.right,
-        width: 2),
+  List<List<FormDesignColumnModel>> detailTotalColumn = [
+    [
+      // จำนวนชิ้น
+      FormDesignColumnModel(command: "&total_piece_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_piece&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดก่อนภาษี
+      FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_before_calc_vat&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดภาษี
+      FormDesignColumnModel(command: "&total_calc_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_calc_vat&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดก่อนปัดเศษ
+      FormDesignColumnModel(command: "&before_rounding_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&before_rounding&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดปัดเศษ
+      FormDesignColumnModel(command: "&rounding_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&rounding&", text_align: PrintColumnAlign.right, width: 2),
+    ],
+    [
+      // ยอดรวมสุทธิ
+      FormDesignColumnModel(
+          command: "&total_amount_name&",
+          width: 5,
+          font_size: 32,
+          font_weight_bold: true),
+      FormDesignColumnModel(
+          command: "&total_amount&",
+          text_align: PrintColumnAlign.right,
+          font_weight_bold: true,
+          font_size: 32,
+          width: 2),
+    ],
+    [
+      // ยอดภาษี
+      FormDesignColumnModel(command: "&total_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_vat&", text_align: PrintColumnAlign.right, width: 2),
+    ],
+    [
+      // ยอดก่อนภาษี
+      FormDesignColumnModel(command: "&total_before_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_before_vat&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ชำระเงินสด
+      FormDesignColumnModel(
+          command: "&total_pay_cash_name&",
+          width: 5,
+          font_size: 32,
+          font_weight_bold: true),
+      FormDesignColumnModel(
+          command: "&total_pay_cash&",
+          text_align: PrintColumnAlign.right,
+          width: 2,
+          font_size: 32,
+          font_weight_bold: true),
+    ],
+    [
+      // เงินทอน
+      FormDesignColumnModel(
+          command: "&total_pay_cash_change_name&",
+          width: 5,
+          font_size: 32,
+          font_weight_bold: true),
+      FormDesignColumnModel(
+          command: "&total_pay_cash_change&",
+          text_align: PrintColumnAlign.right,
+          width: 2,
+          font_size: 32,
+          font_weight_bold: true),
+    ],
   ];
   FormDesignFooterModel footer = FormDesignFooterModel(description: [
     [
@@ -73,7 +162,11 @@ void loadFormDesign() {
   global.formDesignList.add(FormDesignObjectBoxStruct(
     type: 0,
     guid_fixed: "",
-    code: global.formBillDefaultCode,
+    code: "DEDE-01",
+    sum_by_type: true,
+    sum_by_barcode: true,
+    print_logo: true,
+    print_prompt_pay: true,
     names_json: jsonEncode(<LanguageDataModel>[
       LanguageDataModel(code: "th", name: "ใบเสร็จรับเงิน"),
       LanguageDataModel(code: "en", name: "Receipt"),
@@ -91,6 +184,10 @@ void loadFormDesign() {
     type: 0,
     guid_fixed: "",
     code: global.formSummeryDefaultCode,
+    sum_by_type: true,
+    sum_by_barcode: true,
+    print_logo: true,
+    print_prompt_pay: true,
     names_json: jsonEncode(<LanguageDataModel>[
       LanguageDataModel(code: "th", name: "ใบสรุปยอด/ไม่ใช่ใบเสร็จรับเงิน"),
       LanguageDataModel(code: "en", name: "Summary/non-receipt"),

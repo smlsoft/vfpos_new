@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "51:8128154748436428662",
+      "lastPropertyId": "57:2649055115574079493",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -245,6 +245,36 @@
           "id": "51:8128154748436428662",
           "name": "pay_json",
           "type": 9
+        },
+        {
+          "id": "52:8483902652359216461",
+          "name": "total_qty",
+          "type": 8
+        },
+        {
+          "id": "53:1593835513190308362",
+          "name": "total_calc_amount",
+          "type": 8
+        },
+        {
+          "id": "54:1615262830312507733",
+          "name": "total_calc_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "55:6996052209447947626",
+          "name": "total_calc_amount_before_round",
+          "type": 8
+        },
+        {
+          "id": "56:8998589021223372157",
+          "name": "total_calc_amount_round",
+          "type": 8
+        },
+        {
+          "id": "57:2649055115574079493",
+          "name": "pay_cash_change",
+          "type": 8
         }
       ],
       "relations": []
@@ -1412,7 +1442,7 @@
     },
     {
       "id": "29:6792595191811775261",
-      "lastPropertyId": "12:7497203689950258476",
+      "lastPropertyId": "16:2560715377767744935",
       "name": "FormDesignObjectBoxStruct",
       "properties": [
         {
@@ -1474,6 +1504,26 @@
           "id": "12:7497203689950258476",
           "name": "detail_total_json",
           "type": 9
+        },
+        {
+          "id": "13:7099340140954139136",
+          "name": "sum_by_type",
+          "type": 1
+        },
+        {
+          "id": "14:6216481631141985629",
+          "name": "sum_by_barcode",
+          "type": 1
+        },
+        {
+          "id": "15:873777410466834794",
+          "name": "print_logo",
+          "type": 1
+        },
+        {
+          "id": "16:2560715377767744935",
+          "name": "print_prompt_pay",
+          "type": 1
         }
       ],
       "relations": []
