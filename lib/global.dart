@@ -1681,7 +1681,7 @@ Future<void> getProfile() async {
   }
   {
     // POS Setting
-    var value = await apiRepository.getPosSetting();
+    var value = await apiRepository.getPosSetting(global.deviceId);
     var jsonData = value.data;
   }
   await global.loadConfig();

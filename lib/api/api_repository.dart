@@ -680,11 +680,12 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getPosSetting() async {
+  Future<ApiResponse> getPosSetting(String posId) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get('/pos/settings');
+      final response =
+          await client.get('/pos/setting/code/' + posId.toUpperCase());
       try {
         final rawData = json.decode(response.toString());
 
