@@ -224,7 +224,7 @@ class BillObjectBoxStruct {
       required this.buffet_code,
       required this.pay_json,
       required this.total_item_vat_amount,
-      required this.total_item_except_amount,
+      required this.total_item_except_vat_amount,
       required this.print_copy_bill_date_time});
 }
 

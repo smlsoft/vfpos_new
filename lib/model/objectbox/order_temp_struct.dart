@@ -33,6 +33,8 @@ class OrderTempObjectBoxStruct {
 
   /// UUID หน้าจอกรณีเลือกพร้อมกันหลายคน
   String machineId;
+
+  @Property(type: PropertyType.date)
   DateTime orderDateTime;
   String barcode;
 
@@ -70,6 +72,7 @@ class OrderTempObjectBoxStruct {
   bool takeAway;
 
   /// KDS System
+  @Property(type: PropertyType.date)
   DateTime kdsSuccessTime;
 
   /// ครัวปรุงเสร็จ
@@ -82,6 +85,7 @@ class OrderTempObjectBoxStruct {
   String deliveryName;
 
   /// วันที่เวลาแก้ไขล่าสุด เพื่อให้ระบบอื่นนำไปใช้เป็นตัวเช็คว่ามีการแก้ไขหรือยัง
+  @Property(type: PropertyType.date)
   DateTime lastUpdateDateTime;
 
   OrderTempObjectBoxStruct({

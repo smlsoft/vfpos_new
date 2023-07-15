@@ -32,10 +32,10 @@ class UserCacheService {
 
     usr = User.fromJson(jsonDecode(userMap));
     _user = usr;
-    if (global.userLogin != null) {
+    /*if (global.userLogin != null) {
       global.userLogin!.code = _user?.username ?? "";
       global.userLogin!.name = _user?.name ?? "";
-    }
+    }*/
     return usr;
   }
 

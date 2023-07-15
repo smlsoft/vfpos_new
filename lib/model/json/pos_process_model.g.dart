@@ -27,6 +27,7 @@ PosProcessDetailModel _$PosProcessDetailModelFromJson(
       is_void: json['is_void'] as bool? ?? false,
       remark: json['remark'] as String? ?? "",
       image_url: json['image_url'] as String? ?? "",
+      exclude_vat: json['exclude_vat'] as bool? ?? false,
       extra: (json['extra'] as List<dynamic>)
           .map((e) =>
               PosProcessDetailExtraModel.fromJson(e as Map<String, dynamic>))
@@ -53,6 +54,7 @@ Map<String, dynamic> _$PosProcessDetailModelToJson(
       'is_void': instance.is_void,
       'remark': instance.remark,
       'image_url': instance.image_url,
+      'exclude_vat': instance.exclude_vat,
       'extra': instance.extra,
     };
 

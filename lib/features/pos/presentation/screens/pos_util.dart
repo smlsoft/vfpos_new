@@ -212,7 +212,7 @@ Future<saveBillResultClass> saveBill(
       is_sync: false,
       vat_rate: vatRate,
       total_item_vat_amount: posHoldProcess.posProcess.total_item_vat_amount,
-      total_item_except_amount:
+      total_item_except_vat_amount:
           posHoldProcess.posProcess.total_item_except_amount,
       total_vat_amount: totalVatAmount,
       discount_formula: discountFormula,

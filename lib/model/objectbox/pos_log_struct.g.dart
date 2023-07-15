@@ -31,6 +31,7 @@ PosLogObjectBoxStruct _$PosLogObjectBoxStructFromJson(
       extra_code: json['extra_code'] as String? ?? "",
       unit_code: json['unit_code'] as String? ?? "",
       unit_name: json['unit_name'] as String? ?? "",
+      exclude_vat: json['exclude_vat'] as bool? ?? false,
     )..guid_auto_fixed = json['guid_auto_fixed'] as String;
 
 Map<String, dynamic> _$PosLogObjectBoxStructToJson(
@@ -59,4 +60,5 @@ Map<String, dynamic> _$PosLogObjectBoxStructToJson(
       'unit_code': instance.unit_code,
       'unit_name': instance.unit_name,
       'barcode': instance.barcode,
+      'exclude_vat': instance.exclude_vat,
     };

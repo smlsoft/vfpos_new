@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io' as io;
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/core/core.dart';
-import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/services/print_process.dart';
@@ -738,10 +737,14 @@ class PosPrintBillClass {
 
   Future<void> saveImageToJpgFile(
       DateTime docDate, String docNo, Future<ui.Image> image) async {
-    // Request storage permission.
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
+    try {
+      // Request storage permission.
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+    } catch (e) {
+      serviceLocator<Log>().error(e);
     }
 
     try {

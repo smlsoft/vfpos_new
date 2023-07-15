@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(60, 4683251167029681299),
+      lastPropertyId: const IdUid(61, 3701210022462211600),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -313,8 +313,8 @@ final _entities = <ModelEntity>[
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(60, 4683251167029681299),
-            name: 'total_item_except_amount',
+            id: const IdUid(61, 3701210022462211600),
+            name: 'total_item_except_vat_amount',
             type: 8,
             flags: 0)
       ],
@@ -402,7 +402,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(30, 8558907513583874744),
+      lastPropertyId: const IdUid(31, 7795975958565552946),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -521,7 +521,12 @@ final _entities = <ModelEntity>[
             name: 'hold_code',
             type: 9,
             flags: 2048,
-            indexId: const IdUid(29, 7684323603419779677))
+            indexId: const IdUid(29, 7684323603419779677)),
+        ModelProperty(
+            id: const IdUid(31, 7795975958565552946),
+            name: 'exclude_vat',
+            type: 1,
+            flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[]),
@@ -1945,7 +1950,8 @@ ModelDefinition getObjectBoxModel() {
         3689734830323953667,
         4405532620165712495,
         1043201343847864181,
-        4227198458679852788
+        4227198458679852788,
+        4683251167029681299
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1997,7 +2003,7 @@ ModelDefinition getObjectBoxModel() {
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(61);
+          fbb.startTable(62);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -2052,7 +2058,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(56, object.pay_cash_change);
           fbb.addInt64(57, object.vat_mode);
           fbb.addFloat64(58, object.total_item_vat_amount);
-          fbb.addFloat64(59, object.total_item_except_amount);
+          fbb.addFloat64(60, object.total_item_except_vat_amount);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2121,7 +2127,7 @@ ModelDefinition getObjectBoxModel() {
               buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 94, ''),
               pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 104, ''),
               total_item_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 120, 0),
-              total_item_except_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 122, 0),
+              total_item_except_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 124, 0),
               print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -2233,7 +2239,7 @@ ModelDefinition getObjectBoxModel() {
           final barcodeOffset = fbb.writeString(object.barcode);
           final discount_textOffset = fbb.writeString(object.discount_text);
           final hold_codeOffset = fbb.writeString(object.hold_code);
-          fbb.startTable(31);
+          fbb.startTable(32);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
@@ -2257,6 +2263,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(25, discount_textOffset);
           fbb.addInt64(28, object.doc_mode);
           fbb.addOffset(29, hold_codeOffset);
+          fbb.addBool(30, object.exclude_vat);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2295,7 +2302,8 @@ ModelDefinition getObjectBoxModel() {
               discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
               extra_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
-              unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''))
+              unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
+              exclude_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false))
             ..guid_auto_fixed = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, '');
 
           return object;
@@ -3460,8 +3468,8 @@ class BillObjectBoxStruct_ {
   static final total_item_vat_amount =
       QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[53]);
 
-  /// see [BillObjectBoxStruct.total_item_except_amount]
-  static final total_item_except_amount =
+  /// see [BillObjectBoxStruct.total_item_except_vat_amount]
+  static final total_item_except_vat_amount =
       QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[54]);
 }
 
@@ -3612,6 +3620,10 @@ class PosLogObjectBoxStruct_ {
   /// see [PosLogObjectBoxStruct.hold_code]
   static final hold_code =
       QueryStringProperty<PosLogObjectBoxStruct>(_entities[3].properties[22]);
+
+  /// see [PosLogObjectBoxStruct.exclude_vat]
+  static final exclude_vat =
+      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[3].properties[23]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "60:4683251167029681299",
+      "lastPropertyId": "61:3701210022462211600",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -282,8 +282,8 @@
           "type": 8
         },
         {
-          "id": "60:4683251167029681299",
-          "name": "total_item_except_amount",
+          "id": "61:3701210022462211600",
+          "name": "total_item_except_vat_amount",
           "type": 8
         }
       ],
@@ -371,7 +371,7 @@
     },
     {
       "id": "9:5736757595189524590",
-      "lastPropertyId": "30:8558907513583874744",
+      "lastPropertyId": "31:7795975958565552946",
       "name": "PosLogObjectBoxStruct",
       "properties": [
         {
@@ -493,6 +493,11 @@
           "type": 9,
           "flags": 2048,
           "indexId": "29:7684323603419779677"
+        },
+        {
+          "id": "31:7795975958565552946",
+          "name": "exclude_vat",
+          "type": 1
         }
       ],
       "relations": []
@@ -1913,7 +1918,8 @@
     3689734830323953667,
     4405532620165712495,
     1043201343847864181,
-    4227198458679852788
+    4227198458679852788,
+    4683251167029681299
   ],
   "retiredRelationUids": [],
   "version": 1
