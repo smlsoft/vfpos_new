@@ -100,6 +100,8 @@ dependencies:
   permission_handler: ^10.3.0
   slider_captcha: ^1.0.0
   animated_icon: ^0.0.5
+  url_launcher: ^6.1.12
+  top_snackbar_flutter: ^3.1.0
 
 dev_dependencies:
   flutter_driver:

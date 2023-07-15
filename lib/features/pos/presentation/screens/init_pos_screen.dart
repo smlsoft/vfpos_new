@@ -30,18 +30,8 @@ class _InitPOSScreenState extends State<InitPOSScreen> {
       timerSwitchToMenu =
           Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
-          // Navigator.of(context).pushReplacementNamed('menu');
-
-          // context.router.pushAndPopUntil(
-          //     PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
-          //     predicate: (_) => false);
-
           context.router.replace(
               PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
-
-          // timerSwitchToMenu?.cancel();
-          // context.router.replace(
-          //     PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
         }
         setState(() {});
       });

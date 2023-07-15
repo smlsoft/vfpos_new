@@ -24,6 +24,7 @@ class PosProcessDetailModel {
   late bool is_void;
   late String remark;
   late String image_url;
+  late bool exclude_vat;
   late List<PosProcessDetailExtraModel> extra;
 
   PosProcessDetailModel({
@@ -44,6 +45,7 @@ class PosProcessDetailModel {
     this.is_void = false,
     this.remark = "",
     this.image_url = "",
+    this.exclude_vat = false,
     required this.extra,
   });
 
@@ -108,16 +110,34 @@ class PosProcessPromotionModel {
 
 @JsonSerializable()
 class PosProcessModel {
+  /// จำนวนชิ้น
   double total_piece;
+
+  /// ยอดรวมทั้งสิ้น (มีภาษี และ ยกเว้นภาษี)
   double total_amount;
+
+  /// ยอดรวม Promotion
   double total_discount_from_promotion;
+
+  // Qr Code
   String qr_code;
+
+  /// อัตราภาษี
   double vat_rate;
-  double total_vat_amount;
-  double total_before_amount;
-  double total_except_amount;
+
+  /// ยอดรวมสินค้ามีภาษี
+  double total_item_vat_amount;
+
+  /// ยอดรวมสินค้ายกเว้นภาษี
+  double total_item_except_amount;
+
+  /// รายการสินค้า
   List<PosProcessDetailModel> details;
+
+  /// รายการ Promotion
   List<PromotionTempModel> select_promotion_temp_list;
+
+  /// รายการ Promotion ที่เลือก
   List<PosProcessPromotionModel> promotion_list;
 
   PosProcessModel(
@@ -126,9 +146,8 @@ class PosProcessModel {
       this.total_discount_from_promotion = 0,
       this.qr_code = "",
       this.vat_rate = 0,
-      this.total_vat_amount = 0,
-      this.total_before_amount = 0,
-      this.total_except_amount = 0,
+      this.total_item_vat_amount = 0,
+      this.total_item_except_amount = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
       this.promotion_list = const []});

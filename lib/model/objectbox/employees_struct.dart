@@ -10,8 +10,10 @@ class EmployeeObjectBoxStruct {
   String code;
   String email;
   bool is_enabled;
+  bool is_use_pos;
   String name;
   String profile_picture;
+  String pin_code;
 
   EmployeeObjectBoxStruct({
     required this.guidfixed,
@@ -20,5 +22,7 @@ class EmployeeObjectBoxStruct {
     required this.name,
     required this.email,
     required this.is_enabled,
+    required this.is_use_pos,
+    required this.pin_code,
   });
 }

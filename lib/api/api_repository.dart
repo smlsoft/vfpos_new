@@ -38,33 +38,6 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> serverEmployeeGetData({
-    int limit = 0,
-    int offset = 0,
-    String lastupdate = '',
-  }) async {
-    Dio client = Client().init();
-
-    try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=employee&offset=$offset&limit=$limit&action=all";
-      final response = await client.get(query);
-      try {
-        final rawData = json.decode(response.toString());
-        if (rawData['error'] != null) {
-          throw Exception('${rawData['code']}: ${rawData['message']}');
-        }
-        return ApiResponse.fromMap(rawData);
-      } catch (ex) {
-        throw Exception(ex);
-      }
-    } on DioError catch (ex) {
-      String errorMessage = ex.response.toString();
-      serviceLocator<Log>().error(errorMessage);
-      throw Exception(errorMessage);
-    }
-  }
-
   Future<ApiResponse> serverKitchenGetData({
     int limit = 0,
     int offset = 0,
@@ -556,16 +529,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getEmployeeList({
-    int page = 0,
-    int perPage = 20,
-    String search = "",
-  }) async {
+  Future<ApiResponse> getEmployeeList() async {
     Dio client = Client().init();
 
     try {
-      final response =
-          await client.get('/employee?page=$page&limit=$perPage&q=$search');
+      final response = await client.get('/shop/employee/list');
       try {
         final rawData = json.decode(response.toString());
 
@@ -734,6 +702,32 @@ class ApiRepository {
       serviceLocator<Log>().error(errorMessage);
       throw Exception(errorMessage);
     }
+  }
+
+  Future<bool> userChangePassword(String code, String newPassword) async {
+    bool result = false;
+    Dio client = Client().init();
+    try {
+      final response = await client.post('/employee/password',
+          data: {"code": code, "password": newPassword});
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+        result = true;
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+    return result;
   }
 }
 

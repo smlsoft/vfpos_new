@@ -2,11 +2,13 @@ import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sn
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
+import 'package:dedepos/api/sync/model/employee_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
+import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
 import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
@@ -31,7 +33,6 @@ import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
@@ -51,6 +52,7 @@ import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
 import 'db/product_category_helper.dart';
 import 'db/product_barcode_helper.dart';
+import 'package:dedepos/global.dart' as global;
 import 'db/pos_log_helper.dart';
 import 'db/bill_helper.dart';
 import 'db/config_helper.dart';
@@ -59,6 +61,7 @@ import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 import 'model/objectbox/form_design_struct.dart';
 
+String applicationName = "*";
 late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
 List<FormDesignObjectBoxStruct> formDesignList = [];
@@ -133,10 +136,7 @@ double payScreenNumberPadAmount = 0;
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
     PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-String userLoginCode = "001";
-String userLoginName = "สมชาย";
-String employeeLogin = "";
-String employeeLoginName = "";
+late EmployeeObjectBoxStruct? userLogin;
 int machineNumber = 1;
 String selectTableCode = "";
 String selectTableGroup = "";
@@ -147,9 +147,6 @@ List<ProductCategoryObjectBoxStruct> productCategoryCodeSelected = [];
 List<ProductCategoryObjectBoxStruct> productCategoryList = [];
 List<ProductBarcodeObjectBoxStruct> productListByCategory = [];
 List<ProductCategoryObjectBoxStruct> productCategoryChildList = [];
-String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
-String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
-String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
 AppModeEnum appMode = AppModeEnum.posTerminal;
 bool apiConnected = false;
 String apiUserName = "";
@@ -204,6 +201,7 @@ String posTerminalPinCode = "";
 String posTerminalPinTokenId = "";
 String formBillDefaultCode = "DEDE-01"; // ใบเสร็จรับเงิน
 String formSummeryDefaultCode = "DEDE-02"; // ใบสรุปยอด
+bool posScreenAutoRefresh = false;
 
 enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
@@ -294,14 +292,12 @@ int findPosHoldProcessResultIndex(String code) {
   return 0;
 }
 
-Future<void> loadAndCompareEmployee() async {
-  
-}
+Future<void> loadAndCompareEmployee() async {}
 
 Future<void> loadPrinter() async {
   // ลบทิ้ง เพื่อทดสอบ
-  // await appStorage.remove(global.printerCashierStrongCode);
-  // await appStorage.remove(global.printerTableTicketStrongCode);
+  // await appStorage.remove(printerCashierStrongCode);
+  // await appStorage.remove(printerTableTicketStrongCode);
   printerLocalStrongData.clear();
   List<String> printerCodes = [
     printerConfigCashierCode,
@@ -603,16 +599,16 @@ Future<String> billRunning() async {
       }
     }
     result =
-        "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
+        "${deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
 
     /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
     var find = billHelper.selectByDocNumber(
-        docNumber: result, posScreenMode: global.posScreenToInt());
+        docNumber: result, posScreenMode: posScreenToInt());
     if (find == null) {
       success = true;
     } else {
-      configHelper.update(ConfigObjectBoxStruct(
-          device_id: global.deviceId, last_doc_number: result));
+      configHelper.update(
+          ConfigObjectBoxStruct(device_id: deviceId, last_doc_number: result));
     }
   }
   return result;
@@ -633,7 +629,7 @@ void showAlertDialog(
     required String title,
     required String message}) {
   Widget okButton = TextButton(
-    child: Text(global.language("OK")),
+    child: Text(language("OK")),
     onPressed: () {
       Navigator.pop(context);
     },
@@ -816,9 +812,8 @@ Future<void> sendProcessToRemote() async {
       try {
         var jsonData = HttpPost(
             command: "process_result",
-            data: jsonEncode(posHoldProcessResult[
-                    global.findPosHoldProcessResultIndex(
-                        posRemoteDeviceList[index].holdCodeActive)]
+            data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(
+                    posRemoteDeviceList[index].holdCodeActive)]
                 .toJson()));
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
@@ -912,6 +907,7 @@ Future<void> loadConfig() async {
   await loadPrinter();
   await loadFormDesign();
   await loadAndCompareEmployee();
+  await loadEmployee();
 }
 
 Future<void> registerRemoteToTerminal() async {
@@ -951,7 +947,7 @@ Future<void> registerRemoteToTerminal() async {
 /// - register DartPingIOS
 /// - setupObjectBox (core/objectbox.dart)
 /// - register sync master
-/// - สร้าง Process Result ตามจำนวน Hold บิล (global.generatePosHoldProcess)
+/// - สร้าง Process Result ตามจำนวน Hold บิล (generatePosHoldProcess)
 Future<void> startLoading() async {
   {
     await loadConfig();
@@ -1045,8 +1041,8 @@ Future<void> startLoading() async {
   // await setupObjectBox();
 
   int xxx = ProductBarcodeHelper().count();
-  //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
-  //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
+  //objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
+  //objectBoxStore = await openStore(maxDBSizeInKB: 102400);
   {
     /// Sync Master (ข้อมูลหลัก)
     int syncMasterSecondCount = 0;
@@ -1250,26 +1246,37 @@ String syncFindLastUpdate(
   return DateFormat(dateFormatSync).format(DateTime.parse(syncDateBegin));
 }
 
-void testPrinterConnect() async {
+Future<void> testPrinterConnect() async {
   if (printerLocalStrongData.isNotEmpty) {
     for (var printer in printerLocalStrongData) {
-      try {
-        final Socket socket = await Socket.connect(
-            printer.ipAddress, printer.ipPort,
-            timeout: const Duration(seconds: 10));
-        printer.isReady = true;
-        socket.destroy();
-      } catch (e) {
-        printer.isReady = false;
-        errorMessage.add(
-            "${language("printer")} : ${printer.name}/${printer.ipAddress}:${printer.ipPort} ${language("not_ready")} $e");
+      if (printer.printerConnectType == global.PrinterConnectEnum.ip) {
+        if (printer.ipAddress.trim().isNotEmpty) {
+          bool oldReady = printer.isReady;
+          try {
+            final Socket socket = await Socket.connect(
+                printer.ipAddress, printer.ipPort,
+                timeout: const Duration(seconds: 1));
+            printer.isReady = true;
+            socket.destroy();
+          } catch (e) {
+            printer.isReady = false;
+            String message =
+                "${language("printer")} : ${printer.name}/${printer.ipAddress}:${printer.ipPort} ${language("not_ready")}";
+            if (!errorMessage.contains(message)) {
+              // errorMessage.add(message);
+            }
+          }
+          if (oldReady != printer.isReady) {
+            global.posScreenAutoRefresh = true;
+          }
+        }
       }
     }
   }
 }
 
 int printerWidthByCharacter(int printerIndex) {
-  if (global.printerLocalStrongData[printerIndex].paperSize == 1) {
+  if (printerLocalStrongData[printerIndex].paperSize == 1) {
     return 32;
   } else {
     return 48;
@@ -1277,7 +1284,7 @@ int printerWidthByCharacter(int printerIndex) {
 }
 
 double printerWidthByPixel(int printerIndex) {
-  if (global.printerLocalStrongData[printerIndex].paperSize == 1) {
+  if (printerLocalStrongData[printerIndex].paperSize == 1) {
     return 384;
   } else {
     return 576;
@@ -1295,7 +1302,7 @@ void languageSelect(String languageCode) {
       }
     }
   }
-  /*global.languageSystemData.sort((a, b) {
+  /*languageSystemData.sort((a, b) {
     return a.code.compareTo(b.code);
   });*/
 }
@@ -1316,10 +1323,10 @@ Future<void> saveOrderToHoldBill(List<OrderTempObjectBoxStruct> orders) async {
       ProductBarcodeObjectBoxStruct? productSelect =
           await ProductBarcodeHelper().selectByBarcodeFirst(order.barcode);
       if (productSelect != null) {
-        double price = global.getProductPrice(productSelect.prices, 1);
+        double price = getProductPrice(productSelect.prices, 1);
         PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
             log_date_time: DateTime.now(),
-            doc_mode: global.posScreenToInt(),
+            doc_mode: posScreenToInt(),
             hold_code: newOrderId,
             command_code: 1,
             barcode: order.barcode,
@@ -1345,7 +1352,7 @@ Future<void> saveOrderToHoldBill(List<OrderTempObjectBoxStruct> orders) async {
                 if (posLogSelect.isNotEmpty) {
                   await PosLogHelper().insert(PosLogObjectBoxStruct(
                       guid_code_ref: "",
-                      doc_mode: global.posScreenToInt(),
+                      doc_mode: posScreenToInt(),
                       guid_ref: insertGuid,
                       log_date_time: DateTime.now(),
                       hold_code: newOrderId,
@@ -1375,7 +1382,7 @@ Future<void> checkOrderOnline() async {
     try {
       // ดึง Order ลูกค้าสั่งเอง
       String selectQuery =
-          "select orderid,barcode,sum(qty) as qty,optionselected,remark from ordertemp where shopid='${global.shopId}' and isclose=1 group by orderid,barcode,optionselected,remark order by barcode";
+          "select orderid,barcode,sum(qty) as qty,optionselected,remark from ordertemp where shopid='${shopId}' and isclose=1 group by orderid,barcode,optionselected,remark order by barcode";
       var value = await clickHouseSelect(selectQuery);
       ResponseDataModel responseData = ResponseDataModel.fromJson(value);
       // Print
@@ -1406,7 +1413,7 @@ Future<void> checkOrderOnline() async {
       if (updateOrder) {
         // update สถานะ ว่า ส่งไปที่ครัวแล้ว
         String updateQuery =
-            "alter table ordertemp update isclose=2 where shopid='${global.shopId}' and orderid='$orderId'";
+            "alter table ordertemp update isclose=2 where shopid='${shopId}' and orderid='$orderId'";
         await clickHouseExecute(updateQuery);
       }
     } catch (e) {
@@ -1419,7 +1426,7 @@ Future<void> checkOrderOnline() async {
     List<String> orderIdList = [];
     try {
       // update isOrderSuccess และคำนวนณยอดรวม
-      final getData = global.objectBoxStore
+      final getData = objectBoxStore
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.isOrder
               .equals(false)
@@ -1433,7 +1440,7 @@ Future<void> checkOrderOnline() async {
       }
 
       for (var orderId in orderIdList) {
-        var orderTempUpdate = global.objectBoxStore
+        var orderTempUpdate = objectBoxStore
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId
                 .equals(orderId)
@@ -1447,7 +1454,7 @@ Future<void> checkOrderOnline() async {
           // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
           data.isOrderSendKdsSuccess = false;
         }
-        global.objectBoxStore
+        objectBoxStore
             .box<OrderTempObjectBoxStruct>()
             .putMany(orderTempUpdate, mode: PutMode.update);
         // คำนวณ
@@ -1465,7 +1472,7 @@ Future<void> checkOrderOnline() async {
     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
-    final getDataOrderId = global.objectBoxStore
+    final getDataOrderId = objectBoxStore
         .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.isOrder
             .equals(false)
@@ -1482,7 +1489,7 @@ Future<void> checkOrderOnline() async {
     for (var orderId in orderIdList) {
       // เลือกรายการ Order ทีละโต๊ะ
       List<OrderTempDataModel> orderTemp = [];
-      final getData = global.objectBoxStore
+      final getData = objectBoxStore
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
               OrderTempObjectBoxStruct_.isOrder
@@ -1504,7 +1511,7 @@ Future<void> checkOrderOnline() async {
         ));
         // update สถานะ
         data.isOrderSendKdsSuccess = true;
-        global.objectBoxStore
+        objectBoxStore
             .box<OrderTempObjectBoxStruct>()
             .put(data, mode: PutMode.update);
       }
@@ -1566,7 +1573,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   double amount = 0.0;
   {
     // รวมจาก OrderTemp ส่งรายการแล้ว
-    final result = global.objectBoxStore
+    final result = objectBoxStore
         .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.orderId
             .equals(tableNumber)
@@ -1578,7 +1585,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
       amount += orderCalcSumAmount(order);
     }
   }
-  final boxTable = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+  final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
   final resultTable = boxTable
       .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
       .build()
@@ -1600,13 +1607,12 @@ String generateRandomPin(int pinLength) {
 }
 
 Future<void> getProfile() async {
-  global.applicationDocumentsDirectory =
-      await getApplicationDocumentsDirectory();
-  var file = File("${global.applicationDocumentsDirectory.path}/logo.png");
+  applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
+  var file = File("${applicationDocumentsDirectory.path}/logo.png");
   ApiRepository apiRepository = ApiRepository();
   {
     var value = await apiRepository.getProfileShop();
-    global.shopId = value.data["guidfixed"];
+    shopId = value.data["guidfixed"];
   }
   {
     try {
@@ -1657,29 +1663,61 @@ Future<void> getProfile() async {
           List<ProfileSettingBranchModel>.from(branchValue.data
               .map((e) => ProfileSettingBranchModel.fromJson(e)));
 
-      global.profileSetting = ProfileSettingModel(
+      profileSetting = ProfileSettingModel(
         company: company,
         languagelist: languageList,
         configsystem: configSystem,
         branch: branchs,
       );
-      global.appStorage.write('profile', global.profileSetting.toJson());
+      appStorage.write('profile', profileSetting.toJson());
       // Download Logo
-      if (global.profileSetting.company.logo.isNotEmpty) {
-        var url = global.profileSetting.company.logo;
+      if (profileSetting.company.logo.isNotEmpty) {
+        var url = profileSetting.company.logo;
         var response = await http.get(Uri.parse(url));
         await file.writeAsBytes(response.bodyBytes);
       }
     } catch (e) {
       print(e);
     }
-    var getProfile = await global.appStorage.read('profile');
-    global.profileSetting = ProfileSettingModel.fromJson(getProfile);
+    var getProfile = await appStorage.read('profile');
+    profileSetting = ProfileSettingModel.fromJson(getProfile);
   }
   {
     // POS Setting
-    var value = await apiRepository.getPosSetting(global.deviceId);
+    var value = await apiRepository.getPosSetting(deviceId);
     var jsonData = value.data;
   }
-  await global.loadConfig();
+  await loadConfig();
+}
+
+Future<void> loadEmployee() async {
+  try {
+    ApiRepository apiRepository = ApiRepository();
+    var value = await apiRepository.getEmployeeList();
+    List<EmployeeModel> employeeList = (value.data as List)
+        .map((e) => EmployeeModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    employeeHelper.deleteAll();
+    List<EmployeeObjectBoxStruct> employeeObjectBoxList = [];
+    for (var data in employeeList) {
+      employeeObjectBoxList.add(EmployeeObjectBoxStruct(
+        guidfixed: data.guidfixed,
+        code: data.code,
+        name: data.name,
+        email: data.email,
+        is_enabled: data.isenabled,
+        is_use_pos: data.isusepos,
+        pin_code: data.pincode,
+        profile_picture: data.profilepicture,
+      ));
+    }
+    employeeHelper.insertMany(employeeObjectBoxList);
+  } catch (e) {
+    print(e);
+  }
+}
+
+double roundDouble(double value, int places) {
+  num mod = pow(10.0, places);
+  return ((value * mod).round().toDouble() / mod);
 }

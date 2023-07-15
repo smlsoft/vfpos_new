@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
@@ -6,23 +5,19 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/db/buffet_mode_helper.dart';
-import 'package:dedepos/features/authentication/auth.dart';
-import 'package:dedepos/features/pos/restaurant/table_manager_page.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
-import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/printer_config.dart';
 import 'package:dedepos/util/connect_staff_client.dart';
+import 'package:dedepos/util/employee_change_password_page.dart';
 import 'package:dedepos/util/register_pos_terminal.dart';
 import 'package:dedepos/util/select_language_screen.dart';
 import 'package:dedepos/util/shift_and_money.dart';
-import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class MenuScreen extends StatefulWidget {
@@ -245,7 +240,7 @@ class _MenuScreenState extends State<MenuScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              (global.userLoginCode.isEmpty)
+              (global.userLogin!.code.isEmpty)
                   ? const Row(children: [
                       Icon(
                         Icons.key,
@@ -259,6 +254,20 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                     ])
                   : Row(children: [
+                      (global.userLogin!.profile_picture.isNotEmpty)
+                          ? Container(
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.grey, width: 2),
+                              ),
+                              child: Image.network(
+                                global.userLogin!.profile_picture,
+                                height: 30,
+                              ))
+                          : Container(),
+                      const SizedBox(
+                        width: 4,
+                      ),
                       const Icon(
                         Icons.verified_user,
                       ),
@@ -266,7 +275,7 @@ class _MenuScreenState extends State<MenuScreen> {
                         width: 4,
                       ),
                       Text(
-                        "${global.userLoginCode} : ${global.userLoginName}",
+                        "ผู้ใช้งาน : ${global.userLogin!.name} (${global.userLogin!.code})",
                         overflow: TextOverflow.clip,
                       ),
                     ]),
@@ -274,8 +283,7 @@ class _MenuScreenState extends State<MenuScreen> {
               ElevatedButton(
                   onPressed: () {
                     global.loginSuccess = false;
-                    global.userLoginCode = "";
-                    global.userLoginName = "";
+                    global.userLogin = null;
                     if (mounted) {
                       context.router.pushAndPopUntil(
                           const LoginByEmployeeRoute(),
@@ -326,14 +334,14 @@ class _MenuScreenState extends State<MenuScreen> {
               centerTitle: true,
               foregroundColor: Colors.white,
               leading: Container(
-                  margin: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green, width: 2),
-                  ),
-                  child: Image.file(
-                    File(
-                        "${global.applicationDocumentsDirectory.path}/logo.png"),
-                  )),
+                margin: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.green, width: 2),
+                ),
+                child: Image.file(
+                  File("${global.applicationDocumentsDirectory.path}/logo.png"),
+                ),
+              ),
               title: Text((global.appMode == global.AppModeEnum.posTerminal)
                   ? "${global.language("pos_terminal")} : $companyName"
                   : "${global.language("pos_remote")} : $companyName"),
@@ -385,6 +393,17 @@ class _MenuScreenState extends State<MenuScreen> {
                           ).then((value) async => {await global.loadPrinter()});
                         }
                         break;
+                      case 3:
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const EmployeeChangePasswordPage(),
+                            ),
+                          ).then((value) async => {await global.loadPrinter()});
+                        }
+                        break;
                       case 9:
                         if (Platform.isAndroid) {
                           SystemNavigator.pop();
@@ -416,6 +435,11 @@ class _MenuScreenState extends State<MenuScreen> {
                       iconData: Icons.app_registration,
                     ),
                     buildPopupMenuItem(
+                      title: global.language('change_password'),
+                      valueCode: 3,
+                      iconData: Icons.lock,
+                    ),
+                    buildPopupMenuItem(
                       title: global.language('logout'),
                       valueCode: 9,
                       iconData: Icons.logout,
@@ -424,6 +448,32 @@ class _MenuScreenState extends State<MenuScreen> {
                 )
               ]),
           resizeToAvoidBottomInset: false,
+          floatingActionButton: FloatingActionButton.extended(
+              onPressed: () async {},
+              backgroundColor: Colors.green,
+              icon: const Icon(
+                Icons.web_asset,
+                color: Colors.white,
+                shadows: [
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 3.0,
+                    color: Colors.black,
+                  )
+                ],
+              ),
+              label: Text(global.applicationName,
+                  style: const TextStyle(
+                      shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(1.0, 1.0),
+                          blurRadius: 3.0,
+                          color: Colors.black,
+                        )
+                      ],
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold))),
           body: Column(children: [
             infoWidget,
             Expanded(

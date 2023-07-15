@@ -114,9 +114,63 @@ Future<saveBillResultClass> saveBill(
         total_amount: value.total_amount));
     lineNumber++;
   }
+  // รายละเอียดโต๊ะ (DEDE POS Cafe)
+  int manCount = 0;
+  int womanCount = 0;
+  int childCount = 0;
+  String buffetCode = "";
+  // ภาษีมูลค่าเพิ่ม
+  int vatMode = 1; // 1=รวมใน,2=แยกนอก
+  double vatRate = posHoldProcess.posProcess.vat_rate;
+  vatRate = 7;
+  // ยอดรวมก่อนคำนวณภาษี
+  double totalBeforeVatAmount = 0;
+  // ยอดภาษี
+  double totalVatAmount = 0;
+  // ยอดรวมสินค้ามีภาษี
+  double totalItemVatAmount = posHoldProcess.posProcess.total_item_vat_amount;
+  // ยอดก่อนปัดเศษ
+  double beforeRoundAmount = 0;
+  // ยอดปัดเศษ
+  double roundAmount = 0;
+  // ยอดรวมสินค้ามียกเว้นภาษี
+  double totalItemExceptAmount =
+      posHoldProcess.posProcess.total_item_except_amount;
+  // ทดสอบ สินค้ามีภาษี
+  totalItemVatAmount = 10000.49;
+  // สินค้าไม่มีภาษี
+  totalItemExceptAmount = 2000;
+  double totalAmount = totalItemVatAmount + totalItemExceptAmount;
+  // ส่วนลดท้ายบิล
+  discountAmount = 314;
+  totalAmount = totalItemVatAmount + totalItemExceptAmount;
+
+  if (vatMode == 1) {
+    // รวมใน
+    // เอาส่วนลดเงินสดมาหักตัวที่มีไม่มีภาษีก่อน ที่เหลือค่อยมาหักตัวที่มีภาษี (สรรพากรได้เปรียบ)
+    if (totalItemExceptAmount - discountAmount < 0.0) {
+      // กรณีส่วนลดมากกว่าสินค้ายกเว้นภาษี เอาส่วนที่เหลือไปลดจากมูลค่าคิดภาษี
+      totalItemVatAmount += totalItemExceptAmount - discountAmount;
+    } else {
+      // กรณีส่วนลดน้อยกว่าสินค้ายกเว้นภาษี เอาส่วนที่เหลือไปลดจากสินค้ายกเว้นภาษี
+      totalItemVatAmount -= discountAmount;
+    }
+    // ปัดเศษทิ้ง ก่อนการคำนวณ
+    roundAmount = totalAmount.round() - totalAmount;
+    totalAmount += roundAmount;
+    beforeRoundAmount = totalAmount - roundAmount;
+    // คำนวณภาษี
+    totalVatAmount =
+        global.roundDouble((totalItemVatAmount * vatRate) / (100 + vatRate), 2);
+    // ยอดรวมก่อนคำนวณภาษี (ลบเอาจะแม่นกว่า)
+    totalBeforeVatAmount = totalAmount - totalVatAmount;
+  } else {
+    // แยกนอก
+  }
   // Save
   BillObjectBoxStruct billData = BillObjectBoxStruct(
       doc_mode: 1, // 1=ขาย,2=คืน
+      vat_mode: vatMode,
       is_cancel: false,
       cancel_date_time: "",
       cancel_user_code: "",
@@ -131,15 +185,15 @@ Future<saveBillResultClass> saveBill(
       full_vat_tax_id: "",
       table_al_la_crate_mode: false,
       table_number: global.tableNumberSelected,
-      child_count: 0,
-      woman_count: 0,
-      man_count: 0,
-      buffet_code: "",
-      total_calc_amount: 0,
+      child_count: childCount,
+      woman_count: womanCount,
+      man_count: manCount,
+      buffet_code: buffetCode,
+      total_calc_amount: totalBeforeVatAmount,
       total_qty: posHoldProcess.posProcess.total_piece,
-      total_calc_vat_amount: 0,
-      total_calc_amount_before_round: 0,
-      total_calc_amount_round: 0,
+      total_calc_vat_amount: totalVatAmount,
+      total_calc_amount_before_round: beforeRoundAmount,
+      total_calc_amount_round: roundAmount,
       print_copy_bill_date_time: [],
       date_time: docDate,
       table_close_date_time: DateTime.now(),
@@ -147,20 +201,22 @@ Future<saveBillResultClass> saveBill(
       doc_number: docNumber,
       customer_code: posHoldProcess.customerCode,
       customer_name: posHoldProcess.customerName,
-      customer_telephone: "",
+      customer_telephone: posHoldProcess.customerPhone,
       sale_code: posHoldProcess.saleCode,
       sale_name: posHoldProcess.saleName,
-      total_amount: posHoldProcess.posProcess.total_amount,
-      cashier_code: global.userLoginCode,
-      cashier_name: global.userLoginName,
+      total_amount: totalAmount,
+      cashier_code: global.userLogin!.code,
+      cashier_name: global.userLogin!.name,
       pay_cash_amount: cashAmount,
       pay_cash_change: 0,
       is_sync: false,
-      vat_rate: posHoldProcess.posProcess.vat_rate,
-      total_before_amount: posHoldProcess.posProcess.total_before_amount,
-      total_except_amount: posHoldProcess.posProcess.total_except_amount,
-      total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
+      vat_rate: vatRate,
+      total_item_vat_amount: posHoldProcess.posProcess.total_item_vat_amount,
+      total_item_except_amount:
+          posHoldProcess.posProcess.total_item_except_amount,
+      total_vat_amount: totalVatAmount,
       discount_formula: discountFormula,
+      total_except_amount: totalItemExceptAmount,
       sum_discount: discountAmount,
       pay_json: jsonEncode(pays),
       sum_coupon: sumCoupon(),

@@ -13,6 +13,7 @@ import 'package:dedepos/util/register_pos_terminal.dart';
 import 'package:flutter/material.dart';
 
 import '../global.dart';
+import '../util/employee_change_password_page.dart';
 part 'app_routers.gr.dart';
 
 @AutoRouterConfig()
@@ -32,6 +33,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: PosSecondaryRoute.page),
         AutoRoute(page: MenuRoute.page),
         AutoRoute(page: LoginByEmployeeRoute.page),
+        AutoRoute(page: EmployeeChangePasswordRoute.page),
         AutoRoute(page: RegisterPosTerminalRoute.page)
       ];
 }

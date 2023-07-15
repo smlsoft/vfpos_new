@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(57, 2649055115574079493),
+      lastPropertyId: const IdUid(60, 4683251167029681299),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -140,11 +140,6 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(21, 8298043862021191374),
             name: 'sum_qr_code',
-            type: 8,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(22, 4227198458679852788),
-            name: 'total_before_amount',
             type: 8,
             flags: 0),
         ModelProperty(
@@ -306,6 +301,21 @@ final _entities = <ModelEntity>[
             id: const IdUid(57, 2649055115574079493),
             name: 'pay_cash_change',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(58, 5704992869450108965),
+            name: 'vat_mode',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(59, 2523971994597278549),
+            name: 'total_item_vat_amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(60, 4683251167029681299),
+            name: 'total_item_except_amount',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -337,7 +347,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(7, 4224485752852947885),
       name: 'EmployeeObjectBoxStruct',
-      lastPropertyId: const IdUid(13, 41430858726130000),
+      lastPropertyId: const IdUid(16, 6689204863880077424),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -374,6 +384,16 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(13, 41430858726130000),
             name: 'profile_picture',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(14, 2699830854011803703),
+            name: 'is_use_pos',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 6689204863880077424),
+            name: 'pin_code',
             type: 9,
             flags: 0)
       ],
@@ -1923,7 +1943,9 @@ ModelDefinition getObjectBoxModel() {
         1793824541169848359,
         1059936091951539085,
         3689734830323953667,
-        4405532620165712495
+        4405532620165712495,
+        1043201343847864181,
+        4227198458679852788
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -1975,7 +1997,7 @@ ModelDefinition getObjectBoxModel() {
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(58);
+          fbb.startTable(61);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -1996,7 +2018,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(18, object.sum_cheque);
           fbb.addFloat64(19, object.sum_coupon);
           fbb.addFloat64(20, object.sum_qr_code);
-          fbb.addFloat64(21, object.total_before_amount);
           fbb.addFloat64(22, object.total_vat_amount);
           fbb.addFloat64(23, object.vat_rate);
           fbb.addFloat64(24, object.total_except_amount);
@@ -2029,6 +2050,9 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(54, object.total_calc_amount_before_round);
           fbb.addFloat64(55, object.total_calc_amount_round);
           fbb.addFloat64(56, object.pay_cash_change);
+          fbb.addInt64(57, object.vat_mode);
+          fbb.addFloat64(58, object.total_item_vat_amount);
+          fbb.addFloat64(59, object.total_item_except_amount);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2055,7 +2079,6 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 14, ''),
               vat_rate: const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0),
               total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              total_before_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 46, 0),
               total_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0),
               total_except_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 52, 0),
               cashier_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
@@ -2065,6 +2088,7 @@ ModelDefinition getObjectBoxModel() {
               total_calc_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 108, 0),
               total_calc_amount_before_round: const fb.Float64Reader().vTableGet(buffer, rootOffset, 112, 0),
               total_calc_amount_round: const fb.Float64Reader().vTableGet(buffer, rootOffset, 114, 0),
+              vat_mode: const fb.Int64Reader().vTableGet(buffer, rootOffset, 118, 0),
               total_calc_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 110, 0),
               total_qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 106, 0),
               is_sync: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
@@ -2096,6 +2120,8 @@ ModelDefinition getObjectBoxModel() {
               table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false),
               buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 94, ''),
               pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 104, ''),
+              total_item_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 120, 0),
+              total_item_except_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 122, 0),
               print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -2146,7 +2172,8 @@ ModelDefinition getObjectBoxModel() {
           final emailOffset = fbb.writeString(object.email);
           final guidfixedOffset = fbb.writeString(object.guidfixed);
           final profile_pictureOffset = fbb.writeString(object.profile_picture);
-          fbb.startTable(14);
+          final pin_codeOffset = fbb.writeString(object.pin_code);
+          fbb.startTable(17);
           fbb.addInt64(0, object.id);
           fbb.addOffset(2, codeOffset);
           fbb.addOffset(5, nameOffset);
@@ -2154,6 +2181,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(10, guidfixedOffset);
           fbb.addBool(11, object.is_enabled);
           fbb.addOffset(12, profile_pictureOffset);
+          fbb.addBool(13, object.is_use_pos);
+          fbb.addOffset(15, pin_codeOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2173,7 +2202,11 @@ ModelDefinition getObjectBoxModel() {
               email: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 16, ''),
               is_enabled: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 26, false))
+                  .vTableGet(buffer, rootOffset, 26, false),
+              is_use_pos: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 30, false),
+              pin_code:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3290,138 +3323,146 @@ class BillObjectBoxStruct_ {
   static final sum_qr_code =
       QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[19]);
 
-  /// see [BillObjectBoxStruct.total_before_amount]
-  static final total_before_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[20]);
-
   /// see [BillObjectBoxStruct.total_vat_amount]
   static final total_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[21]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[20]);
 
   /// see [BillObjectBoxStruct.vat_rate]
   static final vat_rate =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[22]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[21]);
 
   /// see [BillObjectBoxStruct.total_except_amount]
   static final total_except_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[23]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[22]);
 
   /// see [BillObjectBoxStruct.full_vat_name]
   static final full_vat_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[24]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[23]);
 
   /// see [BillObjectBoxStruct.full_vat_address]
   static final full_vat_address =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[25]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[24]);
 
   /// see [BillObjectBoxStruct.full_vat_tax_id]
   static final full_vat_tax_id =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[26]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[25]);
 
   /// see [BillObjectBoxStruct.full_vat_branch_number]
   static final full_vat_branch_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[27]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[26]);
 
   /// see [BillObjectBoxStruct.print_copy_bill_date_time]
   static final print_copy_bill_date_time =
       QueryStringVectorProperty<BillObjectBoxStruct>(
-          _entities[0].properties[28]);
+          _entities[0].properties[27]);
 
   /// see [BillObjectBoxStruct.is_cancel]
   static final is_cancel =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[29]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[28]);
 
   /// see [BillObjectBoxStruct.cancel_date_time]
   static final cancel_date_time =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[30]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[29]);
 
   /// see [BillObjectBoxStruct.cancel_user_code]
   static final cancel_user_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[31]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[30]);
 
   /// see [BillObjectBoxStruct.cancel_user_name]
   static final cancel_user_name =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[32]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[31]);
 
   /// see [BillObjectBoxStruct.cancel_reason]
   static final cancel_reason =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[33]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[32]);
 
   /// see [BillObjectBoxStruct.full_vat_print]
   static final full_vat_print =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[34]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[33]);
 
   /// see [BillObjectBoxStruct.full_vat_doc_number]
   static final full_vat_doc_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[35]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[34]);
 
   /// see [BillObjectBoxStruct.cancel_description]
   static final cancel_description =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[36]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[35]);
 
   /// see [BillObjectBoxStruct.doc_mode]
   static final doc_mode =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[37]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[36]);
 
   /// see [BillObjectBoxStruct.table_number]
   static final table_number =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[38]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[37]);
 
   /// see [BillObjectBoxStruct.man_count]
   static final man_count =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[39]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[38]);
 
   /// see [BillObjectBoxStruct.woman_count]
   static final woman_count =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[40]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[39]);
 
   /// see [BillObjectBoxStruct.child_count]
   static final child_count =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[41]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[40]);
 
   /// see [BillObjectBoxStruct.table_al_la_crate_mode]
   static final table_al_la_crate_mode =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[42]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[41]);
 
   /// see [BillObjectBoxStruct.buffet_code]
   static final buffet_code =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[43]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[42]);
 
   /// see [BillObjectBoxStruct.table_open_date_time]
   static final table_open_date_time =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[44]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[43]);
 
   /// see [BillObjectBoxStruct.table_close_date_time]
   static final table_close_date_time =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[45]);
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[44]);
 
   /// see [BillObjectBoxStruct.pay_json]
   static final pay_json =
-      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[45]);
 
   /// see [BillObjectBoxStruct.total_qty]
   static final total_qty =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
 
   /// see [BillObjectBoxStruct.total_calc_amount]
   static final total_calc_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[48]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
 
   /// see [BillObjectBoxStruct.total_calc_vat_amount]
   static final total_calc_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[49]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[48]);
 
   /// see [BillObjectBoxStruct.total_calc_amount_before_round]
   static final total_calc_amount_before_round =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[50]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[49]);
 
   /// see [BillObjectBoxStruct.total_calc_amount_round]
   static final total_calc_amount_round =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[51]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[50]);
 
   /// see [BillObjectBoxStruct.pay_cash_change]
   static final pay_cash_change =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[52]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[51]);
+
+  /// see [BillObjectBoxStruct.vat_mode]
+  static final vat_mode =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[52]);
+
+  /// see [BillObjectBoxStruct.total_item_vat_amount]
+  static final total_item_vat_amount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[53]);
+
+  /// see [BillObjectBoxStruct.total_item_except_amount]
+  static final total_item_except_amount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[54]);
 }
 
 /// [ConfigObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -3468,6 +3509,14 @@ class EmployeeObjectBoxStruct_ {
   /// see [EmployeeObjectBoxStruct.profile_picture]
   static final profile_picture =
       QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[6]);
+
+  /// see [EmployeeObjectBoxStruct.is_use_pos]
+  static final is_use_pos =
+      QueryBooleanProperty<EmployeeObjectBoxStruct>(_entities[2].properties[7]);
+
+  /// see [EmployeeObjectBoxStruct.pin_code]
+  static final pin_code =
+      QueryStringProperty<EmployeeObjectBoxStruct>(_entities[2].properties[8]);
 }
 
 /// [PosLogObjectBoxStruct] entity fields to define ObjectBox queries.

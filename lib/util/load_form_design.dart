@@ -61,6 +61,22 @@ Future<void> loadFormDesign() async {
           width: 2),
     ],
     [
+      // ยอดรวมสินค้ามีภาษี
+      FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_before_calc_vat&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดรวมสินค้ายกเว้นภาษี
+      FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_before_calc_vat&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
       // ยอดก่อนภาษี
       FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
       FormDesignColumnModel(

@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "57:2649055115574079493",
+      "lastPropertyId": "60:4683251167029681299",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -109,11 +109,6 @@
         {
           "id": "21:8298043862021191374",
           "name": "sum_qr_code",
-          "type": 8
-        },
-        {
-          "id": "22:4227198458679852788",
-          "name": "total_before_amount",
           "type": 8
         },
         {
@@ -275,6 +270,21 @@
           "id": "57:2649055115574079493",
           "name": "pay_cash_change",
           "type": 8
+        },
+        {
+          "id": "58:5704992869450108965",
+          "name": "vat_mode",
+          "type": 6
+        },
+        {
+          "id": "59:2523971994597278549",
+          "name": "total_item_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "60:4683251167029681299",
+          "name": "total_item_except_amount",
+          "type": 8
         }
       ],
       "relations": []
@@ -305,7 +315,7 @@
     },
     {
       "id": "7:4224485752852947885",
-      "lastPropertyId": "13:41430858726130000",
+      "lastPropertyId": "16:6689204863880077424",
       "name": "EmployeeObjectBoxStruct",
       "properties": [
         {
@@ -344,6 +354,16 @@
         {
           "id": "13:41430858726130000",
           "name": "profile_picture",
+          "type": 9
+        },
+        {
+          "id": "14:2699830854011803703",
+          "name": "is_use_pos",
+          "type": 1
+        },
+        {
+          "id": "16:6689204863880077424",
+          "name": "pin_code",
           "type": 9
         }
       ],
@@ -1891,7 +1911,9 @@
     1793824541169848359,
     1059936091951539085,
     3689734830323953667,
-    4405532620165712495
+    4405532620165712495,
+    1043201343847864181,
+    4227198458679852788
   ],
   "retiredRelationUids": [],
   "version": 1

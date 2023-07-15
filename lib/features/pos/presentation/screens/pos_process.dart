@@ -256,6 +256,7 @@ class PosProcess {
             detail.unit_name = logData.unit_name;
             detail.guid = logData.guid_auto_fixed;
             detail.image_url = productBarcode.images_url;
+            detail.exclude_vat = logData.exclude_vat;
             processResult.details.add(detail);
             result.lineGuid = detail.guid;
           } else {

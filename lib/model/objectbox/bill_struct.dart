@@ -32,6 +32,12 @@ class BillObjectBoxStruct {
   /// จำนวนชิ้น
   double total_qty;
 
+  /// ยอดรวมสินค้ามีภาษี
+  double total_item_vat_amount;
+
+  // ยอดรวมสินค้ายกเว้นภาษี
+  double total_item_except_vat_amount;
+
   /// ยอดรวมก่อนคำนวณ
   double total_calc_amount;
 
@@ -46,9 +52,6 @@ class BillObjectBoxStruct {
 
   /// ยอดรวมทั้งสิ้น
   double total_amount;
-
-  /// ยอดรวมก่อน vat
-  double total_before_amount;
 
   /// ยอด vat
   double total_vat_amount;
@@ -165,6 +168,9 @@ class BillObjectBoxStruct {
 
   String pay_json;
 
+  /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_mode;
+
   BillObjectBoxStruct(
       {required this.date_time,
       required this.table_open_date_time,
@@ -176,7 +182,6 @@ class BillObjectBoxStruct {
       required this.customer_telephone,
       required this.vat_rate,
       required this.total_amount,
-      required this.total_before_amount,
       required this.total_vat_amount,
       required this.total_except_amount,
       required this.cashier_code,
@@ -186,6 +191,7 @@ class BillObjectBoxStruct {
       required this.total_calc_amount,
       required this.total_calc_amount_before_round,
       required this.total_calc_amount_round,
+      required this.vat_mode,
       required this.total_calc_vat_amount,
       required this.total_qty,
       required this.is_sync,
@@ -217,6 +223,8 @@ class BillObjectBoxStruct {
       required this.table_al_la_crate_mode,
       required this.buffet_code,
       required this.pay_json,
+      required this.total_item_vat_amount,
+      required this.total_item_except_amount,
       required this.print_copy_bill_date_time});
 }
 

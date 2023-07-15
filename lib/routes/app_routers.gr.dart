@@ -79,6 +79,12 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const PrinterConfigScreen(),
       );
     },
+    EmployeeChangePasswordRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EmployeeChangePasswordPage(),
+      );
+    },
     LoginByEmployeeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -259,6 +265,20 @@ class PrinterConfigRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'PrinterConfigRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EmployeeChangePasswordPage]
+class EmployeeChangePasswordRoute extends PageRouteInfo<void> {
+  const EmployeeChangePasswordRoute({List<PageRouteInfo>? children})
+      : super(
+          EmployeeChangePasswordRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EmployeeChangePasswordRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -1,25 +1,29 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'sync_employee_model.g.dart';
+part 'employee_model.g.dart';
 
 @JsonSerializable()
-class SyncEmployeeModel {
+class EmployeeModel {
   String guidfixed;
   String code;
   String email;
   bool isenabled;
+  bool isusepos;
   String name;
   String profilepicture;
+  String pincode;
 
-  SyncEmployeeModel({
+  EmployeeModel({
     required this.guidfixed,
     required this.code,
     required this.profilepicture,
     required this.name,
     required this.email,
     required this.isenabled,
+    required this.pincode,
+    required this.isusepos,
   });
 
-  factory SyncEmployeeModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncEmployeeModelFromJson(json);
-  Map<String, dynamic> toJson() => _$SyncEmployeeModelToJson(this);
+  factory EmployeeModel.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeModelFromJson(json);
+  Map<String, dynamic> toJson() => _$EmployeeModelToJson(this);
 }

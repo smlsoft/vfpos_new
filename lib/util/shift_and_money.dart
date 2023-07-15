@@ -94,7 +94,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
                           children: [
                             Text(global.language("employee_code"),
                                 style: textStyle),
-                            Text(global.userLoginCode,
+                            Text(global.userLogin!.code,
                                 style: textStyle.copyWith(
                                     fontWeight: FontWeight.bold)),
                           ],
@@ -103,7 +103,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
                           children: [
                             Text(global.language("employee_name"),
                                 style: textStyle),
-                            Text(global.userLoginName,
+                            Text(global.userLogin!.name,
                                 style: textStyle.copyWith(
                                     fontWeight: FontWeight.bold)),
                           ],
@@ -135,8 +135,8 @@ Widget shiftAndMoneyScreen({required int mode}) {
                                   doctype: mode,
                                   docdate: DateTime.now(),
                                   remark: remarkTextEditingController.text,
-                                  usercode: global.userLoginCode,
-                                  username: global.userLoginName,
+                                  usercode: global.userLogin!.code,
+                                  username: global.userLogin!.name,
                                   amount: amount,
                                   creditcard: 1,
                                   promptpay: 2,

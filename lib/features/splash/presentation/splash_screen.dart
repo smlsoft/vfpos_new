@@ -25,56 +25,58 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      serviceLocator<CheckUserLoginStatus>()
-          .checkIfUserLoggedIn()
-          .then((isUserLoggedIn) async {
-        if (isUserLoggedIn) {
-          final user = await serviceLocator<UserCacheService>().getUser();
+    reload();
+  }
 
-          context
-              .read<AuthenticationBloc>()
-              .add(AuthenticationEvent.authenticated(user: user!));
+  void reload() {
+    serviceLocator<CheckUserLoginStatus>()
+        .checkIfUserLoggedIn()
+        .then((isUserLoggedIn) async {
+      if (isUserLoggedIn) {
+        final user = await serviceLocator<UserCacheService>().getUser();
 
-          await global.appStorage.write("token", user.token);
-          global.apiConnected = true;
-          global.loginSuccess = true;
-          global.loginProcess = true;
-          // global.apiConnected = true;
+        context
+            .read<AuthenticationBloc>()
+            .add(AuthenticationEvent.authenticated(user: user!));
 
-          serviceLocator<CheckUserLoginStatus>()
-              .checkIfUserSelectedShop()
-              .then((userSelectedShop) async {
-            if (userSelectedShop != null) {
-              global.apiShopID = userSelectedShop.guidfixed;
-              await global.getProfile();
-              context.read<SelectShopBloc>().add(
-                  SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
-              if (F.appFlavor == Flavor.DEDEPOS) {
-                context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
-                    predicate: (route) => false);
-                return;
-              } else {
-                context.router.pushAndPopUntil(const InitShopRoute(),
-                    predicate: (route) => false);
-              }
+        await global.appStorage.write("token", user.token);
+        global.apiConnected = true;
+        global.loginSuccess = true;
+        global.loginProcess = true;
+        // global.apiConnected = true;
+
+        serviceLocator<CheckUserLoginStatus>()
+            .checkIfUserSelectedShop()
+            .then((userSelectedShop) async {
+          if (userSelectedShop != null) {
+            global.apiShopID = userSelectedShop.guidfixed;
+            await global.getProfile();
+            context.read<SelectShopBloc>().add(
+                SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
+            if (F.appFlavor == Flavor.DEDEPOS) {
+              context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
+                  predicate: (route) => false);
+              return;
             } else {
-              context.router.pushAndPopUntil(const SelectShopRoute(),
+              context.router.pushAndPopUntil(const InitShopRoute(),
                   predicate: (route) => false);
             }
-          });
-        } else {
-          // check flavor is dedepos
-          if (F.appFlavor == Flavor.DEDEPOS) {
-            context.router.pushAndPopUntil(const RegisterPosTerminalRoute(),
-                predicate: (route) => false);
-            return;
           } else {
-            context.router.pushAndPopUntil(const AuthenticationRoute(),
+            context.router.pushAndPopUntil(const SelectShopRoute(),
                 predicate: (route) => false);
           }
+        });
+      } else {
+        // check flavor is dedepos
+        if (F.appFlavor == Flavor.DEDEPOS) {
+          context.router.pushAndPopUntil(const RegisterPosTerminalRoute(),
+              predicate: (route) => false);
+          return;
+        } else {
+          context.router.pushAndPopUntil(const AuthenticationRoute(),
+              predicate: (route) => false);
         }
-      });
+      }
     });
   }
 
@@ -82,12 +84,19 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Image.asset(
-            'assets/smlsoft-logo-512.png', // path to your image asset
-            height: 900.0, width: 900.0,
+        child: Column(children: [
+          Center(
+            child: Image.asset(
+              'assets/smlsoft-logo-512.png', // path to your image asset
+            ),
           ),
-        ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+              onPressed: () {
+                reload();
+              },
+              child: const Text("Refresh"))
+        ]),
       ),
     );
   }

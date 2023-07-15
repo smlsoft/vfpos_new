@@ -1,50 +1,102 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/util/loading_screen.dart';
+import 'package:dedepos/util/login_by_employee_page.dart';
 import 'package:dedepos/util/select_language_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 
 @RoutePage()
-class LoginByEmployeePage extends StatefulWidget {
-  const LoginByEmployeePage({Key? key}) : super(key: key);
+class EmployeeChangePasswordPage extends StatefulWidget {
+  const EmployeeChangePasswordPage({Key? key}) : super(key: key);
 
   @override
-  _LoginByEmployeeState createState() => _LoginByEmployeeState();
+  _EmployeeChangePasswordState createState() => _EmployeeChangePasswordState();
 }
 
-class _LoginByEmployeeState extends State<LoginByEmployeePage> {
-  TextEditingController userController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  bool obscureVisible = true;
+class _EmployeeChangePasswordState extends State<EmployeeChangePasswordPage> {
+  TextEditingController oldPasswordController = TextEditingController();
+  TextEditingController newFirstPasswordController = TextEditingController();
+  TextEditingController newSecondPasswordController = TextEditingController();
   String lastStatus = "";
 
   @override
   void initState() {
     super.initState();
-    global.loginSuccess = false;
-    global.syncDataSuccess = false;
-    userController.text = '1';
-    passwordController.text = '12345';
+    oldPasswordController.text = '';
+    newFirstPasswordController.text = '';
+    newSecondPasswordController.text = '';
   }
 
   @override
   void dispose() {
-    userController.dispose();
-    passwordController.dispose();
+    oldPasswordController.dispose();
+    newFirstPasswordController.dispose();
+    newSecondPasswordController.dispose();
     super.dispose();
+  }
+
+  void changePassword() {
+    oldPasswordController.text = oldPasswordController.text.trim();
+    newFirstPasswordController.text = newFirstPasswordController.text.trim();
+    newSecondPasswordController.text = newSecondPasswordController.text.trim();
+    print(global.userLogin!.pin_code);
+    if (oldPasswordController.text != global.userLogin!.pin_code) {
+      setState(() {
+        lastStatus = global.language("old_password_not_match");
+      });
+      return;
+    } else if (newFirstPasswordController.text !=
+        newSecondPasswordController.text) {
+      setState(() {
+        lastStatus = global.language("new_password_not_match");
+      });
+      return;
+    } else {
+      ApiRepository apiRepository = ApiRepository();
+      apiRepository
+          .userChangePassword(
+              global.userLogin!.code, newFirstPasswordController.text)
+          .then((result) {
+        if (result == true) {
+          global.loadConfig();
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const LoginByEmployeePage()),
+            );
+          }
+        } else {
+          setState(() {
+            lastStatus = global.language("change_password_fail");
+          });
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.red[100],
             appBar: AppBar(
               title: Text(
-                  "${global.language("sign_in")} ${global.applicationName}"),
+                  "${global.language("change_password")} ${global.applicationName}"),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginByEmployeePage()),
+                  );
+                },
+              ),
               actions: [
                 IconButton(
                     onPressed: () async {
@@ -133,28 +185,27 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                             const SizedBox(height: 20),
                             TextFormField(
                               autofocus: true,
-                              controller: userController,
+                              controller: oldPasswordController,
                               decoration: InputDecoration(
-                                labelText: global.language("user_code"),
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.person),
+                                labelText: global.language("old_password"),
+                                border: const OutlineInputBorder(),
                               ),
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
-                              obscureText: obscureVisible,
-                              controller: passwordController,
+                              controller: newFirstPasswordController,
                               decoration: InputDecoration(
-                                labelText: global.language("user_password"),
+                                labelText: global.language("new_password"),
                                 border: const OutlineInputBorder(),
-                                prefixIcon: const Icon(Icons.lock),
-                                suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        obscureVisible = !obscureVisible;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.visibility)),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            TextFormField(
+                              controller: newSecondPasswordController,
+                              decoration: InputDecoration(
+                                labelText:
+                                    global.language("new_password_confirm"),
+                                border: const OutlineInputBorder(),
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -167,65 +218,12 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                               width: double.infinity,
                               height: 45,
                               child: ElevatedButton(
-                                onPressed: () async {
-                                  var employee = global.employeeHelper
-                                      .selectByCode(code: userController.text);
-                                  if (employee != null) {
-                                    if (employee.pin_code ==
-                                            passwordController.text &&
-                                        employee.is_use_pos == true) {
-                                      if (employee.pin_code == "123456") {
-                                        global.userLogin = employee;
-                                        await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'ต้องเปลี่ยนรหัสผ่าน'),
-                                                content: const Text(
-                                                    'เนื่องจากรหัสผ่านเป็นรหัสเริ่มต้น กรุณาเปลี่ยนรหัสผ่านใหม่'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                      context.router
-                                                          .pushAndPopUntil(
-                                                              const EmployeeChangePasswordRoute(),
-                                                              predicate:
-                                                                  (route) =>
-                                                                      false);
-                                                    },
-                                                    child: const Text('OK'),
-                                                  ),
-                                                ],
-                                              );
-                                            });
-                                      } else {
-                                        global.userLogin = employee;
-                                        global.loginSuccess = true;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const LoadingScreen()),
-                                        );
-                                      }
-                                    } else {
-                                      setState(() {
-                                        lastStatus = global.language(
-                                            "user_name_or_password_incorrect");
-                                      });
-                                    }
-                                  } else {
-                                    setState(() {
-                                      lastStatus = global.language(
-                                          "user_name_or_password_incorrect");
-                                    });
-                                  }
+                                onPressed: () {
+                                  changePassword();
                                 },
-                                child: Text(global.language("sign_in")),
+                                child: Text(global.language("change_password")),
                               ),
-                            )
+                            ),
                           ]),
                     )))));
   }

@@ -164,7 +164,6 @@ class PosPrintBillClass {
   }
 
   String findValueBillTotal(BillObjectBoxStruct value, String source) {
-
     String result = source;
     // จำนวนชิ้น
     result = result.replaceAll("&total_piece_name&", "จำนวนชิ้น");
@@ -199,16 +198,16 @@ class PosPrintBillClass {
         "&total_vat&", global.moneyFormatAndDot.format(value.total_vat_amount));
     // ยอดก่อนภาษี
     result = result.replaceAll("&total_before_vat_name&", "ยอดก่อนภาษี");
-    result = result.replaceAll(
-        "&total_before_vat&", global.moneyFormatAndDot.format(value.total_before_amount));
+    result = result.replaceAll("&total_before_vat&",
+        global.moneyFormatAndDot.format(value.total_calc_amount));
     // รับเงินสด
     result = result.replaceAll("&total_pay_cash_name&", "ชำระเงินสด");
-    result = result.replaceAll(
-        "&total_pay_cash&", global.moneyFormatAndDot.format(value.pay_cash_amount));
+    result = result.replaceAll("&total_pay_cash&",
+        global.moneyFormatAndDot.format(value.pay_cash_amount));
     // เงินทอน
     result = result.replaceAll("&total_pay_cash_change_name&", "เงินทอน");
-    result = result.replaceAll(
-        "&total_pay_cash_change&", global.moneyFormatAndDot.format(value.pay_cash_change));
+    result = result.replaceAll("&total_pay_cash_change&",
+        global.moneyFormatAndDot.format(value.pay_cash_change));
     return result.trim().replaceAll("  ", " ").replaceAll("  ", " ");
   }
 
@@ -216,6 +215,8 @@ class PosPrintBillClass {
     FormDesignObjectBoxStruct formDesign = global.formDesignList[0];
     List<PosPrintBillCommandModel> commandList = [];
 
+    BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
+        docNumber: docNo, posScreenMode: global.posScreenToInt());
     // Reset Printer
     commandList.add(PosPrintBillCommandModel(mode: 0));
 
@@ -254,14 +255,10 @@ class PosPrintBillClass {
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
           width: 1,
-          text: "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)",
-          align: PrintColumnAlign.center)
-    ]));
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      PosPrintBillCommandColumnModel(
-          width: 1,
           text: global.getNameFromJsonLanguage(
               formDesign.names_json, languageCode),
+          fontSize: 30,
+          fontWeightBold: true,
           align: PrintColumnAlign.center)
     ]));
     //
@@ -291,7 +288,7 @@ class PosPrintBillClass {
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
           PosPrintBillCommandColumnModel(
               width: 1,
-              text: "โทรศัพท์ : " + phone,
+              text: "โทรศัพท์ : $phone",
               align: PrintColumnAlign.center)
         ]));
       }
@@ -300,6 +297,14 @@ class PosPrintBillClass {
       PosPrintBillCommandColumnModel(
           width: 1,
           text: "หมายเลขเครื่อง POS : 11231220899223131",
+          align: PrintColumnAlign.center)
+    ]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      PosPrintBillCommandColumnModel(
+          width: 1,
+          text: (bill!.vat_mode == 0)
+              ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)"
+              : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)",
           align: PrintColumnAlign.center)
     ]));
     // Header
@@ -314,395 +319,147 @@ class PosPrintBillClass {
       ]));
     }
     // Detail
-    BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
-        docNumber: docNo, posScreenMode: global.posScreenToInt());
-    if (bill != null) {
-      List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
-          .box<BillDetailObjectBoxStruct>()
-          .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
-          .order(BillDetailObjectBoxStruct_.line_number)
-          .build()
-          .find();
+    List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+        .box<BillDetailObjectBoxStruct>()
+        .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
+        .order(BillDetailObjectBoxStruct_.line_number)
+        .build()
+        .find();
 
-      if (formDesign.sum_by_barcode) {
-        // กรณีพิมพ์บิลแบบรวมรายการ
-        List<BillDetailObjectBoxStruct> billDetailSum = [];
-        for (var billDetail in billDetails) {
-          bool isFound = false;
-          for (var billDetailSumItem in billDetailSum) {
-            if (billDetailSumItem.barcode == billDetail.barcode &&
-                billDetailSumItem.extra_json == billDetail.extra_json) {
-              billDetailSumItem.qty += billDetail.qty;
-              billDetailSumItem.total_amount += billDetail.total_amount;
-              isFound = true;
-              break;
-            }
-          }
-          if (!isFound) {
-            billDetailSum.add(billDetail);
+    if (formDesign.sum_by_barcode) {
+      // กรณีพิมพ์บิลแบบรวมรายการ
+      List<BillDetailObjectBoxStruct> billDetailSum = [];
+      for (var billDetail in billDetails) {
+        bool isFound = false;
+        for (var billDetailSumItem in billDetailSum) {
+          if (billDetailSumItem.barcode == billDetail.barcode &&
+              billDetailSumItem.extra_json == billDetail.extra_json) {
+            billDetailSumItem.qty += billDetail.qty;
+            billDetailSumItem.total_amount += billDetail.total_amount;
+            isFound = true;
+            break;
           }
         }
-        billDetails = billDetailSum;
+        if (!isFound) {
+          billDetailSum.add(billDetail);
+        }
       }
+      billDetails = billDetailSum;
+    }
 
-      List<FormDesignColumnModel> formDetailList =
-          (jsonDecode(formDesign.detail_json) as List)
-              .map((e) => FormDesignColumnModel.fromJson(e))
-              .toList();
-      List<FormDesignColumnModel> formDetailExtraList =
-          (jsonDecode(formDesign.detail_extra_json) as List)
-              .map((e) => FormDesignColumnModel.fromJson(e))
-              .toList();
-      List<List<FormDesignColumnModel>> formDetailColumnList =
-          (jsonDecode(formDesign.detail_total_json) as List)
-              .map((e) => (e as List)
-                  .map((e) => FormDesignColumnModel.fromJson(e))
-                  .toList())
-              .toList();
-      // พิมพ์ หัว Column
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
+    List<FormDesignColumnModel> formDetailList =
+        (jsonDecode(formDesign.detail_json) as List)
+            .map((e) => FormDesignColumnModel.fromJson(e))
+            .toList();
+    List<FormDesignColumnModel> formDetailExtraList =
+        (jsonDecode(formDesign.detail_extra_json) as List)
+            .map((e) => FormDesignColumnModel.fromJson(e))
+            .toList();
+    List<List<FormDesignColumnModel>> formDetailColumnList =
+        (jsonDecode(formDesign.detail_total_json) as List)
+            .map((e) => (e as List)
+                .map((e) => FormDesignColumnModel.fromJson(e))
+                .toList())
+            .toList();
+    // พิมพ์ หัว Column
+    // Line
+    commandList.add(PosPrintBillCommandModel(mode: 3));
+    {
+      List<PosPrintBillCommandColumnModel> columns = [];
+      for (var formDetail in formDetailList) {
+        columns.add(
+          PosPrintBillCommandColumnModel(
+              width: formDetail.width,
+              text: global.getNameFromLanguage(
+                  formDetail.header_names, languageCode),
+              align: formDetail.text_align,
+              fontWeightBold: true,
+              fontSize: formDetail.font_size),
+        );
+      }
+      commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+    }
+    // Line
+    commandList.add(PosPrintBillCommandModel(mode: 3));
+    for (var detail in billDetails) {
       {
+        // รายละเอียดสินค้า
         List<PosPrintBillCommandColumnModel> columns = [];
         for (var formDetail in formDetailList) {
-          columns.add(
-            PosPrintBillCommandColumnModel(
-                width: formDetail.width,
-                text: global.getNameFromLanguage(
-                    formDetail.header_names, languageCode),
-                align: formDetail.text_align,
-                fontWeightBold: true,
-                fontSize: formDetail.font_size),
-          );
+          {
+            columns.add(
+              PosPrintBillCommandColumnModel(
+                  width: formDetail.width,
+                  text: findValueBillDetail(detail, formDetail.command),
+                  align: formDetail.text_align,
+                  fontWeightBold: false,
+                  fontSize: formDetail.font_size),
+            );
+          }
         }
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
       }
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
-      for (var detail in billDetails) {
-        {
-          // รายละเอียดสินค้า
-          List<PosPrintBillCommandColumnModel> columns = [];
-          for (var formDetail in formDetailList) {
-            {
-              columns.add(
-                PosPrintBillCommandColumnModel(
-                    width: formDetail.width,
-                    text: findValueBillDetail(detail, formDetail.command),
-                    align: formDetail.text_align,
-                    fontWeightBold: false,
-                    fontSize: formDetail.font_size),
-              );
-            }
-          }
-          commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
-        }
-        {
-          // ส่วนเพิ่มเติม
-          List<BillDetailExtraObjectBoxStruct> extraList =
-              (jsonDecode(detail.extra_json) as List)
-                  .map((e) => BillDetailExtraObjectBoxStruct.fromJson(e))
-                  .toList();
-          for (var extra in extraList) {
-            List<PosPrintBillCommandColumnModel> columns = [];
-            for (var formDetailExtra in formDetailExtraList) {
-              columns.add(
-                PosPrintBillCommandColumnModel(
-                    width: formDetailExtra.width,
-                    text: findValueBillDetailExtra(
-                        extra, formDetailExtra.command),
-                    align: formDetailExtra.text_align,
-                    fontWeightBold: formDetailExtra.font_weight_bold,
-                    fontSize: formDetailExtra.font_size),
-              );
-            }
-            commandList
-                .add(PosPrintBillCommandModel(mode: 2, columns: columns));
-          }
-        }
-      }
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
       {
-        double sumQty = 0;
-        for (var detail in billDetails) {
-          sumQty += detail.qty;
-        }
-        for (var formDetailColumns in formDetailColumnList) {
+        // ส่วนเพิ่มเติม
+        List<BillDetailExtraObjectBoxStruct> extraList =
+            (jsonDecode(detail.extra_json) as List)
+                .map((e) => BillDetailExtraObjectBoxStruct.fromJson(e))
+                .toList();
+        for (var extra in extraList) {
           List<PosPrintBillCommandColumnModel> columns = [];
-          for (FormDesignColumnModel column in formDetailColumns) {
-            // พิมพ์ยอดรวม (รายการ
+          for (var formDetailExtra in formDetailExtraList) {
             columns.add(
               PosPrintBillCommandColumnModel(
-                  width: column.width,
-                  text: findValueBillTotal(bill, column.command),
-                  align: column.text_align,
-                  fontWeightBold: column.font_weight_bold,
-                  fontSize: column.font_size),
+                  width: formDetailExtra.width,
+                  text:
+                      findValueBillDetailExtra(extra, formDetailExtra.command),
+                  align: formDetailExtra.text_align,
+                  fontWeightBold: formDetailExtra.font_weight_bold,
+                  fontSize: formDetailExtra.font_size),
             );
           }
           commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
         }
       }
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
-      // Header
-      FormDesignHeaderModel footerDescriptionList =
-          FormDesignHeaderModel.fromJson(jsonDecode(formDesign.footer_json));
-      for (var footerDescription in footerDescriptionList.description) {
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-          PosPrintBillCommandColumnModel(
-              width: 1,
-              text: global.getNameFromLanguage(footerDescription, languageCode),
-              align: PrintColumnAlign.center)
-        ]));
+    }
+    // Line
+    commandList.add(PosPrintBillCommandModel(mode: 3));
+    {
+      double sumQty = 0;
+      for (var detail in billDetails) {
+        sumQty += detail.qty;
       }
+      for (var formDetailColumns in formDetailColumnList) {
+        List<PosPrintBillCommandColumnModel> columns = [];
+        for (FormDesignColumnModel column in formDetailColumns) {
+          // พิมพ์ยอดรวม (รายการ
+          columns.add(
+            PosPrintBillCommandColumnModel(
+                width: column.width,
+                text: findValueBillTotal(bill, column.command),
+                align: column.text_align,
+                fontWeightBold: column.font_weight_bold,
+                fontSize: column.font_size),
+          );
+        }
+        commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+      }
+    }
+    // Line
+    commandList.add(PosPrintBillCommandModel(mode: 3));
+    // Header
+    FormDesignHeaderModel footerDescriptionList =
+        FormDesignHeaderModel.fromJson(jsonDecode(formDesign.footer_json));
+    for (var footerDescription in footerDescriptionList.description) {
+      commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+        PosPrintBillCommandColumnModel(
+            width: 1,
+            text: global.getNameFromLanguage(footerDescription, languageCode),
+            align: PrintColumnAlign.center)
+      ]));
     }
     return commandList;
   }
-
-  /*Future<List<PosPrintBillCommandModel>> buildCommand() async {
-    List<PosPrintBillCommandModel> commandList = [];
-
-    // Reset Printer
-    commandList.add(PosPrintBillCommandModel(mode: 0));
-
-    double totalDiscountAndPromotion = 0;
-
-    if (global.posTicket.logo) {
-      // พิมพ์ Logo
-      ByteData data = await rootBundle.load('assets/logo.jpg');
-      Uint8List bytes = data.buffer.asUint8List();
-      commandList.add(PosPrintBillCommandModel(mode: 1, image: bytes));
-    }
-    /*if (global.posTicket.shop_name) {
-      // พิมพ์ชื่อร้าน
-      commandList.add(PosPrintBillCommandModel(
-          mode: 2,
-          columns: [
-            PosPrintBillCommandColumnModel(
-                width: 1,
-                text: global.profileSetting.company.names[0].name,
-                align: PrintColumnAlign.center)
-          ],
-          posTextSize: PosTextSize.size2));
-    }
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      PosPrintBillCommandColumnModel(
-          width: 1,
-          text: global.profileSetting.branch[0].names[0].name,
-          align: PrintColumnAlign.center)
-    ]));
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      PosPrintBillCommandColumnModel(
-          width: 1, text: "(Vat Included)", align: PrintColumnAlign.center)
-    ]));*/
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      PosPrintBillCommandColumnModel(
-          width: 1, text: "ใบสรุปรายการ", align: PrintColumnAlign.center)
-    ]));
-    /*commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      PosPrintBillCommandColumnModel(
-          width: 1,
-          text: "",
-          align: PrintColumnAlign.center)
-    ]));*/
-    //
-    if (global.posTicket.shop_tax_id) {
-      // พิมพ์ เลขที่ผู้เสียภาษี
-      if (global.profileSetting.company.taxID.trim().isNotEmpty) {
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-          PosPrintBillCommandColumnModel(
-              width: 1,
-              text:
-                  "เลขประจำตัวผู้เสียภาษี : ${global.profileSetting.company.taxID}",
-              align: PrintColumnAlign.center)
-        ]));
-      }
-    }
-    //
-    if (global.posTicket.shop_tel) {
-      // พิมพ์ เบอร์โทรศัพท์
-      String phone = "";
-      for (var item in global.profileSetting.company.phones) {
-        if (phone.isNotEmpty) {
-          phone += ",";
-        }
-        phone += item;
-      }
-      if (phone.isNotEmpty) {
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-          PosPrintBillCommandColumnModel(
-              width: 1,
-              text: "โทรศัพท์ : " + phone,
-              align: PrintColumnAlign.center)
-        ]));
-      }
-    }
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      PosPrintBillCommandColumnModel(
-          width: 1,
-          text: "หมายเลขเครื่อง POS : 11231220899223131",
-          align: PrintColumnAlign.center)
-    ]));
-    BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
-        docNumber: docNo, posScreenMode: global.posScreenToInt());
-    if (bill != null) {
-      List<BillDetailObjectBoxStruct> billDetails =
-          global.billDetailHelper.selectByDocNumber(docNumber: docNo);
-      //
-      List<BillPayObjectBoxStruct> payDetails =
-          global.billPayHelper.selectByDocNumber(docNumber: docNo);
-      //
-      double sumWidth =
-          global.posTicket.description_width + global.posTicket.amount_width;
-      double calcWidth = global.printerWidthByCharacter(0) / sumWidth;
-      int widthCharDescription =
-          (global.posTicket.description_width * calcWidth).toInt();
-      int widthCharAmount = (global.posTicket.amount_width * calcWidth).toInt();
-
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
-
-      /// ส่วนของการแสดงรายการสินค้า
-      for (var detail in billDetails) {
-        /// สินค้าทั่วไป
-        String desc =
-            "${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.item_name, languageCode)}/${global.getNameFromJsonLanguage(detail.unit_name, languageCode)}";
-        if (detail.discount_text.isNotEmpty) {
-          desc = "$desc ${global.language("discount")}";
-          if (detail.discount_text.contains("%") ||
-              detail.discount_text.contains(",")) {
-            desc = "$desc ${detail.discount_text}=";
-          }
-          desc = "$desc ${global.moneyFormat.format(detail.discount)}";
-          desc = "$desc ${global.language("money_symbol")}/${detail.unit_name}";
-        }
-        if (detail.price != detail.total_amount) {
-          if (detail.price != 0) {
-            desc = "$desc @${global.moneyFormat.format(detail.price)}";
-          }
-        }
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-          PosPrintBillCommandColumnModel(
-              width: widthCharDescription.toDouble(), text: desc),
-          PosPrintBillCommandColumnModel(
-              width: widthCharAmount.toDouble(),
-              text: (detail.total_amount == 0)
-                  ? ""
-                  : global.moneyFormat.format(detail.total_amount),
-              align: PrintColumnAlign.right),
-        ]));
-
-        /// สินค้าเพิ่ม (Extra)
-        List<BillDetailExtraObjectBoxStruct> extras =
-            global.billDetailExtraHelper.selectByDocNumberAndLineNumber(
-                docNumber: detail.doc_number, lineNumber: detail.line_number);
-        for (var extra in extras) {
-          String extraDesc =
-              " + ${global.getNameFromJsonLanguage(extra.item_name, languageCode)}";
-          commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-            PosPrintBillCommandColumnModel(
-                width: widthCharDescription.toDouble(), text: extraDesc),
-            PosPrintBillCommandColumnModel(
-                width: widthCharAmount.toDouble(),
-                text: (extra.total_amount == 0)
-                    ? ""
-                    : global.moneyFormat.format(extra.total_amount),
-                align: PrintColumnAlign.right),
-          ]));
-        }
-      }
-
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
-      // พิมพ์ยอดรวม
-      commandList.add(PosPrintBillCommandModel(
-          mode: 2,
-          columns: [
-            PosPrintBillCommandColumnModel(
-                width: widthCharDescription.toDouble(),
-                text: global.language("total_amount")),
-            PosPrintBillCommandColumnModel(
-                width: widthCharAmount.toDouble(),
-                text: global.moneyFormat.format(bill.total_amount),
-                align: PrintColumnAlign.right),
-          ],
-          posStyles: const PosStyles(bold: true)));
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
-
-      if (bill.pay_cash_amount > 0) {
-        // รวมเงินสด
-        commandList.add(PosPrintBillCommandModel(
-            mode: 2,
-            columns: [
-              PosPrintBillCommandColumnModel(
-                  width: widthCharDescription.toDouble(),
-                  text: global.language("cash")),
-              PosPrintBillCommandColumnModel(
-                  width: widthCharAmount.toDouble(),
-                  text: global.moneyFormat.format(bill.pay_cash_amount),
-                  align: PrintColumnAlign.right),
-            ],
-            posStyles: const PosStyles(bold: true)));
-      }
-      double sumTotalPayAmount = bill.pay_cash_amount +
-          bill.sum_discount +
-          bill.sum_coupon +
-          bill.sum_credit_card +
-          bill.sum_money_transfer +
-          bill.sum_cheque +
-          bill.sum_qr_code;
-      // ยอดรวมจ่าย
-      commandList.add(PosPrintBillCommandModel(
-          mode: 2,
-          columns: [
-            PosPrintBillCommandColumnModel(
-                width: widthCharDescription.toDouble(),
-                text: global.language("total_pay_bill")),
-            PosPrintBillCommandColumnModel(
-                width: widthCharAmount.toDouble(),
-                text: global.moneyFormat.format(sumTotalPayAmount),
-                align: PrintColumnAlign.right),
-          ],
-          posStyles: const PosStyles(bold: true)));
-
-      // Line
-      commandList.add(PosPrintBillCommandModel(mode: 3));
-
-      if (global.posTicket.sale_detail && bill.sale_code.isNotEmpty) {
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-          PosPrintBillCommandColumnModel(
-              width: 1,
-              text:
-                  "${global.language("sale_code")} : ${bill.sale_name} (${bill.sale_code})"),
-        ]));
-      }
-      commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-        PosPrintBillCommandColumnModel(width: 1, text: "#${bill.doc_number}"),
-        PosPrintBillCommandColumnModel(
-            width: 1, text: "10/10/2564 16:30", align: PrintColumnAlign.right),
-      ]));
-
-      //
-      if (global.posTicket.cashier_detail && bill.cashier_code.isNotEmpty) {
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-          PosPrintBillCommandColumnModel(
-              width: 1,
-              text: "${global.language("cashier")} ${bill.cashier_name}"),
-          PosPrintBillCommandColumnModel(
-              width: 1,
-              text: "${global.language("sale")} ${bill.cashier_name}",
-              align: PrintColumnAlign.right),
-        ]));
-      }
-    } else {
-      serviceLocator<Log>().error(
-          "Printer Connect fail.${global.printerLocalStrongData[0].ipAddress}:${global.printerLocalStrongData[0].ipPort}");
-    }
-    return commandList;
-  }*/
 
   void printBillByBluetoothImageMode() async {
     await PrintBluetoothThermal.connect(
@@ -792,71 +549,72 @@ class PosPrintBillClass {
         : PaperSize.mm80;
     CapabilityProfile profile = await CapabilityProfile.load();
     NetworkPrinter printer = NetworkPrinter(paper, profile);
-    PosPrintResult res = await printer.connect(
-        global.printerLocalStrongData[0].ipAddress,
-        port: global.printerLocalStrongData[0].ipPort);
+    double maxHeight = 0;
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
+    final backgroundPaint = ui.Paint()
+      ..color = const Color(0xFFFFFFFF)
+      ..style = ui.PaintingStyle.fill;
+    final double width = global.printerWidthByPixel(0);
 
-    if (res == PosPrintResult.success) {
-      double maxHeight = 0;
-      final recorder = ui.PictureRecorder();
-      final canvas = ui.Canvas(recorder);
-      final backgroundPaint = ui.Paint()
-        ..color = const Color(0xFFFFFFFF)
-        ..style = ui.PaintingStyle.fill;
-      final double width = global.printerWidthByPixel(0);
+    canvas.drawRect(Rect.fromLTWH(0.0, 0.0, width, 20000.0), backgroundPaint);
 
-      canvas.drawRect(Rect.fromLTWH(0.0, 0.0, width, 20000.0), backgroundPaint);
-
-      await buildCommand().then((value) async {
-        PrintProcess printProcess = PrintProcess(printerIndex: 0);
-        for (var command in value) {
-          // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
-          print("Command : ${command.mode}");
-          switch (command.mode) {
-            case 0: // Reset
-              break;
-            case 1: // Logo Image
-              if (command.image != null) {
-                ui.Image? logo;
-                ui.decodeImageFromList(command.image!, (result) {
-                  logo = result;
-                });
-                while (logo == null) {
-                  await Future.delayed(const Duration(milliseconds: 100));
-                }
-                canvas.drawImage(logo!,
-                    Offset((width - logo!.width) / 2, maxHeight), ui.Paint());
-                maxHeight += logo!.height.toDouble();
+    await buildCommand().then((value) async {
+      PrintProcess printProcess = PrintProcess(printerIndex: 0);
+      for (var command in value) {
+        // 0=Reset,1=Logo Image,2=Text,3=Line,9=Cut
+        print("Command : ${command.mode}");
+        switch (command.mode) {
+          case 0: // Reset
+            break;
+          case 1: // Logo Image
+            if (command.image != null) {
+              ui.Image? logo;
+              ui.decodeImageFromList(command.image!, (result) {
+                logo = result;
+              });
+              while (logo == null) {
+                await Future.delayed(const Duration(milliseconds: 100));
               }
-              break;
-            case 2: // Text
-              printProcess.columnWidth.clear();
-              printProcess.column.clear();
-              for (int index = 0; index < command.columns.length; index++) {
-                printProcess.columnWidth.add(command.columns[index].width);
-                printProcess.column.add(PrintColumn(
-                    text: command.columns[index].text,
-                    align: command.columns[index].align,
-                    bold: command.columns[index].fontWeightBold,
-                    fontSize: command.columns[index].fontSize));
-              }
-              ui.Image result = await printProcess
-                  .lineFeedImage(command.posStyles ?? const PosStyles());
-              canvas.drawImage(result, Offset(0, maxHeight), ui.Paint());
-              maxHeight += result.height.toDouble();
-              break;
-            case 3: // Line
-              canvas.drawLine(
-                  Offset(0, maxHeight),
-                  Offset(0 + global.printerWidthByPixel(0), maxHeight),
-                  ui.Paint());
-              maxHeight += 1;
-              break;
-          }
+              canvas.drawImage(logo!,
+                  Offset((width - logo!.width) / 2, maxHeight), ui.Paint());
+              maxHeight += logo!.height.toDouble();
+            }
+            break;
+          case 2: // Text
+            printProcess.columnWidth.clear();
+            printProcess.column.clear();
+            for (int index = 0; index < command.columns.length; index++) {
+              printProcess.columnWidth.add(command.columns[index].width);
+              printProcess.column.add(PrintColumn(
+                  text: command.columns[index].text,
+                  align: command.columns[index].align,
+                  bold: command.columns[index].fontWeightBold,
+                  fontSize: command.columns[index].fontSize));
+            }
+            ui.Image result = await printProcess
+                .lineFeedImage(command.posStyles ?? const PosStyles());
+            canvas.drawImage(result, Offset(0, maxHeight), ui.Paint());
+            maxHeight += result.height.toDouble();
+            break;
+          case 3: // Line
+            canvas.drawLine(
+                Offset(0, maxHeight),
+                Offset(0 + global.printerWidthByPixel(0), maxHeight),
+                ui.Paint());
+            maxHeight += 1;
+            break;
         }
-        final picture = recorder.endRecording();
-        final imageBuffer = picture.toImage(
-            global.printerWidthByPixel(0).toInt(), maxHeight.toInt());
+      }
+      final picture = recorder.endRecording();
+      final imageBuffer = picture.toImage(
+          global.printerWidthByPixel(0).toInt(), maxHeight.toInt());
+      // Print to printer
+      String printerIp = global.printerLocalStrongData[0].ipAddress;
+      int printerPort = global.printerLocalStrongData[0].ipPort;
+      PosPrintResult res = await printer.connect(printerIp, port: printerPort);
+
+      if (res == PosPrintResult.success) {
         final pngBytes = await imageBuffer
             .then((value) => value.toByteData(format: ui.ImageByteFormat.png));
         im.Image? imageDecode = im.decodeImage(pngBytes!.buffer.asUint8List());
@@ -872,14 +630,21 @@ class PosPrintBillClass {
             serviceLocator<Log>().error(e);
           }
         }
-        saveImageToJpgFile(docDate, docNo, imageBuffer);
-      });
-      io.sleep(const Duration(milliseconds: 100));
-      printer.cut();
-      io.sleep(const Duration(milliseconds: 100));
-      printer.drawer();
-      printer.disconnect();
-    }
+        io.sleep(const Duration(milliseconds: 100));
+        printer.cut();
+        io.sleep(const Duration(milliseconds: 100));
+        printer.drawer();
+        io.sleep(const Duration(milliseconds: 100));
+        printer.disconnect();
+        io.sleep(const Duration(milliseconds: 100));
+        printer.reset();
+      } else {
+        global.errorMessage.add(
+            "${global.language("error_connect_printer")} : IP Printer -> $printerIp:$printerPort");
+      }
+      // Save e-Journal
+      saveImageToJpgFile(docDate, docNo, imageBuffer);
+    });
   }
 
   void printBillByWindowsImageMode() async {

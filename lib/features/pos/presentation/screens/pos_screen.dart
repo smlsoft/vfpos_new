@@ -1,3 +1,7 @@
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/safe_area_values.dart';
+import 'package:top_snackbar_flutter/tap_bounce_container.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
@@ -110,6 +114,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   String widgetMessageImageUrl = "";
   late double listTextHeight = global.posScreenListHeightGet();
   late TabController phoneTabController;
+  int cashierPrinterIndex = -1;
 
   /// 0=Desktop,1=Tablet,2=Phone
   int deviceMode = 0;
@@ -216,17 +221,23 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         }
       });
     }
-    deviceTimer = Timer.periodic(const Duration(seconds: 15), (timer) async {
+    deviceTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       // ตรวจการเชื่อมต่อกับเครื่องพิมพ์
-      //global.testPrinterConnect();
+      global.testPrinterConnect();
+      if (global.posScreenAutoRefresh) {
+        global.posScreenAutoRefresh = false;
+        setState(() {});
+      }
     });
-    messageTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
+    messageTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (global.errorMessage.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(global.errorMessage.join("\n")),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-        ));
+        showTopSnackBar(
+          Overlay.of(context),
+          CustomSnackBar.success(
+            backgroundColor: Colors.red,
+            message: global.errorMessage.join("\n"),
+          ),
+        );
         global.errorMessage.clear();
         global.playSound(sound: global.SoundEnum.beep);
       }
@@ -245,6 +256,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         }
       }
     });
+    global.testPrinterConnect();
+    for (int index = 0; index < global.printerLocalStrongData.length; index++) {
+      if (index == 0) {
+        // 0=Cashier พิมพ์ใบเสร็จ
+        cashierPrinterIndex = index;
+        break;
+      }
+    }
   }
 
   @override
@@ -3469,7 +3488,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void receiveMoneyDialog() {
     receiveAmount.text = "";
-    empCode.text = global.userLoginCode;
+    empCode.text = global.userLogin!.code;
     showDialog(
         barrierLabel: "",
         barrierDismissible: false,
@@ -4830,6 +4849,24 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     global.globalContext = context;
+    Widget printerStatus = (cashierPrinterIndex != -1)
+        ? Row(
+            children: [
+              Icon(
+                Icons.print,
+                color: (global.printerLocalStrongData[cashierPrinterIndex]
+                            .isReady ==
+                        true)
+                    ? Colors.white
+                    : Colors.red,
+                size: 20,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+            ],
+          )
+        : Container();
     return MultiBlocListener(
         listeners: [
           BlocListener<ProductCategoryBloc, ProductCategoryState>(
@@ -4938,7 +4975,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     ),
                     child: Scaffold(
                         appBar: AppBar(
-                          toolbarHeight: 24,
+                          toolbarHeight: 32,
                           automaticallyImplyLeading: false,
                           backgroundColor: (global.posScreenMode ==
                                   global.PosScreenModeEnum.posSale)
@@ -4946,6 +4983,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               : Colors.red,
                           title: Row(
                             children: [
+                              printerStatus,
+                              const SizedBox(
+                                width: 5,
+                              ),
                               if (global.posSaleChannelCode != "XXX")
                                 Container(
                                     height: 12,
@@ -4970,12 +5011,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               Text(
                                   (global.posScreenMode ==
                                           global.PosScreenModeEnum.posSale)
-                                      ? global
-                                          .language("doc_sale") //  'ขายสินค้า'
+                                      ? global.language(
+                                          "pos_screen_sale") //  'ขายสินค้า'
                                       : global.language(
-                                          "doc_return"), // 'รับคืนสินค้า',
+                                          "pos_screen_return"), // 'รับคืนสินค้า',
                                   style: const TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       shadows: [
                                         Shadow(
@@ -4985,9 +5026,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                         ),
                                       ])),
                               const Spacer(),
-                              const Text("DEDE POS",
-                                  style: TextStyle(
-                                      fontSize: 12,
+                              Text(
+                                  "${global.applicationName} : ${global.userLogin!.name} (${global.userLogin!.code})",
+                                  style: const TextStyle(
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       shadows: [
                                         Shadow(
