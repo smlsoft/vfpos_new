@@ -6,7 +6,6 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/global.dart' as global;
-
 import 'app/app_view.dart';
 import 'flavors.dart';
 

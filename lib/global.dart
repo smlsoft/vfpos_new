@@ -61,7 +61,7 @@ import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
 import 'model/objectbox/form_design_struct.dart';
 
-String applicationName = "*";
+String applicationName = "";
 late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
 List<FormDesignObjectBoxStruct> formDesignList = [];
