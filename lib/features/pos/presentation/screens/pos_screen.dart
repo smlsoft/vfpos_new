@@ -146,6 +146,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       options_json: "",
       isalacarte: true,
       ordertypes: "",
+      vat_type: 1,
       product_count: 0);
   List<ProductOptionModel> productOptions = [];
 
@@ -1077,6 +1078,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               prices: "",
               unit_code: "",
               unit_names: "",
+              vat_type: 1,
               new_line: 0,
               images_url: "",
               guid_fixed: "",
@@ -2373,6 +2375,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                           guid_fixed: "",
                           item_code: "",
                           item_guid: "",
+                          vat_type: 1,
                           descriptions: "",
                           item_unit_code: "",
                           options_json: "",

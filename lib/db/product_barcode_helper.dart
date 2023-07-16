@@ -53,6 +53,7 @@ class ProductBarcodeHelper {
           unit_code: data.unit_code,
           unit_names: data.unit_names,
           new_line: 0,
+          vat_type: data.vat_type,
           color_select: "",
           image_or_color: true,
           color_select_hex: "",

@@ -167,7 +167,7 @@ Future syncBillData() async {
         totalamount: bill.total_amount,
         totalbeforevat: 0,
         totalcost: 0,
-        totaldiscount: bill.sum_discount,
+        totaldiscount: bill.total_discount,
         totalexceptvat: bill.total_except_amount,
         totalvalue: bill.total_amount,
         totalvatvalue: bill.total_vat_amount,

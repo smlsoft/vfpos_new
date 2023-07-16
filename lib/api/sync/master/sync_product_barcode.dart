@@ -49,6 +49,7 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
       images_url: newData.imageuri,
       image_or_color: newData.useimageorcolor,
       color_select: newData.colorselect,
+      vat_type: 1,
       isalacarte: newData.isalacarte!,
       ordertypes:
           (newData.ordertypes == null) ? "" : jsonEncode(newData.ordertypes!),

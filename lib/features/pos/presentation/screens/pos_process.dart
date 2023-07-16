@@ -204,6 +204,7 @@ class PosProcess {
                 guid_fixed: "",
                 item_code: "",
                 item_guid: "",
+                vat_type: 1,
                 descriptions: "",
                 item_unit_code: "",
                 options_json: "",
@@ -433,9 +434,16 @@ class PosProcess {
 
     // รวม
     double totalPiece = 0;
+    double totalItemVatAmount = 0;
+    double totalItemExceptVatAmount = 0;
     for (int index = 0; index < processResult.details.length; index++) {
       if (processResult.details[index].is_void == false) {
         totalAmount += processResult.details[index].total_amount;
+        if (processResult.details[index].exclude_vat == false) {
+          totalItemVatAmount += processResult.details[index].total_amount;
+        } else {
+          totalItemExceptVatAmount += processResult.details[index].total_amount;
+        }
         totalPiece += processResult.details[index].qty;
         for (int extraIndex = 0;
             extraIndex < processResult.details[index].extra.length;
@@ -449,6 +457,8 @@ class PosProcess {
     }
     processResult.total_piece = totalPiece;
     processResult.total_amount = totalAmount;
+    processResult.total_item_vat_amount = totalItemVatAmount;
+    processResult.total_item_except_amount = totalItemExceptVatAmount;
     return processResult;
   }
 }

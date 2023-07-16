@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "61:3701210022462211600",
+      "lastPropertyId": "71:7887005235775397265",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -80,11 +80,6 @@
           "id": "14:3541771743061204879",
           "name": "discount_formula",
           "type": 9
-        },
-        {
-          "id": "15:2271278130534666477",
-          "name": "sum_discount",
-          "type": 8
         },
         {
           "id": "17:7335730019120480512",
@@ -247,26 +242,6 @@
           "type": 8
         },
         {
-          "id": "53:1593835513190308362",
-          "name": "total_calc_amount",
-          "type": 8
-        },
-        {
-          "id": "54:1615262830312507733",
-          "name": "total_calc_vat_amount",
-          "type": 8
-        },
-        {
-          "id": "55:6996052209447947626",
-          "name": "total_calc_amount_before_round",
-          "type": 8
-        },
-        {
-          "id": "56:8998589021223372157",
-          "name": "total_calc_amount_round",
-          "type": 8
-        },
-        {
           "id": "57:2649055115574079493",
           "name": "pay_cash_change",
           "type": 8
@@ -284,6 +259,41 @@
         {
           "id": "61:3701210022462211600",
           "name": "total_item_except_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "62:7184901347809486783",
+          "name": "total_item_vat_after_discount_amount",
+          "type": 8
+        },
+        {
+          "id": "63:3735171330386112790",
+          "name": "total_item_except_vat_after_discount_amount",
+          "type": 8
+        },
+        {
+          "id": "66:2418146863738338942",
+          "name": "total_discount",
+          "type": 8
+        },
+        {
+          "id": "67:2788619645020568733",
+          "name": "total_discount_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "69:8614707686559505730",
+          "name": "total_discount_except_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "70:5863642082019305378",
+          "name": "total_calc_vat_amount",
+          "type": 8
+        },
+        {
+          "id": "71:7887005235775397265",
+          "name": "total_calc_except_vat_amount",
           "type": 8
         }
       ],
@@ -550,7 +560,7 @@
     },
     {
       "id": "11:2320464900211169166",
-      "lastPropertyId": "29:4005330741966595239",
+      "lastPropertyId": "32:1503007406801578390",
       "name": "ProductBarcodeObjectBoxStruct",
       "properties": [
         {
@@ -652,12 +662,17 @@
           "type": 9
         },
         {
-          "id": "28:5322643886496037132",
+          "id": "30:8946745145777008156",
+          "name": "vat_type",
+          "type": 6
+        },
+        {
+          "id": "31:3830828443157894992",
           "name": "isalacarte",
           "type": 1
         },
         {
-          "id": "29:4005330741966595239",
+          "id": "32:1503007406801578390",
           "name": "ordertypes",
           "type": 9
         }
@@ -1919,7 +1934,17 @@
     4405532620165712495,
     1043201343847864181,
     4227198458679852788,
-    4683251167029681299
+    4683251167029681299,
+    6996052209447947626,
+    2271278130534666477,
+    1615262830312507733,
+    2416049641827758190,
+    8998589021223372157,
+    3534380567335844494,
+    5322643886496037132,
+    4005330741966595239,
+    1859914905112325149,
+    1593835513190308362
   ],
   "retiredRelationUids": [],
   "version": 1

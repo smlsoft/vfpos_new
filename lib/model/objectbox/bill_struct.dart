@@ -38,17 +38,29 @@ class BillObjectBoxStruct {
   // ยอดรวมสินค้ายกเว้นภาษี
   double total_item_except_vat_amount;
 
-  /// ยอดรวมก่อนคำนวณ
-  double total_calc_amount;
+  /// สูตรส่วนลดท้ายบิล
+  String discount_formula;
 
-  /// ยอดคำนวณภาษีมูลค่าเพิ่มโดยประมาณ
+  /// ส่วนลดทั้งหมด (ท้ายบิล)
+  double total_discount;
+
+  /// ส่วนลดสินค้ามีภาษี
+  double total_discount_vat_amount;
+
+  /// ส่วนลดสินค้ายกเว้นภาษี
+  double total_discount_except_vat_amount;
+
+  /// ยอดรวมสินค้ามีภาษี หลังหักส่วนลด
+  double total_item_vat_after_discount_amount;
+
+  // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
+  double total_item_except_vat_after_discount_amount;
+
+  /// ยอดรวมก่อนคำนวณภาษีสินค้ามีภาษี
   double total_calc_vat_amount;
 
-  /// ยอดก่อนปัดเศษ
-  double total_calc_amount_before_round;
-
-  /// ปัดเศษ
-  double total_calc_amount_round;
+  /// ยอดรวมก่อนคำนวณภาษีสินค้ายกเว้น
+  double total_calc_except_vat_amount;
 
   /// ยอดรวมทั้งสิ้น
   double total_amount;
@@ -100,12 +112,6 @@ class BillObjectBoxStruct {
 
   /// เงินทอน
   double pay_cash_change;
-
-  /// สูตรส่วนลด
-  String discount_formula;
-
-  /// ส่วนลดทั้งหมด
-  double sum_discount;
 
   /// ชำระเงินโดย QR Code
   double sum_qr_code;
@@ -161,9 +167,11 @@ class BillObjectBoxStruct {
   String buffet_code;
 
   /// เวลาเปิดโต๊ะ
+  @Property(type: PropertyType.date)
   DateTime table_open_date_time;
 
   /// เวลาปิดโต๊ะ
+  @Property(type: PropertyType.date)
   DateTime table_close_date_time;
 
   String pay_json;
@@ -188,16 +196,18 @@ class BillObjectBoxStruct {
       required this.cashier_name,
       required this.sale_code,
       required this.sale_name,
-      required this.total_calc_amount,
-      required this.total_calc_amount_before_round,
-      required this.total_calc_amount_round,
-      required this.vat_mode,
       required this.total_calc_vat_amount,
+      required this.total_calc_except_vat_amount,
+      required this.vat_mode,
+      required this.total_item_vat_after_discount_amount,
+      required this.total_item_except_vat_after_discount_amount,
+      required this.total_discount_vat_amount,
+      required this.total_discount_except_vat_amount,
       required this.total_qty,
       required this.is_sync,
       required this.discount_formula,
       required this.pay_cash_amount,
-      required this.sum_discount,
+      required this.total_discount,
       required this.sum_qr_code,
       required this.sum_credit_card,
       required this.sum_money_transfer,

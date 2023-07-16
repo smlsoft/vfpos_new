@@ -97,7 +97,7 @@ class PosPrintBillClass {
         discountValue =
             "$discountValue ${global.moneyFormat.format(detail.discount)}";
         discountValue =
-            "$discountValue ${global.language("money_symbol")}/${detail.unit_name}";
+            "$discountValue ${global.language("money_symbol")}/${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)}";
       }
       result = result.replaceAll("&item_discount&", discountValue);
     }
@@ -123,11 +123,8 @@ class PosPrintBillClass {
     }
     {
       // มูลค่าทั้งหมด
-      result = result.replaceAll(
-          "&item_total_amount&",
-          (detail.total_amount == 0)
-              ? ""
-              : global.moneyFormat.format(detail.total_amount));
+      result = result.replaceAll("&item_total_amount&",
+          global.moneyFormat.format(detail.total_amount));
     }
     return result.trim().replaceAll("  ", " ").replaceAll("  ", " ");
   }
@@ -168,37 +165,67 @@ class PosPrintBillClass {
     result = result.replaceAll("&total_piece_name&", "จำนวนชิ้น");
     result = result.replaceAll(
         "&total_piece&", global.moneyFormatAndDot.format(value.total_qty));
-    // ยอดภาษีก่อนปัดเศษ
+    // ยอดรวมสินค้ามีภาษี
     result =
-        result.replaceAll("&total_before_calc_vat_name&", "ยอดรวมก่อนภาษี");
+        result.replaceAll("&total_item_vat_amount_name&", "รวมสินค้ามีภาษี");
+    result = result.replaceAll("&total_item_vat_amount&",
+        global.moneyFormatAndDot.format(value.total_item_vat_amount));
+    // ยอดรวมสินค้ายกเว้นภาษี
+    result = result.replaceAll(
+        "&total_itm_except_vat_amount_name&", "รวมสินค้ายกเว้นภาษี");
+    result = result.replaceAll("&total_itm_except_vat_amount&",
+        global.moneyFormatAndDot.format(value.total_item_except_vat_amount));
+    // ส่วนลดสินค้ามีภาษี
+    result =
+        result.replaceAll("&total_discount_vat_name&", "ส่วนลดสินค้ามีภาษี");
+    result = result.replaceAll("&total_discount_vat_amount&",
+        global.moneyFormatAndDot.format(value.total_discount_vat_amount));
+    // ส่วนลดสินค้ายกเว้นภาษี
+    result = result.replaceAll(
+        "&total_discount_vat_except_name&", "ส่วนลดสินค้ายกเว้นภาษี");
+    result = result.replaceAll(
+        "&total_discount_vat_except_amount&",
+        global.moneyFormatAndDot
+            .format(value.total_discount_except_vat_amount));
+    // ส่วนลดทั้งหมด
+    result = result.replaceAll("&total_discount_name&", "ส่วนลดทั้งหมด");
+    result = result.replaceAll("&total_discount_amount&",
+        global.moneyFormatAndDot.format(value.total_discount));
+    // ยอดรวมสินค้ามีภาษี หัก ส่วนลด
+    result = result.replaceAll("&total_item_vat_amount_after_discount_name&",
+        "รวมสินค้ามีภาษี (หลังหักส่วนลด)");
+    result = result.replaceAll("&total_item_vat_amount_after_discount&",
+        global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
+    // ยอดรวมสินค้ายกเว้นภาษี หัก ส่วนลด
+    result = result.replaceAll(
+        "&total_itm_except_vat_amount_after_discount_name&",
+        "รวมสินค้ายกเว้นภาษี (หลังหักส่วนลด)");
+    result = result.replaceAll("&total_itm_except_vat_amount_after_discount&",
+        global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
+    // ยอดรวมหลังหักส่วนลด
+    result = result.replaceAll(
+        "&total_before_calc_vat_name&", "ยอดรวมหลังหักส่วนลด");
     result = result.replaceAll("&total_before_calc_vat&",
-        global.moneyFormatAndDot.format(value.total_calc_amount));
-    result = result.replaceAll("&total_calc_vat_name&", "ภาษีมูลค่าเพิ่ม");
-    // ปัดเศษ
-    result = result.replaceAll("&total_calc_vat&",
         global.moneyFormatAndDot.format(value.total_calc_vat_amount));
-    result = result.replaceAll("&before_rounding_name&", "ยอดก่อนปัดเศษ");
-    result = result.replaceAll("&before_rounding&",
-        global.moneyFormatAndDot.format(value.total_calc_amount_before_round));
-    result = result.replaceAll("&rounding_name&", "ปัดเศษ");
-    result = result.replaceAll("&rounding&",
-        global.moneyFormatAndDot.format(value.total_calc_amount_round));
     // รวมทั้งสิ้น
     result = result.replaceAll("&total_amount_name&", "ยอดรวมสุทธิ");
     result = result.replaceAll(
-        "&total_amount&",
-        (value.total_amount == 0)
-            ? ""
-            : global.moneyFormatAndDot.format(value.total_amount));
+        "&total_amount&", global.moneyFormatAndDot.format(value.total_amount));
+    // ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี
+    result = result.replaceAll("&total_before_except_vat_name&",
+        "ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี");
+    result = result.replaceAll("&total_before_except_vat&",
+        global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
+    // ยอดก่อนภาษีมูลค่าเพิ่ม
+    result = result.replaceAll(
+        "&total_before_vat_name&", "ยอดก่อนภาษีมูลค่าเพิ่มสินค้ามีภาษี");
+    result = result.replaceAll("&total_before_vat&",
+        global.moneyFormatAndDot.format(value.total_calc_vat_amount));
     // ภาษี
     result = result.replaceAll("&total_vat_name&",
         "ภาษีมูลค่าเพิ่ม : ${global.moneyFormat.format(value.vat_rate)}%");
     result = result.replaceAll(
         "&total_vat&", global.moneyFormatAndDot.format(value.total_vat_amount));
-    // ยอดก่อนภาษี
-    result = result.replaceAll("&total_before_vat_name&", "ยอดก่อนภาษี");
-    result = result.replaceAll("&total_before_vat&",
-        global.moneyFormatAndDot.format(value.total_calc_amount));
     // รับเงินสด
     result = result.replaceAll("&total_pay_cash_name&", "ชำระเงินสด");
     result = result.replaceAll("&total_pay_cash&",
@@ -301,7 +328,7 @@ class PosPrintBillClass {
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       PosPrintBillCommandColumnModel(
           width: 1,
-          text: (bill!.vat_mode == 0)
+          text: (bill!.vat_mode == 1)
               ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)"
               : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)",
           align: PrintColumnAlign.center)

@@ -47,6 +47,7 @@ class TableProcessObjectBoxStruct {
   late bool order_success;
 
   /// เวลาเปิดโต๊ะ
+  @Property(type: PropertyType.date)
   late DateTime table_open_datetime;
 
   /// Qr Code ล่าสุด
@@ -99,10 +100,12 @@ class TableProcessObjectBoxStruct {
 
   /// อาหารเสร็จแล้ว พร้อมเวลา
   late bool delivery_cook_success;
+  @Property(type: PropertyType.date)
   late DateTime delivery_cook_success_datetime;
 
   /// ส่งอาหารแล้ว พร้อมเวลา
   late bool delivery_send_success;
+  @Property(type: PropertyType.date)
   late DateTime delivery_send_success_datetime;
 
   /// สถานะ 0=รับที่ร้านรอคิดเงิน,1=คิดเงินแล้ว ทำส่ง Delivery

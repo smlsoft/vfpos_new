@@ -8,6 +8,7 @@ class ShiftObjectBoxStruct {
 
   /// 0=เปิดกะ,1=ปิดกะ,2=รับเงินทอนเพิ่ม,3=นำเงินออก
   int doctype;
+  @Property(type: PropertyType.date)
   DateTime docdate;
   String usercode;
   String username;

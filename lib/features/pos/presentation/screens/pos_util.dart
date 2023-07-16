@@ -82,6 +82,11 @@ Future<saveBillResultClass> saveBill(
     ));
   }
 
+  // ภาษีมูลค่าเพิ่ม
+  int vatMode = 1; // 1=รวมใน,2=แยกนอก
+  double vatRate = posHoldProcess.posProcess.vat_rate;
+  vatRate = 7;
+
   // รายละเอียด
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
@@ -119,53 +124,66 @@ Future<saveBillResultClass> saveBill(
   int womanCount = 0;
   int childCount = 0;
   String buffetCode = "";
-  // ภาษีมูลค่าเพิ่ม
-  int vatMode = 1; // 1=รวมใน,2=แยกนอก
-  double vatRate = posHoldProcess.posProcess.vat_rate;
-  vatRate = 7;
   // ยอดรวมก่อนคำนวณภาษี
   double totalBeforeVatAmount = 0;
-  // ยอดภาษี
-  double totalVatAmount = 0;
   // ยอดรวมสินค้ามีภาษี
   double totalItemVatAmount = posHoldProcess.posProcess.total_item_vat_amount;
-  // ยอดก่อนปัดเศษ
-  double beforeRoundAmount = 0;
-  // ยอดปัดเศษ
-  double roundAmount = 0;
+  totalItemVatAmount = 1000;
   // ยอดรวมสินค้ามียกเว้นภาษี
-  double totalItemExceptAmount =
+  double totalItemExceptVatAmount =
       posHoldProcess.posProcess.total_item_except_amount;
-  // ทดสอบ สินค้ามีภาษี
-  totalItemVatAmount = 10000.49;
-  // สินค้าไม่มีภาษี
-  totalItemExceptAmount = 2000;
-  double totalAmount = totalItemVatAmount + totalItemExceptAmount;
-  // ส่วนลดท้ายบิล
-  discountAmount = 314;
-  totalAmount = totalItemVatAmount + totalItemExceptAmount;
-
+  totalItemExceptVatAmount = 1000;
+  discountAmount = 200;
+  double totalAmount = 0;
+  double discountAmountForCalc = discountAmount;
+  double totalItemVatAfterDiscountAmount = totalItemVatAmount;
+  double totalItemExceptVatAfterDiscountAmount = totalItemExceptVatAmount;
+  double totalAllAmountNotIncludeVat =
+      ((totalItemVatAmount * 100) / 107) + totalItemExceptVatAmount;
+  double totalVatAmount = 0;
+  double discountAmountForProductVat = (totalItemVatAmount == 0)
+      ? 0
+      : (discountAmount * (totalItemVatAmount * 100) / 107) /
+          totalAllAmountNotIncludeVat; // ส่วนลดสำหรับสินค้ามีภาษี
+  double discountAmountForProductExceptVat = discountAmount -
+      discountAmountForProductVat; // ส่วนลดสำหรับสินค้ามียกเว้นภาษี
+  // ส่วนลดสำหรับสินค้ามียกเว้นภาษี
   if (vatMode == 1) {
     // รวมใน
-    // เอาส่วนลดเงินสดมาหักตัวที่มีไม่มีภาษีก่อน ที่เหลือค่อยมาหักตัวที่มีภาษี (สรรพากรได้เปรียบ)
-    if (totalItemExceptAmount - discountAmount < 0.0) {
-      // กรณีส่วนลดมากกว่าสินค้ายกเว้นภาษี เอาส่วนที่เหลือไปลดจากมูลค่าคิดภาษี
-      totalItemVatAmount += totalItemExceptAmount - discountAmount;
-    } else {
-      // กรณีส่วนลดน้อยกว่าสินค้ายกเว้นภาษี เอาส่วนที่เหลือไปลดจากสินค้ายกเว้นภาษี
-      totalItemVatAmount -= discountAmount;
-    }
-    // ปัดเศษทิ้ง ก่อนการคำนวณ
-    roundAmount = totalAmount.round() - totalAmount;
-    totalAmount += roundAmount;
-    beforeRoundAmount = totalAmount - roundAmount;
-    // คำนวณภาษี
-    totalVatAmount =
-        global.roundDouble((totalItemVatAmount * vatRate) / (100 + vatRate), 2);
-    // ยอดรวมก่อนคำนวณภาษี (ลบเอาจะแม่นกว่า)
-    totalBeforeVatAmount = totalAmount - totalVatAmount;
+    // ส่วนลดที่เหลือมาลดจากสินค้ามีภาษี
+    totalItemVatAfterDiscountAmount -= discountAmountForProductVat;
+    totalItemExceptVatAfterDiscountAmount -= discountAmountForProductExceptVat;
+    totalAmount =
+        totalItemVatAfterDiscountAmount + totalItemExceptVatAfterDiscountAmount;
+    // คำนวณภาษีมูลค่าเพิ่ม
+    totalVatAmount = global.roundDouble(
+        (totalItemVatAfterDiscountAmount * vatRate) / (100 + vatRate), 2);
+    // ยอดรวมก่อนคำนวณภาษี
+    totalBeforeVatAmount = (totalItemVatAfterDiscountAmount +
+            totalItemExceptVatAfterDiscountAmount) -
+        totalVatAmount;
   } else {
     // แยกนอก
+    // เอาส่วนลดเงินสดมาหักตัวที่มีไม่มีภาษีก่อน ที่เหลือค่อยมาหักตัวที่มีภาษี (สรรพากรได้เปรียบ)
+    if (totalItemExceptVatAfterDiscountAmount - discountAmountForCalc < 0.0) {
+      // กรณีส่วนลดมากกว่าสินค้ายกเว้นภาษี เอาส่วนที่เหลือไปลดจากมูลค่าคิดภาษี
+      totalItemExceptVatAfterDiscountAmount = 0;
+      discountAmountForCalc -= totalItemExceptVatAfterDiscountAmount;
+    } else {
+      totalItemExceptVatAfterDiscountAmount -= discountAmountForCalc;
+      discountAmountForCalc = 0;
+    }
+    // ส่วนลดที่เหลือมาลดจากสินค้ามีภาษี
+    totalItemVatAfterDiscountAmount -= discountAmountForCalc;
+    totalAmount =
+        totalItemVatAfterDiscountAmount + totalItemExceptVatAfterDiscountAmount;
+    // ยอดรวมก่อนคำนวณภาษี
+    totalBeforeVatAmount =
+        totalItemVatAfterDiscountAmount + totalItemExceptVatAfterDiscountAmount;
+    // คำนวณภาษีมูลค่าเพิ่ม
+    totalVatAmount = global.roundDouble(
+        (totalItemVatAfterDiscountAmount * vatRate) / 100, 2);
+    totalAmount += totalVatAmount;
   }
   // Save
   BillObjectBoxStruct billData = BillObjectBoxStruct(
@@ -189,11 +207,9 @@ Future<saveBillResultClass> saveBill(
       woman_count: womanCount,
       man_count: manCount,
       buffet_code: buffetCode,
-      total_calc_amount: totalBeforeVatAmount,
+      total_calc_vat_amount: totalBeforeVatAmount,
+      total_calc_except_vat_amount: 0,
       total_qty: posHoldProcess.posProcess.total_piece,
-      total_calc_vat_amount: totalVatAmount,
-      total_calc_amount_before_round: beforeRoundAmount,
-      total_calc_amount_round: roundAmount,
       print_copy_bill_date_time: [],
       date_time: docDate,
       table_close_date_time: DateTime.now(),
@@ -210,14 +226,18 @@ Future<saveBillResultClass> saveBill(
       pay_cash_amount: cashAmount,
       pay_cash_change: 0,
       is_sync: false,
+      total_item_vat_after_discount_amount: totalItemVatAfterDiscountAmount,
+      total_item_except_vat_after_discount_amount:
+          totalItemExceptVatAfterDiscountAmount,
       vat_rate: vatRate,
-      total_item_vat_amount: posHoldProcess.posProcess.total_item_vat_amount,
-      total_item_except_vat_amount:
-          posHoldProcess.posProcess.total_item_except_amount,
+      total_item_vat_amount: totalItemVatAmount,
+      total_item_except_vat_amount: totalItemExceptVatAmount,
       total_vat_amount: totalVatAmount,
       discount_formula: discountFormula,
-      total_except_amount: totalItemExceptAmount,
-      sum_discount: discountAmount,
+      total_except_amount: totalItemExceptVatAmount,
+      total_discount: discountAmount,
+      total_discount_vat_amount: discountAmountForProductVat,
+      total_discount_except_vat_amount: discountAmountForProductExceptVat,
       pay_json: jsonEncode(pays),
       sum_coupon: sumCoupon(),
       sum_qr_code: sumQr(),

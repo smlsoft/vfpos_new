@@ -61,50 +61,88 @@ Future<void> loadFormDesign() async {
           width: 2),
     ],
     [
-      // ยอดรวมสินค้ามีภาษี
-      FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
-      FormDesignColumnModel(
-          command: "&total_before_calc_vat&",
-          text_align: PrintColumnAlign.right,
-          width: 2),
-    ],
-    [
       // ยอดรวมสินค้ายกเว้นภาษี
-      FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
       FormDesignColumnModel(
-          command: "&total_before_calc_vat&",
+          command: "&total_itm_except_vat_amount_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_itm_except_vat_amount&",
           text_align: PrintColumnAlign.right,
           width: 2),
     ],
     [
-      // ยอดก่อนภาษี
-      FormDesignColumnModel(command: "&total_before_calc_vat_name&", width: 5),
+      // ยอดรวมสินค้ามีภาษี
+      FormDesignColumnModel(command: "&total_item_vat_amount_name&", width: 5),
       FormDesignColumnModel(
-          command: "&total_before_calc_vat&",
+          command: "&total_item_vat_amount&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดส่วนลดสินค้ายกเว้นภาษี
+      FormDesignColumnModel(
+          command: "&total_discount_vat_except_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_discount_vat_except_amount&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดส่วนลดสินค้ามีภาษี
+      FormDesignColumnModel(command: "&total_discount_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_discount_vat_amount&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดส่วนลดทั้งหมด
+      FormDesignColumnModel(command: "&total_discount_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_discount_amount&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดรวมสินค้ายกเว้นภาษี (หลังหักส่วนลด)
+      FormDesignColumnModel(
+          command: "&total_itm_except_vat_amount_after_discount_name&",
+          width: 5),
+      FormDesignColumnModel(
+          command: "&total_itm_except_vat_amount_after_discount&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดรวมสินค้ามีภาษี (หลังหักส่วนลด)
+      FormDesignColumnModel(
+          command: "&total_item_vat_amount_after_discount_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_item_vat_amount_after_discount&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี
+      FormDesignColumnModel(
+          command: "&total_before_except_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_before_except_vat&",
+          text_align: PrintColumnAlign.right,
+          width: 2),
+    ],
+    [
+      // ยอดก่อนภาษีมูลค่าเพิ่ม
+      FormDesignColumnModel(command: "&total_before_vat_name&", width: 5),
+      FormDesignColumnModel(
+          command: "&total_before_vat&",
           text_align: PrintColumnAlign.right,
           width: 2),
     ],
     [
       // ยอดภาษี
-      FormDesignColumnModel(command: "&total_calc_vat_name&", width: 5),
+      FormDesignColumnModel(command: "&total_vat_name&", width: 5),
       FormDesignColumnModel(
-          command: "&total_calc_vat&",
-          text_align: PrintColumnAlign.right,
-          width: 2),
-    ],
-    [
-      // ยอดก่อนปัดเศษ
-      FormDesignColumnModel(command: "&before_rounding_name&", width: 5),
-      FormDesignColumnModel(
-          command: "&before_rounding&",
-          text_align: PrintColumnAlign.right,
-          width: 2),
-    ],
-    [
-      // ยอดปัดเศษ
-      FormDesignColumnModel(command: "&rounding_name&", width: 5),
-      FormDesignColumnModel(
-          command: "&rounding&", text_align: PrintColumnAlign.right, width: 2),
+          command: "&total_vat&", text_align: PrintColumnAlign.right, width: 2),
     ],
     [
       // ยอดรวมสุทธิ
@@ -118,20 +156,6 @@ Future<void> loadFormDesign() async {
           text_align: PrintColumnAlign.right,
           font_weight_bold: true,
           font_size: 32,
-          width: 2),
-    ],
-    [
-      // ยอดภาษี
-      FormDesignColumnModel(command: "&total_vat_name&", width: 5),
-      FormDesignColumnModel(
-          command: "&total_vat&", text_align: PrintColumnAlign.right, width: 2),
-    ],
-    [
-      // ยอดก่อนภาษี
-      FormDesignColumnModel(command: "&total_before_vat_name&", width: 5),
-      FormDesignColumnModel(
-          command: "&total_before_vat&",
-          text_align: PrintColumnAlign.right,
           width: 2),
     ],
     [

@@ -62,7 +62,7 @@ dependencies:
   web_socket_channel: ^2.4.0
   flutter_usb_printer: ^0.1.0+1
   objectbox: ^2.0.0
-  json_annotation: ^4.8.0
+  json_annotation: ^4.8.1
   objectbox_generator: ^2.0.0
   objectbox_flutter_libs: ^2.0.0
   archive: ^3.3.2

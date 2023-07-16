@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'dart:convert';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
@@ -69,6 +67,9 @@ class ProductBarcodeObjectBoxStruct {
   /// สีที่เลือก (Hex)
   String color_select_hex;
 
+  /// ประเภทภาษี 1=มีภาษี,2=ไม่มีภาษี (ยกเว้น)
+  int vat_type;
+
   /// สินค้าแบบอลาคาร์ท
   late bool isalacarte;
 
@@ -95,6 +96,7 @@ class ProductBarcodeObjectBoxStruct {
       required this.color_select_hex,
       required this.isalacarte,
       required this.ordertypes,
+      required this.vat_type,
       required this.product_count});
 
   factory ProductBarcodeObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
