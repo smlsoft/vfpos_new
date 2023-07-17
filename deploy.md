@@ -16,3 +16,6 @@ flutter build appbundle --flavor dedepos -t lib/main_dedepos.dart --release --da
 ระบุ Release Name, Release Notes
 
 กด Save แล้วกด Review
+
+-- apk
+flutter build apk --flavor dedepos -t lib/main_dedepos.dart --release --dart-define=ENVIRONMENT=PROD
