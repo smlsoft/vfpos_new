@@ -73,6 +73,7 @@ class PosPrintBillClass {
   String languageCode;
   double billWidth =
       (global.printerLocalStrongData[0].paperSize == 1) ? 378.0 : 575.0;
+  double scale = 1.0;
 
   PosPrintBillClass(
       {required this.docDate, required this.docNo, required this.languageCode});
@@ -212,13 +213,13 @@ class PosPrintBillClass {
     result = result.replaceAll(
         "&total_amount&", global.moneyFormatAndDot.format(value.total_amount));
     // ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี
-    result = result.replaceAll("&total_before_except_vat_name&",
-        "ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี");
+    result = result.replaceAll(
+        "&total_before_except_vat_name&", "ยอดก่อนภาษี สินค้ายกเว้นภาษี");
     result = result.replaceAll("&total_before_except_vat&",
         global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
     // ยอดก่อนภาษีมูลค่าเพิ่ม
     result = result.replaceAll(
-        "&total_before_vat_name&", "ยอดก่อนภาษีมูลค่าเพิ่มสินค้ามีภาษี");
+        "&total_before_vat_name&", "ยอดก่อนภาษี สินค้ามีภาษี");
     result = result.replaceAll("&total_before_vat&",
         global.moneyFormatAndDot.format(value.total_calc_vat_amount));
     // ภาษี
@@ -240,9 +241,14 @@ class PosPrintBillClass {
   Future<List<PosPrintBillCommandModel>> buildCommand() async {
     FormDesignObjectBoxStruct formDesign = global.formDesignList[0];
     List<PosPrintBillCommandModel> commandList = [];
+    double paperWithFromPrinter =
+        (global.printerLocalStrongData[0].paperSize == 1) ? 58 : 80;
+
+    scale = paperWithFromPrinter / formDesign.paper_width;
 
     BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
         docNumber: docNo, posScreenMode: global.posScreenToInt());
+
     // Reset Printer
     commandList.add(PosPrintBillCommandModel(mode: 0));
 
@@ -251,8 +257,19 @@ class PosPrintBillClass {
       io.File file =
           io.File("${global.applicationDocumentsDirectory.path}/logo.png");
       if (file.existsSync()) {
-        commandList.add(
-            PosPrintBillCommandModel(mode: 1, image: file.readAsBytesSync()));
+        Uint8List bytes = file.readAsBytesSync();
+        // get image width height
+        ui.Image getImage = await decodeImageFromList(bytes);
+        final codec = await ui.instantiateImageCodec(
+          bytes.buffer.asUint8List(),
+          targetHeight: (getImage.height * scale).toInt(),
+          targetWidth: (getImage.width * scale).toInt(),
+        );
+        final frame = await codec.getNextFrame();
+        final image =
+            await frame.image.toByteData(format: ui.ImageByteFormat.png);
+        bytes = image!.buffer.asUint8List();
+        commandList.add(PosPrintBillCommandModel(mode: 1, image: bytes));
       }
     }
 
@@ -266,7 +283,7 @@ class PosPrintBillClass {
                 text: global.getNameFromLanguage(
                     global.profileSetting.company.names, languageCode),
                 fontWeightBold: true,
-                fontSize: 32,
+                fontSize: 32 * scale,
                 align: PrintColumnAlign.center)
           ],
           posTextSize: PosTextSize.size2));
@@ -283,7 +300,7 @@ class PosPrintBillClass {
           width: 1,
           text: global.getNameFromJsonLanguage(
               formDesign.names_json, languageCode),
-          fontSize: 30,
+          fontSize: 30 * scale,
           fontWeightBold: true,
           align: PrintColumnAlign.center)
     ]));
@@ -400,7 +417,7 @@ class PosPrintBillClass {
                   formDetail.header_names, languageCode),
               align: formDetail.text_align,
               fontWeightBold: true,
-              fontSize: formDetail.font_size),
+              fontSize: formDetail.font_size * scale),
         );
       }
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
@@ -419,7 +436,7 @@ class PosPrintBillClass {
                   text: findValueBillDetail(detail, formDetail.command),
                   align: formDetail.text_align,
                   fontWeightBold: false,
-                  fontSize: formDetail.font_size),
+                  fontSize: formDetail.font_size * scale),
             );
           }
         }
@@ -441,7 +458,7 @@ class PosPrintBillClass {
                       findValueBillDetailExtra(extra, formDetailExtra.command),
                   align: formDetailExtra.text_align,
                   fontWeightBold: formDetailExtra.font_weight_bold,
-                  fontSize: formDetailExtra.font_size),
+                  fontSize: formDetailExtra.font_size * scale),
             );
           }
           commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
@@ -465,7 +482,7 @@ class PosPrintBillClass {
                 text: findValueBillTotal(bill, column.command),
                 align: column.text_align,
                 fontWeightBold: column.font_weight_bold,
-                fontSize: column.font_size),
+                fontSize: column.font_size * scale),
           );
         }
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
@@ -529,7 +546,7 @@ class PosPrintBillClass {
                     text: command.columns[index].text,
                     align: command.columns[index].align,
                     bold: command.columns[index].fontWeightBold,
-                    fontSize: command.columns[index].fontSize));
+                    fontSize: command.columns[index].fontSize * scale));
               }
               ui.Image result = await printProcess
                   .lineFeedImage(command.posStyles ?? const PosStyles());
@@ -616,7 +633,7 @@ class PosPrintBillClass {
                   text: command.columns[index].text,
                   align: command.columns[index].align,
                   bold: command.columns[index].fontWeightBold,
-                  fontSize: command.columns[index].fontSize));
+                  fontSize: command.columns[index].fontSize * scale));
             }
             ui.Image result = await printProcess
                 .lineFeedImage(command.posStyles ?? const PosStyles());
@@ -718,7 +735,7 @@ class PosPrintBillClass {
                     text: command.columns[index].text,
                     align: command.columns[index].align,
                     bold: command.columns[index].fontWeightBold,
-                    fontSize: command.columns[index].fontSize));
+                    fontSize: command.columns[index].fontSize * scale));
               }
               ui.Image result = await printProcess
                   .lineFeedImage(command.posStyles ?? const PosStyles());
@@ -894,7 +911,7 @@ class PosPrintBillClass {
                   text: command.columns[index].text,
                   align: command.columns[index].align,
                   bold: command.columns[index].fontWeightBold,
-                  fontSize: command.columns[index].fontSize));
+                  fontSize: command.columns[index].fontSize * scale));
             }
             ui.Image result = await printProcess
                 .lineFeedImage(command.posStyles ?? const PosStyles());

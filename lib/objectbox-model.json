@@ -1482,7 +1482,7 @@
     },
     {
       "id": "29:6792595191811775261",
-      "lastPropertyId": "16:2560715377767744935",
+      "lastPropertyId": "17:8090532004233741835",
       "name": "FormDesignObjectBoxStruct",
       "properties": [
         {
@@ -1564,6 +1564,11 @@
           "id": "16:2560715377767744935",
           "name": "print_prompt_pay",
           "type": 1
+        },
+        {
+          "id": "17:8090532004233741835",
+          "name": "paper_width",
+          "type": 8
         }
       ],
       "relations": []

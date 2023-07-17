@@ -1499,7 +1499,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(29, 6792595191811775261),
       name: 'FormDesignObjectBoxStruct',
-      lastPropertyId: const IdUid(16, 2560715377767744935),
+      lastPropertyId: const IdUid(17, 8090532004233741835),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1578,6 +1578,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(16, 2560715377767744935),
             name: 'print_prompt_pay',
             type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 8090532004233741835),
+            name: 'paper_width',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -3238,7 +3243,7 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.detail_extra_json);
           final detail_total_jsonOffset =
               fbb.writeString(object.detail_total_json);
-          fbb.startTable(17);
+          fbb.startTable(18);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_fixedOffset);
           fbb.addOffset(2, codeOffset);
@@ -3254,6 +3259,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(13, object.sum_by_barcode);
           fbb.addBool(14, object.print_logo);
           fbb.addBool(15, object.print_prompt_pay);
+          fbb.addFloat64(16, object.paper_width);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3266,6 +3272,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               code: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
+              paper_width:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
               type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0),
               sum_by_type: const fb.BoolReader()
                   .vTableGet(buffer, rootOffset, 28, false),
@@ -3277,10 +3285,9 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 34, false),
               names_json: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 20, ''),
-              header_json: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              detail_json:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
+              header_json:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 12, ''),
+              detail_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
               detail_extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               detail_total_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               detail_footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''),
@@ -4606,6 +4613,10 @@ class FormDesignObjectBoxStruct_ {
   static final print_prompt_pay =
       QueryBooleanProperty<FormDesignObjectBoxStruct>(
           _entities[17].properties[14]);
+
+  /// see [FormDesignObjectBoxStruct.paper_width]
+  static final paper_width = QueryDoubleProperty<FormDesignObjectBoxStruct>(
+      _entities[17].properties[15]);
 }
 
 /// [BillDetailObjectBoxStruct] entity fields to define ObjectBox queries.

@@ -11,6 +11,7 @@ FormDesignObjectBoxStruct _$FormDesignObjectBoxStructFromJson(
     FormDesignObjectBoxStruct(
       guid_fixed: json['guid_fixed'] as String,
       code: json['code'] as String,
+      paper_width: (json['paper_width'] as num).toDouble(),
       type: json['type'] as int,
       sum_by_type: json['sum_by_type'] as bool,
       sum_by_barcode: json['sum_by_barcode'] as bool,
@@ -32,6 +33,7 @@ Map<String, dynamic> _$FormDesignObjectBoxStructToJson(
       'guid_fixed': instance.guid_fixed,
       'code': instance.code,
       'type': instance.type,
+      'paper_width': instance.paper_width,
       'sum_by_type': instance.sum_by_type,
       'sum_by_barcode': instance.sum_by_barcode,
       'print_logo': instance.print_logo,
