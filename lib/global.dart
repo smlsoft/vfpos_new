@@ -158,7 +158,6 @@ bool syncRefreshPrinter = true;
 String syncDateBegin = "2000-01-01T00:00:00";
 String syncCategoryTimeName = "lastSyncCategory";
 String syncProductBarcodeTimeName = "lastSyncProductBarcode";
-String syncPrinterTimeName = "lastSyncPrinter";
 String syncInventoryTimeName = "lastSyncInventory";
 String syncMemberTimeName = "lastSyncMember";
 String syncBankTimeName = "lastSyncBank";
@@ -167,6 +166,7 @@ String syncBuffetModeTimeName = "lastSyncBuffetMode";
 String syncTableZoneTimeName = "lastSyncTableZone";
 String syncKitchenTimeName = "lastSyncTableZone";
 String syncDeviceTimeName = "lastSyncDevice";
+String syncWalletTimeName = "lastSyncWallet";
 bool isOnline = false;
 PaymentModel? paymentData;
 late Store objectBoxStore;
@@ -852,23 +852,6 @@ double calcDiscountFormula(
   return sumDiscount;
 }
 
-Future<void> createLogoImageFromBankProvider() async {
-  List<BankObjectBoxStruct> bankDataList = BankHelper().selectAll();
-  for (var element in bankDataList) {
-    if (element.logo != "") {
-      String base64 = element.logo.replaceFirst("data:image/png;base64,", "");
-      Uint8List bytes = base64Decode(base64);
-      File file = File(
-          "$pathApplicationDocumentsDirectory/bank${element.code.toLowerCase()}.png");
-      file.writeAsBytes(bytes);
-    }
-  }
-}
-
-String findLogoImageFromCreditCardProvider(String code) {
-  return "$pathApplicationDocumentsDirectory/bank${code.toLowerCase()}.png";
-}
-
 String language(String code) {
   bool found = false;
   code = code.trim().toLowerCase();
@@ -952,7 +935,7 @@ Future<void> startLoading() async {
   {
     await loadConfig();
     // Payment
-    qrPaymentProviderList.add(PaymentProviderModel(
+    /*qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
       paymentcode: "promptpay",
       bookbankcode: "001",
@@ -1022,7 +1005,7 @@ Future<void> startLoading() async {
       paymenttype: 1,
       feeRate: 0.0,
       wallettype: 204,
-    ));
+    ));*/
   }
   //WidgetsFlutterBinding.ensureInitialized();
   //await GetStorage.init();
@@ -1720,4 +1703,12 @@ Future<void> loadEmployee() async {
 double roundDouble(double value, int places) {
   num mod = pow(10.0, places);
   return ((value * mod).round().toDouble() / mod);
+}
+
+String findBankLogo(String code) {
+  BankObjectBoxStruct? bankDataList = BankHelper().selectByCode(code: code);
+  if (bankDataList != null) {
+    return bankDataList.logo;
+  }
+  return "";
 }

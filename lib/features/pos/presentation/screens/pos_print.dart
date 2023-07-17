@@ -195,7 +195,7 @@ class PosPrintBillClass {
     result = result.replaceAll("&total_item_vat_amount_after_discount_name&",
         "รวมสินค้ามีภาษี (หลังหักส่วนลด)");
     result = result.replaceAll("&total_item_vat_amount_after_discount&",
-        global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
+        global.moneyFormatAndDot.format(value.total_calc_vat_amount));
     // ยอดรวมสินค้ายกเว้นภาษี หัก ส่วนลด
     result = result.replaceAll(
         "&total_itm_except_vat_amount_after_discount_name&",

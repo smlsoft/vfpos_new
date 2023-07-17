@@ -8,6 +8,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayTransfer extends StatefulWidget {
   final PosProcessModel posProcess;
@@ -37,7 +38,7 @@ class _PayTransferState extends State<PayTransfer> {
 
   bool saveData() {
     if (bankCode.trim().isNotEmpty && amount > 0) {
-      global.payScreenData.transfer.add(PayTransferModel(
+      global.payScreenData.transfer!.add(PayTransferModel(
           bank_code: bankCode,
           bank_name: bankName,
           account_number: "123123131312312",
@@ -70,8 +71,8 @@ class _PayTransferState extends State<PayTransfer> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                title: Text(
-                                    global.language("please_select_bank")),
+                                title:
+                                    Text(global.language("please_select_bank")),
                                 content: SizedBox(
                                     width: 350,
                                     height: 300,
@@ -87,10 +88,12 @@ class _PayTransferState extends State<PayTransfer> {
                                                     alignment: Alignment.center,
                                                     width: 100,
                                                     height: 50,
-                                                    child: Image.asset(global
-                                                        .findLogoImageFromCreditCardProvider(
-                                                            bankDataList[index]
-                                                                .code))),
+                                                    child: Image(
+                                                        image: NetworkToFileImage(
+                                                            url: global.findBankLogo(
+                                                                bankDataList[
+                                                                        index]
+                                                                    .code)))),
                                                 const SizedBox(width: 10),
                                                 Text(bankDataList[index]
                                                     .names[0])
@@ -119,12 +122,15 @@ class _PayTransferState extends State<PayTransfer> {
                                   width: 100,
                                   height: 50,
                                   child: (bankCode.isNotEmpty)
-                                      ? Image.asset(global
-                                          .findLogoImageFromCreditCardProvider(
-                                              bankCode))
+                                      ? Image(
+                                          image: NetworkToFileImage(
+                                              url: global
+                                                  .findBankLogo(bankCode)))
                                       : Container())),
                           Text(
-                            global.language('bank'),
+                            (bankName.isNotEmpty)
+                                ? bankName
+                                : global.language('bank_name'),
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
@@ -245,14 +251,15 @@ class _PayTransferState extends State<PayTransfer> {
                   SizedBox(
                       width: 100,
                       height: 50,
-                      child: Image.asset(
-                          global.findLogoImageFromCreditCardProvider(
-                              global.payScreenData.transfer[index].bank_code))),
+                      child: Image(
+                          image: NetworkToFileImage(
+                              url: global.findBankLogo(global
+                                  .payScreenData.transfer![index].bank_code)))),
                   const SizedBox(width: 10),
                   buildDetailsBlock(
                       label: global.language('total_amount'),
-                      value: global.moneyFormat
-                          .format(global.payScreenData.transfer[index].amount)),
+                      value: global.moneyFormat.format(
+                          global.payScreenData.transfer![index].amount)),
                 ],
               ),
               trailing: IconButton(
@@ -266,8 +273,7 @@ class _PayTransferState extends State<PayTransfer> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text(global
-                                .language("delete_confirm")),
+                            content: Text(global.language("delete_confirm")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -280,7 +286,7 @@ class _PayTransferState extends State<PayTransfer> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.transfer
+                                    global.payScreenData.transfer!
                                         .removeAt(index);
                                     refreshEvent();
                                   });
@@ -328,14 +334,17 @@ class _PayTransferState extends State<PayTransfer> {
           child: Column(
             children: <Widget>[
               cardDetail(),
-              Column(
-                children: <Widget>[
-                  ...global.payScreenData.transfer.map((detail) {
-                    var index = global.payScreenData.transfer.indexOf(detail);
-                    return buildTransferCard(index: index);
-                  }).toList()
-                ],
-              ),
+              (global.payScreenData.transfer == null)
+                  ? Container()
+                  : Column(
+                      children: <Widget>[
+                        ...global.payScreenData.transfer!.map((detail) {
+                          var index =
+                              global.payScreenData.transfer!.indexOf(detail);
+                          return buildTransferCard(index: index);
+                        }).toList()
+                      ],
+                    ),
             ],
           ),
         ));

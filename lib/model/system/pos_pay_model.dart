@@ -10,21 +10,21 @@ class PosPayModel {
   double cash_amount; // ยอดชำระเงินสด
   String discount_formula; // สูตรส่วนลด
   double discount_amount; // ยอดส่วนลด
-  List<PayCreditCardModel> credit_card; // บัตรเครดิต
-  List<PayTransferModel> transfer; // เงินโอน
-  List<PayChequeModel> cheque; // เช็ค
-  List<PayCouponModel> coupon; // คูปอง
-  List<PayQrModel> qr;
+  List<PayCreditCardModel>? credit_card; // บัตรเครดิต
+  List<PayTransferModel>? transfer; // เงินโอน
+  List<PayChequeModel>? cheque; // เช็ค
+  List<PayCouponModel>? coupon; // คูปอง
+  List<PayQrModel>? qr;
 
   PosPayModel({
     this.cash_amount_text = "",
     this.cash_amount = 0,
     this.discount_formula = "",
     this.discount_amount = 0,
-    this.credit_card = const [],
-    this.transfer = const [],
-    this.cheque = const [],
-    this.coupon = const [],
+    this.credit_card,
+    this.transfer,
+    this.cheque,
+    this.coupon,
     this.qr = const [],
   });
 

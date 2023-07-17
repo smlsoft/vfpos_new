@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
+import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayCheque extends StatefulWidget {
   final PosProcessModel posProcess;
@@ -46,7 +47,7 @@ class _PayChequeState extends State<PayCheque> {
 
   bool saveData() {
     if (chequeNumber.trim().isNotEmpty && chequeAmount > 0) {
-      global.payScreenData.cheque.add(PayChequeModel(
+      global.payScreenData.cheque!.add(PayChequeModel(
           due_date: DateTime.now(),
           bank_code: bankCode,
           bank_name: bankName,
@@ -98,10 +99,11 @@ class _PayChequeState extends State<PayCheque> {
                                                     alignment: Alignment.center,
                                                     width: 100,
                                                     height: 50,
-                                                    child: Image.asset(global
-                                                        .findLogoImageFromCreditCardProvider(
-                                                            bankDataList[index]
-                                                                .code))),
+                                                    child: Image(
+                                                        image: NetworkToFileImage(
+                                                            url: bankDataList[
+                                                                    index]
+                                                                .logo))),
                                                 const SizedBox(width: 10),
                                                 Text(bankDataList[index]
                                                     .names[0])
@@ -130,12 +132,15 @@ class _PayChequeState extends State<PayCheque> {
                                   width: 100,
                                   height: 50,
                                   child: (bankCode.isNotEmpty)
-                                      ? Image.asset(global
-                                          .findLogoImageFromCreditCardProvider(
-                                              bankCode))
+                                      ? Image(
+                                          image: NetworkToFileImage(
+                                              url: global
+                                                  .findBankLogo(bankCode)))
                                       : Container())),
                           Text(
-                            global.language("bank_name"),
+                            (bankName.isNotEmpty)
+                                ? bankName
+                                : global.language("bank_name"),
                             style: TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
@@ -418,17 +423,17 @@ class _PayChequeState extends State<PayCheque> {
                   SizedBox(
                       width: 100,
                       height: 50,
-                      child: Image.asset(
-                          global.findLogoImageFromCreditCardProvider(
-                              global.payScreenData.cheque[index].bank_code))),
+                      child: Image(
+                          image: NetworkImage(global.findBankLogo(
+                              global.payScreenData.cheque![index].bank_code)))),
                   const SizedBox(width: 10),
                   buildDetailsBlock(
                       label: global.language("cheque_number"),
-                      value: global.payScreenData.cheque[index].cheque_number),
+                      value: global.payScreenData.cheque![index].cheque_number),
                   const SizedBox(width: 50),
                   buildDetailsBlock(
                       label: global.language("bank_branch_number"),
-                      value: global.payScreenData.cheque[index].branch_number),
+                      value: global.payScreenData.cheque![index].branch_number),
                 ],
               ),
               subtitle: Container(
@@ -440,12 +445,12 @@ class _PayChequeState extends State<PayCheque> {
                       label: global.language('due_date'),
                       value: DateFormat.yMMMMEEEEd()
                           .formatInBuddhistCalendarThai(
-                              global.payScreenData.cheque[index].due_date),
+                              global.payScreenData.cheque![index].due_date),
                     ),
                     buildDetailsBlock(
                         label: global.language('amount'),
-                        value: global.moneyFormat
-                            .format(global.payScreenData.cheque[index].amount)),
+                        value: global.moneyFormat.format(
+                            global.payScreenData.cheque![index].amount)),
                   ],
                 ),
               ),
@@ -473,7 +478,8 @@ class _PayChequeState extends State<PayCheque> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.cheque.removeAt(index);
+                                    global.payScreenData.cheque!
+                                        .removeAt(index);
                                     refreshEvent();
                                   });
                                 },
@@ -521,14 +527,16 @@ class _PayChequeState extends State<PayCheque> {
       child: Column(
         children: <Widget>[
           cardDetail(),
-          Column(
-            children: <Widget>[
-              ...global.payScreenData.cheque.map((detail) {
-                var index = global.payScreenData.cheque.indexOf(detail);
-                return buildCreditCard(index: index);
-              }).toList()
-            ],
-          ),
+          (global.payScreenData.cheque == null)
+              ? Container()
+              : Column(
+                  children: <Widget>[
+                    ...global.payScreenData.cheque!.map((detail) {
+                      var index = global.payScreenData.cheque!.indexOf(detail);
+                      return buildCreditCard(index: index);
+                    }).toList()
+                  ],
+                ),
         ],
       ),
     )));

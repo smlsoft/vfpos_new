@@ -8,6 +8,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayCreditCard extends StatefulWidget {
   final PosProcessModel posProcess;
@@ -42,12 +43,13 @@ class _PayCreditCardState extends State<PayCreditCard> {
 
   bool saveData() {
     if (cardNumber.trim().isNotEmpty && cardAmount > 0) {
-      global.payScreenData.credit_card.add(PayCreditCardModel(
+      PayCreditCardModel data = PayCreditCardModel(
           bank_code: bankCode,
           bank_name: bankName,
           card_number: cardNumber,
           approved_code: approveNumber,
-          amount: cardAmount));
+          amount: cardAmount);
+      global.payScreenData.credit_card!.add(data);
       return true;
     } else {
       return false;
@@ -93,10 +95,12 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                                     alignment: Alignment.center,
                                                     width: 100,
                                                     height: 50,
-                                                    child: Image.asset(global
-                                                        .findLogoImageFromCreditCardProvider(
-                                                            bankDataList[index]
-                                                                .code))),
+                                                    child: Image(
+                                                        image: NetworkToFileImage(
+                                                            url: global.findBankLogo(
+                                                                bankDataList[
+                                                                        index]
+                                                                    .code)))),
                                                 const SizedBox(width: 10),
                                                 Text(bankDataList[index]
                                                     .names[0])
@@ -125,12 +129,15 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                   width: 100,
                                   height: 50,
                                   child: (bankCode.isNotEmpty)
-                                      ? Image.asset(global
-                                          .findLogoImageFromCreditCardProvider(
-                                              bankCode))
+                                      ? Image(
+                                          image: NetworkToFileImage(
+                                              url: global
+                                                  .findBankLogo(bankCode)))
                                       : Container())),
                           Text(
-                            global.language('bank'),
+                            (bankName.isNotEmpty)
+                                ? bankName
+                                : global.language('bank'),
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
@@ -166,8 +173,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                     renderBox.localToGlobal(Offset.zero);
                                 global.payScreenNumberPadLeft =
                                     offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop =
-                                    offset.dy - size.height;
+                                global.payScreenNumberPadTop = offset.dy;
                                 _buttonIndex = 1;
                               }
                               refreshEvent();
@@ -352,7 +358,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
     );
   }
 
-  Widget _buildCreditCard({required int index}) {
+  Widget buildCreditCard({required int index}) {
     return Column(
       children: [
         Card(
@@ -369,9 +375,10 @@ class _PayCreditCardState extends State<PayCreditCard> {
                   SizedBox(
                       width: 100,
                       height: 50,
-                      child: Image.asset(
-                          global.findLogoImageFromCreditCardProvider(global
-                              .payScreenData.credit_card[index].bank_code))),
+                      child: Image(
+                          image: NetworkToFileImage(
+                              url: global.findBankLogo(global.payScreenData
+                                  .credit_card![index].bank_code)))),
                   const SizedBox(width: 10),
                   Text(
                     '${global.language('card_number')}  : ',
@@ -382,7 +389,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         fontFamily: 'CourrierPrime'),
                   ),
                   Text(
-                    global.payScreenData.credit_card[index].card_number,
+                    global.payScreenData.credit_card![index].card_number,
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -398,13 +405,13 @@ class _PayCreditCardState extends State<PayCreditCard> {
                   children: <Widget>[
                     buildDetailsBlock(
                       label: global.language('authorization_code'),
-                      value:
-                          global.payScreenData.credit_card[index].approved_code,
+                      value: global
+                          .payScreenData.credit_card![index].approved_code,
                     ),
                     buildDetailsBlock(
                         label: global.language('amount'),
                         value: global.moneyFormat.format(
-                            global.payScreenData.credit_card[index].amount)),
+                            global.payScreenData.credit_card![index].amount)),
                   ],
                 ),
               ),
@@ -419,8 +426,8 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text(global
-                                .language("delete_confirm_warning")),
+                            content:
+                                Text(global.language("delete_confirm_warning")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -433,7 +440,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.credit_card
+                                    global.payScreenData.credit_card!
                                         .removeAt(index);
                                     refreshEvent();
                                   });
@@ -481,14 +488,17 @@ class _PayCreditCardState extends State<PayCreditCard> {
             child: Column(
           children: <Widget>[
             cardDetail(),
-            Column(
-              children: <Widget>[
-                ...global.payScreenData.credit_card.map((detail) {
-                  var index = global.payScreenData.credit_card.indexOf(detail);
-                  return _buildCreditCard(index: index);
-                }).toList()
-              ],
-            ),
+            (global.payScreenData.credit_card == null)
+                ? Container()
+                : Column(
+                    children: <Widget>[
+                      ...global.payScreenData.credit_card!.map((detail) {
+                        var index =
+                            global.payScreenData.credit_card!.indexOf(detail);
+                        return buildCreditCard(index: index);
+                      }).toList()
+                    ],
+                  ),
           ],
         )));
   }

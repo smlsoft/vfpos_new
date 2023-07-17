@@ -100,6 +100,7 @@ Future<void> loadFormDesign() async {
       FormDesignColumnModel(
           command: "&total_discount_amount&",
           text_align: PrintColumnAlign.right,
+          font_weight_bold: true,
           width: 2),
     ],
     [
@@ -117,7 +118,7 @@ Future<void> loadFormDesign() async {
       FormDesignColumnModel(
           command: "&total_item_vat_amount_after_discount_name&", width: 5),
       FormDesignColumnModel(
-          command: "&total_item_vat_amount_after_discount&",
+          command: "&total_before_calc_vat&",
           text_align: PrintColumnAlign.right,
           width: 2),
     ],

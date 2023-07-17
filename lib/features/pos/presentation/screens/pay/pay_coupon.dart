@@ -36,7 +36,7 @@ class _PayCouponState extends State<PayCoupon> {
 
   bool saveData() {
     if (_couponNumber.trim().isNotEmpty && _couponAmount > 0) {
-      global.payScreenData.coupon.add(PayCouponModel(
+      global.payScreenData.coupon!.add(PayCouponModel(
           number: _couponNumber,
           description: _descriptionController.text,
           amount: _couponAmount));
@@ -235,11 +235,11 @@ class _PayCouponState extends State<PayCoupon> {
                 children: [
                   _buildDetailsBlock(
                       label: global.language("coupon_number"),
-                      value: global.payScreenData.coupon[index].number),
+                      value: global.payScreenData.coupon![index].number),
                   const SizedBox(width: 10),
                   _buildDetailsBlock(
                       label: global.language("coupon_description"),
-                      value: global.payScreenData.coupon[index].description),
+                      value: global.payScreenData.coupon![index].description),
                 ],
               ),
               subtitle: Container(
@@ -249,8 +249,8 @@ class _PayCouponState extends State<PayCoupon> {
                   children: <Widget>[
                     _buildDetailsBlock(
                         label: global.language('coupon_amount'),
-                        value: global.moneyFormat
-                            .format(global.payScreenData.coupon[index].amount)),
+                        value: global.moneyFormat.format(
+                            global.payScreenData.coupon![index].amount)),
                   ],
                 ),
               ),
@@ -265,8 +265,8 @@ class _PayCouponState extends State<PayCoupon> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content:
-                                 Text(global.language("do_you_want_to_cancel_this_item")),
+                            content: Text(global
+                                .language("do_you_want_to_cancel_this_item")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -279,7 +279,8 @@ class _PayCouponState extends State<PayCoupon> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.coupon.removeAt(index);
+                                    global.payScreenData.coupon!
+                                        .removeAt(index);
                                     refreshEvent();
                                   });
                                 },
@@ -327,14 +328,16 @@ class _PayCouponState extends State<PayCoupon> {
       child: Column(
         children: <Widget>[
           cardDetail(),
-          Column(
-            children: <Widget>[
-              ...global.payScreenData.coupon.map((detail) {
-                var index = global.payScreenData.coupon.indexOf(detail);
-                return _buildCreditCard(index: index);
-              }).toList()
-            ],
-          ),
+          (global.payScreenData.coupon == null)
+              ? Container()
+              : Column(
+                  children: <Widget>[
+                    ...global.payScreenData.coupon!.map((detail) {
+                      var index = global.payScreenData.coupon!.indexOf(detail);
+                      return _buildCreditCard(index: index);
+                    }).toList()
+                  ],
+                ),
         ],
       ),
     )));

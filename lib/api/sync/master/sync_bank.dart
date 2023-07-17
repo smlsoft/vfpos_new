@@ -66,10 +66,8 @@ Future syncBank(
       guidfixed: newData.guidfixed,
       code: newData.code,
       names: packNameValues,
+      logo: newData.logo,
     );
-
-    serviceLocator<Log>().debug("Sync Bank : ${newData.code} ${newData.names}");
-
     manyForInsert.add(newBank);
   }
   if (removeMany.isNotEmpty) {
@@ -95,7 +93,8 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await serverBankGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime)
+      await serverBankGetData(
+              offset: offset, limit: limit, lastupdate: lastUpdateTime)
           .then((value) {
         if (value.success) {
           var dataList = value.data["bankmaster"];
@@ -108,8 +107,6 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
-            serviceLocator<Log>().trace(
-                "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
             syncBank(removeList, newDataList);
           }
         } else {
@@ -121,6 +118,5 @@ Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
       offset += limit;
     }
     global.appStorage.write(global.syncBankTimeName, getLastUpdateTime);
-    global.createLogoImageFromBankProvider();
   }
 }

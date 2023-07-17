@@ -102,6 +102,7 @@ dependencies:
   animated_icon: ^0.0.5
   url_launcher: ^6.1.12
   top_snackbar_flutter: ^3.1.0
+  network_to_file_image: ^4.0.1
 
 dev_dependencies:
   flutter_driver:

@@ -31,6 +31,7 @@ import 'model/objectbox/product_category_struct.dart';
 import 'model/objectbox/shift_struct.dart';
 import 'model/objectbox/staff_client_struct.dart';
 import 'model/objectbox/table_struct.dart';
+import 'model/objectbox/wallet_struct.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -1664,6 +1665,71 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(32, 2794950564994791106),
+      name: 'WalletObjectBoxStruct',
+      lastPropertyId: const IdUid(11, 420388068252893737),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 7184088621256279597),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 2504139452902985776),
+            name: 'guid_fixed',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(38, 1908698160459029540)),
+        ModelProperty(
+            id: const IdUid(3, 5596247766453503361),
+            name: 'bankcode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 8158897483347994470),
+            name: 'bookbankname',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 7789353011510943049),
+            name: 'countrycode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 2533087898925222927),
+            name: 'feerate',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 606166391458088108),
+            name: 'names',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 7095625110865926763),
+            name: 'paymentcode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 8731513177970391643),
+            name: 'paymentlogo',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(10, 3030051318160692162),
+            name: 'paymenttype',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(11, 420388068252893737),
+            name: 'wallettype',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -1687,8 +1753,8 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(30, 8931092861744922825),
-      lastIndexId: const IdUid(36, 4249010379526982022),
+      lastEntityId: const IdUid(32, 2794950564994791106),
+      lastIndexId: const IdUid(38, 1908698160459029540),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -1702,7 +1768,8 @@ ModelDefinition getObjectBoxModel() {
         2798929453371134862,
         5035133149351921342,
         8200473711235576786,
-        7075751635639607639
+        7075751635639607639,
+        8538538599954258662
       ],
       retiredIndexUids: const [
         9219344176730085609,
@@ -1976,7 +2043,21 @@ ModelDefinition getObjectBoxModel() {
         5322643886496037132,
         4005330741966595239,
         1859914905112325149,
-        1593835513190308362
+        1593835513190308362,
+        4592900457830482968,
+        2203833686837184581,
+        5094911608209091875,
+        731521702167957516,
+        4593446394589587300,
+        198481917941527787,
+        2288908173334907873,
+        2212240660032404882,
+        7856061661578561802,
+        708982341961744165,
+        1977433210348608761,
+        5136718908964752502,
+        6922994843946849916,
+        1596360228007164917
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -3275,6 +3356,64 @@ ModelDefinition getObjectBoxModel() {
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
+        }),
+    WalletObjectBoxStruct: EntityDefinition<WalletObjectBoxStruct>(
+        model: _entities[19],
+        toOneRelations: (WalletObjectBoxStruct object) => [],
+        toManyRelations: (WalletObjectBoxStruct object) => {},
+        getId: (WalletObjectBoxStruct object) => object.id,
+        setId: (WalletObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (WalletObjectBoxStruct object, fb.Builder fbb) {
+          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+          final bankcodeOffset = fbb.writeString(object.bankcode);
+          final bookbanknameOffset = fbb.writeString(object.bookbankname);
+          final countrycodeOffset = fbb.writeString(object.countrycode);
+          final namesOffset = fbb.writeString(object.names);
+          final paymentcodeOffset = fbb.writeString(object.paymentcode);
+          final paymentlogoOffset = fbb.writeString(object.paymentlogo);
+          fbb.startTable(12);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, guid_fixedOffset);
+          fbb.addOffset(2, bankcodeOffset);
+          fbb.addOffset(3, bookbanknameOffset);
+          fbb.addOffset(4, countrycodeOffset);
+          fbb.addFloat64(5, object.feerate);
+          fbb.addOffset(6, namesOffset);
+          fbb.addOffset(7, paymentcodeOffset);
+          fbb.addOffset(8, paymentlogoOffset);
+          fbb.addInt64(9, object.paymenttype);
+          fbb.addInt64(10, object.wallettype);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = WalletObjectBoxStruct(
+              guid_fixed: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, ''),
+              bankcode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, ''),
+              bookbankname: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, ''),
+              countrycode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, ''),
+              feerate:
+                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0),
+              names: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 16, ''),
+              paymentcode: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 18, ''),
+              paymentlogo:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 20, ''),
+              paymenttype: const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0),
+              wallettype: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0))
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
         })
   };
 
@@ -4530,4 +4669,51 @@ class BillDetailObjectBoxStruct_ {
   /// see [BillDetailObjectBoxStruct.extra_json]
   static final extra_json = QueryStringProperty<BillDetailObjectBoxStruct>(
       _entities[18].properties[14]);
+}
+
+/// [WalletObjectBoxStruct] entity fields to define ObjectBox queries.
+class WalletObjectBoxStruct_ {
+  /// see [WalletObjectBoxStruct.id]
+  static final id =
+      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[19].properties[0]);
+
+  /// see [WalletObjectBoxStruct.guid_fixed]
+  static final guid_fixed =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[1]);
+
+  /// see [WalletObjectBoxStruct.bankcode]
+  static final bankcode =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[2]);
+
+  /// see [WalletObjectBoxStruct.bookbankname]
+  static final bookbankname =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[3]);
+
+  /// see [WalletObjectBoxStruct.countrycode]
+  static final countrycode =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[4]);
+
+  /// see [WalletObjectBoxStruct.feerate]
+  static final feerate =
+      QueryDoubleProperty<WalletObjectBoxStruct>(_entities[19].properties[5]);
+
+  /// see [WalletObjectBoxStruct.names]
+  static final names =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[6]);
+
+  /// see [WalletObjectBoxStruct.paymentcode]
+  static final paymentcode =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[7]);
+
+  /// see [WalletObjectBoxStruct.paymentlogo]
+  static final paymentlogo =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[19].properties[8]);
+
+  /// see [WalletObjectBoxStruct.paymenttype]
+  static final paymenttype =
+      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[19].properties[9]);
+
+  /// see [WalletObjectBoxStruct.wallettype]
+  static final wallettype =
+      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[19].properties[10]);
 }

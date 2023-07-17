@@ -71,7 +71,6 @@ class PosScreen extends StatefulWidget {
 
 class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  late Timer posScreenTimer;
   late Timer messageTimer;
   late Timer deviceTimer;
   final ScrollController groupSelectListScrollController = ScrollController();
@@ -272,7 +271,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     super.dispose();
     global.functionPosScreenRefresh = null;
     deviceTimer.cancel();
-    posScreenTimer.cancel();
     messageTimer.cancel();
     if (global.isTabletScreen() || global.isDesktopScreen()) {
       tabletTabController.dispose();

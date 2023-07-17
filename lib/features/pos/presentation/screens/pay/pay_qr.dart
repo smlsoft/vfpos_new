@@ -38,7 +38,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
   bool saveData(String providerCode, String providerName) {
     global.payScreenNumberPadIsActive = false;
     if (_amount > 0) {
-      global.payScreenData.qr.add(PayQrModel(
+      global.payScreenData.qr!.add(PayQrModel(
           provider_code: providerCode,
           provider_name: providerName,
           description: _descriptionController.text,
@@ -174,21 +174,21 @@ class PayQrWidgetState extends State<PayQrWidget> {
                 Column(
                   children: [
                     Image.asset(
-                      ("assets/images/qrpay/${global.payScreenData.qr[index].provider_code}.png")
+                      ("assets/images/qrpay/${global.payScreenData.qr![index].provider_code}.png")
                           .toLowerCase(),
                       height: 40,
                     ),
-                    Text(global.payScreenData.qr[index].provider_name)
+                    Text(global.payScreenData.qr![index].provider_name)
                   ],
                 ),
                 buildDetailsBlock(
                   label: global.language('qr_description'),
-                  value: global.payScreenData.qr[index].description,
+                  value: global.payScreenData.qr![index].description,
                 ),
                 buildDetailsBlock(
                     label: global.language('qr_amount'),
                     value: global.moneyFormat
-                        .format(global.payScreenData.qr[index].amount)),
+                        .format(global.payScreenData.qr![index].amount)),
               ],
             ),
           ),
@@ -217,7 +217,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                           onPressed: () {
                             setState(() {
                               Navigator.of(context).pop();
-                              global.payScreenData.qr.removeAt(index);
+                              global.payScreenData.qr!.removeAt(index);
                               refreshEvent();
                             });
                           },
@@ -358,7 +358,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
             Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(bottom: 4),
-                child: (global.payScreenData.qr.isEmpty)
+                child: (global.payScreenData.qr!.isEmpty)
                     ? Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -393,8 +393,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
                 formDetail(),
                 Column(
                   children: <Widget>[
-                    ...global.payScreenData.qr.map((detail) {
-                      var index = global.payScreenData.qr.indexOf(detail);
+                    ...global.payScreenData.qr!.map((detail) {
+                      var index = global.payScreenData.qr!.indexOf(detail);
                       return buildCard(index: index);
                     }).toList(),
                   ],
