@@ -30,56 +30,66 @@ Future<saveBillResultClass> saveBill(
   // จ่าย
   List<BillPayObjectBoxStruct> pays = [];
   // บัตรเครดิต
-  for (var value in global.payScreenData.credit_card!) {
-    pays.add(BillPayObjectBoxStruct(
-      trans_flag: 1,
-      bank_code: value.bank_code,
-      bank_name: value.bank_name,
-      card_number: value.card_number,
-      amount: value.amount,
-    ));
+  if (global.payScreenData.credit_card != null) {
+    for (var value in global.payScreenData.credit_card!) {
+      pays.add(BillPayObjectBoxStruct(
+        trans_flag: 1,
+        bank_code: value.bank_code,
+        bank_name: value.bank_name,
+        card_number: value.card_number,
+        amount: value.amount,
+      ));
+    }
   }
   // เงินโอน
-  for (var value in global.payScreenData.transfer!) {
-    pays.add(BillPayObjectBoxStruct(
-      trans_flag: 2,
-      bank_code: value.bank_code,
-      bank_name: value.bank_name,
-      bank_account_no: value.account_number,
-      amount: value.amount,
-    ));
+  if (global.payScreenData.transfer != null) {
+    for (var value in global.payScreenData.transfer!) {
+      pays.add(BillPayObjectBoxStruct(
+        trans_flag: 2,
+        bank_code: value.bank_code,
+        bank_name: value.bank_name,
+        bank_account_no: value.account_number,
+        amount: value.amount,
+      ));
+    }
   }
   // เช็ค
-  for (var value in global.payScreenData.cheque!) {
-    BillPayObjectBoxStruct data = BillPayObjectBoxStruct(
-      trans_flag: 3,
-      bank_code: value.bank_code,
-      bank_name: value.bank_name,
-      cheque_number: value.cheque_number,
-      branch_number: value.branch_number,
-      amount: value.amount,
-    );
-    data.due_date = value.due_date;
-    pays.add(data);
+  if (global.payScreenData.cheque != null) {
+    for (var value in global.payScreenData.cheque!) {
+      BillPayObjectBoxStruct data = BillPayObjectBoxStruct(
+        trans_flag: 3,
+        bank_code: value.bank_code,
+        bank_name: value.bank_name,
+        cheque_number: value.cheque_number,
+        branch_number: value.branch_number,
+        amount: value.amount,
+      );
+      data.due_date = value.due_date;
+      pays.add(data);
+    }
   }
   // คูปอง
-  for (var value in global.payScreenData.coupon!) {
-    pays.add(BillPayObjectBoxStruct(
-      trans_flag: 4,
-      number: value.number,
-      description: value.description,
-      amount: value.amount,
-    ));
+  if (global.payScreenData.coupon != null) {
+    for (var value in global.payScreenData.coupon!) {
+      pays.add(BillPayObjectBoxStruct(
+        trans_flag: 4,
+        number: value.number,
+        description: value.description,
+        amount: value.amount,
+      ));
+    }
   }
   // จ่ายด้วย QR
-  for (var value in global.payScreenData.qr!) {
-    pays.add(BillPayObjectBoxStruct(
-      trans_flag: 5,
-      provider_code: value.provider_code,
-      provider_name: value.provider_name,
-      description: value.description,
-      amount: value.amount,
-    ));
+  if (global.payScreenData.qr != null) {
+    for (var value in global.payScreenData.qr!) {
+      pays.add(BillPayObjectBoxStruct(
+        trans_flag: 5,
+        provider_code: value.provider_code,
+        provider_name: value.provider_name,
+        description: value.description,
+        amount: value.amount,
+      ));
+    }
   }
 
   // ภาษีมูลค่าเพิ่ม
