@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dedepos/db/kitchen_helper.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
 import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
@@ -73,11 +74,11 @@ Future<void> sendToKitchen(
           mode: 2,
           posStyles: const PosStyles(bold: true),
           columns: [
-            PosPrintBillCommandColumnModel(
-                fontSize: 80,
+            FormDesignColumnModel(
+                font_size: 80,
                 width: 1,
                 text: "โต๊ะ : $orderId",
-                align: PrintColumnAlign.center)
+                text_align: PrintColumnAlign.center)
           ]));
       for (var order in orderList) {
         if (kitchen.products.contains(order.barcode) == true) {
@@ -90,28 +91,28 @@ Future<void> sendToKitchen(
                 mode: 2,
                 posStyles: const PosStyles(bold: true),
                 columns: [
-                  PosPrintBillCommandColumnModel(
-                      fontSize: 24,
+                  FormDesignColumnModel(
+                      font_size: 24,
                       width: 4,
                       text:
                           "${global.getNameFromJsonLanguage(findBarcode.names, global.userScreenLanguage)}-${global.getNameFromJsonLanguage(findBarcode.unit_names, global.userScreenLanguage)}",
-                      align: PrintColumnAlign.left),
-                  PosPrintBillCommandColumnModel(
-                      fontSize: 24,
+                      text_align: PrintColumnAlign.left),
+                  FormDesignColumnModel(
+                      font_size: 24,
                       width: 1,
                       text: global.moneyFormat.format(order.qty),
-                      align: PrintColumnAlign.right),
+                      text_align: PrintColumnAlign.right),
                 ]));
             if (order.remark.trim().isNotEmpty) {
               printer.addCommand(PosPrintBillCommandModel(
                   mode: 2,
                   posStyles: const PosStyles(bold: true),
                   columns: [
-                    PosPrintBillCommandColumnModel(
-                        fontSize: 24,
+                    FormDesignColumnModel(
+                        font_size: 24,
                         width: 1,
                         text: "x หมายเหตุ x : ${order.remark}",
-                        align: PrintColumnAlign.left),
+                        text_align: PrintColumnAlign.left),
                   ]));
             }
             if (order.optionSelected.isNotEmpty) {
@@ -129,11 +130,11 @@ Future<void> sendToKitchen(
                           mode: 2,
                           posStyles: const PosStyles(bold: false),
                           columns: [
-                            PosPrintBillCommandColumnModel(
-                                fontSize: 24,
+                            FormDesignColumnModel(
+                                font_size: 24,
                                 width: 1,
                                 text: " * ${option.names[0].name}",
-                                align: PrintColumnAlign.left),
+                                text_align: PrintColumnAlign.left),
                           ]));
                       optionPrint = true;
                     }
@@ -141,11 +142,11 @@ Future<void> sendToKitchen(
                         mode: 2,
                         posStyles: const PosStyles(bold: false),
                         columns: [
-                          PosPrintBillCommandColumnModel(
-                              fontSize: 24,
+                          FormDesignColumnModel(
+                              font_size: 24,
                               width: 1,
                               text: "   - ${choice.names[0].name}",
-                              align: PrintColumnAlign.left),
+                              text_align: PrintColumnAlign.left),
                         ]));
                   }
                 }
@@ -158,12 +159,12 @@ Future<void> sendToKitchen(
           mode: 2,
           posStyles: const PosStyles(bold: true),
           columns: [
-            PosPrintBillCommandColumnModel(
-                fontSize: 32,
+            FormDesignColumnModel(
+                font_size: 32,
                 width: 1,
                 text:
                     "${global.getNameFromJsonLanguage(kitchen.names, global.userScreenLanguage)} : เวลา : ${DateFormat("HH:mm").format(DateTime.now())}",
-                align: PrintColumnAlign.center)
+                text_align: PrintColumnAlign.center)
           ]));
       printer.sendToPrinter();
     }

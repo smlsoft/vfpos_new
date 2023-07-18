@@ -756,15 +756,18 @@ class _PrinterConfigSelectPrinterScreenState
                               isConfigConnectSuccess: true,
                               vendorId: "",
                               productId: "",
-                              paperSize: printerPaperSize,
+                              paperType: printerPaperSize,
                               printBillAuto: printBillAuto);
                           var jsonString =
                               const JsonEncoder().convert(data.toJson());
-                          await global.appStorage
-                              .write(widget.printerCode, jsonString);
+                          await global.appStorage.write(
+                              widget.printerCode,
+                              jsonString);
                           global.loadConfig();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          if (mounted) {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          }
                         },
                       ),
                       ElevatedButton(

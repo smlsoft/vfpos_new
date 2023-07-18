@@ -1,3 +1,5 @@
+import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
+import 'package:dedepos/util/print_hold_bill.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/safe_area_values.dart';
 import 'package:top_snackbar_flutter/tap_bounce_container.dart';
@@ -2954,20 +2956,20 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget totalAndPayScreen() {
-    List<Widget> quickPay = [];
-    quickPay.add(const SizedBox(
+    List<Widget> iconMenu = [];
+    iconMenu.add(const SizedBox(
       width: 2,
     ));
-    quickPay.add(ElevatedButton(
+    iconMenu.add(ElevatedButton(
       onPressed: () async {
         payScreen(3);
       },
       child: const FaIcon(FontAwesomeIcons.creditCard),
     ));
-    quickPay.add(const SizedBox(
+    iconMenu.add(const SizedBox(
       width: 2,
     ));
-    quickPay.add(ElevatedButton(
+    iconMenu.add(ElevatedButton(
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.zero,
       ),
@@ -2976,12 +2978,24 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       },
       child: const Icon(Icons.qr_code),
     ));
+    iconMenu.add(const SizedBox(
+      width: 2,
+    ));
+    iconMenu.add(ElevatedButton(
+      style: OutlinedButton.styleFrom(
+        padding: EdgeInsets.zero,
+      ),
+      onPressed: () async {
+        printHoldBill(context: context, holdNumber: global.posHoldActiveCode);
+      },
+      child: const Icon(Icons.print),
+    ));
     if (1 == 1) {
       // ร้านอาหาร
-      quickPay.add(const SizedBox(
+      iconMenu.add(const SizedBox(
         width: 2,
       ));
-      quickPay.add(ElevatedButton(
+      iconMenu.add(ElevatedButton(
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.zero,
         ),
@@ -3075,7 +3089,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           ),
           Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: quickPay),
+              children: iconMenu),
         ],
       ),
     );

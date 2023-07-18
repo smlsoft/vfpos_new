@@ -53,12 +53,15 @@ class PrinterLocalStrongDataModel {
   String manufacturer;
   String vendorId;
   String productId;
-  int paperSize; // 1 = 58mm, 2 = 80mm
+  int paperType; // 1 = 58mm, 2 = 80mm
   bool printBillAuto;
   PrinterTypeEnum printerType;
   PrinterConnectEnum printerConnectType;
   bool isConfigConnectSuccess;
   bool isReady;
+  String formSummeryCode; // ใบสรุปยอดขาย
+  String formTaxCode; // ใบกำกับภาษีแบบย่อย
+  String formFullTaxCode; // ใบกำกับภาษีแบบเต็ม
 
   PrinterLocalStrongDataModel(
       {this.code = "",
@@ -71,8 +74,11 @@ class PrinterLocalStrongDataModel {
       this.manufacturer = "",
       this.vendorId = "",
       this.productId = "",
-      this.paperSize = 2,
+      this.paperType = 2,
       this.isReady = false,
+      this.formSummeryCode = "",
+      this.formTaxCode = "",
+      this.formFullTaxCode = "",
       this.isConfigConnectSuccess = false,
       this.printerType = PrinterTypeEnum.thermal,
       this.printerConnectType = PrinterConnectEnum.ip,

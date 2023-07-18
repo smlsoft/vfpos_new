@@ -113,6 +113,9 @@ class PosProcessModel {
   /// จำนวนชิ้น
   double total_piece;
 
+  /// ยอดรวมภาษี
+  double total_vat_amount;
+
   /// ยอดรวมทั้งสิ้น (มีภาษี และ ยกเว้นภาษี)
   double total_amount;
 
@@ -146,6 +149,7 @@ class PosProcessModel {
       this.total_discount_from_promotion = 0,
       this.qr_code = "",
       this.vat_rate = 0,
+      this.total_vat_amount = 0,
       this.total_item_vat_amount = 0,
       this.total_item_except_amount = 0,
       this.details = const [],

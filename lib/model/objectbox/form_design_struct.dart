@@ -19,9 +19,6 @@ class FormDesignObjectBoxStruct {
   /// 0=ใบเสร็จรับเงิน,1=ใบสรุปยอด,2=ใบกำกับภาษีแบบเต็ม
   int type;
 
-  /// กำหนดความกว้างของกระดาษ หน่วยเป็น mm (มิลลิเมตร) เช่น 58mm,80mm
-  double paper_width;
-
   /// True=รวมรายการตามประเภท, False=ไม่รวมตามประเภท  (อาหาร,เครื่องดื่ม,อื่นๆ)
   bool sum_by_type;
 
@@ -45,7 +42,6 @@ class FormDesignObjectBoxStruct {
   FormDesignObjectBoxStruct({
     required this.guid_fixed,
     required this.code,
-    required this.paper_width,
     required this.type,
     required this.sum_by_type,
     required this.sum_by_barcode,
@@ -96,6 +92,7 @@ class FormDesignFooterModel {
 @JsonSerializable(explicitToJson: true)
 class FormDesignColumnModel {
   List<LanguageDataModel> header_names;
+  String text;
   String command;
   double width;
   double font_size;
@@ -110,10 +107,11 @@ class FormDesignColumnModel {
   String font_color;
 
   FormDesignColumnModel({
-    required this.command,
+    this.command = "",
     this.width = 1,
+    this.text = "",
     this.header_names = const [],
-    this.font_size = 32,
+    this.font_size = 24,
     this.font_family = "Arial",
     this.font_weight_bold = false,
     this.font_style_italic = false,

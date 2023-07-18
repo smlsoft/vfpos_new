@@ -48,8 +48,11 @@ PrinterLocalStrongDataModel _$PrinterLocalStrongDataModelFromJson(
       manufacturer: json['manufacturer'] as String? ?? "",
       vendorId: json['vendorId'] as String? ?? "",
       productId: json['productId'] as String? ?? "",
-      paperSize: json['paperSize'] as int? ?? 2,
+      paperType: json['paperType'] as int? ?? 2,
       isReady: json['isReady'] as bool? ?? false,
+      formSummeryCode: json['formSummeryCode'] as String? ?? "",
+      formTaxCode: json['formTaxCode'] as String? ?? "",
+      formFullTaxCode: json['formFullTaxCode'] as String? ?? "",
       isConfigConnectSuccess: json['isConfigConnectSuccess'] as bool? ?? false,
       printerType:
           $enumDecodeNullable(_$PrinterTypeEnumEnumMap, json['printerType']) ??
@@ -73,13 +76,16 @@ Map<String, dynamic> _$PrinterLocalStrongDataModelToJson(
       'manufacturer': instance.manufacturer,
       'vendorId': instance.vendorId,
       'productId': instance.productId,
-      'paperSize': instance.paperSize,
+      'paperType': instance.paperType,
       'printBillAuto': instance.printBillAuto,
       'printerType': _$PrinterTypeEnumEnumMap[instance.printerType]!,
       'printerConnectType':
           _$PrinterConnectEnumEnumMap[instance.printerConnectType]!,
       'isConfigConnectSuccess': instance.isConfigConnectSuccess,
       'isReady': instance.isReady,
+      'formSummeryCode': instance.formSummeryCode,
+      'formTaxCode': instance.formTaxCode,
+      'formFullTaxCode': instance.formFullTaxCode,
     };
 
 const _$PrinterTypeEnumEnumMap = {

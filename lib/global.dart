@@ -199,8 +199,10 @@ bool checkOrderActive = false;
 int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
 String posTerminalPinCode = "";
 String posTerminalPinTokenId = "";
-String formBillDefaultCode = "DEDE-01"; // ใบเสร็จรับเงิน
-String formSummeryDefaultCode = "DEDE-02"; // ใบสรุปยอด
+String formTaxDefaultCode = "DEDE-01-88"; // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ
+String formFullTaxDefaultCode =
+    "DEDE-02-88"; // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม
+String formSummeryDefaultCode = "DEDE-05-88"; // ใบสรุปยอด
 bool posScreenAutoRefresh = false;
 
 enum PrinterTypeEnum { thermal, dot, laser, inkjet }
@@ -323,12 +325,6 @@ Future<void> loadPrinter() async {
           name: printerNames[printerCodes.indexOf(printerCode)]));
     }
   }
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  posTerminalPinCode =
-      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
-  posTerminalPinTokenId =
-      sharedPreferences.getString('pos_terminal_token') ?? "";
-  deviceId = sharedPreferences.getString('pos_device_id') ?? "";
 }
 
 int posScreenToInt() {
@@ -891,6 +887,12 @@ Future<void> loadConfig() async {
   await loadFormDesign();
   await loadAndCompareEmployee();
   await loadEmployee();
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  posTerminalPinCode =
+      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+  posTerminalPinTokenId =
+      sharedPreferences.getString('pos_terminal_token') ?? "";
+  deviceId = sharedPreferences.getString('pos_device_id') ?? "";
 }
 
 Future<void> registerRemoteToTerminal() async {
@@ -1259,7 +1261,7 @@ Future<void> testPrinterConnect() async {
 }
 
 int printerWidthByCharacter(int printerIndex) {
-  if (printerLocalStrongData[printerIndex].paperSize == 1) {
+  if (printerLocalStrongData[printerIndex].paperType == 1) {
     return 32;
   } else {
     return 48;
@@ -1267,7 +1269,7 @@ int printerWidthByCharacter(int printerIndex) {
 }
 
 double printerWidthByPixel(int printerIndex) {
-  if (printerLocalStrongData[printerIndex].paperSize == 1) {
+  if (printerLocalStrongData[printerIndex].paperType == 1) {
     return 384;
   } else {
     return 576;
@@ -1711,4 +1713,15 @@ String findBankLogo(String code) {
     return bankDataList.logo;
   }
   return "";
+}
+
+double paperWidth(int paperType) {
+  switch (paperType) {
+    case 1: // 58
+      return 378;
+    case 2: // 80
+      return 575;
+    default:
+      return 575;
+  }
 }

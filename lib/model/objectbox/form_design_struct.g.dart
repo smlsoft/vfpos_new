@@ -11,7 +11,6 @@ FormDesignObjectBoxStruct _$FormDesignObjectBoxStructFromJson(
     FormDesignObjectBoxStruct(
       guid_fixed: json['guid_fixed'] as String,
       code: json['code'] as String,
-      paper_width: (json['paper_width'] as num).toDouble(),
       type: json['type'] as int,
       sum_by_type: json['sum_by_type'] as bool,
       sum_by_barcode: json['sum_by_barcode'] as bool,
@@ -33,7 +32,6 @@ Map<String, dynamic> _$FormDesignObjectBoxStructToJson(
       'guid_fixed': instance.guid_fixed,
       'code': instance.code,
       'type': instance.type,
-      'paper_width': instance.paper_width,
       'sum_by_type': instance.sum_by_type,
       'sum_by_barcode': instance.sum_by_barcode,
       'print_logo': instance.print_logo,
@@ -88,8 +86,9 @@ Map<String, dynamic> _$FormDesignFooterModelToJson(
 FormDesignColumnModel _$FormDesignColumnModelFromJson(
         Map<String, dynamic> json) =>
     FormDesignColumnModel(
-      command: json['command'] as String,
+      command: json['command'] as String? ?? "",
       width: (json['width'] as num?)?.toDouble() ?? 1,
+      text: json['text'] as String? ?? "",
       header_names: (json['header_names'] as List<dynamic>?)
               ?.map(
                   (e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
@@ -111,6 +110,7 @@ Map<String, dynamic> _$FormDesignColumnModelToJson(
         FormDesignColumnModel instance) =>
     <String, dynamic>{
       'header_names': instance.header_names.map((e) => e.toJson()).toList(),
+      'text': instance.text,
       'command': instance.command,
       'width': instance.width,
       'font_size': instance.font_size,

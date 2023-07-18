@@ -120,6 +120,7 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
           (json['total_discount_from_promotion'] as num?)?.toDouble() ?? 0,
       qr_code: json['qr_code'] as String? ?? "",
       vat_rate: (json['vat_rate'] as num?)?.toDouble() ?? 0,
+      total_vat_amount: (json['total_vat_amount'] as num?)?.toDouble() ?? 0,
       total_item_vat_amount:
           (json['total_item_vat_amount'] as num?)?.toDouble() ?? 0,
       total_item_except_amount:
@@ -145,6 +146,7 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
     <String, dynamic>{
       'total_piece': instance.total_piece,
+      'total_vat_amount': instance.total_vat_amount,
       'total_amount': instance.total_amount,
       'total_discount_from_promotion': instance.total_discount_from_promotion,
       'qr_code': instance.qr_code,

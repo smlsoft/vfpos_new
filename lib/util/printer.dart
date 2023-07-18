@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dedepos/db/shift_helper.dart';
+import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/services/print_process.dart';
 import 'package:image/image.dart' as im;
@@ -22,7 +23,7 @@ class PrinterClass {
   });
 
   double paperMaxWidth() {
-    return (global.printerLocalStrongData[printerIndex].paperSize == 1)
+    return (global.printerLocalStrongData[printerIndex].paperType == 1)
         ? 378.0
         : 575.0;
   }
@@ -35,7 +36,7 @@ class PrinterClass {
 
   void printByIpImageMode() async {
     PaperSize paper =
-        (global.printerLocalStrongData[printerIndex].paperSize == 1)
+        (global.printerLocalStrongData[printerIndex].paperType == 1)
             ? PaperSize.mm58
             : PaperSize.mm80;
     CapabilityProfile profile = await CapabilityProfile.load();
@@ -75,8 +76,8 @@ class PrinterClass {
               printProcess.columnWidth.add(command.columns[index].width);
               printProcess.column.add(PrintColumn(
                 text: command.columns[index].text,
-                align: command.columns[index].align,
-                fontSize: command.columns[index].fontSize,
+                align: command.columns[index].text_align,
+                fontSize: command.columns[index].font_size,
               ));
             }
             ui.Image result = await printProcess
@@ -139,7 +140,7 @@ class PrinterClass {
     if (connectStatus) {
       final profile = await CapabilityProfile.load();
       final generator = Generator(
-          (global.printerLocalStrongData[0].paperSize == 1)
+          (global.printerLocalStrongData[0].paperType == 1)
               ? PaperSize.mm58
               : PaperSize.mm80,
           profile);
@@ -171,8 +172,8 @@ class PrinterClass {
               printProcess.columnWidth.add(command.columns[index].width);
               printProcess.column.add(PrintColumn(
                 text: command.columns[index].text,
-                align: command.columns[index].align,
-                fontSize: command.columns[index].fontSize,
+                align: command.columns[index].text_align,
+                fontSize: command.columns[index].font_size,
               ));
             }
             ui.Image result = await printProcess
@@ -258,22 +259,22 @@ void printTableQrCode(
       mode: 2,
       posStyles: const PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 60,
+        FormDesignColumnModel(
+            font_size: 60,
             width: 1,
             text: global.profileSetting.company.names[0].name,
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 24,
+        FormDesignColumnModel(
+            font_size: 24,
             width: 1,
             text: "Printing time : " +
                 DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now()),
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   String tableTitle = "";
   switch (tableManagerMode) {
@@ -307,35 +308,35 @@ void printTableQrCode(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 80,
+        FormDesignColumnModel(
+            font_size: 80,
             width: 1,
             text: tableTitle,
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
 
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 40,
+        FormDesignColumnModel(
+            font_size: 40,
             width: 1,
             text: "เวลาเปิดโต๊ะ : " +
                 DateFormat("HH:mm").format(table.table_open_datetime),
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   if (table.table_al_la_crate_mode == false) {
     printer.addCommand(PosPrintBillCommandModel(
         mode: 2,
         posStyles: PosStyles(bold: true),
         columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
+          FormDesignColumnModel(
+              font_size: 40,
               width: 1,
               text:
                   "จำนวนนาที : ${global.moneyFormat.format(global.buffetMaxMinute)} นาที",
-              align: PrintColumnAlign.center)
+              text_align: PrintColumnAlign.center)
         ]));
     String endTime = DateFormat("HH:mm").format(table.table_open_datetime
         .add(Duration(minutes: global.buffetMaxMinute)));
@@ -343,11 +344,11 @@ void printTableQrCode(
         mode: 2,
         posStyles: PosStyles(bold: true),
         columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
+          FormDesignColumnModel(
+              font_size: 40,
               width: 1,
               text: "เวลาปิดโต๊ะ : $endTime",
-              align: PrintColumnAlign.center)
+              text_align: PrintColumnAlign.center)
         ]));
   }
   String countPeople = "";
@@ -366,11 +367,11 @@ void printTableQrCode(
         mode: 2,
         posStyles: PosStyles(bold: true),
         columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 40,
+          FormDesignColumnModel(
+              font_size: 40,
               width: 1,
               text: "$countPeople",
-              align: PrintColumnAlign.center)
+              text_align: PrintColumnAlign.center)
         ]));
   }
   String orderType = "";
@@ -387,11 +388,11 @@ void printTableQrCode(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 40,
+        FormDesignColumnModel(
+            font_size: 40,
             width: 1,
             text: "เงื่อนไข : $orderType",
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   printer.addCommand(PosPrintBillCommandModel(
     mode: 4,
@@ -410,22 +411,22 @@ void shiftAndMoneyPrint(String guid) {
       mode: 2,
       posStyles: const PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 60,
+        FormDesignColumnModel(
+            font_size: 60,
             width: 1,
             text: global.profileSetting.company.names[0].name,
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 24,
+        FormDesignColumnModel(
+            font_size: 24,
             width: 1,
             text: "Printing time : " +
                 DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now()),
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   String tableTitle = "";
   switch (data.doctype) {
@@ -446,54 +447,54 @@ void shiftAndMoneyPrint(String guid) {
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 40,
+        FormDesignColumnModel(
+            font_size: 40,
             width: 1,
             text: tableTitle,
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
 
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: false),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 32,
+        FormDesignColumnModel(
+            font_size: 32,
             width: 1,
             text: "วันเวลา : " + DateFormat("HH:mm").format(data.docdate),
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: false),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 32,
+        FormDesignColumnModel(
+            font_size: 32,
             width: 1,
             text: "พนักงาน : ${data.username} (${data.usercode})",
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   if (data.remark.isNotEmpty) {
     printer.addCommand(PosPrintBillCommandModel(
         mode: 2,
         posStyles: PosStyles(bold: false),
         columns: [
-          PosPrintBillCommandColumnModel(
-              fontSize: 32,
+          FormDesignColumnModel(
+              font_size: 32,
               width: 1,
               text: "หมายเหตุ : ${data.remark}",
-              align: PrintColumnAlign.center)
+              text_align: PrintColumnAlign.center)
         ]));
   }
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
-        PosPrintBillCommandColumnModel(
-            fontSize: 32,
+        FormDesignColumnModel(
+            font_size: 32,
             width: 1,
             text: "จำนวนเงิน ${global.moneyFormat.format(data.amount)} บาท",
-            align: PrintColumnAlign.center)
+            text_align: PrintColumnAlign.center)
       ]));
   printer.addCommand(PosPrintBillCommandModel(
     mode: 4,
