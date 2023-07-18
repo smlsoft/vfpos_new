@@ -98,134 +98,148 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                 child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 500),
                     child: Container(
-                      margin: const EdgeInsets.all(20),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: const Offset(
-                                0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.file(
+                        margin: const EdgeInsets.all(5),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(
+                                  0, 3), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                /*Image.file(
                               File(global.getShopLogoPathName()),
                               width: 100,
                               height: 100,
-                            ),
-                            Text(
-                                global.getNameFromLanguage(
-                                    global.profileSetting.company.names,
-                                    global.userScreenLanguage),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              autofocus: true,
-                              controller: userController,
-                              decoration: InputDecoration(
-                                labelText: global.language("user_code"),
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.person),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              obscureText: obscureVisible,
-                              controller: passwordController,
-                              decoration: InputDecoration(
-                                labelText: global.language("user_password"),
-                                border: const OutlineInputBorder(),
-                                prefixIcon: const Icon(Icons.lock),
-                                suffixIcon: IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        obscureVisible = !obscureVisible;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.visibility)),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              lastStatus,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const SizedBox(height: 10),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 45,
-                              child: ElevatedButton(
-                                onPressed: () async {
-                                  var employee = global.employeeHelper
-                                      .selectByCode(code: userController.text);
-                                  if (employee != null) {
-                                    if (employee.pin_code ==
-                                            passwordController.text &&
-                                        employee.is_use_pos == true) {
-                                      if (employee.pin_code == "123456") {
-                                        global.userLogin = employee;
-                                        await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'ต้องเปลี่ยนรหัสผ่าน'),
-                                                content: const Text(
-                                                    'เนื่องจากรหัสผ่านเป็นรหัสเริ่มต้น กรุณาเปลี่ยนรหัสผ่านใหม่'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                      context.router
-                                                          .pushAndPopUntil(
-                                                              const EmployeeChangePasswordRoute(),
-                                                              predicate:
-                                                                  (route) =>
-                                                                      false);
-                                                    },
-                                                    child: const Text('OK'),
-                                                  ),
-                                                ],
+                            ),*/
+                                Row(
+                                  children: [
+                                    Image.file(
+                                      File(global.getShopLogoPathName()),
+                                      width: 50,
+                                      height: 50,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                        global.getNameFromLanguage(
+                                            global.profileSetting.company.names,
+                                            global.userScreenLanguage),
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold)),
+                                    Spacer(),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        var employee = global.employeeHelper
+                                            .selectByCode(
+                                                code: userController.text);
+                                        if (employee != null) {
+                                          if (employee.pin_code ==
+                                                  passwordController.text &&
+                                              employee.is_use_pos == true) {
+                                            if (employee.pin_code == "123456") {
+                                              global.userLogin = employee;
+                                              await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'ต้องเปลี่ยนรหัสผ่าน'),
+                                                      content: const Text(
+                                                          'เนื่องจากรหัสผ่านเป็นรหัสเริ่มต้น กรุณาเปลี่ยนรหัสผ่านใหม่'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                            context.router
+                                                                .pushAndPopUntil(
+                                                                    const EmployeeChangePasswordRoute(),
+                                                                    predicate:
+                                                                        (route) =>
+                                                                            false);
+                                                          },
+                                                          child:
+                                                              const Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  });
+                                            } else {
+                                              global.userLogin = employee;
+                                              global.loginSuccess = true;
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const LoadingScreen()),
                                               );
+                                            }
+                                          } else {
+                                            setState(() {
+                                              lastStatus = global.language(
+                                                  "user_name_or_password_incorrect");
                                             });
-                                      } else {
-                                        global.userLogin = employee;
-                                        global.loginSuccess = true;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const LoadingScreen()),
-                                        );
-                                      }
-                                    } else {
-                                      setState(() {
-                                        lastStatus = global.language(
-                                            "user_name_or_password_incorrect");
-                                      });
-                                    }
-                                  } else {
-                                    setState(() {
-                                      lastStatus = global.language(
-                                          "user_name_or_password_incorrect");
-                                    });
-                                  }
-                                },
-                                child: Text(global.language("sign_in")),
-                              ),
-                            )
-                          ]),
-                    )))));
+                                          }
+                                        } else {
+                                          setState(() {
+                                            lastStatus = global.language(
+                                                "user_name_or_password_incorrect");
+                                          });
+                                        }
+                                      },
+                                      child: Text(global.language("sign_in")),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                TextFormField(
+                                  autofocus: true,
+                                  controller: userController,
+                                  decoration: InputDecoration(
+                                    labelText: global.language("user_code"),
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.person),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  obscureText: obscureVisible,
+                                  controller: passwordController,
+                                  decoration: InputDecoration(
+                                    labelText: global.language("user_password"),
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon: const Icon(Icons.lock),
+                                    suffixIcon: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            obscureVisible = !obscureVisible;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.visibility)),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  lastStatus,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              ]),
+                        ))))));
   }
 }

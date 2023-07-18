@@ -52,10 +52,6 @@ Future<void> initializeEnvironmentConfig() async {
     'ENVIRONMENT',
     defaultValue: Environment.DEV,
   );
-  global.applicationDocumentsDirectory =
-      await getApplicationDocumentsDirectory();
-  objectBoxInit();
-
   Environment().initConfig(environment);
 
   await GetStorage.init();
@@ -66,7 +62,9 @@ Future<void> initializeEnvironmentConfig() async {
   } catch (ex) {
     global.userScreenLanguage = "th";
   }
-
+  global.applicationDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
+  objectBoxInit();
   //
   if (global.developerMode && kIsWeb == false) {
     // Developer Mode
