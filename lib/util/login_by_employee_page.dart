@@ -131,7 +131,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                       width: 50,
                                       height: 50,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10,
                                     ),
                                     Text(
@@ -141,7 +141,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                         style: const TextStyle(
                                             fontSize: 20,
                                             fontWeight: FontWeight.bold)),
-                                    Spacer(),
+                                    const Spacer(),
                                     ElevatedButton(
                                       onPressed: () async {
                                         var employee = global.employeeHelper
@@ -213,8 +213,8 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                   controller: userController,
                                   decoration: InputDecoration(
                                     labelText: global.language("user_code"),
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.person),
+                                    border: const OutlineInputBorder(),
+                                    prefixIcon: const Icon(Icons.person),
                                   ),
                                 ),
                                 const SizedBox(height: 10),

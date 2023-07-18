@@ -291,8 +291,6 @@ int findPosHoldProcessResultIndex(String code) {
   return 0;
 }
 
-Future<void> loadAndCompareEmployee() async {}
-
 Future<void> loadPrinter() async {
   printerLocalStrongData.clear();
   List<String> printerCodes = [
@@ -879,7 +877,6 @@ void posScreenListHeightSet(double value) {
 Future<void> loadConfig() async {
   await loadPrinter();
   await loadFormDesign();
-  await loadAndCompareEmployee();
   await loadEmployee();
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   posTerminalPinCode =
@@ -1666,6 +1663,7 @@ Future<void> getProfile() async {
 }
 
 Future<void> loadEmployee() async {
+  print("loadEmployee()");
   try {
     ApiRepository apiRepository = ApiRepository();
     var value = await apiRepository.getEmployeeList();
