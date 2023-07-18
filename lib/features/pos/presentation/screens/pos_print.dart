@@ -235,7 +235,7 @@ class PosPrintBillClass {
     if (global.posTicket.logo) {
       // พิมพ์ Logo
       io.File file =
-          io.File("${global.applicationDocumentsDirectory.path}/logo.png");
+          io.File(global.getShopLogoPathName());
       if (file.existsSync()) {
         Uint8List bytes = file.readAsBytesSync();
         /*ui.Image getImage = await decodeImageFromList(bytes);

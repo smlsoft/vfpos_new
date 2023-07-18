@@ -18,15 +18,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Timer? timerSwitchToMenu;
 
   void init() async {
-    /*await global.appStorage.remove(global.syncPrinterTimeName);
-    await global.appStorage.remove(global.syncCategoryTimeName);
-    await global.appStorage.remove(global.syncInventoryTimeName);
-    await global.appStorage.remove(global.syncMemberTimeName);
-    await global.appStorage.remove(global.syncEmployeeTimeName);
-    await global.appStorage.remove(global.syncTableTimeName);
-    await global.appStorage.remove(global.syncTableZoneTimeName);
-    await global.appStorage.remove(global.syncDeviceTimeName);*/
-
     if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
         Navigator.of(context).pushReplacementNamed('client');

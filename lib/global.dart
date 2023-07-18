@@ -4,6 +4,7 @@ import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
 import 'package:dedepos/api/sync/model/employee_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
+import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
 import 'package:dedepos/google_sheet.dart';
@@ -91,7 +92,6 @@ String ipAddress = "";
 List<String> errorMessage = [];
 List<InformationModel> informationList = <InformationModel>[];
 bool initSuccess = false;
-late String pathApplicationDocumentsDirectory;
 List<PosHoldProcessModel> posHoldProcessResult = [];
 String posHoldActiveCode = "0";
 ProductCategoryHelper productCategoryHelper = ProductCategoryHelper();
@@ -107,7 +107,6 @@ int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.##");
 final moneyFormatAndDot = NumberFormat("##,##0.00");
 final qtyShortFormat = NumberFormat("##,##0");
-String objectBoxDatabaseName = "smlposmobile.db";
 String deviceId = "";
 String deviceName = "";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
@@ -163,9 +162,7 @@ String syncMemberTimeName = "lastSyncMember";
 String syncBankTimeName = "lastSyncBank";
 String syncTableTimeName = "lastSyncTable";
 String syncBuffetModeTimeName = "lastSyncBuffetMode";
-String syncTableZoneTimeName = "lastSyncTableZone";
 String syncKitchenTimeName = "lastSyncTableZone";
-String syncDeviceTimeName = "lastSyncDevice";
 String syncWalletTimeName = "lastSyncWallet";
 bool isOnline = false;
 PaymentModel? paymentData;
@@ -297,9 +294,6 @@ int findPosHoldProcessResultIndex(String code) {
 Future<void> loadAndCompareEmployee() async {}
 
 Future<void> loadPrinter() async {
-  // ลบทิ้ง เพื่อทดสอบ
-  // await appStorage.remove(printerCashierStrongCode);
-  // await appStorage.remove(printerTableTicketStrongCode);
   printerLocalStrongData.clear();
   List<String> printerCodes = [
     printerConfigCashierCode,
@@ -1054,9 +1048,6 @@ Future<void> startLoading() async {
   });
 
   generatePosHoldProcess();
-  pathApplicationDocumentsDirectory =
-      (await getApplicationDocumentsDirectory()).path;
-
   initSuccess = true;
 }
 
@@ -1592,8 +1583,6 @@ String generateRandomPin(int pinLength) {
 }
 
 Future<void> getProfile() async {
-  applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
-  var file = File("${applicationDocumentsDirectory.path}/logo.png");
   ApiRepository apiRepository = ApiRepository();
   {
     var value = await apiRepository.getProfileShop();
@@ -1659,6 +1648,7 @@ Future<void> getProfile() async {
       if (profileSetting.company.logo.isNotEmpty) {
         var url = profileSetting.company.logo;
         var response = await http.get(Uri.parse(url));
+        var file = File(global.getShopLogoPathName());
         await file.writeAsBytes(response.bodyBytes);
       }
     } catch (e) {
@@ -1724,4 +1714,8 @@ double paperWidth(int paperType) {
     default:
       return 575;
   }
+}
+
+String getShopLogoPathName() {
+  return "${applicationDocumentsDirectory.path}/$shopId-logo.png";
 }

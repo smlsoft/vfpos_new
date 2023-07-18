@@ -339,7 +339,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   border: Border.all(color: Colors.green, width: 2),
                 ),
                 child: Image.file(
-                  File("${global.applicationDocumentsDirectory.path}/logo.png"),
+                  File(global.getShopLogoPathName()),
                 ),
               ),
               title: Text((global.appMode == global.AppModeEnum.posTerminal)

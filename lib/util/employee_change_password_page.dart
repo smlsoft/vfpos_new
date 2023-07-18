@@ -172,7 +172,7 @@ class _EmployeeChangePasswordState extends State<EmployeeChangePasswordPage> {
                           children: [
                             Image.file(
                               File(
-                                  "${global.applicationDocumentsDirectory.path}/logo.png"),
+                                  global.getShopLogoPathName()),
                               width: 100,
                               height: 100,
                             ),

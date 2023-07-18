@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/auth.dart';
@@ -25,7 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    reload();
+    Timer(const Duration(seconds: 5), () {
+      reload();
+    });
+    //reload();
   }
 
   void reload() {
@@ -50,10 +55,10 @@ class _SplashScreenState extends State<SplashScreen> {
             .then((userSelectedShop) async {
           if (userSelectedShop != null) {
             global.apiShopID = userSelectedShop.guidfixed;
-            await global.getProfile();
             context.read<SelectShopBloc>().add(
                 SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
             if (F.appFlavor == Flavor.DEDEPOS) {
+              await global.getProfile();
               context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
                   predicate: (route) => false);
               return;
@@ -90,12 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
               'assets/smlsoft-logo-512.png', // path to your image asset
             ),
           ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-              onPressed: () {
-                reload();
-              },
-              child: const Text("Refresh"))
         ]),
       ),
     );

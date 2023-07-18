@@ -82,6 +82,7 @@ Future<void> syncProductCategoryCompare(
   ApiRepository apiRepository = ApiRepository();
   String lastUpdateTime = global.appStorage.read(global.syncCategoryTimeName) ??
       global.syncDateBegin;
+  print("lastUpdateTime : " + lastUpdateTime);
 
   // หมวดสินค้า
   final productCategoryCount = ProductCategoryHelper().count();

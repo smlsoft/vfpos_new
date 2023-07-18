@@ -76,7 +76,7 @@ Future syncMasterProcess() async {
     // Sync เฉพาะเครื่อง POS Terminal
     global.isOnline = await global.hasNetwork();
     if (global.isOnline) {
-      if (global.apiConnected == false) {
+      /*if (global.apiConnected == false) {
         if (global.loginProcess == false) {
           global.loginProcess = true;
           UserRepository userRepository = UserRepository();
@@ -100,7 +100,7 @@ Future syncMasterProcess() async {
             global.loginProcess = false;
           });
         }
-      }
+      }*/
       if (global.apiConnected == true &&
           global.loginSuccess == true &&
           global.syncDataProcess == false) {

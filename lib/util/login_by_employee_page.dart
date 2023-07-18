@@ -119,8 +119,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.file(
-                              File(
-                                  "${global.applicationDocumentsDirectory.path}/logo.png"),
+                              File(global.getShopLogoPathName()),
                               width: 100,
                               height: 100,
                             ),

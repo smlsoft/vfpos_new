@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
+import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/request.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/auth.dart';
@@ -12,6 +13,7 @@ import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/environment.dart';
@@ -26,6 +28,29 @@ class RegisterPosTerminalPage extends StatefulWidget {
 
 class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
   late Timer findTerminalTimer;
+  late Timer countDownTimer;
+  int countdownSecond = 15;
+  int countSecond = 0;
+
+  void findTerminalTimerStart() {
+    findTerminalTimer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      if (++countSecond > 15) {
+        // เกิน 15 วิ เริ่มตรวจสอบว่าอนุมัติหรือไม่
+        await recheck();
+      }
+    });
+  }
+
+  void countDownTimerStart() {
+    countDownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        countdownSecond--;
+        if (countdownSecond == 0) {
+          timer.cancel();
+        }
+      });
+    });
+  }
 
   @override
   void initState() {
@@ -35,76 +60,78 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
     } else {
       checkPinCode();
     }
-    findTerminalTimer =
-        Timer.periodic(const Duration(seconds: 5), (timer) async {
-      var responseData = await clickHouseSelect(
-          "SELECT status,token,deviceid,access_token,shipid,isdev FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
-      ResponseDataModel result = ResponseDataModel.fromJson(responseData);
-      if (result.data.isNotEmpty) {
-        if (result.data[0]['status'] == 1) {
-          global.posTerminalPinTokenId = result.data[0]['token'];
-          global.deviceId = result.data[0]['deviceid'];
+    countDownTimerStart();
+    findTerminalTimerStart();
+  }
 
-          SharedPreferences sharedPreferences =
-              await SharedPreferences.getInstance();
-          sharedPreferences.setString(
-              'pos_terminal_token', global.posTerminalPinTokenId);
-          sharedPreferences.setString('pos_device_id', global.deviceId);
+  Future<void> recheck() async {
+    var responseData = await clickHouseSelect(
+        "SELECT status,token,deviceid,access_token,shipid,isdev FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
+    ResponseDataModel result = ResponseDataModel.fromJson(responseData);
+    if (result.data.isNotEmpty) {
+      if (result.data[0]['status'] == 1) {
+        global.posTerminalPinTokenId = result.data[0]['token'];
+        global.deviceId = result.data[0]['deviceid'];
 
-          // do authen with token
-          String accessToken = result.data[0]['access_token'];
-          String shopId = result.data[0]['shipid'];
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        sharedPreferences.setString(
+            'pos_terminal_token', global.posTerminalPinTokenId);
+        sharedPreferences.setString('pos_device_id', global.deviceId);
 
-          bool isDev =
-              result.data[0]['isdev'] != null && result.data[0]['isdev'] == '1';
-          if (isDev) {
-            Environment().initConfig("DEV");
-            serviceLocator<Request>().updateEndpoint();
-          } else {
-            Environment().initConfig("PROD");
-            serviceLocator<Request>().updateEndpoint();
-          }
-
-          serviceLocator<Request>().updateAuthorization(accessToken);
-
-          serviceLocator<LoginUserRepository>()
-              .profile()
-              .then((response) async {
-            if (response.isRight()) {
-              // save user cache
-              User remoteUser = response.getOrElse(() => User());
-              remoteUser = remoteUser.copyWith(token: accessToken);
-
-              await serviceLocator<UserCacheService>().saveUser(remoteUser);
-              // select shop
-              serviceLocator<ShopAuthenticationRepository>()
-                  .selectShop(shopid: shopId)
-                  .then((selectShopResponse) async {
-                if (selectShopResponse.isRight()) {
-                  global.loginSuccess = true;
-                  // add user autenticate bloc
-                  context
-                      .read<AuthenticationBloc>()
-                      .add(AuthenticationEvent.authenticated(user: remoteUser));
-
-                  if (mounted) {
-                    context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
-                        predicate: (route) => false);
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Failed Not Selected Shop"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              });
-            }
-          });
+        // do authen with token
+        String accessToken = result.data[0]['access_token'];
+        String shopId = result.data[0]['shipid'];
+        global.appStorage.write("token", accessToken);
+        global.apiConnected = true;
+        global.loginProcess = true;
+        bool isDev =
+            result.data[0]['isdev'] != null && result.data[0]['isdev'] == 1;
+        if (isDev) {
+          Environment().initConfig("DEV");
+          serviceLocator<Request>().updateEndpoint();
+        } else {
+          Environment().initConfig("PROD");
+          serviceLocator<Request>().updateEndpoint();
         }
+
+        serviceLocator<Request>().updateAuthorization(accessToken);
+
+        serviceLocator<LoginUserRepository>().profile().then((response) async {
+          if (response.isRight()) {
+            // save user cache
+            User remoteUser = response.getOrElse(() => User());
+            remoteUser = remoteUser.copyWith(token: accessToken);
+
+            await serviceLocator<UserCacheService>().saveUser(remoteUser);
+            // select shop
+            serviceLocator<ShopAuthenticationRepository>()
+                .selectShop(shopid: shopId)
+                .then((selectShopResponse) async {
+              if (selectShopResponse.isRight()) {
+                global.loginSuccess = true;
+                // add user autenticate bloc
+                context
+                    .read<AuthenticationBloc>()
+                    .add(AuthenticationEvent.authenticated(user: remoteUser));
+                await global.getProfile();
+                if (mounted) {
+                  context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
+                      predicate: (route) => false);
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Failed Not Selected Shop"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            });
+          }
+        });
       }
-    });
+    }
   }
 
   Future<void> checkPinCode() async {
@@ -130,7 +157,12 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
 
   @override
   void dispose() {
-    findTerminalTimer.cancel();
+    if (findTerminalTimer.isActive) {
+      findTerminalTimer.cancel();
+    }
+    if (countDownTimer.isActive) {
+      countDownTimer.cancel();
+    }
     super.dispose();
   }
 
@@ -188,11 +220,53 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
                         const Text(
                             "ให้กดปุ่ม ลงทะเบียนใหม่ แล้วแจ้ง Admin เพื่ออนุมัติการลงทะเบียนใหม่"),
                         const SizedBox(height: 10),
-                        ElevatedButton(
-                            onPressed: () async {
-                              await initPinCode();
-                            },
-                            child: const Text("ลงทะเบียนใหม่")),
+                        if (countDownTimer.isActive)
+                          ElevatedButton(
+                              onPressed: () async {
+                                countDownTimer.cancel();
+                                findTerminalTimer.cancel();
+                                await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                            "ยืนยันการลงทะเบียนใหม่"),
+                                        content: const Text(
+                                            "ข้อมูลในเครื่องจะถูกลบทิ้งทั้งหมด"),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              findTerminalTimerStart();
+                                              countDownTimerStart();
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("ยกเลิก"),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              global.loginSuccess = false;
+                                              objectBoxDeleteAll();
+                                              await initPinCode();
+                                              findTerminalTimerStart();
+                                              if (mounted) {
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                            child: const Text("ยืนยัน"),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                              child: Text(
+                                  "ลงทะเบียนใหม่ภายใน : $countdownSecond วินาที")),
+                        if (countDownTimer.isActive == false)
+                          LoadingAnimationWidget.staggeredDotsWave(
+                            color: Colors.blue,
+                            size: 100,
+                          ),
+                        if (countDownTimer.isActive == false)
+                          Text("รอการอนุมัติด้วยระบบ Merchant")
                       ],
                     )))));
   }

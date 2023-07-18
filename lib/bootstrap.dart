@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:presentation_displays/display.dart';
 
@@ -37,7 +38,6 @@ Future<void> initializeApp() async {
   await setupDisplay();
 
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
-    await setupObjectBox();
     await initLanguage();
     await setUpServiceLocator();
   } else if (global.displayMachine ==
@@ -52,6 +52,9 @@ Future<void> initializeEnvironmentConfig() async {
     'ENVIRONMENT',
     defaultValue: Environment.DEV,
   );
+  global.applicationDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
+  objectBoxInit();
 
   Environment().initConfig(environment);
 
