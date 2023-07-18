@@ -16,6 +16,10 @@ class Request {
     _dio.options.headers['authorization'] = 'Bearer $token';
   }
 
+  void updateEndpoint() {
+    _dio.options.baseUrl = Environment().config.serviceApi;
+  }
+
   void updateDioInterceptors() {
     _dio.options = BaseOptions(
       baseUrl: Environment().config.serviceApi,
