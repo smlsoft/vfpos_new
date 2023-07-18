@@ -14,6 +14,8 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/environment.dart';
+
 @RoutePage()
 class RegisterPosTerminalPage extends StatefulWidget {
   const RegisterPosTerminalPage({Key? key}) : super(key: key);
@@ -36,7 +38,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
     findTerminalTimer =
         Timer.periodic(const Duration(seconds: 5), (timer) async {
       var responseData = await clickHouseSelect(
-          "SELECT status,token,deviceid,access_token,shipid FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
+          "SELECT status,token,deviceid,access_token,shipid,isdev FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
       ResponseDataModel result = ResponseDataModel.fromJson(responseData);
       if (result.data.isNotEmpty) {
         if (result.data[0]['status'] == 1) {
@@ -52,6 +54,17 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
           // do authen with token
           String accessToken = result.data[0]['access_token'];
           String shopId = result.data[0]['shipid'];
+
+          bool isDev =
+              result.data[0]['isdev'] != null && result.data[0]['isdev'] == '1';
+          if (isDev) {
+            Environment().initConfig("DEV");
+            serviceLocator<Request>().updateEndpoint();
+          } else {
+            Environment().initConfig("PROD");
+            serviceLocator<Request>().updateEndpoint();
+          }
+
           serviceLocator<Request>().updateAuthorization(accessToken);
 
           serviceLocator<LoginUserRepository>()
