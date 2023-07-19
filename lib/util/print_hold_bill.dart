@@ -158,8 +158,8 @@ class PosPrintHoldBillClass {
     // ภาษี
     result = result.replaceAll("&total_vat_name&",
         "ภาษีมูลค่าเพิ่ม : ${global.moneyFormat.format(value.vat_rate)}%");
-    result = result.replaceAll("&total_vat&",
-        global.moneyFormatAndDot.format(value.total_vat_amount));
+    result = result.replaceAll(
+        "&total_vat&", global.moneyFormatAndDot.format(value.total_vat_amount));
     // รวมทั้งสิ้น
     result = result.replaceAll("&total_amount_name&", "ยอดรวมสุทธิ");
     result = result.replaceAll(
@@ -331,6 +331,18 @@ class PosPrintHoldBillClass {
       FormDesignColumnModel(
           width: 1,
           text: "ไม่ใช่ใบเสร็จรับเงิน",
+          text_align: PrintColumnAlign.center)
+    ]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      FormDesignColumnModel(
+          width: 1,
+          text: "ยอดภาษี และยอดรวม อาจเปลี่ยนแปลง",
+          text_align: PrintColumnAlign.center)
+    ]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      FormDesignColumnModel(
+          width: 1,
+          text: "เมื่อถึงขึ้นตอนการชำระเงิน",
           text_align: PrintColumnAlign.center)
     ]));
     return commandList;

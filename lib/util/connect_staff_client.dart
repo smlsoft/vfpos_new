@@ -46,7 +46,7 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
         child: SafeArea(
             child: Scaffold(
       appBar: AppBar(
-        title: const Text('Connect Staff Client Page'),
+        title: const Text('เชื่อมต่อเครื่องลูก'),
       ),
       body: Center(
         child: Row(
@@ -98,26 +98,27 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
                     ),
                     child: Column(children: [
                       const Text(
-                        "Staff Scan QR Code to Connect",
+                        "เครื่องลูกที่มีกล้องสามารถ Scan Qr Code ได้",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Expanded(
-                          child: Container(
-                              child: Center(
-                                  child: QrImageView(
+                          child: Center(
+                              child: QrImageView(
                         size: 200,
                         backgroundColor: Colors.white,
                         data: connectCode,
                         version: QrVersions.auto,
-                      )))),
+                      ))),
+                      const Text(
+                          "เครื่องลูกที่ไม่มีกล้อง สามารถเชื่อมต่อด้วย IP Address"),
                       Text(
-                        "IP Address : " + global.ipAddress,
+                        "IP Address : ${global.ipAddress}",
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        "Connect Code : " + connectSecureCode,
+                        "รหัสสำหรับเชื่อมต่อ : $connectSecureCode",
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),

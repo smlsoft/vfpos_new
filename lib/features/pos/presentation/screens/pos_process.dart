@@ -459,6 +459,10 @@ class PosProcess {
     processResult.total_amount = totalAmount;
     processResult.total_item_vat_amount = totalItemVatAmount;
     processResult.total_item_except_amount = totalItemExceptVatAmount;
+    processResult.vat_rate = 7;
+    processResult.total_vat_amount =
+        (totalItemVatAmount * processResult.vat_rate) /
+            (100 + processResult.vat_rate);
     return processResult;
   }
 }
