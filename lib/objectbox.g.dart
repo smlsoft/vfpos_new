@@ -1349,7 +1349,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(28, 6807013238340886010),
       name: 'TableProcessObjectBoxStruct',
-      lastPropertyId: const IdUid(32, 8336559978788265250),
+      lastPropertyId: const IdUid(34, 1393119992901697318),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1509,8 +1509,13 @@ final _entities = <ModelEntity>[
             type: 6,
             flags: 0),
         ModelProperty(
-            id: const IdUid(32, 8336559978788265250),
-            name: 'numberMain',
+            id: const IdUid(33, 1929759151900000360),
+            name: 'table_child_count',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(34, 1393119992901697318),
+            name: 'number_main',
             type: 9,
             flags: 0)
       ],
@@ -2080,7 +2085,8 @@ ModelDefinition getObjectBoxModel() {
         1596360228007164917,
         8090532004233741835,
         1992801089709445516,
-        8072533966917796245
+        8072533966917796245,
+        8336559978788265250
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -3164,8 +3170,8 @@ ModelDefinition getObjectBoxModel() {
           final remarkOffset = fbb.writeString(object.remark);
           final open_by_staff_codeOffset =
               fbb.writeString(object.open_by_staff_code);
-          final numberMainOffset = fbb.writeString(object.numberMain);
-          fbb.startTable(33);
+          final number_mainOffset = fbb.writeString(object.number_main);
+          fbb.startTable(35);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
@@ -3199,7 +3205,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addInt64(
               29, object.delivery_send_success_datetime.millisecondsSinceEpoch);
           fbb.addInt64(30, object.delivery_status);
-          fbb.addOffset(31, numberMainOffset);
+          fbb.addInt64(32, object.table_child_count);
+          fbb.addOffset(33, number_mainOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3212,8 +3219,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
-              numberMain: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 66, ''),
+              number_main: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 70, ''),
               names: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
               zone: const fb.StringReader(asciiOptimization: true)
@@ -3246,7 +3253,8 @@ ModelDefinition getObjectBoxModel() {
               delivery_cook_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0)),
               delivery_send_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 60, false),
               delivery_send_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0)),
-              delivery_status: const fb.Int64Reader().vTableGet(buffer, rootOffset, 64, 0))
+              delivery_status: const fb.Int64Reader().vTableGet(buffer, rootOffset, 64, 0),
+              table_child_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 68, 0))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -4586,9 +4594,14 @@ class TableProcessObjectBoxStruct_ {
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
           _entities[16].properties[30]);
 
-  /// see [TableProcessObjectBoxStruct.numberMain]
-  static final numberMain = QueryStringProperty<TableProcessObjectBoxStruct>(
-      _entities[16].properties[31]);
+  /// see [TableProcessObjectBoxStruct.table_child_count]
+  static final table_child_count =
+      QueryIntegerProperty<TableProcessObjectBoxStruct>(
+          _entities[16].properties[31]);
+
+  /// see [TableProcessObjectBoxStruct.number_main]
+  static final number_main = QueryStringProperty<TableProcessObjectBoxStruct>(
+      _entities[16].properties[32]);
 }
 
 /// [FormDesignObjectBoxStruct] entity fields to define ObjectBox queries.

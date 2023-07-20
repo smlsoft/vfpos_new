@@ -11,7 +11,7 @@ TableProcessObjectBoxStruct _$TableProcessObjectBoxStructFromJson(
     TableProcessObjectBoxStruct(
       guidfixed: json['guidfixed'] as String,
       number: json['number'] as String,
-      numberMain: json['numberMain'] as String,
+      number_main: json['number_main'] as String,
       names: json['names'] as String,
       zone: json['zone'] as String,
       table_status: json['table_status'] as int,
@@ -43,6 +43,7 @@ TableProcessObjectBoxStruct _$TableProcessObjectBoxStructFromJson(
       delivery_send_success_datetime:
           DateTime.parse(json['delivery_send_success_datetime'] as String),
       delivery_status: json['delivery_status'] as int,
+      table_child_count: json['table_child_count'] as int,
     )..id = json['id'] as int;
 
 Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
@@ -51,7 +52,7 @@ Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
       'id': instance.id,
       'guidfixed': instance.guidfixed,
       'number': instance.number,
-      'numberMain': instance.numberMain,
+      'number_main': instance.number_main,
       'names': instance.names,
       'zone': instance.zone,
       'table_status': instance.table_status,
@@ -82,4 +83,5 @@ Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
       'delivery_send_success_datetime':
           instance.delivery_send_success_datetime.toIso8601String(),
       'delivery_status': instance.delivery_status,
+      'table_child_count': instance.table_child_count,
     };

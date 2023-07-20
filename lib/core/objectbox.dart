@@ -34,7 +34,7 @@ Future<void> objectBoxInit() async {
     final isExists = await objectBoxDirectory.exists();
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
-      // await objectBoxDirectory.delete(recursive: true);
+      await objectBoxDirectory.delete(recursive: true);
       objectBoxStore = Store(getObjectBoxModel(),
           directory: objectBoxDirectory.path,
           queriesCaseSensitiveDefault: false);

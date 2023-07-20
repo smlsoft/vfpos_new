@@ -101,7 +101,8 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
         TableProcessHelper().insert(TableProcessObjectBoxStruct(
           guidfixed: table.guidfixed,
           number: table.number,
-          numberMain: table.numberMain,
+          table_child_count: 0,
+          number_main: table.numberMain,
           names: table.names,
           zone: table.zone,
           table_status: 0,

@@ -124,6 +124,8 @@ Future<void> startServer() async {
                               .equals(orderId)
                               .and(OrderTempObjectBoxStruct_.barcode
                                   .equals(barcode)
+                                  .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                      .equals(false))
                                   .and(OrderTempObjectBoxStruct_.isOrder
                                       .equals(isOrder))))
                           .build()
@@ -131,8 +133,9 @@ Future<void> startServer() async {
                       : box
                           .query(OrderTempObjectBoxStruct_.orderId
                               .equals(orderId)
-                              .and(OrderTempObjectBoxStruct_.isOrder
-                                  .equals(isOrder)))
+                              .and(
+                                  OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                              .and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder)))
                           .build()
                           .find();
                   response.write(
@@ -223,16 +226,24 @@ Future<void> startServer() async {
                       jsonEncode(boxData.map((e) => e.toJson()).toList()));
                   break;
                 case "get_all_table":
-                  List<TableProcessObjectBoxStruct> boxData = global
+                  List<TableProcessObjectBoxStruct> tableData = global
                       .objectBoxStore
                       .box<TableProcessObjectBoxStruct>()
                       .query(TableProcessObjectBoxStruct_.is_delivery
                           .equals(false))
-                      .order(TableProcessObjectBoxStruct_.number)
                       .build()
                       .find();
+                  // หาโต๊ะลูก
+                  for (var table in tableData) {
+                    table.table_child_count = global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>()
+                        .query(TableProcessObjectBoxStruct_.number_main
+                            .equals(table.number))
+                        .build()
+                        .count();
+                  }
                   response.write(
-                      jsonEncode(boxData.map((e) => e.toJson()).toList()));
+                      jsonEncode(tableData.map((e) => e.toJson()).toList()));
                   break;
                 case "get_all_category":
                   List<ProductCategoryObjectBoxStruct> boxData = global
@@ -904,12 +915,15 @@ Future<void> startServer() async {
                             .build()
                             .findFirst();
                         if (findTargetTableResult == null) {
+                          print("findTargetTableResult ; " +
+                              jsonData.targetTable);
                           final newTable = TableProcessObjectBoxStruct(
                             number: jsonData.targetTable,
                             guidfixed: Uuid().v4(),
-                            numberMain: findSourceTableResult!.numberMain,
+                            number_main: findSourceTableResult!.number_main,
                             names: findSourceTableResult.names,
                             zone: findSourceTableResult.zone,
+                            table_child_count: 0,
                             table_al_la_crate_mode:
                                 findSourceTableResult.table_al_la_crate_mode,
                             table_open_datetime:
@@ -957,12 +971,6 @@ Future<void> startServer() async {
                               .put(newTable, mode: PutMode.insert);
                         }
                       }
-                      // ลบบิลเดิม / สร้างใหม่
-                      await global.rebuildOrderToHoldBill(jsonData.sourceTable);
-                      await global.rebuildOrderToHoldBill(jsonData.targetTable);
-                      // คำนวณใหม่
-                      await global.orderSumAndUpdateTable(jsonData.sourceTable);
-                      await global.orderSumAndUpdateTable(jsonData.targetTable);
                     }
                     {
                       // ลบรายการ Qty = 0 ออก
@@ -982,6 +990,12 @@ Future<void> startServer() async {
                         }
                       }
                     }
+                    // ลบบิลเดิม / สร้างใหม่
+                    await global.rebuildOrderToHoldBill(jsonData.sourceTable);
+                    await global.rebuildOrderToHoldBill(jsonData.targetTable);
+                    // คำนวณใหม่
+                    await global.orderSumAndUpdateTable(jsonData.sourceTable);
+                    await global.orderSumAndUpdateTable(jsonData.targetTable);
                     response.write(true);
                     break;
                   case "staff.order_temp_update":
@@ -1096,6 +1110,7 @@ Future<void> startServer() async {
                         .findFirst();
                     if (fromTableResult != null && toTableResult != null) {
                       // Update เปิดโต๊ะ ปลายทาง
+                      toTableResult.number_main = toTableResult.number;
                       toTableResult.table_status = 1;
                       toTableResult.man_count = fromTableResult.man_count;
                       toTableResult.woman_count = fromTableResult.woman_count;

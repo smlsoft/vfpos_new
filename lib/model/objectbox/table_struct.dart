@@ -32,7 +32,7 @@ class TableProcessObjectBoxStruct {
   @Unique()
   final String guidfixed;
   final String number;
-  late String numberMain;
+  late String number_main;
   final String names;
   late String zone;
 
@@ -113,10 +113,13 @@ class TableProcessObjectBoxStruct {
   /// สถานะ 0=รับที่ร้านรอคิดเงิน,1=คิดเงินแล้ว ทำส่ง Delivery
   late int delivery_status;
 
+  /// จำนวนโต๊ะลูก (กรณีแยกโต๊ะ)
+  late int table_child_count;
+
   TableProcessObjectBoxStruct({
     required this.guidfixed,
     required this.number,
-    required this.numberMain,
+    required this.number_main,
     required this.names,
     required this.zone,
     required this.table_status,
@@ -145,6 +148,7 @@ class TableProcessObjectBoxStruct {
     required this.delivery_send_success,
     required this.delivery_send_success_datetime,
     required this.delivery_status,
+    required this.table_child_count,
   });
 
   factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
