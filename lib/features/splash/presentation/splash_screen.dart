@@ -58,9 +58,19 @@ class _SplashScreenState extends State<SplashScreen> {
             context.read<SelectShopBloc>().add(
                 SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
             if (F.appFlavor == Flavor.DEDEPOS) {
-              await global.getProfile();
-              context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
-                  predicate: (route) => false);
+              while (true) {
+                try {
+                  await global.getProfile();
+                  context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
+                      predicate: (route) => false);
+                  break;
+                } catch (e) {
+                  await Future.delayed(const Duration(seconds: 1));
+                  context
+                      .read<AuthenticationBloc>()
+                      .add(AuthenticationEvent.authenticated(user: user!));
+                }
+              }
               return;
             } else {
               context.router.pushAndPopUntil(const InitShopRoute(),

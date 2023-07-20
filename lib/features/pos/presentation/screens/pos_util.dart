@@ -6,6 +6,7 @@ import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'dart:async';
 import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:flutter/material.dart';
 
@@ -251,6 +252,22 @@ Future<saveBillResultClass> saveBill(
   // Running เลขที่ใบเสร็จ
   global.configHelper.update(ConfigObjectBoxStruct(
       device_id: global.deviceId, last_doc_number: docNumber));
+  // update Order Temp ร้านอาหาร
+  if (global.tableNumberSelected.isNotEmpty) {
+    final orderTemps = global.objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.orderId
+            .equals(global.tableNumberSelected)
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
+        .build()
+        .find();
+    for (int index = 0; index < orderTemps.length; index++) {
+      orderTemps[index].isPaySuccess = true;
+      global.objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
+          .put(orderTemps[index], mode: PutMode.update);
+    }
+  }
   return result;
 }
 

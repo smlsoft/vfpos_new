@@ -980,7 +980,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(22, 1593243704545833045),
       name: 'OrderTempObjectBoxStruct',
-      lastPropertyId: const IdUid(36, 9012772445680981154),
+      lastPropertyId: const IdUid(39, 9093663776850589453),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1126,6 +1126,16 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(36, 9012772445680981154),
             name: 'isOrderReadySendKds',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(37, 2066776849424700922),
+            name: 'orderIdMain',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(39, 9093663776850589453),
+            name: 'isPaySuccess',
             type: 1,
             flags: 0)
       ],
@@ -1299,7 +1309,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(27, 153743876333693310),
       name: 'TableObjectBoxStruct',
-      lastPropertyId: const IdUid(5, 2696241712250339061),
+      lastPropertyId: const IdUid(6, 2263669243744119121),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1327,6 +1337,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(5, 2696241712250339061),
             name: 'zone',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 2263669243744119121),
+            name: 'numberMain',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1334,7 +1349,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(28, 6807013238340886010),
       name: 'TableProcessObjectBoxStruct',
-      lastPropertyId: const IdUid(31, 2886526464000284121),
+      lastPropertyId: const IdUid(32, 8336559978788265250),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1492,6 +1507,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(31, 2886526464000284121),
             name: 'delivery_status',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(32, 8336559978788265250),
+            name: 'numberMain',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2059,7 +2079,8 @@ ModelDefinition getObjectBoxModel() {
         6922994843946849916,
         1596360228007164917,
         8090532004233741835,
-        1992801089709445516
+        1992801089709445516,
+        8072533966917796245
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2835,7 +2856,8 @@ ModelDefinition getObjectBoxModel() {
           final deliveryNumberOffset = fbb.writeString(object.deliveryNumber);
           final deliveryCodeOffset = fbb.writeString(object.deliveryCode);
           final deliveryNameOffset = fbb.writeString(object.deliveryName);
-          fbb.startTable(37);
+          final orderIdMainOffset = fbb.writeString(object.orderIdMain);
+          fbb.startTable(40);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, orderIdOffset);
           fbb.addOffset(2, orderGuidOffset);
@@ -2865,6 +2887,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(32, object.isOrderSendKdsSuccess);
           fbb.addInt64(33, object.lastUpdateDateTime.millisecondsSinceEpoch);
           fbb.addBool(35, object.isOrderReadySendKds);
+          fbb.addOffset(36, orderIdMainOffset);
+          fbb.addBool(38, object.isPaySuccess);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2876,6 +2900,8 @@ ModelDefinition getObjectBoxModel() {
               id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
               orderId: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
+              orderIdMain: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 76, ''),
               orderGuid: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
               machineId: const fb.StringReader(asciiOptimization: true)
@@ -2886,11 +2912,10 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 14, ''),
               qty:
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              price:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
+              price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
+              amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
               isOrder: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false),
+              isPaySuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 80, false),
               optionSelected: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
               remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               names: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
@@ -3082,12 +3107,14 @@ ModelDefinition getObjectBoxModel() {
           final numberOffset = fbb.writeString(object.number);
           final namesOffset = fbb.writeString(object.names);
           final zoneOffset = fbb.writeString(object.zone);
-          fbb.startTable(6);
+          final numberMainOffset = fbb.writeString(object.numberMain);
+          fbb.startTable(7);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
           fbb.addOffset(3, namesOffset);
           fbb.addOffset(4, zoneOffset);
+          fbb.addOffset(5, numberMainOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3100,6 +3127,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
+              numberMain: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, ''),
               names: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
               zone: const fb.StringReader(asciiOptimization: true)
@@ -3135,7 +3164,8 @@ ModelDefinition getObjectBoxModel() {
           final remarkOffset = fbb.writeString(object.remark);
           final open_by_staff_codeOffset =
               fbb.writeString(object.open_by_staff_code);
-          fbb.startTable(32);
+          final numberMainOffset = fbb.writeString(object.numberMain);
+          fbb.startTable(33);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);
@@ -3169,6 +3199,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addInt64(
               29, object.delivery_send_success_datetime.millisecondsSinceEpoch);
           fbb.addInt64(30, object.delivery_status);
+          fbb.addOffset(31, numberMainOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3181,6 +3212,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               number: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
+              numberMain: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 66, ''),
               names: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
               zone: const fb.StringReader(asciiOptimization: true)
@@ -3191,8 +3224,7 @@ ModelDefinition getObjectBoxModel() {
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
               amount:
                   const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              order_success: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 20, false),
+              order_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false),
               qr_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
               table_open_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0)),
               man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0),
@@ -4253,6 +4285,14 @@ class OrderTempObjectBoxStruct_ {
   static final isOrderReadySendKds =
       QueryBooleanProperty<OrderTempObjectBoxStruct>(
           _entities[11].properties[28]);
+
+  /// see [OrderTempObjectBoxStruct.orderIdMain]
+  static final orderIdMain = QueryStringProperty<OrderTempObjectBoxStruct>(
+      _entities[11].properties[29]);
+
+  /// see [OrderTempObjectBoxStruct.isPaySuccess]
+  static final isPaySuccess = QueryBooleanProperty<OrderTempObjectBoxStruct>(
+      _entities[11].properties[30]);
 }
 
 /// [ShiftObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4400,6 +4440,10 @@ class TableObjectBoxStruct_ {
   /// see [TableObjectBoxStruct.zone]
   static final zone =
       QueryStringProperty<TableObjectBoxStruct>(_entities[15].properties[4]);
+
+  /// see [TableObjectBoxStruct.numberMain]
+  static final numberMain =
+      QueryStringProperty<TableObjectBoxStruct>(_entities[15].properties[5]);
 }
 
 /// [TableProcessObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4541,6 +4585,10 @@ class TableProcessObjectBoxStruct_ {
   static final delivery_status =
       QueryIntegerProperty<TableProcessObjectBoxStruct>(
           _entities[16].properties[30]);
+
+  /// see [TableProcessObjectBoxStruct.numberMain]
+  static final numberMain = QueryStringProperty<TableProcessObjectBoxStruct>(
+      _entities[16].properties[31]);
 }
 
 /// [FormDesignObjectBoxStruct] entity fields to define ObjectBox queries.

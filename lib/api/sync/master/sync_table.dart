@@ -34,6 +34,7 @@ Future syncTable(
     TableObjectBoxStruct newTable = TableObjectBoxStruct(
       guidfixed: newData.guidfixed,
       number: newData.number,
+      numberMain: "",
       names: jsonEncode(newData.names),
       zone: newData.zone,
     );
@@ -100,6 +101,7 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
         TableProcessHelper().insert(TableProcessObjectBoxStruct(
           guidfixed: table.guidfixed,
           number: table.number,
+          numberMain: table.numberMain,
           names: table.names,
           zone: table.zone,
           table_status: 0,

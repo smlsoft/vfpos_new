@@ -958,7 +958,7 @@
     },
     {
       "id": "22:1593243704545833045",
-      "lastPropertyId": "36:9012772445680981154",
+      "lastPropertyId": "39:9093663776850589453",
       "name": "OrderTempObjectBoxStruct",
       "properties": [
         {
@@ -1105,6 +1105,16 @@
         {
           "id": "36:9012772445680981154",
           "name": "isOrderReadySendKds",
+          "type": 1
+        },
+        {
+          "id": "37:2066776849424700922",
+          "name": "orderIdMain",
+          "type": 9
+        },
+        {
+          "id": "39:9093663776850589453",
+          "name": "isPaySuccess",
           "type": 1
         }
       ],
@@ -1280,7 +1290,7 @@
     },
     {
       "id": "27:153743876333693310",
-      "lastPropertyId": "5:2696241712250339061",
+      "lastPropertyId": "6:2263669243744119121",
       "name": "TableObjectBoxStruct",
       "properties": [
         {
@@ -1310,13 +1320,18 @@
           "id": "5:2696241712250339061",
           "name": "zone",
           "type": 9
+        },
+        {
+          "id": "6:2263669243744119121",
+          "name": "numberMain",
+          "type": 9
         }
       ],
       "relations": []
     },
     {
       "id": "28:6807013238340886010",
-      "lastPropertyId": "31:2886526464000284121",
+      "lastPropertyId": "32:8336559978788265250",
       "name": "TableProcessObjectBoxStruct",
       "properties": [
         {
@@ -1476,6 +1491,11 @@
           "id": "31:2886526464000284121",
           "name": "delivery_status",
           "type": 6
+        },
+        {
+          "id": "32:8336559978788265250",
+          "name": "numberMain",
+          "type": 9
         }
       ],
       "relations": []
@@ -2027,7 +2047,8 @@
     6922994843946849916,
     1596360228007164917,
     8090532004233741835,
-    1992801089709445516
+    1992801089709445516,
+    8072533966917796245
   ],
   "retiredRelationUids": [],
   "version": 1

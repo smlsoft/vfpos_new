@@ -1289,10 +1289,34 @@ int findBuffetModeIndex(String code) {
   return -1;
 }
 
+Future<void> rebuildOrderToHoldBill(String tableNumber) async {
+  var data = global.objectBoxStore
+      .box<PosLogObjectBoxStruct>()
+      .query(PosLogObjectBoxStruct_.hold_code.equals("T-$tableNumber"))
+      .build()
+      .find();
+  if (data.isNotEmpty) {
+    for (var item in data) {
+      global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(item.id);
+    }
+  }
+  // ดึงรายการที่สั่งไปแล้ว มาสร้างรายการ Hold Bill
+  var dataTemp = global.objectBoxStore
+      .box<OrderTempObjectBoxStruct>()
+      .query(OrderTempObjectBoxStruct_.orderId
+          .equals(tableNumber)
+          .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
+      .build()
+      .find();
+  if (dataTemp.isNotEmpty) {
+    await saveOrderToHoldBill(dataTemp);
+  }
+}
+
 Future<void> saveOrderToHoldBill(List<OrderTempObjectBoxStruct> orders) async {
   if (orders.isNotEmpty) {
     for (var order in orders) {
-      String newOrderId = "T-" + order.orderId;
+      String newOrderId = "T-${order.orderId}";
       ProductBarcodeObjectBoxStruct? productSelect =
           await ProductBarcodeHelper().selectByBarcodeFirst(order.barcode);
       if (productSelect != null) {
@@ -1491,13 +1515,13 @@ Future<void> checkOrderOnline() async {
       if (orderToKitchenPrintMode == 0) {
         // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
         await sendToKitchen(orderId: orderId, orderList: orderTemp);
-        print("sendToKitchen 1 : " + orderTemp.length.toString());
+        print("sendToKitchen 1 : ${orderTemp.length}");
         orderTemp.clear();
       }
       if (orderTemp.isNotEmpty) {
         // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
         await sendToKitchen(orderId: orderId, orderList: orderTemp);
-        print("sendToKitchen 2 : " + orderTemp.length.toString());
+        print("sendToKitchen 2 : ${orderTemp.length}");
       }
     }
   }

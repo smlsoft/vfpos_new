@@ -11,6 +11,7 @@ TableProcessObjectBoxStruct _$TableProcessObjectBoxStructFromJson(
     TableProcessObjectBoxStruct(
       guidfixed: json['guidfixed'] as String,
       number: json['number'] as String,
+      numberMain: json['numberMain'] as String,
       names: json['names'] as String,
       zone: json['zone'] as String,
       table_status: json['table_status'] as int,
@@ -50,6 +51,7 @@ Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
       'id': instance.id,
       'guidfixed': instance.guidfixed,
       'number': instance.number,
+      'numberMain': instance.numberMain,
       'names': instance.names,
       'zone': instance.zone,
       'table_status': instance.table_status,

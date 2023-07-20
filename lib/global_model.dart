@@ -496,3 +496,21 @@ class ProfileSettingCompanyModel {
 
   Map<String, dynamic> toJson() => _$ProfileSettingCompanyModelToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true)
+class OrderTempUpdateForSplitModel {
+  final String sourceTable;
+  final String targetTable;
+  final String sourceGuid;
+
+  OrderTempUpdateForSplitModel({
+    required this.sourceTable,
+    required this.targetTable,
+    required this.sourceGuid,
+  });
+
+  factory OrderTempUpdateForSplitModel.fromJson(Map<String, dynamic> json) =>
+      _$OrderTempUpdateForSplitModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OrderTempUpdateForSplitModelToJson(this);
+}

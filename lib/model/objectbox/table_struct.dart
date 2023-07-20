@@ -11,12 +11,14 @@ class TableObjectBoxStruct {
   @Unique()
   String guidfixed;
   String number;
+  String numberMain;
   String names;
   String zone;
 
   TableObjectBoxStruct({
     required this.guidfixed,
     required this.number,
+    required this.numberMain,
     required this.names,
     required this.zone,
   });
@@ -29,8 +31,8 @@ class TableProcessObjectBoxStruct {
 
   @Unique()
   final String guidfixed;
-
   final String number;
+  late String numberMain;
   final String names;
   late String zone;
 
@@ -114,6 +116,7 @@ class TableProcessObjectBoxStruct {
   TableProcessObjectBoxStruct({
     required this.guidfixed,
     required this.number,
+    required this.numberMain,
     required this.names,
     required this.zone,
     required this.table_status,

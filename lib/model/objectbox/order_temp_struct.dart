@@ -31,6 +31,9 @@ class OrderTempObjectBoxStruct {
   /// รหัส อ้างอิง
   String orderGuid;
 
+  /// รหัส Order หลัก (โทรศัพท์,GUID โต๊ะ)
+  String orderIdMain;
+
   /// UUID หน้าจอกรณีเลือกพร้อมกันหลายคน
   String machineId;
 
@@ -62,6 +65,9 @@ class OrderTempObjectBoxStruct {
   /// รายการนี้รอส่งเข้าครัว
   bool isOrderReadySendKds;
 
+  /// ปิด (เก็บสะสม)
+  bool isPaySuccess;
+
   /// ข้อเลือกพิเศษ
   String optionSelected;
   String remark;
@@ -91,6 +97,7 @@ class OrderTempObjectBoxStruct {
   OrderTempObjectBoxStruct({
     required this.id,
     required this.orderId,
+    required this.orderIdMain,
     required this.orderGuid,
     required this.machineId,
     required this.orderDateTime,
@@ -99,6 +106,7 @@ class OrderTempObjectBoxStruct {
     required this.price,
     required this.amount,
     required this.isOrder,
+    required this.isPaySuccess,
     required this.optionSelected,
     required this.remark,
     required this.names,

@@ -25,6 +25,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/util/network.dart' as network;
 import 'package:dedepos/util/printer.dart' as printer;
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 double orderCalcSumAmount(OrderTempObjectBoxStruct order) {
   double amount = order.qty * order.price;
@@ -158,6 +159,27 @@ Future<void> startServer() async {
                       OrderTempStruct(orderQty: orderQty, orderTemp: result);
                   response.write(jsonEncode(orderTemp.toJson()));
                   break;
+                case "staff.order_temp_get_data_from_order_main_id":
+                  var jsonData = jsonDecode(httpGetData.json);
+                  String orderMainId = jsonData["orderMainId"];
+                  bool isOrder = jsonData["isOrder"];
+                  final box =
+                      global.objectBoxStore.box<OrderTempObjectBoxStruct>();
+                  final result = box
+                      .query(OrderTempObjectBoxStruct_.orderIdMain
+                          .equals(orderMainId)
+                          .and(OrderTempObjectBoxStruct_.isOrder
+                              .equals(isOrder)))
+                      .build()
+                      .find();
+                  double orderQty = 0;
+                  for (var item in result) {
+                    orderQty += item.qty;
+                  }
+                  OrderTempStruct orderTemp =
+                      OrderTempStruct(orderQty: orderQty, orderTemp: result);
+                  response.write(jsonEncode(orderTemp.toJson()));
+                  break;
                 case "staff.order_temp_get_data_from_order_guid":
                   String orderGuid = httpGetData.json;
                   final box =
@@ -206,6 +228,7 @@ Future<void> startServer() async {
                       .box<TableProcessObjectBoxStruct>()
                       .query(TableProcessObjectBoxStruct_.is_delivery
                           .equals(false))
+                      .order(TableProcessObjectBoxStruct_.number)
                       .build()
                       .find();
                   response.write(
@@ -758,6 +781,209 @@ Future<void> startServer() async {
                     }
                     response.write(result);
                     break;
+                  case "staff.order_temp_update_for_split":
+                    bool insertNewOrderData = true;
+                    // 0=ต้นทาง, 1=ปลายทางม ,2=orderGuid (ได้ครั้งละ 1 qty)
+                    OrderTempUpdateForSplitModel jsonData =
+                        OrderTempUpdateForSplitModel.fromJson(
+                            jsonDecode(httpPost.data));
+                    // รายการเดิม ถ้ามีให้ update ถ้าไม่มีให้เพิ่ม
+                    print(
+                        "ย้ายจาก ${jsonData.sourceTable} ไป ${jsonData.targetTable}");
+                    final findSourceTempResult = global.objectBoxStore
+                        .box<OrderTempObjectBoxStruct>()
+                        .query(OrderTempObjectBoxStruct_.orderId
+                            .equals(jsonData.sourceTable)
+                            .and(OrderTempObjectBoxStruct_.orderGuid
+                                .equals(jsonData.sourceGuid)
+                                .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                    .equals(false))))
+                        .build()
+                        .findFirst();
+                    final findTargetTempResult = global.objectBoxStore
+                        .box<OrderTempObjectBoxStruct>()
+                        .query(OrderTempObjectBoxStruct_.orderId
+                            .equals(jsonData.targetTable)
+                            .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                .equals(false)))
+                        .build()
+                        .find();
+                    if (findSourceTempResult != null &&
+                        findSourceTempResult.qty > 0) {
+                      for (var target in findTargetTempResult) {
+                        if (target.barcode == findSourceTempResult.barcode &&
+                            target.remark == findSourceTempResult.remark &&
+                            target.optionSelected ==
+                                findSourceTempResult.optionSelected) {
+                          // กรณีพบข้อมูลเดิมในโต๊ะปลายทาง
+                          target.qty += 1;
+                          target.orderQty += 1;
+                          target.amount = orderCalcSumAmount(target);
+                          global.objectBoxStore
+                              .box<OrderTempObjectBoxStruct>()
+                              .put(target, mode: PutMode.update);
+                          findSourceTempResult.qty -= 1;
+                          findSourceTempResult.orderQty -= 1;
+                          findSourceTempResult.amount =
+                              orderCalcSumAmount(findSourceTempResult);
+                          global.objectBoxStore
+                              .box<OrderTempObjectBoxStruct>()
+                              .put(findSourceTempResult, mode: PutMode.update);
+                          insertNewOrderData = false;
+                          break;
+                        }
+                      }
+                      if (insertNewOrderData) {
+                        // กรณีไม่พบข้อมูลเดิมในโต๊ะปลายทาง
+                        // ลดจำนวนของเก่า
+                        findSourceTempResult.qty -= 1;
+                        findSourceTempResult.orderQty -= 1;
+                        findSourceTempResult.amount =
+                            orderCalcSumAmount(findSourceTempResult);
+                        global.objectBoxStore
+                            .box<OrderTempObjectBoxStruct>()
+                            .put(findSourceTempResult, mode: PutMode.update);
+                        // เพิ่มข้อมูลใหม่
+                        final newOrderTemp = OrderTempObjectBoxStruct(
+                          id: 0,
+                          orderId: jsonData.targetTable,
+                          orderIdMain: findSourceTempResult.orderIdMain,
+                          orderGuid: Uuid().v4(),
+                          machineId: findSourceTempResult.machineId,
+                          orderDateTime: findSourceTempResult.orderDateTime,
+                          barcode: findSourceTempResult.barcode,
+                          qty: 1,
+                          price: findSourceTempResult.price,
+                          amount: findSourceTempResult.price,
+                          isOrder: findSourceTempResult.isOrder,
+                          isPaySuccess: findSourceTempResult.isPaySuccess,
+                          optionSelected: findSourceTempResult.optionSelected,
+                          remark: findSourceTempResult.remark,
+                          names: findSourceTempResult.names,
+                          takeAway: findSourceTempResult.takeAway,
+                          unitCode: findSourceTempResult.unitCode,
+                          unitName: findSourceTempResult.unitName,
+                          imageUri: findSourceTempResult.imageUri,
+                          kdsSuccessTime: findSourceTempResult.kdsSuccessTime,
+                          kdsSuccess: findSourceTempResult.kdsSuccess,
+                          isOrderSuccess: findSourceTempResult.isOrderSuccess,
+                          isOrderSendKdsSuccess:
+                              findSourceTempResult.isOrderSendKdsSuccess,
+                          kdsId: findSourceTempResult.kdsId,
+                          cancelQty: findSourceTempResult.cancelQty,
+                          orderQty: 1,
+                          deliveryNumber: findSourceTempResult.deliveryNumber,
+                          deliveryCode: findSourceTempResult.deliveryCode,
+                          isOrderReadySendKds:
+                              findSourceTempResult.isOrderReadySendKds,
+                          deliveryName: findSourceTempResult.deliveryName,
+                          lastUpdateDateTime:
+                              findSourceTempResult.lastUpdateDateTime,
+                        );
+                        newOrderTemp.orderId = jsonData.targetTable;
+                        newOrderTemp.orderGuid = Uuid().v4();
+                        newOrderTemp.qty = 1;
+                        newOrderTemp.orderQty = 1;
+                        newOrderTemp.amount = orderCalcSumAmount(newOrderTemp);
+                        global.objectBoxStore
+                            .box<OrderTempObjectBoxStruct>()
+                            .put(newOrderTemp, mode: PutMode.insert);
+                      }
+                      {
+                        // เพิ่มโต๊ะปลายทาง
+                        final findSourceTableResult = global.objectBoxStore
+                            .box<TableProcessObjectBoxStruct>()
+                            .query(TableProcessObjectBoxStruct_.number
+                                .equals(jsonData.sourceTable))
+                            .build()
+                            .findFirst();
+                        final findTargetTableResult = global.objectBoxStore
+                            .box<TableProcessObjectBoxStruct>()
+                            .query(TableProcessObjectBoxStruct_.number
+                                .equals(jsonData.targetTable))
+                            .build()
+                            .findFirst();
+                        if (findTargetTableResult == null) {
+                          final newTable = TableProcessObjectBoxStruct(
+                            number: jsonData.targetTable,
+                            guidfixed: Uuid().v4(),
+                            numberMain: findSourceTableResult!.numberMain,
+                            names: findSourceTableResult.names,
+                            zone: findSourceTableResult.zone,
+                            table_al_la_crate_mode:
+                                findSourceTableResult.table_al_la_crate_mode,
+                            table_open_datetime:
+                                findSourceTableResult.table_open_datetime,
+                            table_status: findSourceTableResult.table_status,
+                            delivery_ticket_number:
+                                findSourceTableResult.delivery_ticket_number,
+                            remark: findSourceTableResult.remark,
+                            order_count: findSourceTableResult.order_count,
+                            amount: findSourceTableResult.amount,
+                            order_success: findSourceTableResult.order_success,
+                            qr_code: findSourceTableResult.qr_code,
+                            man_count: findSourceTableResult.man_count,
+                            woman_count: findSourceTableResult.woman_count,
+                            child_count: findSourceTableResult.child_count,
+                            buffet_code: findSourceTableResult.buffet_code,
+                            customer_address:
+                                findSourceTableResult.customer_address,
+                            customer_code_or_telephone: findSourceTableResult
+                                .customer_code_or_telephone,
+                            customer_name: findSourceTableResult.customer_name,
+                            delivery_cook_success:
+                                findSourceTableResult.delivery_cook_success,
+                            delivery_cook_success_datetime:
+                                findSourceTableResult
+                                    .delivery_cook_success_datetime,
+                            delivery_code: findSourceTableResult.delivery_code,
+                            delivery_number:
+                                findSourceTableResult.delivery_number,
+                            delivery_status:
+                                findSourceTableResult.delivery_status,
+                            delivery_send_success:
+                                findSourceTableResult.delivery_send_success,
+                            delivery_send_success_datetime:
+                                findSourceTableResult
+                                    .delivery_send_success_datetime,
+                            is_delivery: findSourceTableResult.is_delivery,
+                            open_by_staff_code:
+                                findSourceTableResult.open_by_staff_code,
+                            make_food_immediately:
+                                findSourceTableResult.make_food_immediately,
+                          );
+                          global.objectBoxStore
+                              .box<TableProcessObjectBoxStruct>()
+                              .put(newTable, mode: PutMode.insert);
+                        }
+                      }
+                      // ลบบิลเดิม / สร้างใหม่
+                      await global.rebuildOrderToHoldBill(jsonData.sourceTable);
+                      await global.rebuildOrderToHoldBill(jsonData.targetTable);
+                      // คำนวณใหม่
+                      await global.orderSumAndUpdateTable(jsonData.sourceTable);
+                      await global.orderSumAndUpdateTable(jsonData.targetTable);
+                    }
+                    {
+                      // ลบรายการ Qty = 0 ออก
+                      final findSourceTempResultDelete = global.objectBoxStore
+                          .box<OrderTempObjectBoxStruct>()
+                          .query(OrderTempObjectBoxStruct_.orderId
+                              .equals(jsonData.sourceTable)
+                              .or(OrderTempObjectBoxStruct_.orderId
+                                  .equals(jsonData.targetTable)))
+                          .build()
+                          .find();
+                      for (var item in findSourceTempResultDelete) {
+                        if (item.orderQty == 0) {
+                          global.objectBoxStore
+                              .box<OrderTempObjectBoxStruct>()
+                              .remove(item.id);
+                        }
+                      }
+                    }
+                    response.write(true);
+                    break;
                   case "staff.order_temp_update":
                     int result = 0;
                     bool isUpdate = false;
@@ -765,7 +991,7 @@ Future<void> startServer() async {
                         OrderTempObjectBoxStruct.fromJson(
                             jsonDecode(httpPost.data));
                     // รายการเดิม
-                    final findOtherTempResult = global.objectBoxStore
+                    final findOldTempResult = global.objectBoxStore
                         .box<OrderTempObjectBoxStruct>()
                         .query(OrderTempObjectBoxStruct_.orderId
                             .equals(jsonData.orderId)
@@ -782,14 +1008,14 @@ Future<void> startServer() async {
                     if (productBarcodeStatus != null &&
                         productBarcodeStatus.orderAutoStock) {
                       if (productBarcodeStatus.qtyBalance -
-                              (jsonData.qty - findOtherTempResult!.qty) <
+                              (jsonData.qty - findOldTempResult!.qty) <
                           0) {
                         // สินค้าคุมยอดคงเหลือ และ ยอดคงเหลือไม่พอ
                         result = 1;
                       } else {
                         isUpdate = true;
                         productBarcodeStatus.qtyBalance -=
-                            (jsonData.qty - findOtherTempResult.qty);
+                            (jsonData.qty - findOldTempResult.qty);
                         global.objectBoxStore
                             .box<ProductBarcodeStatusObjectBoxStruct>()
                             .put(productBarcodeStatus, mode: PutMode.update);
@@ -799,7 +1025,7 @@ Future<void> startServer() async {
                       isUpdate = true;
                     }
                     if (isUpdate == true) {
-                      if (findOtherTempResult != null) {
+                      if (findOldTempResult != null) {
                         jsonData.amount = orderCalcSumAmount(jsonData);
                         global.objectBoxStore
                             .box<OrderTempObjectBoxStruct>()
@@ -810,7 +1036,7 @@ Future<void> startServer() async {
                       }
                       global.orderSumAndUpdateTable(jsonData.orderId);
                     }
-                    final test = global.objectBoxStore
+                    /*final test = global.objectBoxStore
                         .box<OrderTempObjectBoxStruct>()
                         .query(OrderTempObjectBoxStruct_.orderId
                             .equals(jsonData.orderId)
@@ -822,7 +1048,7 @@ Future<void> startServer() async {
                         .find();
                     for (var x in test) {
                       print(x.qty.toString());
-                    }
+                    }*/
                     response.write(result);
                     break;
                   case "staff.update_table":
@@ -852,6 +1078,7 @@ Future<void> startServer() async {
                     }
                     break;
                   case "staff.move_table":
+                    // ย้ายโต๊ะ
                     var jsonObject = jsonDecode(httpPost.data);
                     String fromTableNumber = jsonObject["from_table"];
                     String toTableNumber = jsonObject["to_table"];
@@ -897,14 +1124,104 @@ Future<void> startServer() async {
                       final posLogs = global.objectBoxStore
                           .box<PosLogObjectBoxStruct>()
                           .query(PosLogObjectBoxStruct_.hold_code
-                              .equals("T-" + fromTableNumber))
+                              .equals("T-$fromTableNumber"))
                           .build()
                           .find();
                       for (int index = 0; index < posLogs.length; index++) {
-                        posLogs[index].hold_code = "T-" + toTableNumber;
+                        posLogs[index].hold_code = "T-$toTableNumber";
                         global.objectBoxStore
                             .box<PosLogObjectBoxStruct>()
                             .put(posLogs[index]);
+                      }
+                      // ย้าย Order (Order Temp)
+                      final orderTemps = global.objectBoxStore
+                          .box<OrderTempObjectBoxStruct>()
+                          .query(OrderTempObjectBoxStruct_.orderId
+                              .equals(fromTableNumber)
+                              .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                  .equals(false)))
+                          .build()
+                          .find();
+                      for (int index = 0; index < orderTemps.length; index++) {
+                        orderTemps[index].orderId = toTableNumber;
+                        orderTemps[index].orderIdMain = toTableNumber;
+                        global.objectBoxStore
+                            .box<OrderTempObjectBoxStruct>()
+                            .put(orderTemps[index], mode: PutMode.update);
+                      }
+                    }
+                    break;
+                  case "staff.merge_table":
+                    // รวมโต๊ะ
+                    var jsonObject = jsonDecode(httpPost.data);
+                    String fromTableNumber = jsonObject["from_table"];
+                    String toTableNumber = jsonObject["to_table"];
+                    final fromTableResult = global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>()
+                        .query(TableProcessObjectBoxStruct_.number
+                            .equals(fromTableNumber))
+                        .build()
+                        .findFirst();
+                    final toTableResult = global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>()
+                        .query(TableProcessObjectBoxStruct_.number
+                            .equals(toTableNumber))
+                        .build()
+                        .findFirst();
+                    if (fromTableResult != null && toTableResult != null) {
+                      // Update โต๊ะ ปลายทาง
+                      toTableResult.table_status = 1;
+                      toTableResult.man_count += fromTableResult.man_count;
+                      toTableResult.woman_count += fromTableResult.woman_count;
+                      toTableResult.child_count += fromTableResult.child_count;
+                      toTableResult.table_al_la_crate_mode =
+                          fromTableResult.table_al_la_crate_mode;
+                      toTableResult.buffet_code = fromTableResult.buffet_code;
+                      toTableResult.amount = fromTableResult.amount;
+                      toTableResult.order_count = fromTableResult.order_count;
+                      toTableResult.table_open_datetime =
+                          fromTableResult.table_open_datetime;
+                      global.objectBoxStore
+                          .box<TableProcessObjectBoxStruct>()
+                          .put(toTableResult, mode: PutMode.update);
+                      // Update ปิดโต๊ะ ต้นทาง
+                      fromTableResult.table_status = 0;
+                      fromTableResult.order_count = 0;
+                      fromTableResult.amount = 0;
+                      fromTableResult.man_count = 0;
+                      fromTableResult.woman_count = 0;
+                      fromTableResult.child_count = 0;
+                      global.objectBoxStore
+                          .box<TableProcessObjectBoxStruct>()
+                          .put(fromTableResult);
+                      // ย้าย Order (Hold Bill)
+                      final posLogs = global.objectBoxStore
+                          .box<PosLogObjectBoxStruct>()
+                          .query(PosLogObjectBoxStruct_.hold_code
+                              .equals("T-$fromTableNumber"))
+                          .build()
+                          .find();
+                      for (int index = 0; index < posLogs.length; index++) {
+                        posLogs[index].hold_code = "T-$toTableNumber";
+                        global.objectBoxStore
+                            .box<PosLogObjectBoxStruct>()
+                            .put(posLogs[index]);
+                      }
+                      // ย้าย Order (Order Temp)
+                      final orderTemps = global.objectBoxStore
+                          .box<OrderTempObjectBoxStruct>()
+                          .query(OrderTempObjectBoxStruct_.orderId
+                              .equals(fromTableNumber)
+                              .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                  .equals(false)))
+                          .build()
+                          .find();
+                      for (int index = 0; index < orderTemps.length; index++) {
+                        orderTemps[index].orderId = toTableNumber;
+                        orderTemps[index].orderIdMain = toTableNumber;
+                        global.objectBoxStore
+                            .box<OrderTempObjectBoxStruct>()
+                            .put(orderTemps[index], mode: PutMode.update);
                       }
                     }
                     break;

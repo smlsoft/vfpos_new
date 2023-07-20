@@ -384,3 +384,19 @@ Map<String, dynamic> _$ProfileSettingCompanyModelToJson(
       'images': instance.images,
       'logo': instance.logo,
     };
+
+OrderTempUpdateForSplitModel _$OrderTempUpdateForSplitModelFromJson(
+        Map<String, dynamic> json) =>
+    OrderTempUpdateForSplitModel(
+      sourceTable: json['sourceTable'] as String,
+      targetTable: json['targetTable'] as String,
+      sourceGuid: json['sourceGuid'] as String,
+    );
+
+Map<String, dynamic> _$OrderTempUpdateForSplitModelToJson(
+        OrderTempUpdateForSplitModel instance) =>
+    <String, dynamic>{
+      'sourceTable': instance.sourceTable,
+      'targetTable': instance.targetTable,
+      'sourceGuid': instance.sourceGuid,
+    };
