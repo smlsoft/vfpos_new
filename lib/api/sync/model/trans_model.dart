@@ -38,7 +38,7 @@ class TransactionModel {
   double vatrate;
   int vattype;
   TransPaymentDetailModel paymentdetail;
-
+  String paymentdetailraw;
   TransactionModel({
     required this.cashiercode,
     required this.custcode,
@@ -75,10 +75,10 @@ class TransactionModel {
     required this.vatrate,
     required this.vattype,
     required this.paymentdetail,
+    required this.paymentdetailraw,
   });
 
-  factory TransactionModel.fromJson(Map<String, dynamic> json) =>
-      _$TransactionModelFromJson(json);
+  factory TransactionModel.fromJson(Map<String, dynamic> json) => _$TransactionModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionModelToJson(this);
 }
@@ -97,8 +97,7 @@ class TransNameInfoModel {
     required this.name,
   });
 
-  factory TransNameInfoModel.fromJson(Map<String, dynamic> json) =>
-      _$TransNameInfoModelFromJson(json);
+  factory TransNameInfoModel.fromJson(Map<String, dynamic> json) => _$TransNameInfoModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransNameInfoModelToJson(this);
 }
@@ -193,8 +192,7 @@ class TransDetailModel {
     required this.whnames,
   });
 
-  factory TransDetailModel.fromJson(Map<String, dynamic> json) =>
-      _$TransDetailModelFromJson(json);
+  factory TransDetailModel.fromJson(Map<String, dynamic> json) => _$TransDetailModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransDetailModelToJson(this);
 }
@@ -215,8 +213,7 @@ class PaymentTransferModel {
     required this.docDateTime,
   });
 
-  factory PaymentTransferModel.fromJson(Map<String, dynamic> json) =>
-      _$PaymentTransferModelFromJson(json);
+  factory PaymentTransferModel.fromJson(Map<String, dynamic> json) => _$PaymentTransferModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PaymentTransferModelToJson(this);
 }
@@ -235,8 +232,7 @@ class TransLocationInfoModel {
     required this.name,
   });
 
-  factory TransLocationInfoModel.fromJson(Map<String, dynamic> json) =>
-      _$TransLocationInfoModelFromJson(json);
+  factory TransLocationInfoModel.fromJson(Map<String, dynamic> json) => _$TransLocationInfoModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransLocationInfoModelToJson(this);
 }
@@ -255,8 +251,7 @@ class TransPaymentDetailModel {
     required this.paymenttransfers,
   });
 
-  factory TransPaymentDetailModel.fromJson(Map<String, dynamic> json) =>
-      _$TransPaymentDetailModelFromJson(json);
+  factory TransPaymentDetailModel.fromJson(Map<String, dynamic> json) => _$TransPaymentDetailModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransPaymentDetailModelToJson(this);
 }
@@ -279,8 +274,7 @@ class TransPaymentCreditCardModel {
     required this.totalnetworth,
   });
 
-  factory TransPaymentCreditCardModel.fromJson(Map<String, dynamic> json) =>
-      _$TransPaymentCreditCardModelFromJson(json);
+  factory TransPaymentCreditCardModel.fromJson(Map<String, dynamic> json) => _$TransPaymentCreditCardModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransPaymentCreditCardModelToJson(this);
 }
@@ -301,8 +295,7 @@ class TransPaymentTransferModel {
     required this.docdatetime,
   });
 
-  factory TransPaymentTransferModel.fromJson(Map<String, dynamic> json) =>
-      _$TransPaymentTransferModelFromJson(json);
+  factory TransPaymentTransferModel.fromJson(Map<String, dynamic> json) => _$TransPaymentTransferModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransPaymentTransferModelToJson(this);
 }
