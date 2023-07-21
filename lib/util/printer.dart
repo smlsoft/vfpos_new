@@ -129,6 +129,7 @@ class PrinterClass {
       sleep(const Duration(milliseconds: 100));
       printer.cut();
       printer.disconnect();
+      sleep(const Duration(milliseconds: 100));
       print(qrCode);
     }
   }

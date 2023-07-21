@@ -3050,7 +3050,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
               ),
               onPressed: () {
-                payScreen(0);
+                if (global
+                        .posHoldProcessResult[
+                            global.findPosHoldProcessResultIndex(
+                                global.posHoldActiveCode)]
+                        .posProcess
+                        .total_amount >
+                    0) {
+                  payScreen(0);
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(5),

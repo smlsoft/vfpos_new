@@ -400,3 +400,21 @@ Map<String, dynamic> _$OrderTempUpdateForSplitModelToJson(
       'targetTable': instance.targetTable,
       'sourceGuid': instance.sourceGuid,
     };
+
+PosConfigModel _$PosConfigModelFromJson(Map<String, dynamic> json) =>
+    PosConfigModel(
+      code: json['code'] as String,
+      doccode: json['doccode'] as String,
+      vattype: json['vattype'] as int,
+      vatrate: (json['vatrate'] as num).toDouble(),
+      docformattaxinv: json['docformattaxinv'] as String,
+    );
+
+Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'doccode': instance.doccode,
+      'vattype': instance.vattype,
+      'vatrate': instance.vatrate,
+      'docformattaxinv': instance.docformattaxinv,
+    };

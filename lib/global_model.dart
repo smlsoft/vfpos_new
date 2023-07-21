@@ -514,3 +514,25 @@ class OrderTempUpdateForSplitModel {
 
   Map<String, dynamic> toJson() => _$OrderTempUpdateForSplitModelToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true)
+class PosConfigModel {
+  final String code;
+  final String doccode;
+  final int vattype;
+  final double vatrate;
+  final String docformattaxinv;
+
+  PosConfigModel({
+    required this.code,
+    required this.doccode,
+    required this.vattype,
+    required this.vatrate,
+    required this.docformattaxinv,
+  });
+
+  factory PosConfigModel.fromJson(Map<String, dynamic> json) =>
+      _$PosConfigModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PosConfigModelToJson(this);
+}

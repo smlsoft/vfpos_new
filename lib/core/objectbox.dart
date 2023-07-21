@@ -5,7 +5,6 @@ import 'package:dedepos/global.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
-import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
@@ -64,7 +63,6 @@ void objectBoxDeleteAll() {
   objectBoxStore.box<BankObjectBoxStruct>().removeAll();
   objectBoxStore.box<BillObjectBoxStruct>().removeAll();
   objectBoxStore.box<BuffetModeObjectBoxStruct>().removeAll();
-  objectBoxStore.box<ConfigObjectBoxStruct>().removeAll();
   objectBoxStore.box<EmployeeObjectBoxStruct>().removeAll();
   objectBoxStore.box<FormDesignObjectBoxStruct>().removeAll();
   objectBoxStore.box<KitchenObjectBoxStruct>().removeAll();

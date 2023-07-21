@@ -235,12 +235,18 @@ Future<void> startServer() async {
                       .find();
                   // หาโต๊ะลูก
                   for (var table in tableData) {
-                    table.table_child_count = global.objectBoxStore
+                    table.table_child_count = 0;
+                    var data = global.objectBoxStore
                         .box<TableProcessObjectBoxStruct>()
                         .query(TableProcessObjectBoxStruct_.number_main
                             .equals(table.number))
                         .build()
-                        .count();
+                        .find();
+                    for (var item in data) {
+                      if (item.number.contains("#")) {
+                        table.table_child_count++;
+                      }
+                    }
                   }
                   response.write(
                       jsonEncode(tableData.map((e) => e.toJson()).toList()));
@@ -1199,16 +1205,6 @@ Future<void> startServer() async {
                       global.objectBoxStore
                           .box<TableProcessObjectBoxStruct>()
                           .put(toTableResult, mode: PutMode.update);
-                      // Update ปิดโต๊ะ ต้นทาง
-                      fromTableResult.table_status = 0;
-                      fromTableResult.order_count = 0;
-                      fromTableResult.amount = 0;
-                      fromTableResult.man_count = 0;
-                      fromTableResult.woman_count = 0;
-                      fromTableResult.child_count = 0;
-                      global.objectBoxStore
-                          .box<TableProcessObjectBoxStruct>()
-                          .put(fromTableResult);
                       // ย้าย Order (Hold Bill)
                       final posLogs = global.objectBoxStore
                           .box<PosLogObjectBoxStruct>()
@@ -1238,6 +1234,15 @@ Future<void> startServer() async {
                             .box<OrderTempObjectBoxStruct>()
                             .put(orderTemps[index], mode: PutMode.update);
                       }
+                      // ลบโต๊ กรณีเป็นโต๊ะลูก
+                      if (fromTableNumber.contains("#")) {
+                        global.objectBoxStore
+                            .box<TableProcessObjectBoxStruct>()
+                            .remove(fromTableResult.id);
+                      }
+                      // คำนวณใหม่
+                      await global.orderSumAndUpdateTable(fromTableNumber);
+                      await global.orderSumAndUpdateTable(toTableNumber);
                     }
                     break;
                   case "process_result":

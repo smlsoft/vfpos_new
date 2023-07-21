@@ -509,8 +509,13 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             .build()
             .findFirst();
         if (result != null) {
-          result.table_status = 0;
-          box.put(result);
+          // ถ้าเป็นโต๊ะเสริม ให้ลบออก
+          if (result.number.contains("#")) {
+            box.remove(result.id);
+          } else {
+            result.table_status = 0;
+            box.put(result);
+          }
         }
         syncBillProcess();
         paySuccessDialog();

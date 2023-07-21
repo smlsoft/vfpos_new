@@ -4,10 +4,10 @@ import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
 import 'package:dedepos/api/sync/model/employee_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
-import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
 import 'package:dedepos/google_sheet.dart';
+import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
@@ -28,7 +28,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
 import 'package:dedepos/api/network/sync_model.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
@@ -47,7 +46,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'dart:async';
 import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
@@ -56,7 +54,6 @@ import 'db/product_barcode_helper.dart';
 import 'package:dedepos/global.dart' as global;
 import 'db/pos_log_helper.dart';
 import 'db/bill_helper.dart';
-import 'db/config_helper.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
@@ -65,6 +62,7 @@ import 'model/objectbox/form_design_struct.dart';
 String applicationName = "";
 late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
+late PosConfigModel posConfig;
 List<FormDesignObjectBoxStruct> formDesignList = [];
 bool developerMode = true;
 List<String> countryNames = [
@@ -99,7 +97,6 @@ ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 EmployeeHelper employeeHelper = EmployeeHelper();
 PosLogHelper posLogHelper = PosLogHelper();
 BillHelper billHelper = BillHelper();
-ConfigHelper configHelper = ConfigHelper();
 PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
 int syncTimeIntervalMaxBySecond = 10;
@@ -564,41 +561,38 @@ Future<String> billRunning() async {
   // ตัวอย่าง 002YYMMDD########## สำหรับ Tax ABB เครื่อง POS (002=รหัสเครื่อง POS)
   // ตัวอย่าง SO-YYMMDD-###### สำหรับขาย
   // ตัวอย่าง PO-YYMMDD-###### สำหรับซื้อ
-  String dateNow = DateFormat('yyMMdd').format(DateTime.now());
+  DateTime dateTimeNow = DateTime.now();
+  String dateNow = DateFormat('yyyyMMdd').format(dateTimeNow);
   String result = "";
-  bool success = false;
-  while (success == false) {
-    int number = 0;
-    List<ConfigObjectBoxStruct> configGet = configHelper.select();
-    if (configGet.isNotEmpty) {
-      ConfigObjectBoxStruct config = configGet[0];
-      List<String> split = config.last_doc_number.split(
-        "-",
-      );
-      if (split.isNotEmpty) {
-        number = int.tryParse(split[split.length - 1]) ?? 0;
-        if (split.length > 1) {
-          String date = split[split.length - 2];
-          if (date != dateNow) {
-            number = 0;
-            success = true;
-          }
-        }
-      }
-    }
-    result =
-        "${deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
-
-    /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
-    var find = billHelper.selectByDocNumber(
-        docNumber: result, posScreenMode: posScreenToInt());
-    if (find == null) {
-      success = true;
-    } else {
-      configHelper.update(
-          ConfigObjectBoxStruct(device_id: deviceId, last_doc_number: result));
+  String countDigit = "";
+  String lastDigit = "";
+  for (var item in global.posConfig.docformattaxinv.split("")) {
+    if (item == "#") {
+      countDigit += "0";
+      lastDigit += "9";
     }
   }
+  String docFormat = global.posConfig.doccode +
+      global.posConfig.docformattaxinv.replaceAll("#", "");
+  docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
+  docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
+  docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
+  docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
+  int number = 0;
+  var getLast = global.objectBoxStore
+      .box<BillObjectBoxStruct>()
+      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
+      .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
+      .build()
+      .findFirst();
+  if (getLast != null) {
+    if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
+      number = int.parse(getLast.doc_number
+          .substring(getLast.doc_number.length - countDigit.length));
+    }
+  }
+  result = "$docFormat${(NumberFormat(countDigit)).format(number + 1)}";
+  print("Doc Running : $result");
   return result;
 }
 
@@ -875,6 +869,14 @@ void posScreenListHeightSet(double value) {
 }
 
 Future<void> loadConfig() async {
+  ApiRepository apiRepository = ApiRepository();
+  try {
+    // POS Setting
+    var value = await apiRepository.getPosSetting(deviceId);
+    global.posConfig = PosConfigModel.fromJson(value.data);
+  } catch (e) {
+    serviceLocator<Log>().error(e);
+  }
   await loadPrinter();
   await loadFormDesign();
   await loadEmployee();
@@ -1677,11 +1679,6 @@ Future<void> getProfile() async {
     }
     var getProfile = await appStorage.read('profile');
     profileSetting = ProfileSettingModel.fromJson(getProfile);
-  }
-  {
-    // POS Setting
-    var value = await apiRepository.getPosSetting(deviceId);
-    var jsonData = value.data;
   }
   await loadConfig();
 }

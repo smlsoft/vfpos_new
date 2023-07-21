@@ -71,6 +71,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                                     printerName: global
                                         .printerLocalStrongData[index]
                                         .name))).then((value) async {
+                      await global.loadPrinter();
                       setState(() {});
                     });
                   },
@@ -92,8 +93,11 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                       await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => PrinterConfigSelectFormPage(printer:global.printerLocalStrongData[index]
-))).then((value) async {
+                              builder: (context) => PrinterConfigSelectFormPage(
+                                  printer: global
+                                      .printerLocalStrongData[index]))).then(
+                          (value) async {
+                        await global.loadPrinter();
                         setState(() {});
                       });
                     },

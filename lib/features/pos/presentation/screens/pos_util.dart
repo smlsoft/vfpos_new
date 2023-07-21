@@ -4,7 +4,6 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'dart:async';
-import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -249,9 +248,6 @@ Future<saveBillResultClass> saveBill(
 
   global.billHelper.insert(billData);
   global.objectBoxStore.box<BillDetailObjectBoxStruct>().putMany(details);
-  // Running เลขที่ใบเสร็จ
-  global.configHelper.update(ConfigObjectBoxStruct(
-      device_id: global.deviceId, last_doc_number: docNumber));
   // update Order Temp ร้านอาหาร
   if (global.tableNumberSelected.isNotEmpty) {
     final orderTemps = global.objectBoxStore
