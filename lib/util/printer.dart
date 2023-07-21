@@ -250,7 +250,9 @@ class PrinterClass {
 void printTableQrCode(
     {required global.TableManagerEnum tableManagerMode,
     required TableProcessObjectBoxStruct table,
-    String qrCode = ""}) {
+    String qrCode = "",
+    String fromTable = "",
+    String toTable = ""}) {
   // printerIndex 1 = Ticket Printer
   PrinterClass printer = PrinterClass(printerIndex: 1, qrCode: qrCode);
   print(printer.qrCode);
@@ -261,7 +263,7 @@ void printTableQrCode(
       posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
-            font_size: 60,
+            font_size: 40,
             width: 1,
             text: global.profileSetting.company.names[0].name,
             text_align: PrintColumnAlign.center)
@@ -273,44 +275,34 @@ void printTableQrCode(
         FormDesignColumnModel(
             font_size: 24,
             width: 1,
-            text: "Printing time : " +
-                DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now()),
+            text:
+                "Printing time : ${DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now())}",
             text_align: PrintColumnAlign.center)
       ]));
   String tableTitle = "";
   switch (tableManagerMode) {
     case global.TableManagerEnum.openTable:
-      tableTitle += "เปิด";
+      tableTitle = "เปิดโต๊ะ : ${table.number}";
       break;
     case global.TableManagerEnum.closeTable:
-      tableTitle += "ปิด";
-      break;
-    case global.TableManagerEnum.openTable:
-      // TODO: Handle this case.
-      break;
-    case global.TableManagerEnum.closeTable:
-      // TODO: Handle this case.
+      tableTitle = "ปิดโต๊ะ : ${table.number}";
       break;
     case global.TableManagerEnum.moveTable:
-      // TODO: Handle this case.
+      tableTitle += "ย้ายโต๊ะ จาก $fromTable ไปยัง : $toTable";
       break;
     case global.TableManagerEnum.mergeTable:
-      // TODO: Handle this case.
       break;
     case global.TableManagerEnum.informationTable:
-      // TODO: Handle this case.
       break;
     case global.TableManagerEnum.splitTable:
-      // TODO: Handle this case.
       break;
   }
-  tableTitle += "โต๊ะ : " + table.number;
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
       posStyles: PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
-            font_size: 80,
+            font_size: 40,
             width: 1,
             text: tableTitle,
             text_align: PrintColumnAlign.center)
@@ -321,10 +313,10 @@ void printTableQrCode(
       posStyles: PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
-            font_size: 40,
+            font_size: 30,
             width: 1,
-            text: "เวลาเปิดโต๊ะ : " +
-                DateFormat("HH:mm").format(table.table_open_datetime),
+            text:
+                "เวลาเปิดโต๊ะ : ${DateFormat("HH:mm").format(table.table_open_datetime)}",
             text_align: PrintColumnAlign.center)
       ]));
   if (table.table_al_la_crate_mode == false) {
@@ -333,7 +325,7 @@ void printTableQrCode(
         posStyles: PosStyles(bold: true),
         columns: [
           FormDesignColumnModel(
-              font_size: 40,
+              font_size: 30,
               width: 1,
               text:
                   "จำนวนนาที : ${global.moneyFormat.format(global.buffetMaxMinute)} นาที",
@@ -346,7 +338,7 @@ void printTableQrCode(
         posStyles: PosStyles(bold: true),
         columns: [
           FormDesignColumnModel(
-              font_size: 40,
+              font_size: 30,
               width: 1,
               text: "เวลาปิดโต๊ะ : $endTime",
               text_align: PrintColumnAlign.center)
@@ -369,7 +361,7 @@ void printTableQrCode(
         posStyles: PosStyles(bold: true),
         columns: [
           FormDesignColumnModel(
-              font_size: 40,
+              font_size: 30,
               width: 1,
               text: "$countPeople",
               text_align: PrintColumnAlign.center)
@@ -390,7 +382,7 @@ void printTableQrCode(
       posStyles: PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
-            font_size: 40,
+            font_size: 30,
             width: 1,
             text: "เงื่อนไข : $orderType",
             text_align: PrintColumnAlign.center)
@@ -413,7 +405,7 @@ void shiftAndMoneyPrint(String guid) {
       posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
-            font_size: 60,
+            font_size: 40,
             width: 1,
             text: global.profileSetting.company.names[0].name,
             text_align: PrintColumnAlign.center)
@@ -425,8 +417,8 @@ void shiftAndMoneyPrint(String guid) {
         FormDesignColumnModel(
             font_size: 24,
             width: 1,
-            text: "Printing time : " +
-                DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now()),
+            text:
+                "Printing time : ${DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now())}",
             text_align: PrintColumnAlign.center)
       ]));
   String tableTitle = "";
@@ -462,7 +454,7 @@ void shiftAndMoneyPrint(String guid) {
         FormDesignColumnModel(
             font_size: 32,
             width: 1,
-            text: "วันเวลา : " + DateFormat("HH:mm").format(data.docdate),
+            text: "วันเวลา : ${DateFormat("HH:mm").format(data.docdate)}",
             text_align: PrintColumnAlign.center)
       ]));
   printer.addCommand(PosPrintBillCommandModel(

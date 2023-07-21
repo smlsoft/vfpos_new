@@ -1324,7 +1324,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(28, 6807013238340886010),
       name: 'TableProcessObjectBoxStruct',
-      lastPropertyId: const IdUid(34, 1393119992901697318),
+      lastPropertyId: const IdUid(36, 7481048659880661150),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -2065,7 +2065,9 @@ ModelDefinition getObjectBoxModel() {
         8336559978788265250,
         3339566010883661331,
         7361895675452458520,
-        8195153540722984911
+        8195153540722984911,
+        3179045193437887525,
+        7481048659880661150
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -3119,7 +3121,7 @@ ModelDefinition getObjectBoxModel() {
           final open_by_staff_codeOffset =
               fbb.writeString(object.open_by_staff_code);
           final number_mainOffset = fbb.writeString(object.number_main);
-          fbb.startTable(35);
+          fbb.startTable(37);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(2, numberOffset);

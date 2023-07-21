@@ -1091,7 +1091,7 @@ Future<void> startServer() async {
                         .build()
                         .findFirst();
                     if (result != null) {
-                      box.put(getTable);
+                      box.put(getTable, mode: PutMode.update);
                       switch (getTable.table_status) {
                         case 1:
                           // พิมพ์ใบเปิดโต๊ะ
@@ -1099,8 +1099,8 @@ Future<void> startServer() async {
                               tableManagerMode:
                                   global.TableManagerEnum.openTable,
                               table: getTable,
-                              qrCode: getTable.qr_code);
-                          print(getTable.qr_code);
+                              qrCode:
+                                  "https://dedefoodorder.web.app/?shop=${global.shopId}&ticket=${getTable.qr_code}");
                           break;
                       }
                     }
@@ -1178,6 +1178,14 @@ Future<void> startServer() async {
                             .box<OrderTempObjectBoxStruct>()
                             .put(orderTemps[index], mode: PutMode.update);
                       }
+                      // print ticket to cashier and kitchen station
+                      printer.printTableQrCode(
+                          tableManagerMode: global.TableManagerEnum.moveTable,
+                          table: fromTableResult,
+                          fromTable: fromTableResult.number,
+                          toTable: toTableResult.number,
+                          qrCode:
+                              "https://dedefoodorder.web.app/?shop=${global.shopId}&ticket=${toTableResult.qr_code}");
                     }
                     break;
                   case "staff.merge_table":
