@@ -5,10 +5,12 @@ import 'package:dedepos/api/sync/model/trans_model.dart';
 import 'package:dedepos/api/user_repository.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dio/dio.dart';
+import 'package:uuid/uuid.dart';
 
 Future syncBillData() async {
   List<BillObjectBoxStruct> bills = (global.billHelper.selectSyncIsFalse());
@@ -91,10 +93,7 @@ Future syncBillData() async {
         whnames: [],
       ));
     }
-    List<BillPayObjectBoxStruct> payDetails =
-        (jsonDecode(bill.pay_json) as List)
-            .map((e) => BillPayObjectBoxStruct.fromJson(e))
-            .toList();
+    List<BillPayObjectBoxStruct> payDetails = (jsonDecode(bill.pay_json) as List).map((e) => BillPayObjectBoxStruct.fromJson(e)).toList();
     List<TransPaymentCreditCardModel> paymentCreditCards = [];
     List<TransPaymentTransferModel> paymentTransfers = [];
     for (var payDetail in payDetails) {
@@ -147,7 +146,7 @@ Future syncBillData() async {
         description: "POS",
         discountword: bill.discount_formula,
         docdatetime: bill.date_time.toUtc().toIso8601String(),
-        docno: bill.doc_number,
+        docno: new Uuid().v4(),
         docrefdate: null,
         docrefno: "",
         docreftype: 0,
@@ -175,9 +174,12 @@ Future syncBillData() async {
         vatrate: bill.vat_rate,
         vattype: 0,
         details: details,
-        paymentdetail: paymentDetail);
+        paymentdetail: paymentDetail,
+        paymentdetailraw: jsonEncode(paymentDetail.toJson()));
 
     await saveTransaction(trans);
+
+    BillHelper().updatesSyncSuccess(docNumber: bill.doc_number);
 
     /*BillObjectBoxStruct bill = bills[index];
     List<ApiBillDetailStruct> apiBillDetails = [];
@@ -319,10 +321,9 @@ Future syncBillData() async {
 
 Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   Dio client = Client().init();
-  String jsonPayload = jsonEncode(trx.toJson());
+  //String jsonPayload = jsonEncode(trx.toJson());
   try {
-    final response =
-        await client.post('/transaction/sale-invoice', data: trx.toJson());
+    final response = await client.post('/transaction/sale-invoice', data: trx.toJson());
     try {
       final rawData = json.decode(response.toString());
 
@@ -336,10 +337,12 @@ Future<ApiResponse> saveTransaction(TransactionModel trx) async {
 
       return ApiResponse.fromMap(rawData);
     } catch (ex) {
+      global.syncDataProcess = false;
       serviceLocator<Log>().error(ex);
       throw Exception(ex);
     }
   } on DioError catch (ex) {
+    global.syncDataProcess = false;
     String errorMessage = ex.response.toString();
     serviceLocator<Log>().error(errorMessage);
     throw Exception(errorMessage);
@@ -355,15 +358,12 @@ Future syncBillProcess() async {
         if (!global.loginProcess) {
           global.loginProcess = true;
           UserRepository userRepository = UserRepository();
-          await userRepository
-              .authenUser(global.apiUserName, global.apiUserPassword)
-              .then((result) async {
+          await userRepository.authenUser(global.apiUserName, global.apiUserPassword).then((result) async {
             if (result.success) {
               global.apiConnected = true;
               global.appStorage.write("token", result.data["token"]);
               serviceLocator<Log>().debug("Login Success");
-              ApiResponse selectShop =
-                  await userRepository.selectShop(global.apiShopID);
+              ApiResponse selectShop = await userRepository.selectShop(global.apiShopID);
               if (selectShop.success) {
                 serviceLocator<Log>().debug("Select Shop Success");
               }
