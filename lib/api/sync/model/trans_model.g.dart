@@ -48,6 +48,7 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
       vattype: json['vattype'] as int,
       paymentdetail: TransPaymentDetailModel.fromJson(
           json['paymentdetail'] as Map<String, dynamic>),
+      paymentdetailraw: json['paymentdetailraw'] as String,
     );
 
 Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
@@ -87,6 +88,7 @@ Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
       'vatrate': instance.vatrate,
       'vattype': instance.vattype,
       'paymentdetail': instance.paymentdetail.toJson(),
+      'paymentdetailraw': instance.paymentdetailraw,
     };
 
 TransNameInfoModel _$TransNameInfoModelFromJson(Map<String, dynamic> json) =>
