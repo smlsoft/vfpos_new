@@ -418,3 +418,16 @@ Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
       'vatrate': instance.vatrate,
       'docformattaxinv': instance.docformattaxinv,
     };
+
+PosInformationModel _$PosInformationModelFromJson(Map<String, dynamic> json) =>
+    PosInformationModel(
+      shop_id: json['shop_id'] as String,
+      shop_name: json['shop_name'] as String,
+    );
+
+Map<String, dynamic> _$PosInformationModelToJson(
+        PosInformationModel instance) =>
+    <String, dynamic>{
+      'shop_id': instance.shop_id,
+      'shop_name': instance.shop_name,
+    };

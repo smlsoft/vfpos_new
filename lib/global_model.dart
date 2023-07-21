@@ -536,3 +536,20 @@ class PosConfigModel {
 
   Map<String, dynamic> toJson() => _$PosConfigModelToJson(this);
 }
+
+@JsonSerializable(explicitToJson: true)
+class PosInformationModel {
+  /// เอาไว้เชื่อมต่อระหว่างเครื่อง
+  final String shop_id;
+  final String shop_name;
+
+  PosInformationModel({
+    required this.shop_id,
+    required this.shop_name,
+  });
+
+  factory PosInformationModel.fromJson(Map<String, dynamic> json) =>
+      _$PosInformationModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PosInformationModelToJson(this);
+}

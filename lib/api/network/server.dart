@@ -82,6 +82,14 @@ Future<void> startServer() async {
                 case "get_connect":
                   response.write("connected");
                   break;
+                case "pos_information":
+                  PosInformationModel data = PosInformationModel(
+                      shop_id: global.shopId,
+                      shop_name: global.getNameFromLanguage(
+                          global.profileSetting.company.names,
+                          global.userScreenLanguage));
+                  response.write(jsonEncode(data.toJson()));
+                  break;
                 case "staff.get_product_barcode_status":
                   response
                       .write(jsonEncode(ProductBarcodeStatusHelper().getAll()));
