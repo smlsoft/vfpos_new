@@ -22,6 +22,7 @@ import 'package:dedepos/util/print_kitchen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:presentation_displays/displays_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -1742,4 +1743,25 @@ String getShopLogoPathName() {
 
 String qrCodeOrderOnline(String qrCode) {
   return "https://dedefoodorder.web.app/?shop=$shopId&ticket=$qrCode";
+}
+
+Future<Directory> createPath(String mainPath, DateTime docDate) async {
+  final directory = await getApplicationDocumentsDirectory();
+
+  // Format date as YYYYMMDD
+  final dateFormatter = DateFormat('yyyyMMdd');
+  String formattedDate = dateFormatter.format(docDate);
+
+  // Create a new directory for the main path
+  final mainDirectory = Directory('${directory.path}/$mainPath');
+  if (!await mainDirectory.exists()) {
+    await mainDirectory.create();
+  }
+
+  // Create a new directory for the date
+  final dateDirectory = Directory('${directory.path}/$mainPath/$formattedDate');
+  if (!await dateDirectory.exists()) {
+    await dateDirectory.create();
+  }
+  return dateDirectory;
 }

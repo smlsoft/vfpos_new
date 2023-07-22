@@ -1,5 +1,8 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:io';
+
+import 'package:dedepos/global_model.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -154,4 +157,25 @@ class TableProcessObjectBoxStruct {
   factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
       _$TableProcessObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$TableProcessObjectBoxStructToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CloseTableModel {
+  TableProcessObjectBoxStruct table;
+
+  /// 0=ชำระที่ Cashier,1=ชำระที่โต๊ะเงินสด,2=ชำระที่โต๊ะ QR Code
+  int payMode;
+  String slipImage;
+  PosHoldProcessModel process;
+
+  CloseTableModel(
+      {required this.table,
+      required this.payMode,
+      required this.slipImage,
+      required this.process});
+
+  factory CloseTableModel.fromJson(Map<String, dynamic> json) =>
+      _$CloseTableModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CloseTableModelToJson(this);
 }

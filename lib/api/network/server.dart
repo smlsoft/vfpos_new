@@ -1,8 +1,12 @@
 import "dart:developer" as dev;
+import 'dart:typed_data';
 import 'package:dedepos/api/network/sync_model.dart';
+import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/core.dart';
 import 'package:dedepos/db/pos_log_helper.dart';
 import 'package:dedepos/db/product_barcode_status_helper.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_util.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
@@ -14,6 +18,7 @@ import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/model/objectbox/staff_client_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_process.dart';
 import 'package:dedepos/util/pos_compile_process.dart';
@@ -1170,18 +1175,80 @@ Future<void> startServer() async {
                     break;
                   case "staff.close_table":
                     var jsonObject = jsonDecode(httpPost.data);
-                    TableProcessObjectBoxStruct getTable =
-                        TableProcessObjectBoxStruct.fromJson(jsonObject);
+                    CloseTableModel closeData =
+                        CloseTableModel.fromJson(jsonObject);
                     final box = global.objectBoxStore
                         .box<TableProcessObjectBoxStruct>();
                     final result = box
                         .query(TableProcessObjectBoxStruct_.number
-                            .equals(getTable.number))
+                            .equals(closeData.table.number))
                         .build()
                         .findFirst();
                     if (result != null) {
-                      box.put(getTable, mode: PutMode.update);
-                      switch (getTable.table_status) {
+                      switch (closeData.payMode) {
+                        case 0: // ชำระที่ Cashier
+                          result.table_status = 2;
+                          break;
+                        case 1: // ชำระที่โต๊ะ
+                          result.table_status = 3;
+                          break;
+                        case 2: // ชำระที่โต๊ะ ด้วย QR Code
+                          result.table_status = 3;
+                          break;
+                      }
+                      box.put(closeData.table, mode: PutMode.update);
+                      if (result.table_status == 3) {
+                        // สร้างบิล และพิมพ์ใบเสร็จ
+                        await saveBill(
+                                cashAmount:
+                                    closeData.process.payScreenData.cash_amount,
+                                discountFormula: closeData
+                                    .process.payScreenData.discount_formula,
+                                discountAmount: closeData
+                                    .process.payScreenData.discount_amount)
+                            .then((value) async {
+                          if (value.docNumber.isNotEmpty) {
+                            printBill(
+                                docDate: value.docDate,
+                                docNo: value.docNumber,
+                                languageCode: global.userScreenLanguage,
+                                slipImage: closeData.slipImage);
+                            // ร้านอาหาร update โต๊ะ
+                            final box = global.objectBoxStore
+                                .box<TableProcessObjectBoxStruct>();
+                            final result = box
+                                .query(TableProcessObjectBoxStruct_.number
+                                    .equals(closeData.table.number))
+                                .build()
+                                .findFirst();
+                            if (result != null) {
+                              // ถ้าเป็นโต๊ะเสริม ให้ลบออก
+                              if (result.number.contains("#")) {
+                                box.remove(result.id);
+                              } else {
+                                result.table_status = 0;
+                                box.put(result);
+                              }
+                            }
+                            if (closeData.slipImage.isNotEmpty) {
+                              // เก็บ slip base64
+                              Uint8List imageBytes =
+                                  base64Decode(closeData.slipImage);
+                              String mainPath = "payslip";
+                              final dateDirectory = await global.createPath(
+                                  mainPath, DateTime.now());
+                              // Save the image to the new directory
+                              final path =
+                                  "${dateDirectory.path}/${value.docNumber}.jpg";
+                              print(path);
+                              final file = File(path);
+                              await file.writeAsBytes(imageBytes);
+                            }
+                            syncBillProcess();
+                          }
+                        });
+                      }
+                      /*switch (closeData.table.table_status) {
                         case 1:
                           // พิมพ์ใบเปิดโต๊ะ
                           printer.printTableQrCode(
@@ -1191,7 +1258,7 @@ Future<void> startServer() async {
                               qrCode:
                                   global.qrCodeOrderOnline(getTable.qr_code));
                           break;
-                      }
+                      }*/
                     }
                     break;
                   case "staff.update_table":

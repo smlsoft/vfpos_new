@@ -553,4 +553,3 @@ class PosInformationModel {
 
   Map<String, dynamic> toJson() => _$PosInformationModelToJson(this);
 }
-

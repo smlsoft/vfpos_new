@@ -23,10 +23,14 @@ import 'dart:ui' as ui;
 Future<void> printBill(
     {required DateTime docDate,
     required String docNo,
-    required String languageCode}) async {
+    required String languageCode,
+    String slipImage = ""}) async {
   if (global.posTicket.print_mode == 0) {
     PosPrintBillClass posPrintBill = PosPrintBillClass(
-        docDate: docDate, docNo: docNo, languageCode: languageCode);
+        docDate: docDate,
+        docNo: docNo,
+        languageCode: languageCode,
+        slipImage: slipImage);
     posPrintBill.printBill();
   } else {
     //printBillImage(docNo);
@@ -58,9 +62,13 @@ class PosPrintBillClass {
   String languageCode;
   double billWidth =
       global.paperWidth(global.printerLocalStrongData[0].paperType);
+  String slipImage;
 
   PosPrintBillClass(
-      {required this.docDate, required this.docNo, required this.languageCode});
+      {required this.docDate,
+      required this.docNo,
+      required this.languageCode,
+      required this.slipImage});
 
   String findValueBillDetail(BillDetailObjectBoxStruct detail, String source) {
     String result = source;
@@ -234,8 +242,7 @@ class PosPrintBillClass {
 
     if (global.posTicket.logo) {
       // พิมพ์ Logo
-      io.File file =
-          io.File(global.getShopLogoPathName());
+      io.File file = io.File(global.getShopLogoPathName());
       if (file.existsSync()) {
         Uint8List bytes = file.readAsBytesSync();
         /*ui.Image getImage = await decodeImageFromList(bytes);
@@ -628,6 +635,19 @@ class PosPrintBillClass {
             break;
         }
       }
+      if (slipImage.isNotEmpty) {
+        Uint8List imageBytes = base64Decode(slipImage);
+        ui.Image? slip;
+        ui.decodeImageFromList(imageBytes, (result) {
+          slip = result;
+        });
+        while (slip == null) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+        canvas.drawImage(
+            slip!, Offset((width - slip!.width) / 2, maxHeight), ui.Paint());
+        maxHeight += slip!.height.toDouble() + 50;
+      }
       final picture = recorder.endRecording();
       final imageBuffer = picture.toImage(
           global.printerWidthByPixel(0).toInt(), maxHeight.toInt());
@@ -772,25 +792,7 @@ class PosPrintBillClass {
 
     try {
       String mainPath = "posbill";
-      final directory = await getApplicationDocumentsDirectory();
-
-      // Format date as YYYYMMDD
-      final dateFormatter = DateFormat('yyyyMMdd');
-      String formattedDate = dateFormatter.format(docDate);
-
-      // Create a new directory for the main path
-      final mainDirectory = io.Directory('${directory.path}/$mainPath');
-      if (!await mainDirectory.exists()) {
-        await mainDirectory.create();
-      }
-
-      // Create a new directory for the date
-      final dateDirectory =
-          io.Directory('${directory.path}/$mainPath/$formattedDate');
-      if (!await dateDirectory.exists()) {
-        await dateDirectory.create();
-      }
-
+      final dateDirectory = await global.createPath(mainPath, docDate);
       // Save the image to the new directory
       final path = '${dateDirectory.path}/$docNo.jpg';
       print(path);

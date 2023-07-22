@@ -85,3 +85,21 @@ Map<String, dynamic> _$TableProcessObjectBoxStructToJson(
       'delivery_status': instance.delivery_status,
       'table_child_count': instance.table_child_count,
     };
+
+CloseTableModel _$CloseTableModelFromJson(Map<String, dynamic> json) =>
+    CloseTableModel(
+      table: TableProcessObjectBoxStruct.fromJson(
+          json['table'] as Map<String, dynamic>),
+      payMode: json['payMode'] as int,
+      slipImage: json['slipImage'] as String,
+      process:
+          PosHoldProcessModel.fromJson(json['process'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$CloseTableModelToJson(CloseTableModel instance) =>
+    <String, dynamic>{
+      'table': instance.table.toJson(),
+      'payMode': instance.payMode,
+      'slipImage': instance.slipImage,
+      'process': instance.process.toJson(),
+    };
