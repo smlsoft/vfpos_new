@@ -452,7 +452,7 @@ class PosPrintHoldBillClass {
 
   Future<void> printHoldBill() async {
     PosProcessModel processResult =
-        await PosProcess().process(holdCode: holdNumber, docMode: 1);
+        await PosProcess().process(holdCode: holdNumber, docMode: 1,discountFormula: "");
     switch (global.printerLocalStrongData[0].printerConnectType) {
       case global.PrinterConnectEnum.ip:
         printBillByIpImageMode(processResult);

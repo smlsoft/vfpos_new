@@ -143,6 +143,33 @@ class PosProcessModel {
   /// รายการ Promotion ที่เลือก
   List<PosProcessPromotionModel> promotion_list;
 
+  /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_mode;
+
+  /// สูตรส่วนลดท้ายบิล
+  String discount_formula;
+
+  /// ส่วนลดทั้งหมด (ท้ายบิล)
+  double total_discount;
+
+  /// ส่วนลดสินค้ามีภาษี
+  double total_discount_vat_amount;
+
+  /// ส่วนลดสินค้ายกเว้นภาษี
+  double total_discount_except_vat_amount;
+
+  /// ยอดรวมสินค้ามีภาษี หลังหักส่วนลด
+  double total_item_vat_after_discount_amount;
+
+  // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
+  double total_item_except_vat_after_discount_amount;
+
+  /// ยอดรวมก่อนคำนวณภาษีสินค้ามีภาษี
+  double total_calc_vat_amount;
+
+  /// ยอดรวมก่อนคำนวณภาษีสินค้ายกเว้น
+  double total_calc_except_vat_amount;
+
   PosProcessModel(
       {this.total_piece = 0.0,
       this.total_amount = 0.0,
@@ -154,6 +181,15 @@ class PosProcessModel {
       this.total_item_except_amount = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
+      this.vat_mode = 1,
+      this.discount_formula = "",
+      this.total_discount = 0,
+      this.total_discount_vat_amount = 0,
+      this.total_discount_except_vat_amount = 0,
+      this.total_item_vat_after_discount_amount = 0,
+      this.total_item_except_vat_after_discount_amount = 0,
+      this.total_calc_vat_amount = 0,
+      this.total_calc_except_vat_amount = 0,
       this.promotion_list = const []});
 
   factory PosProcessModel.fromJson(Map<String, dynamic> json) =>

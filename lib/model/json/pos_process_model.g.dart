@@ -136,6 +136,24 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
                   (e) => PromotionTempModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      vat_mode: json['vat_mode'] as int? ?? 1,
+      discount_formula: json['discount_formula'] as String? ?? "",
+      total_discount: (json['total_discount'] as num?)?.toDouble() ?? 0,
+      total_discount_vat_amount:
+          (json['total_discount_vat_amount'] as num?)?.toDouble() ?? 0,
+      total_discount_except_vat_amount:
+          (json['total_discount_except_vat_amount'] as num?)?.toDouble() ?? 0,
+      total_item_vat_after_discount_amount:
+          (json['total_item_vat_after_discount_amount'] as num?)?.toDouble() ??
+              0,
+      total_item_except_vat_after_discount_amount:
+          (json['total_item_except_vat_after_discount_amount'] as num?)
+                  ?.toDouble() ??
+              0,
+      total_calc_vat_amount:
+          (json['total_calc_vat_amount'] as num?)?.toDouble() ?? 0,
+      total_calc_except_vat_amount:
+          (json['total_calc_except_vat_amount'] as num?)?.toDouble() ?? 0,
       promotion_list: (json['promotion_list'] as List<dynamic>?)
               ?.map((e) =>
                   PosProcessPromotionModel.fromJson(e as Map<String, dynamic>))
@@ -156,4 +174,16 @@ Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
       'details': instance.details,
       'select_promotion_temp_list': instance.select_promotion_temp_list,
       'promotion_list': instance.promotion_list,
+      'vat_mode': instance.vat_mode,
+      'discount_formula': instance.discount_formula,
+      'total_discount': instance.total_discount,
+      'total_discount_vat_amount': instance.total_discount_vat_amount,
+      'total_discount_except_vat_amount':
+          instance.total_discount_except_vat_amount,
+      'total_item_vat_after_discount_amount':
+          instance.total_item_vat_after_discount_amount,
+      'total_item_except_vat_after_discount_amount':
+          instance.total_item_except_vat_after_discount_amount,
+      'total_calc_vat_amount': instance.total_calc_vat_amount,
+      'total_calc_except_vat_amount': instance.total_calc_except_vat_amount,
     };

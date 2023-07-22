@@ -92,7 +92,9 @@ class PosProcess {
   }
 
   Future<PosProcessModel> process(
-      {required String holdCode, required int docMode}) async {
+      {required String holdCode,
+      required int docMode,
+      required String discountFormula}) async {
     double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
@@ -456,13 +458,16 @@ class PosProcess {
       }
     }
     processResult.total_piece = totalPiece;
-    processResult.total_amount = totalAmount;
     processResult.total_item_vat_amount = totalItemVatAmount;
     processResult.total_item_except_amount = totalItemExceptVatAmount;
+    processResult.discount_formula = discountFormula;
+    processResult.total_discount = global.calcDiscountFormula(
+        totalAmount: totalAmount, discountText: discountFormula);
     processResult.vat_rate = 7;
     processResult.total_vat_amount =
         (totalItemVatAmount * processResult.vat_rate) /
             (100 + processResult.vat_rate);
+    processResult.total_amount = totalAmount - processResult.total_discount;
     return processResult;
   }
 }

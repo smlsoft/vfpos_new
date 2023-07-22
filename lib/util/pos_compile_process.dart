@@ -11,7 +11,7 @@ Future<PosProcessResultModel> posCompileProcess(
     PosProcess posProcess = PosProcess();
     global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)]
             .posProcess =
-        await posProcess.process(holdCode: holdCode, docMode: docMode);
+        await posProcess.process(holdCode: holdCode, docMode: docMode,discountFormula: "");
     posProcess.sumCategoryCount(
         value: global
             .posHoldProcessResult[
@@ -32,7 +32,7 @@ Future<PosProcessResultModel> posCompileProcess(
                       global.findPosHoldProcessResultIndex(getHoldCode)]
                   .posProcess =
               await posProcess.process(
-                  holdCode: getHoldCode, docMode: getDocMode);
+                  holdCode: getHoldCode, docMode: getDocMode,discountFormula: "");
           posProcess.sumCategoryCount(
               value: global
                   .posHoldProcessResult[

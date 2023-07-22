@@ -233,6 +233,78 @@ Future<void> startServer() async {
                   response.write(
                       jsonEncode(boxData.map((e) => e.toJson()).toList()));
                   break;
+                case "get_table":
+                  var jsonData = jsonDecode(httpGetData.json);
+                  String mainNumber = jsonData["mainNumber"];
+                  String tableNumber = jsonData["number"];
+                  TableProcessObjectBoxStruct? tableData = global.objectBoxStore
+                      .box<TableProcessObjectBoxStruct>()
+                      .query(TableProcessObjectBoxStruct_.number
+                          .equals(tableNumber)
+                          .and(TableProcessObjectBoxStruct_.is_delivery
+                              .equals(false)))
+                      .build()
+                      .findFirst();
+                  if (tableData == null) {
+                    // เพิ่มโต๊ะ
+                    final findSourceTableResult = global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>()
+                        .query(TableProcessObjectBoxStruct_.number
+                            .equals(mainNumber))
+                        .build()
+                        .findFirst();
+                    final newTable = TableProcessObjectBoxStruct(
+                      number: tableNumber,
+                      guidfixed: Uuid().v4(),
+                      number_main: findSourceTableResult!.number,
+                      names: findSourceTableResult.names,
+                      zone: findSourceTableResult.zone,
+                      table_child_count: 0,
+                      table_al_la_crate_mode:
+                          findSourceTableResult.table_al_la_crate_mode,
+                      table_open_datetime:
+                          findSourceTableResult.table_open_datetime,
+                      table_status: findSourceTableResult.table_status,
+                      delivery_ticket_number:
+                          findSourceTableResult.delivery_ticket_number,
+                      remark: findSourceTableResult.remark,
+                      order_count: findSourceTableResult.order_count,
+                      amount: findSourceTableResult.amount,
+                      order_success: findSourceTableResult.order_success,
+                      qr_code: const Uuid().v4().replaceAll("-", ""),
+                      man_count: findSourceTableResult.man_count,
+                      woman_count: findSourceTableResult.woman_count,
+                      child_count: findSourceTableResult.child_count,
+                      buffet_code: findSourceTableResult.buffet_code,
+                      customer_address: findSourceTableResult.customer_address,
+                      customer_code_or_telephone:
+                          findSourceTableResult.customer_code_or_telephone,
+                      customer_name: findSourceTableResult.customer_name,
+                      delivery_cook_success:
+                          findSourceTableResult.delivery_cook_success,
+                      delivery_cook_success_datetime:
+                          findSourceTableResult.delivery_cook_success_datetime,
+                      delivery_code: findSourceTableResult.delivery_code,
+                      delivery_number: findSourceTableResult.delivery_number,
+                      delivery_status: findSourceTableResult.delivery_status,
+                      delivery_send_success:
+                          findSourceTableResult.delivery_send_success,
+                      delivery_send_success_datetime:
+                          findSourceTableResult.delivery_send_success_datetime,
+                      is_delivery: findSourceTableResult.is_delivery,
+                      open_by_staff_code:
+                          findSourceTableResult.open_by_staff_code,
+                      make_food_immediately:
+                          findSourceTableResult.make_food_immediately,
+                    );
+                    global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>()
+                        .put(newTable, mode: PutMode.insert);
+                    response.write(jsonEncode(newTable.toJson()));
+                  } else {
+                    response.write(jsonEncode(tableData.toJson()));
+                  }
+                  break;
                 case "get_all_table":
                   List<TableProcessObjectBoxStruct> tableData = global
                       .objectBoxStore
@@ -297,16 +369,18 @@ Future<void> startServer() async {
                       jsonEncode(boxData.map((e) => e.toJson()).toList()));
                   break;
                 case "get_process":
-                  HttpParameterModel jsonParameter =
-                      HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-                  String holdCode = jsonParameter.holdCode;
-                  int docMode = jsonParameter.docMode;
+                  var json = jsonDecode(httpGetData.json);
+                  String holdCode = json["holdCode"];
+                  int docMode = json["docMode"];
+                  String discountFormula = json["discountFormula"];
                   global
                           .posHoldProcessResult[
                               global.findPosHoldProcessResultIndex(holdCode)]
                           .posProcess =
-                      await PosProcess()
-                          .process(holdCode: holdCode, docMode: docMode);
+                      await PosProcess().process(
+                          holdCode: holdCode,
+                          docMode: docMode,
+                          discountFormula: discountFormula);
                   response.write(jsonEncode(global.posHoldProcessResult[
                           global.findPosHoldProcessResultIndex(holdCode)]
                       .toJson()));
@@ -413,6 +487,23 @@ Future<void> startServer() async {
                         device_guid: jsonCategory.clientGuid,
                         device_ip: jsonCategory.clientIp));
                     response.write("success");
+                    break;
+                  case "staff.print_table_and_qrcode":
+                    var jsonObject = jsonDecode(httpPost.data);
+                    String tableNumber = jsonObject["number"];
+                    final result = global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>()
+                        .query(TableProcessObjectBoxStruct_.number
+                            .equals(tableNumber))
+                        .build()
+                        .findFirst();
+                    if (result != null) {
+                      printer.printTableQrCode(
+                          fullDetail: false,
+                          tableManagerMode: global.TableManagerEnum.openTable,
+                          table: result,
+                          qrCode: global.qrCodeOrderOnline(result.qr_code));
+                    }
                     break;
                   case "staff.set_kds_start_cooking":
                     // เริ่มทำอาหารได้
@@ -929,8 +1020,6 @@ Future<void> startServer() async {
                             .build()
                             .findFirst();
                         if (findTargetTableResult == null) {
-                          print("findTargetTableResult ; " +
-                              jsonData.targetTable);
                           final newTable = TableProcessObjectBoxStruct(
                             number: jsonData.targetTable,
                             guidfixed: Uuid().v4(),
@@ -1079,6 +1168,32 @@ Future<void> startServer() async {
                     }*/
                     response.write(result);
                     break;
+                  case "staff.close_table":
+                    var jsonObject = jsonDecode(httpPost.data);
+                    TableProcessObjectBoxStruct getTable =
+                        TableProcessObjectBoxStruct.fromJson(jsonObject);
+                    final box = global.objectBoxStore
+                        .box<TableProcessObjectBoxStruct>();
+                    final result = box
+                        .query(TableProcessObjectBoxStruct_.number
+                            .equals(getTable.number))
+                        .build()
+                        .findFirst();
+                    if (result != null) {
+                      box.put(getTable, mode: PutMode.update);
+                      switch (getTable.table_status) {
+                        case 1:
+                          // พิมพ์ใบเปิดโต๊ะ
+                          printer.printTableQrCode(
+                              tableManagerMode:
+                                  global.TableManagerEnum.openTable,
+                              table: getTable,
+                              qrCode:
+                                  global.qrCodeOrderOnline(getTable.qr_code));
+                          break;
+                      }
+                    }
+                    break;
                   case "staff.update_table":
                     var jsonObject = jsonDecode(httpPost.data);
                     TableProcessObjectBoxStruct getTable =
@@ -1100,7 +1215,7 @@ Future<void> startServer() async {
                                   global.TableManagerEnum.openTable,
                               table: getTable,
                               qrCode:
-                                  "https://dedefoodorder.web.app/?shop=${global.shopId}&ticket=${getTable.qr_code}");
+                                  global.qrCodeOrderOnline(getTable.qr_code));
                           break;
                       }
                     }
@@ -1185,7 +1300,7 @@ Future<void> startServer() async {
                           fromTable: fromTableResult.number,
                           toTable: toTableResult.number,
                           qrCode:
-                              "https://dedefoodorder.web.app/?shop=${global.shopId}&ticket=${toTableResult.qr_code}");
+                              global.qrCodeOrderOnline(toTableResult.qr_code));
                     }
                     break;
                   case "staff.merge_table":

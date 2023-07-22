@@ -17,10 +17,10 @@ class PayDiscountWidget extends StatefulWidget {
 }
 
 class _PayDiscountWidgetState extends State<PayDiscountWidget> {
-  String _textInputFormula = "";
+  String textInputFormula = "";
 
   void refreshEvent() {
-    global.payScreenData.discount_formula = _textInputFormula;
+    global.payScreenData.discount_formula = textInputFormula;
     global.payScreenData.discount_amount = global.calcDiscountFormula(
         totalAmount: widget.posProcess.total_amount,
         discountText: global.payScreenData.discount_formula);
@@ -28,7 +28,7 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
   }
 
   void textInputAdd(String word) {
-    _textInputFormula = _textInputFormula + word;
+    textInputFormula = textInputFormula + word;
     refreshEvent();
   }
 
@@ -126,9 +126,9 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                 icon: Icons.backspace,
                 color: Colors.red.shade200,
                 callBack: () {
-                  if (_textInputFormula.isNotEmpty) {
-                    _textInputFormula = _textInputFormula.substring(
-                        0, _textInputFormula.length - 1);
+                  if (textInputFormula.isNotEmpty) {
+                    textInputFormula = textInputFormula.substring(
+                        0, textInputFormula.length - 1);
                     refreshEvent();
                   }
                 },
@@ -151,8 +151,8 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                 margin: 2,
                 text: '.',
                 callBack: () => {
-                  if (!_textInputFormula.contains('.'))
-                    textInputAdd((_textInputFormula.isNotEmpty) ? "." : "0.")
+                  if (!textInputFormula.contains('.'))
+                    textInputAdd((textInputFormula.isNotEmpty) ? "." : "0.")
                 },
               )),
               Expanded(
@@ -161,7 +161,7 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                   text: 'C',
                   color: Colors.grey.shade400,
                   callBack: () {
-                    _textInputFormula = "";
+                    textInputFormula = "";
                     refreshEvent();
                   },
                 ),
@@ -209,7 +209,7 @@ class _PayDiscountWidgetState extends State<PayDiscountWidget> {
                                       color: Colors.grey, fontSize: 12)))),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text(_textInputFormula,
+                        child: Text(textInputFormula,
                             style: const TextStyle(
                                 color: Colors.blue,
                                 fontSize: 60,

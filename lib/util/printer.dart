@@ -250,6 +250,7 @@ class PrinterClass {
 void printTableQrCode(
     {required global.TableManagerEnum tableManagerMode,
     required TableProcessObjectBoxStruct table,
+    bool fullDetail = true,
     String qrCode = "",
     String fromTable = "",
     String toTable = ""}) {
@@ -344,28 +345,30 @@ void printTableQrCode(
               text_align: PrintColumnAlign.center)
         ]));
   }
-  String countPeople = "";
-  int sumPeople = table.man_count + table.woman_count;
-  if (sumPeople > 1) {
-    countPeople = "ผู้ใหญ่ $sumPeople คน";
-  }
-  if (table.child_count > 0) {
-    if (countPeople.isNotEmpty) {
-      countPeople += " : ";
+  if (fullDetail) {
+    String countPeople = "";
+    int sumPeople = table.man_count + table.woman_count;
+    if (sumPeople > 1) {
+      countPeople = "ผู้ใหญ่ $sumPeople คน";
     }
-    countPeople += "เด็ก ${table.child_count} คน";
-  }
-  if (countPeople.isNotEmpty) {
-    printer.addCommand(PosPrintBillCommandModel(
-        mode: 2,
-        posStyles: PosStyles(bold: true),
-        columns: [
-          FormDesignColumnModel(
-              font_size: 30,
-              width: 1,
-              text: "$countPeople",
-              text_align: PrintColumnAlign.center)
-        ]));
+    if (table.child_count > 0) {
+      if (countPeople.isNotEmpty) {
+        countPeople += " : ";
+      }
+      countPeople += "เด็ก ${table.child_count} คน";
+    }
+    if (countPeople.isNotEmpty) {
+      printer.addCommand(PosPrintBillCommandModel(
+          mode: 2,
+          posStyles: PosStyles(bold: true),
+          columns: [
+            FormDesignColumnModel(
+                font_size: 30,
+                width: 1,
+                text: "$countPeople",
+                text_align: PrintColumnAlign.center)
+          ]));
+    }
   }
   String orderType = "";
   if (table.table_al_la_crate_mode) {
