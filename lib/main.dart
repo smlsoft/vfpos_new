@@ -11,7 +11,7 @@ void main() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  global.applicationName = "DeDe Pos";
+  global.applicationName = "DeDe POS";
   initializeDateFormatting();
   await initializeApp();
   runApp(App());
