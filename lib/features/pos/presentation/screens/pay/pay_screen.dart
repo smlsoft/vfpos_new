@@ -3,6 +3,8 @@
 import 'dart:developer' as dev;
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/model/objectbox/order_temp_struct.dart';
+import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,19 +31,20 @@ import 'pay_qr.dart';
 import 'pay_widget.dart';
 import '../pos_util.dart' as posUtil;
 
-class PayScreen extends StatefulWidget {
+class PayScreenPage extends StatefulWidget {
   final PosProcessModel posProcess;
   final int defaultTabIndex;
 
-  const PayScreen(
+  const PayScreenPage(
       {Key? key, required this.posProcess, required this.defaultTabIndex})
       : super(key: key);
 
   @override
-  State<PayScreen> createState() => _PayScreenState();
+  State<PayScreenPage> createState() => _PayScreenPageState();
 }
 
-class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
+class _PayScreenPageState extends State<PayScreenPage>
+    with TickerProviderStateMixin {
   String _textInputCash = "";
   late TabController tabBarMenuController;
   double sumTotalPayAmount = 0;
@@ -517,6 +520,33 @@ class _PayScreenState extends State<PayScreen> with TickerProviderStateMixin {
             box.put(result);
           }
         }
+        // Update Order ให้เป็นชำระเงินแล้ว
+        final boxOrder = global.objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .query(OrderTempObjectBoxStruct_.orderGuid
+                .equals(global.tableNumberSelected)
+                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
+            .build()
+            .find();
+        for (var item in boxOrder) {
+          item.isPaySuccess = true;
+          global.objectBoxStore
+              .box<OrderTempObjectBoxStruct>()
+              .put(item, mode: PutMode.update);
+        }
+        // ลบรายการพักบิล
+        var posLog = global.objectBoxStore
+            .box<PosLogObjectBoxStruct>()
+            .query(PosLogObjectBoxStruct_.hold_code
+                .equals(global.posHoldActiveCode))
+            .build()
+            .find();
+        for (var item in posLog) {
+          global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(item.id);
+        }
+
+        global.tableNumberSelected = "";
+        global.posHoldActiveCode = "0";
         syncBillProcess();
         paySuccessDialog();
       }

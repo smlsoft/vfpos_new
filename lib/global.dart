@@ -286,7 +286,7 @@ int findPosHoldProcessResultIndex(String code) {
       return i;
     }
   }
-  return 0;
+  return -1;
 }
 
 Future<void> loadPrinter() async {
@@ -1431,6 +1431,7 @@ Future<void> checkOrderOnline() async {
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.isOrder
               .equals(false)
+              .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
               .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
           .build()
           .find();
@@ -1445,6 +1446,7 @@ Future<void> checkOrderOnline() async {
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId
                 .equals(orderId)
+                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
                 .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
             .build()
             .find();
@@ -1479,6 +1481,7 @@ Future<void> checkOrderOnline() async {
             .equals(false)
             .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
             .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
             .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
         .build()
         .find();
@@ -1499,6 +1502,7 @@ Future<void> checkOrderOnline() async {
                       .equals(true))
                   .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess
                       .equals(false))
+                  .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
                   .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
           .build()
           .find();
@@ -1578,6 +1582,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
         .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.orderId
             .equals(tableNumber)
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
             .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
         .build()
         .find();

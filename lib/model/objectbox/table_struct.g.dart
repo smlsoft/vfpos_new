@@ -92,8 +92,9 @@ CloseTableModel _$CloseTableModelFromJson(Map<String, dynamic> json) =>
           json['table'] as Map<String, dynamic>),
       payMode: json['payMode'] as int,
       slipImage: json['slipImage'] as String,
+      discountFormula: json['discountFormula'] as String,
       process:
-          PosHoldProcessModel.fromJson(json['process'] as Map<String, dynamic>),
+          PosProcessModel.fromJson(json['process'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$CloseTableModelToJson(CloseTableModel instance) =>
@@ -102,4 +103,5 @@ Map<String, dynamic> _$CloseTableModelToJson(CloseTableModel instance) =>
       'payMode': instance.payMode,
       'slipImage': instance.slipImage,
       'process': instance.process.toJson(),
+      'discountFormula': instance.discountFormula,
     };

@@ -8,7 +8,9 @@ import 'package:dedepos/db/product_barcode_status_helper.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_util.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/json/product_option_model.dart';
+import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
 import 'package:dedepos/model/objectbox/order_temp_struct.dart';
@@ -87,6 +89,30 @@ Future<void> startServer() async {
                 case "get_connect":
                   response.write("connected");
                   break;
+                case "get_pay_slip":
+                  var docNumber = httpGetData.json;
+                  var bill = global.objectBoxStore
+                      .box<BillObjectBoxStruct>()
+                      .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
+                      .build()
+                      .findFirst();
+                  if (bill != null) {
+                    Directory dir =
+                        await global.createPath("posbill", bill.date_time);
+                    File file = File("${dir.path}/${bill.doc_number}.jpg");
+                    if (file.existsSync()) {
+                      Uint8List bytes = file.readAsBytesSync();
+                      response.headers.contentType =
+                          ContentType("image", "jpeg");
+                      String base64 = base64Encode(bytes);
+                      response.write(base64);
+                    } else {
+                      response.write("");
+                    }
+                  } else {
+                    response.write("");
+                  }
+                  break;
                 case "pos_information":
                   PosInformationModel data = PosInformationModel(
                       shop_id: global.shopId,
@@ -111,6 +137,8 @@ Future<void> startServer() async {
                       .query(OrderTempObjectBoxStruct_.kdsId
                           .equals(kitchenId)
                           .and(OrderTempObjectBoxStruct_.isOrder.equals(false))
+                          .and(OrderTempObjectBoxStruct_.isPaySuccess
+                              .equals(false))
                           .and((OrderTempObjectBoxStruct_.isOrderSendKdsSuccess
                               .equals(true)))
                           .and((OrderTempObjectBoxStruct_.kdsSuccess
@@ -163,6 +191,8 @@ Future<void> startServer() async {
                   final result = box
                       .query(OrderTempObjectBoxStruct_.orderId
                           .equals(orderId)
+                          .and(OrderTempObjectBoxStruct_.isPaySuccess
+                              .equals(false))
                           .and(OrderTempObjectBoxStruct_.isOrder
                               .equals(isOrder)))
                       .build()
@@ -184,6 +214,8 @@ Future<void> startServer() async {
                   final result = box
                       .query(OrderTempObjectBoxStruct_.orderIdMain
                           .equals(orderMainId)
+                          .and(OrderTempObjectBoxStruct_.isPaySuccess
+                              .equals(false))
                           .and(OrderTempObjectBoxStruct_.isOrder
                               .equals(isOrder)))
                       .build()
@@ -378,17 +410,11 @@ Future<void> startServer() async {
                   String holdCode = json["holdCode"];
                   int docMode = json["docMode"];
                   String discountFormula = json["discountFormula"];
-                  global
-                          .posHoldProcessResult[
-                              global.findPosHoldProcessResultIndex(holdCode)]
-                          .posProcess =
-                      await PosProcess().process(
-                          holdCode: holdCode,
-                          docMode: docMode,
-                          discountFormula: discountFormula);
-                  response.write(jsonEncode(global.posHoldProcessResult[
-                          global.findPosHoldProcessResultIndex(holdCode)]
-                      .toJson()));
+                  PosProcessModel posProcess = await PosProcess().process(
+                      holdCode: holdCode,
+                      docMode: docMode,
+                      discountFormula: discountFormula);
+                  response.write(jsonEncode(posProcess.toJson()));
                   break;
                 case "PosLogHelper.holdCount":
                   HttpParameterModel jsonCategory =
@@ -532,6 +558,8 @@ Future<void> startServer() async {
                           .box<OrderTempObjectBoxStruct>()
                           .query(OrderTempObjectBoxStruct_.orderId
                               .equals(dataTicket.number)
+                              .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                  .equals(false))
                               .and(OrderTempObjectBoxStruct_.isOrderReadySendKds
                                   .equals(false)))
                           .build()
@@ -742,6 +770,8 @@ Future<void> startServer() async {
                         .box<OrderTempObjectBoxStruct>()
                         .query(OrderTempObjectBoxStruct_.orderId
                             .equals(orderId)
+                            .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                .equals(false))
                             .and(OrderTempObjectBoxStruct_.isOrder.equals(true))
                             .and(OrderTempObjectBoxStruct_.barcode
                                 .equals(barcode)))
@@ -785,12 +815,15 @@ Future<void> startServer() async {
                     global.orderSumAndUpdateTable(orderId);
                     break;
                   case "staff.order_temp_send_order_by_orderid":
+                    // ส่ง Order ไปที่ครัว และ Cashier
                     String orderId = httpPost.data;
                     final box =
                         global.objectBoxStore.box<OrderTempObjectBoxStruct>();
                     final result = box
                         .query(OrderTempObjectBoxStruct_.orderId
                             .equals(orderId)
+                            .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                .equals(false))
                             .and(
                                 OrderTempObjectBoxStruct_.isOrder.equals(true)))
                         .build()
@@ -812,6 +845,8 @@ Future<void> startServer() async {
                         .box<OrderTempObjectBoxStruct>()
                         .query(OrderTempObjectBoxStruct_.orderId
                             .equals(orderId)
+                            .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                .equals(false))
                             .and(OrderTempObjectBoxStruct_.isOrder.equals(true))
                             .and(OrderTempObjectBoxStruct_.orderGuid
                                 .equals(orderGuid)))
@@ -833,6 +868,8 @@ Future<void> startServer() async {
                         .box<OrderTempObjectBoxStruct>()
                         .query(OrderTempObjectBoxStruct_.orderId
                             .equals(orderId)
+                            .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                .equals(false))
                             .and(OrderTempObjectBoxStruct_.isOrder.equals(true))
                             .and(OrderTempObjectBoxStruct_.orderGuid
                                 .equals(orderGuid)))
@@ -883,10 +920,12 @@ Future<void> startServer() async {
                                       .and(OrderTempObjectBoxStruct_
                                           .optionSelected
                                           .equals(jsonData.optionSelected))))
+                              .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                  .equals(false))
                               .and(OrderTempObjectBoxStruct_.isOrder
                                   .equals(true)
-                                  .and(OrderTempObjectBoxStruct_.takeAway
-                                      .equals(jsonData.takeAway))))
+                                  .and(
+                                      OrderTempObjectBoxStruct_.takeAway.equals(jsonData.takeAway))))
                           .build()
                           .findFirst();
                       if (findResult != null) {
@@ -1119,6 +1158,8 @@ Future<void> startServer() async {
                             .equals(jsonData.orderId)
                             .and(OrderTempObjectBoxStruct_.orderGuid
                                 .equals(jsonData.orderGuid))
+                            .and(OrderTempObjectBoxStruct_.isPaySuccess
+                                .equals(false))
                             .and(
                                 OrderTempObjectBoxStruct_.isOrder.equals(true)))
                         .build()
@@ -1174,6 +1215,7 @@ Future<void> startServer() async {
                     response.write(result);
                     break;
                   case "staff.close_table":
+                    String docNumber = "";
                     var jsonObject = jsonDecode(httpPost.data);
                     CloseTableModel closeData =
                         CloseTableModel.fromJson(jsonObject);
@@ -1200,19 +1242,18 @@ Future<void> startServer() async {
                       if (result.table_status == 3) {
                         // สร้างบิล และพิมพ์ใบเสร็จ
                         await saveBill(
-                                cashAmount:
-                                    closeData.process.payScreenData.cash_amount,
-                                discountFormula: closeData
-                                    .process.payScreenData.discount_formula,
-                                discountAmount: closeData
-                                    .process.payScreenData.discount_amount)
+                                cashAmount: closeData.process.total_amount,
+                                discountFormula: closeData.discountFormula,
+                                discountAmount:
+                                    closeData.process.total_discount)
                             .then((value) async {
                           if (value.docNumber.isNotEmpty) {
+                            docNumber = value.docNumber;
                             printBill(
-                                docDate: value.docDate,
-                                docNo: value.docNumber,
-                                languageCode: global.userScreenLanguage,
-                                slipImage: closeData.slipImage);
+                              docDate: value.docDate,
+                              docNo: value.docNumber,
+                              languageCode: global.userScreenLanguage,
+                            );
                             // ร้านอาหาร update โต๊ะ
                             final box = global.objectBoxStore
                                 .box<TableProcessObjectBoxStruct>();
@@ -1248,17 +1289,7 @@ Future<void> startServer() async {
                           }
                         });
                       }
-                      /*switch (closeData.table.table_status) {
-                        case 1:
-                          // พิมพ์ใบเปิดโต๊ะ
-                          printer.printTableQrCode(
-                              tableManagerMode:
-                                  global.TableManagerEnum.openTable,
-                              table: getTable,
-                              qrCode:
-                                  global.qrCodeOrderOnline(getTable.qr_code));
-                          break;
-                      }*/
+                      response.write(docNumber);
                     }
                     break;
                   case "staff.update_table":

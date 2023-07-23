@@ -20,17 +20,17 @@ import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
 import 'package:image/image.dart' as im;
 import 'dart:ui' as ui;
 
-Future<void> printBill(
-    {required DateTime docDate,
-    required String docNo,
-    required String languageCode,
-    String slipImage = ""}) async {
+Future<void> printBill({
+  required DateTime docDate,
+  required String docNo,
+  required String languageCode,
+}) async {
   if (global.posTicket.print_mode == 0) {
     PosPrintBillClass posPrintBill = PosPrintBillClass(
-        docDate: docDate,
-        docNo: docNo,
-        languageCode: languageCode,
-        slipImage: slipImage);
+      docDate: docDate,
+      docNo: docNo,
+      languageCode: languageCode,
+    );
     posPrintBill.printBill();
   } else {
     //printBillImage(docNo);
@@ -62,13 +62,12 @@ class PosPrintBillClass {
   String languageCode;
   double billWidth =
       global.paperWidth(global.printerLocalStrongData[0].paperType);
-  String slipImage;
 
-  PosPrintBillClass(
-      {required this.docDate,
-      required this.docNo,
-      required this.languageCode,
-      required this.slipImage});
+  PosPrintBillClass({
+    required this.docDate,
+    required this.docNo,
+    required this.languageCode,
+  });
 
   String findValueBillDetail(BillDetailObjectBoxStruct detail, String source) {
     String result = source;
@@ -635,7 +634,7 @@ class PosPrintBillClass {
             break;
         }
       }
-      if (slipImage.isNotEmpty) {
+      /*if (slipImage.isNotEmpty) {
         Uint8List imageBytes = base64Decode(slipImage);
         ui.Image? slip;
         ui.decodeImageFromList(imageBytes, (result) {
@@ -647,7 +646,7 @@ class PosPrintBillClass {
         canvas.drawImage(
             slip!, Offset((width - slip!.width) / 2, maxHeight), ui.Paint());
         maxHeight += slip!.height.toDouble() + 50;
-      }
+      }*/
       final picture = recorder.endRecording();
       final imageBuffer = picture.toImage(
           global.printerWidthByPixel(0).toInt(), maxHeight.toInt());

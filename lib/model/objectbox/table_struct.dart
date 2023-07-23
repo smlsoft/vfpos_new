@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -166,12 +167,14 @@ class CloseTableModel {
   /// 0=ชำระที่ Cashier,1=ชำระที่โต๊ะเงินสด,2=ชำระที่โต๊ะ QR Code
   int payMode;
   String slipImage;
-  PosHoldProcessModel process;
+  PosProcessModel process;
+  String discountFormula;
 
   CloseTableModel(
       {required this.table,
       required this.payMode,
       required this.slipImage,
+      required this.discountFormula,
       required this.process});
 
   factory CloseTableModel.fromJson(Map<String, dynamic> json) =>

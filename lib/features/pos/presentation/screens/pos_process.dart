@@ -100,38 +100,6 @@ class PosProcess {
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
         .selectByHoldCodeIsVoidSuccess(
             holdCode: holdCode, isVoid: 0, success: 0, docMode: docMode);
-    /*print('Total Log ' + _valueLog.length.toString());
-    for (int _index = _valueLog.length - 1; _index > 0; _index--) {
-      switch (_valueLog[_index].command_code) {
-        case 100:
-          // ลบ Radio เอาตัวสุดท้ายตัวเดียว
-          for (int _findIndex = _index - 1; _findIndex > 0; _findIndex--) {
-            if (_valueLog[_findIndex].command_code ==
-                _valueLog[_index].command_code) {
-              if (_valueLog[_findIndex].group == _valueLog[_index].group &&
-                  _valueLog[_findIndex].guid_fixed ==
-                      _valueLog[_index].guid_fixed) {
-                _valueLog[_findIndex].is_void = 1;
-              }
-            }
-          }
-          break;
-        case 101:
-          // ลบ Check Box เอาตัวสุดท้ายตัวเดียว
-          for (int _findIndex = _index - 1; _findIndex > 0; _findIndex--) {
-            if (_valueLog[_findIndex].command_code ==
-                _valueLog[_index].command_code) {
-              if (_valueLog[_index].group == _valueLog[_findIndex].group &&
-                  _valueLog[_index].code == _valueLog[_findIndex].code &&
-                  _valueLog[_index].guid_fixed ==
-                      _valueLog[_findIndex].guid_fixed) {
-                _valueLog[_findIndex].is_void = 1;
-              }
-            }
-          }
-          break;
-      }
-    }*/
 
     int count = 0;
     for (int index = 0; index < valueLog.length; index++) {
