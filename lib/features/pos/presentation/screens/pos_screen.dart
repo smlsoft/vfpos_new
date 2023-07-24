@@ -298,19 +298,18 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Future<void> getProcessFromTerminal() async {
-    int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+    int holdIndex =
+        global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter =
           HttpParameterModel(holdCode: global.posHoldActiveCode);
       HttpGetDataModel json = HttpGetDataModel(
           code: "get_process", json: jsonEncode(jsonParameter.toJson()));
-      global.posHoldProcessResult[holdIndex] =
-          PosHoldProcessModel.fromJson(jsonDecode(
+      global.posHoldProcessResult[holdIndex] = PosHoldProcessModel.fromJson(
+          jsonDecode(
               await global.getFromServer(json: jsonEncode(json.toJson()))));
       PosProcess().sumCategoryCount(
-          value: global
-              .posHoldProcessResult[holdIndex]
-              .posProcess);
+          value: global.posHoldProcessResult[holdIndex].posProcess);
       setState(() {});
     }
   }
@@ -1123,17 +1122,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     int holdIndex = global.findPosHoldProcessResultIndex(holdCode);
     if (findActiveLineByGuid.isNotEmpty) {
       for (int i = 0;
-          i <
-              global
-                  .posHoldProcessResult[holdIndex]
-                  .posProcess
-                  .details
-                  .length;
+          i < global.posHoldProcessResult[holdIndex].posProcess.details.length;
           i++) {
-        PosProcessDetailModel detail = global
-            .posHoldProcessResult[holdIndex]
-            .posProcess
-            .details[i];
+        PosProcessDetailModel detail =
+            global.posHoldProcessResult[holdIndex].posProcess.details[i];
         if (detail.guid == findActiveLineByGuid) {
           activeLineNumber = i;
           break;
@@ -1453,23 +1445,17 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 onTap: () {
                   //selectProductExtraList.clear();
                   displayDetailByBarcode = false;
-                  int holdIndex = global.findPosHoldProcessResultIndex(
-                      global.posHoldActiveCode);
+                  int holdIndex = global
+                      .findPosHoldProcessResultIndex(global.posHoldActiveCode);
                   for (int index = 0;
                       index <
-                              global
-                                  .posHoldProcessResult[holdIndex]
-                                  .posProcess
-                                  .details
-                                  .length &&
+                              global.posHoldProcessResult[holdIndex].posProcess
+                                  .details.length &&
                           displayDetailByBarcode == false;
                       index++) {
                     if (product.barcode ==
-                        global
-                            .posHoldProcessResult[holdIndex]
-                            .posProcess
-                            .details[index]
-                            .barcode) {
+                        global.posHoldProcessResult[holdIndex].posProcess
+                            .details[index].barcode) {
                       displayDetailByBarcode = true;
                       activeLineNumber = index;
                       findActiveLineByGuid = global
@@ -2063,8 +2049,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
       TextStyle textStyle = TextStyle(
           color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
-      int holdIndex = global.findPosHoldProcessResultIndex(
-          global.posHoldActiveCode);
+      int holdIndex =
+          global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -2321,8 +2307,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       child: detailRow(
           index: index, detail: detail, textStyle: textStyle, isActive: active),
     );
-    int holdIndex = global.findPosHoldProcessResultIndex(
-        global.posHoldActiveCode);
+    int holdIndex =
+        global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     return Material(
         color: Colors.white.withOpacity(0),
         child: (detail.is_void)
@@ -2330,23 +2316,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             : InkWell(
                 onTap: () async {
                   activeLineNumber = index;
-                  findActiveLineByGuid = global
-                      .posHoldProcessResult[holdIndex]
-                      .posProcess
-                      .details[index]
-                      .guid;
-                  global
-                      .posHoldProcessResult[holdIndex]
-                      .posProcess
+                  findActiveLineByGuid = global.posHoldProcessResult[holdIndex]
+                      .posProcess.details[index].guid;
+                  global.posHoldProcessResult[holdIndex].posProcess
                       .select_promotion_temp_list
                       .clear();
 
                   product = await ProductBarcodeHelper().selectByBarcodeFirst(
-                          global
-                              .posHoldProcessResult[holdIndex]
-                              .posProcess
-                              .details[index]
-                              .barcode) ??
+                          global.posHoldProcessResult[holdIndex].posProcess
+                              .details[index].barcode) ??
                       ProductBarcodeObjectBoxStruct(
                           barcode: "",
                           color_select: "",
@@ -2930,7 +2908,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       if (resultTable != null) {
         resultTable.order_count = 0;
         resultTable.amount = 0;
-        boxTable.put(resultTable);
+        boxTable.put(resultTable, mode: PutMode.update);
       }
       //
       productOptions.clear();
@@ -2987,7 +2965,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           padding: EdgeInsets.zero,
         ),
         onPressed: () async {
-          holdBill(holdType: 2);
+          await holdBill(holdType: 2);
         },
         child: const Icon(Icons.table_restaurant),
       ));
@@ -3195,8 +3173,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       commandButton(
         icon: FontAwesomeIcons.walkieTalkie,
         label: global.language("hold_bill"),
-        onPressed: () {
-          holdBill(holdType: 1);
+        onPressed: () async {
+          await holdBill(holdType: 1);
         },
       ),
       commandButton(
@@ -3344,7 +3322,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget transScreenSummery() {
     TextStyle textStyleTotal =
         const TextStyle(color: Colors.black, fontSize: 16);
-        int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+    int holdIndex =
+        global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     return SingleChildScrollView(
         child: Column(children: [
       Text(
@@ -3354,14 +3333,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           "${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}",
           style: textStyleTotal),
       if (global
-          .posHoldProcessResult[holdIndex]
-          .posProcess
-          .promotion_list
-          .isNotEmpty)
-        for (var detail in global
-            .posHoldProcessResult[holdIndex]
-            .posProcess
-            .promotion_list)
+          .posHoldProcessResult[holdIndex].posProcess.promotion_list.isNotEmpty)
+        for (var detail
+            in global.posHoldProcessResult[holdIndex].posProcess.promotion_list)
           Row(
             children: [
               Expanded(
@@ -3869,7 +3843,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     }).onError((error, stackTrace) => null);
   }
 
-  void holdBill({required int holdType}) async {
+  Future<void> holdBill({required int holdType}) async {
     // พักบิล
     PosHoldProcessModel result = await Navigator.push(
       context,
@@ -3882,8 +3856,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     if (holdType == 2) {
       // เลือกโต๊ะ (โปรแกรมร้านอาหาร)
       global.tableSelected = true;
-      global.tableNumberSelected = result.code;
-      global.posHoldActiveCode = "T-${result.code}";
+      global.tableNumberSelected = result.code.replaceAll("T-", "");
+      global.posHoldActiveCode = result.code;
       global.tableProcessSelected = result;
     } else {
       global.tableSelected = false;
@@ -3908,10 +3882,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     } else {
       await getProcessFromTerminal();
     }
-    global.payScreenData = global
-        .posHoldProcessResult[
-            holdIndex]
-        .payScreenData;
+    global.payScreenData = global.posHoldProcessResult[holdIndex].payScreenData;
     setState(() {});
   }
 
@@ -4342,17 +4313,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          int holdIndex = global
-                              .findPosHoldProcessResultIndex(
-                                  global.posHoldActiveCode);
-                          global
-                              .posHoldProcessResult[
-                                 holdIndex]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[
-                                 holdIndex]
-                              .saleName = "";
+                          int holdIndex = global.findPosHoldProcessResultIndex(
+                              global.posHoldActiveCode);
+                          global.posHoldProcessResult[holdIndex].saleCode = "";
+                          global.posHoldProcessResult[holdIndex].saleName = "";
                         });
                       },
                     )
@@ -4381,17 +4345,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       constraints: const BoxConstraints(),
                       onPressed: () {
                         setState(() {
-                          int holdIndex = global
-                              .findPosHoldProcessResultIndex(
-                                  global.posHoldActiveCode);
-                          global
-                              .posHoldProcessResult[
-                                holdIndex]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[
-                                 holdIndex]
-                              .saleName = "";
+                          int holdIndex = global.findPosHoldProcessResultIndex(
+                              global.posHoldActiveCode);
+                          global.posHoldProcessResult[holdIndex].saleCode = "";
+                          global.posHoldProcessResult[holdIndex].saleName = "";
                         });
                       },
                     )
@@ -4574,9 +4531,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   border: Border.all(width: 0, color: Colors.blue)),
               child: Column(children: [
                 if (global
-                    .posHoldProcessResult[holdIndex]
-                    .customerCode
-                    .isNotEmpty)
+                    .posHoldProcessResult[holdIndex].customerCode.isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
@@ -4598,14 +4553,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          global
-                              .posHoldProcessResult[
-                                 holdIndex]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[
-                                  holdIndex]
-                              .saleName = "";
+                          global.posHoldProcessResult[holdIndex].saleCode = "";
+                          global.posHoldProcessResult[holdIndex].saleName = "";
                         });
                       },
                     )
@@ -4639,14 +4588,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       constraints: const BoxConstraints(),
                       onPressed: () {
                         setState(() {
-                          global
-                              .posHoldProcessResult[
-                                 holdIndex]
-                              .saleCode = "";
-                          global
-                              .posHoldProcessResult[
-                                  holdIndex]
-                              .saleName = "";
+                          global.posHoldProcessResult[holdIndex].saleCode = "";
+                          global.posHoldProcessResult[holdIndex].saleName = "";
                         });
                       },
                     )
@@ -4958,10 +4901,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               Text(
                                   (global.posScreenMode ==
                                           global.PosScreenModeEnum.posSale)
-                                      ? "${global.language("pos_screen_sale")} ${global
-                                              .posHoldActiveCode}" //  'ขายสินค้า'
-                                      : "${global.language("pos_screen_return")} ${global
-                                              .posHoldActiveCode}", // 'รับคืนสินค้า',
+                                      ? global.language(
+                                          "pos_screen_sale") //  'ขายสินค้า'
+                                      : global.language(
+                                          "pos_screen_return"), // 'รับคืนสินค้า',
                                   style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

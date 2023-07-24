@@ -106,21 +106,21 @@ const _$PrinterConnectEnumEnumMap = {
 PosHoldProcessModel _$PosHoldProcessModelFromJson(Map<String, dynamic> json) =>
     PosHoldProcessModel(
       code: json['code'] as String,
+      holdType: json['holdType'] as int? ?? 1,
+      tableNumber: json['tableNumber'] as String? ?? "",
+      isDelivery: json['isDelivery'] as bool? ?? false,
+      deliveryNumber: json['deliveryNumber'] as String? ?? "",
+      customerCode: json['customerCode'] as String? ?? "",
+      customerName: json['customerName'] as String? ?? "",
+      customerPhone: json['customerPhone'] as String? ?? "",
     )
-      ..holdType = json['holdType'] as int
       ..logCount = json['logCount'] as int
       ..saleCode = json['saleCode'] as String
       ..saleName = json['saleName'] as String
-      ..customerCode = json['customerCode'] as String
-      ..customerName = json['customerName'] as String
-      ..customerPhone = json['customerPhone'] as String
       ..payScreenData =
           PosPayModel.fromJson(json['payScreenData'] as Map<String, dynamic>)
       ..posProcess =
-          PosProcessModel.fromJson(json['posProcess'] as Map<String, dynamic>)
-      ..tableNumber = json['tableNumber'] as String
-      ..isDelivery = json['isDelivery'] as bool
-      ..deliveryNumber = json['deliveryNumber'] as String;
+          PosProcessModel.fromJson(json['posProcess'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$PosHoldProcessModelToJson(
         PosHoldProcessModel instance) =>

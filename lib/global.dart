@@ -2,6 +2,7 @@ import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sn
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
+import 'package:dedepos/api/network/server_post.dart';
 import 'package:dedepos/api/sync/model/employee_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
@@ -1293,88 +1294,6 @@ int findBuffetModeIndex(String code) {
   return -1;
 }
 
-Future<void> rebuildOrderToHoldBill(String tableNumber) async {
-  var data = global.objectBoxStore
-      .box<PosLogObjectBoxStruct>()
-      .query(PosLogObjectBoxStruct_.hold_code.equals("T-$tableNumber"))
-      .build()
-      .find();
-  if (data.isNotEmpty) {
-    for (var item in data) {
-      global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(item.id);
-    }
-  }
-  // ดึงรายการที่สั่งไปแล้ว มาสร้างรายการ Hold Bill
-  var dataTemp = global.objectBoxStore
-      .box<OrderTempObjectBoxStruct>()
-      .query(OrderTempObjectBoxStruct_.orderId
-          .equals(tableNumber)
-          .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
-      .build()
-      .find();
-  if (dataTemp.isNotEmpty) {
-    await saveOrderToHoldBill(dataTemp);
-  }
-}
-
-Future<void> saveOrderToHoldBill(List<OrderTempObjectBoxStruct> orders) async {
-  if (orders.isNotEmpty) {
-    for (var order in orders) {
-      String newOrderId = "T-${order.orderId}";
-      ProductBarcodeObjectBoxStruct? productSelect =
-          await ProductBarcodeHelper().selectByBarcodeFirst(order.barcode);
-      if (productSelect != null) {
-        double price = getProductPrice(productSelect.prices, 1);
-        PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
-            log_date_time: DateTime.now(),
-            doc_mode: posScreenToInt(),
-            hold_code: newOrderId,
-            command_code: 1,
-            barcode: order.barcode,
-            name: productSelect.names,
-            unit_code: productSelect.unit_code,
-            unit_name: productSelect.unit_names,
-            qty: order.qty,
-            price: price);
-        String insertGuid = data.guid_auto_fixed;
-        await PosLogHelper().insert(data);
-        // เพิ่มส่วนขยาย (option)
-        if (order.optionSelected.isNotEmpty) {
-          List<OrderProductOptionModel> options =
-              jsonDecode(order.optionSelected)
-                  .map<OrderProductOptionModel>(
-                      (e) => OrderProductOptionModel.fromJson(e))
-                  .toList();
-          for (var option in options) {
-            for (var choice in option.choices) {
-              if (choice.selected) {
-                List<PosLogObjectBoxStruct> posLogSelect =
-                    await PosLogHelper().selectByGuidFixed(insertGuid);
-                if (posLogSelect.isNotEmpty) {
-                  await PosLogHelper().insert(PosLogObjectBoxStruct(
-                      guid_code_ref: "",
-                      doc_mode: posScreenToInt(),
-                      guid_ref: insertGuid,
-                      log_date_time: DateTime.now(),
-                      hold_code: newOrderId,
-                      command_code: 101,
-                      extra_code: "",
-                      code: choice.guid,
-                      price: choice.priceValue,
-                      name: jsonEncode(choice.names),
-                      qty_fixed: choice.qty,
-                      qty: choice.qty,
-                      selected: true));
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 Future<void> checkOrderOnline() async {
   checkOrderActive = true;
   {
@@ -1383,7 +1302,7 @@ Future<void> checkOrderOnline() async {
     try {
       // ดึง Order ลูกค้าสั่งเอง
       String selectQuery =
-          "select orderid,barcode,sum(qty) as qty,optionselected,remark from ordertemp where shopid='${shopId}' and isclose=1 group by orderid,barcode,optionselected,remark order by barcode";
+          "select orderid,barcode,sum(qty) as qty,optionselected,remark from ordertemp where shopid='$shopId' and isclose=1 group by orderid,barcode,optionselected,remark order by barcode";
       var value = await clickHouseSelect(selectQuery);
       ResponseDataModel responseData = ResponseDataModel.fromJson(value);
       // Print
@@ -1414,7 +1333,7 @@ Future<void> checkOrderOnline() async {
       if (updateOrder) {
         // update สถานะ ว่า ส่งไปที่ครัวแล้ว
         String updateQuery =
-            "alter table ordertemp update isclose=2 where shopid='${shopId}' and orderid='$orderId'";
+            "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
         await clickHouseExecute(updateQuery);
       }
     } catch (e) {
@@ -1591,15 +1510,46 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
       amount += orderCalcSumAmount(order);
     }
   }
-  final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
-  final resultTable = boxTable
-      .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
-      .build()
-      .findFirst();
-  if (resultTable != null) {
-    resultTable.order_count = orderCount;
-    resultTable.amount = amount;
-    boxTable.put(resultTable, mode: PutMode.update);
+  {
+    final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
+    final resultTable = boxTable
+        .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
+        .build()
+        .findFirst();
+    if (resultTable != null) {
+      resultTable.order_count = orderCount;
+      resultTable.amount = amount;
+      boxTable.put(resultTable, mode: PutMode.update);
+    }
+  }
+  {
+    // สร้าง Hold Bill สำหรับระบบ POS
+    final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
+    final resultTable = boxTable
+        .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
+        .build()
+        .find();
+    // เพิ่มกรณีไม่มี
+    for (var table in resultTable) {
+      int foundHoldIndex = -1;
+      for (var hold in posHoldProcessResult) {
+        if (hold.holdType == 2) {
+          if (hold.tableNumber == table.number) {
+            foundHoldIndex = posHoldProcessResult.indexOf(hold);
+            break;
+          }
+        }
+      }
+      if (foundHoldIndex == -1) {
+        posHoldProcessResult.add(PosHoldProcessModel(
+          code: "T-${table.number}",
+          tableNumber: table.number,
+          holdType: 2,
+          isDelivery: table.is_delivery,
+          deliveryNumber: table.delivery_number,
+        ));
+      } else {}
+    }
   }
 }
 

@@ -125,7 +125,7 @@ class PosHoldProcessModel {
   String code;
 
   /// 1=POS,2=ร้านอาหาร (โต๊ะ)
-  int holdType = 1;
+  int holdType;
 
   /// จำนวน Log
   int logCount = 0;
@@ -137,13 +137,13 @@ class PosHoldProcessModel {
   String saleName = "";
 
   /// รหัสลูกค้า
-  String customerCode = "";
+  String customerCode;
 
   /// ชื่อลูกค้า
-  String customerName = "";
+  String customerName;
 
   /// เบอร์โทรลูกค้า
-  String customerPhone = "";
+  String customerPhone;
 
   /// การชำระเงิน
   PosPayModel payScreenData = PosPayModel();
@@ -151,14 +151,22 @@ class PosHoldProcessModel {
   /// รายการสินค้า
   PosProcessModel posProcess = PosProcessModel();
 
-  String tableNumber = "";
+  String tableNumber;
 
   /// เป็นรายการกลับบ้านหรือไม่
-  bool isDelivery = false;
+  bool isDelivery;
 
-  String deliveryNumber = "";
+  String deliveryNumber;
 
-  PosHoldProcessModel({required this.code});
+  PosHoldProcessModel(
+      {required this.code,
+      this.holdType = 1,
+      this.tableNumber = "",
+      this.isDelivery = false,
+      this.deliveryNumber = "",
+      this.customerCode = "",
+      this.customerName = "",
+      this.customerPhone = ""});
 
   factory PosHoldProcessModel.fromJson(Map<String, dynamic> json) =>
       _$PosHoldProcessModelFromJson(json);

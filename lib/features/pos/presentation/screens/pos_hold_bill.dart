@@ -19,7 +19,7 @@ class _PosHoldBillState extends State<PosHoldBill>
     with TickerProviderStateMixin {
   @override
   void initState() {
-    super.initState();    
+    super.initState();
     for (int index = 0; index < global.posHoldProcessResult.length; index++) {
       global.posLogHelper
           .holdCount(global.posHoldProcessResult[index].code)
@@ -47,7 +47,8 @@ class _PosHoldBillState extends State<PosHoldBill>
           TableProcessHelper().getAll();
       for (var table in tableInfo) {
         if (table.table_status == 2) {
-          PosHoldProcessModel hold = PosHoldProcessModel(code: table.number);
+          PosHoldProcessModel hold = PosHoldProcessModel(
+              code: "T-${table.number}", tableNumber: table.number);
           hold.holdType = 2;
           hold.isDelivery = table.is_delivery;
           hold.deliveryNumber = table.delivery_number;
@@ -55,7 +56,7 @@ class _PosHoldBillState extends State<PosHoldBill>
         }
       }
     }
-    
+
     return GridView.builder(
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 200,
@@ -70,9 +71,21 @@ class _PosHoldBillState extends State<PosHoldBill>
 
   Widget holdButton(PosHoldProcessModel hold) {
     late Color backgroundColor;
-
+    print("hold : ${hold.code} : ${hold.logCount}");
+    {
+      // test
+      List<TableProcessObjectBoxStruct> tableInfo = global.objectBoxStore
+          .box<TableProcessObjectBoxStruct>()
+          .query()
+          .build()
+          .find();
+      for (var table in tableInfo) {
+        print("table : ${table.number} : ${table.table_status}");
+      }
+    }
     if (global
-            .posHoldProcessResult[global.findPosHoldProcessResultIndex(hold.code)]
+            .posHoldProcessResult[
+                global.findPosHoldProcessResultIndex(hold.code)]
             .logCount !=
         0) {
       backgroundColor = Colors.cyan;
@@ -82,58 +95,66 @@ class _PosHoldBillState extends State<PosHoldBill>
     Widget tableStatus = Container();
     if (widget.holdType == 1) {
       // POS
+      int holdIndex = global.findPosHoldProcessResultIndex(hold.code);
       tableStatus = Text(
-          (global
-                      .posHoldProcessResult[
-                          global.findPosHoldProcessResultIndex(hold.code)]
-                      .logCount ==
-                  0)
+          (global.posHoldProcessResult[holdIndex].logCount == 0)
               ? global.language("blank")
-              : "${global.language('qty')} ${global.posHoldProcessResult[global.findPosHoldProcessResultIndex(hold.code)].logCount} รายการ",
+              : "${global.language('qty')} ${global.posHoldProcessResult[holdIndex].logCount} รายการ",
           style: const TextStyle(color: Colors.white, fontSize: 16));
     }
     if (widget.holdType == 2) {
-      TableProcessObjectBoxStruct tableInfo = global.objectBoxStore
-          .box<TableProcessObjectBoxStruct>()
-          .query(TableProcessObjectBoxStruct_.number.equals(hold.code))
-          .build()
-          .findFirst()!;
-
       // ร้านอาหาร
+      TableProcessObjectBoxStruct? tableInfo = global.objectBoxStore
+          .box<TableProcessObjectBoxStruct>()
+          .query(TableProcessObjectBoxStruct_.number
+              .equals(hold.code.replaceAll("T-", "")))
+          .build()
+          .findFirst();
       String orderType = "";
-      if (tableInfo.table_al_la_crate_mode) {
-        orderType = "อาราคัส";
-      } else {
-        int findBuffetIndex = global.findBuffetModeIndex(tableInfo.buffet_code);
-        if (findBuffetIndex != -1) {
-          orderType =
-              orderType = global.buffetModeLists[findBuffetIndex].names[0];
+      if (tableInfo != null) {
+        if (tableInfo.table_al_la_crate_mode) {
+          orderType = "อาราคัส";
+        } else {
+          int findBuffetIndex =
+              global.findBuffetModeIndex(tableInfo.buffet_code);
+          if (findBuffetIndex != -1) {
+            orderType =
+                orderType = global.buffetModeLists[findBuffetIndex].names[0];
+          }
         }
       }
-
-      tableStatus = Container(
-          padding: const EdgeInsets.all(4),
-          child: Column(children: [
-            Text("ประเภท : $orderType",
-                style: const TextStyle(color: Colors.white, fontSize: 12)),
-            if (tableInfo.man_count != 0)
-              Text(
-                  "ผู้ชาย : ${global.moneyFormat.format(tableInfo.man_count.toDouble())}",
-                  style: const TextStyle(color: Colors.white, fontSize: 12)),
-            if (tableInfo.woman_count != 0)
-              Text(
-                  "ผู้หญิง : ${global.moneyFormat.format(tableInfo.woman_count.toDouble())}",
-                  style: const TextStyle(color: Colors.white, fontSize: 12)),
-            if (tableInfo.child_count != 0)
-              Text(
-                  "เด็ก : ${global.moneyFormat.format(tableInfo.child_count.toDouble())}",
-                  style: const TextStyle(color: Colors.white, fontSize: 12)),
-            Text(
-                "เวลาเปิดโต๊ะ : " +
-                    DateFormat('dd-HH:mm')
-                        .format(tableInfo.table_open_datetime),
-                style: const TextStyle(color: Colors.white, fontSize: 12)),
-          ]));
+      tableStatus = (tableInfo != null)
+          ? Container(
+              padding: const EdgeInsets.all(4),
+              child: Column(children: [
+                if (tableInfo.is_delivery)
+                  const Text("สั่งกลับบ้าน",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold)),
+                Text("ประเภท : $orderType",
+                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+                if (tableInfo.man_count != 0)
+                  Text(
+                      "ผู้ชาย : ${global.moneyFormat.format(tableInfo.man_count.toDouble())}",
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 12)),
+                if (tableInfo.woman_count != 0)
+                  Text(
+                      "ผู้หญิง : ${global.moneyFormat.format(tableInfo.woman_count.toDouble())}",
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 12)),
+                if (tableInfo.child_count != 0)
+                  Text(
+                      "เด็ก : ${global.moneyFormat.format(tableInfo.child_count.toDouble())}",
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 12)),
+                Text(
+                    "เวลาเปิดโต๊ะ : ${DateFormat('dd-HH:mm').format(tableInfo.table_open_datetime)}",
+                    style: const TextStyle(color: Colors.white, fontSize: 12)),
+              ]))
+          : Container();
     }
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -142,7 +163,7 @@ class _PosHoldBillState extends State<PosHoldBill>
               ? global.posTheme.secondary
               : backgroundColor),
       onPressed: () async {
-        Navigator.pop(context,hold);
+        Navigator.pop(context, hold);
       },
       child: Column(
         children: [
@@ -154,7 +175,12 @@ class _PosHoldBillState extends State<PosHoldBill>
               ),
               padding: const EdgeInsets.all(10),
               width: double.infinity,
-              child: Center(child: Text((hold.isDelivery)  ? hold.deliveryNumber : hold.code))),
+              child: Center(
+                  child: Text((hold.isDelivery)
+                      ? hold.deliveryNumber
+                      : (hold.code.contains("T-"))
+                          ? "โต๊ะ : ${hold.code.replaceAll("T-", "")}"
+                          : "พักบิล : ${hold.code}"))),
           Expanded(
               child: Center(
             child: tableStatus,
