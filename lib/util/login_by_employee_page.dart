@@ -119,18 +119,15 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                /*Image.file(
-                              File(global.getShopLogoPathName()),
-                              width: 100,
-                              height: 100,
-                            ),*/
                                 Row(
                                   children: [
-                                    Image.file(
-                                      File(global.getShopLogoPathName()),
-                                      width: 50,
-                                      height: 50,
-                                    ),
+                                    if (File(global.getShopLogoPathName())
+                                        .existsSync())
+                                      Image.file(
+                                        File(global.getShopLogoPathName()),
+                                        width: 50,
+                                        height: 50,
+                                      ),
                                     const SizedBox(
                                       width: 10,
                                     ),

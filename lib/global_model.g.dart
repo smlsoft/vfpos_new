@@ -364,7 +364,7 @@ ProfileSettingCompanyModel _$ProfileSettingCompanyModelFromJson(
       usedepartment: json['usedepartment'] as bool,
       images:
           (json['images'] as List<dynamic>).map((e) => e as String).toList(),
-      logo: json['logo'] as String,
+      logo: json['logo'] as String?,
     );
 
 Map<String, dynamic> _$ProfileSettingCompanyModelToJson(

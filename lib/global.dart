@@ -1624,12 +1624,14 @@ Future<void> getProfile() async {
         branch: branchs,
       );
       appStorage.write('profile', profileSetting.toJson());
-      // Download Logo
-      if (profileSetting.company.logo.isNotEmpty) {
-        var url = profileSetting.company.logo;
-        var response = await http.get(Uri.parse(url));
-        var file = File(global.getShopLogoPathName());
-        await file.writeAsBytes(response.bodyBytes);
+      if (profileSetting.company.logo != null) {
+        // Download Logo
+        if (profileSetting.company.logo!.isNotEmpty) {
+          var url = profileSetting.company.logo!;
+          var response = await http.get(Uri.parse(url));
+          var file = File(global.getShopLogoPathName());
+          await file.writeAsBytes(response.bodyBytes);
+        }
       }
     } catch (e) {
       print(e);
@@ -1693,7 +1695,7 @@ double paperWidth(int paperType) {
 }
 
 String getShopLogoPathName() {
-  return "${applicationDocumentsDirectory.path}/$shopId-logo.png";
+  return "${applicationDocumentsDirectory.path}/logo.png";
 }
 
 String qrCodeOrderOnline(String qrCode) {

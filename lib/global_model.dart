@@ -482,7 +482,7 @@ class ProfileSettingCompanyModel {
   bool usebranch;
   bool usedepartment;
   List<String> images;
-  String logo;
+  String? logo;
 
   ProfileSettingCompanyModel(
       {required this.names,
