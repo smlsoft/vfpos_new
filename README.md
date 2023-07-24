@@ -30,7 +30,7 @@ flutter build windows --flavor dedepos -t lib/main_dedepos.dart
 
 ## Build Windows msix
 ```
-flutter build windows -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD  --dart-define=FLAVOR=vfpos
+flutter build windows -t lib/main_dedepos.dart --dart-define=ENVIRONMENT=PROD  --dart-define=FLAVOR=dedepos
 flutter pub run msix:create --build-windows false
 ```
 
