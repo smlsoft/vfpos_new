@@ -798,7 +798,7 @@ Future<void> sendProcessToRemote() async {
         var jsonData = HttpPost(
             command: "process_result",
             data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(
-                    posRemoteDeviceList[index].holdCodeActive)]
+                    posRemoteDeviceList[index].holdCodeActive!)]
                 .toJson()));
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
@@ -872,6 +872,12 @@ void posScreenListHeightSet(double value) {
 }
 
 Future<void> loadConfig() async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  posTerminalPinCode =
+      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+  posTerminalPinTokenId =
+      sharedPreferences.getString('pos_terminal_token') ?? "";
+  deviceId = sharedPreferences.getString('pos_device_id') ?? "";
   ApiRepository apiRepository = ApiRepository();
   try {
     // POS Setting
@@ -883,12 +889,6 @@ Future<void> loadConfig() async {
   await loadPrinter();
   await loadFormDesign();
   await loadEmployee();
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  posTerminalPinCode =
-      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
-  posTerminalPinTokenId =
-      sharedPreferences.getString('pos_terminal_token') ?? "";
-  deviceId = sharedPreferences.getString('pos_device_id') ?? "";
 }
 
 Future<void> registerRemoteToTerminal() async {
@@ -931,7 +931,6 @@ Future<void> registerRemoteToTerminal() async {
 /// - สร้าง Process Result ตามจำนวน Hold บิล (generatePosHoldProcess)
 Future<void> startLoading() async {
   {
-    await loadConfig();
     // Payment
     /*qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
@@ -1017,19 +1016,13 @@ Future<void> startLoading() async {
 
   DartPingIOS.register();
 
-  // objectbox
-  // move to after login & Select shop
-  // await setupObjectBox();
-
   int xxx = ProductBarcodeHelper().count();
-  //objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
-  //objectBoxStore = await openStore(maxDBSizeInKB: 102400);
   {
     /// Sync Master (ข้อมูลหลัก)
-    int syncMasterSecondCount = 0;
+    /*int syncMasterSecondCount = 0;
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (loginSuccess && syncDataProcess == false) {
-        //log('Sync Data Master : ' + DateTime.now().toString());
+        print('Sync Data Master : ' + DateTime.now().toString());
         syncMasterSecondCount++;
         if (syncMasterSecondCount > syncTimeIntervalSecond) {
           sync.syncMasterProcess();
@@ -1040,7 +1033,7 @@ Future<void> startLoading() async {
           syncMasterSecondCount = 0;
         }
       }
-    });
+    });*/
   }
   Timer.periodic(const Duration(seconds: 1), (timer) async {
     if (loginSuccess) {
@@ -1177,7 +1170,7 @@ Future scanServerById(String name) async {
                       .debug("Connected to ${ipList[index].ip}");
                   SyncDeviceModel server =
                       SyncDeviceModel.fromJson(jsonDecode(result.body));
-                  if (server.deviceId == name && server.isCashierTerminal) {
+                  if (server.deviceId == name && server.isCashierTerminal!) {
                     ipList[index].connected = true;
                     loopScan = false;
                     targetDeviceIpAddress = ipList[index].ip;

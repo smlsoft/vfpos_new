@@ -26,8 +26,8 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
     super.initState();
     global.loginSuccess = false;
     global.syncDataSuccess = false;
-    userController.text = '1';
-    passwordController.text = '12345';
+    userController.text = 'SSS222';
+    passwordController.text = '12345678';
   }
 
   @override
@@ -141,6 +141,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                     const Spacer(),
                                     ElevatedButton(
                                       onPressed: () async {
+                                        // ตรวจสอบ User,Password
                                         var employee = global.employeeHelper
                                             .selectByCode(
                                                 code: userController.text);
@@ -149,6 +150,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                                   passwordController.text &&
                                               employee.is_use_pos == true) {
                                             if (employee.pin_code == "123456") {
+                                              // บังคับให้เปลี่ยนรหัสผ่าน
                                               global.userLogin = employee;
                                               await showDialog(
                                                   context: context,

@@ -20,14 +20,14 @@ class SyncCustomerDisplayModel {
 @JsonSerializable(explicitToJson: true)
 class SyncDeviceModel {
   String deviceId;
-  String deviceName;
+  String? deviceName;
   String ip;
   bool connected;
-  bool isCashierTerminal;
-  bool isClient;
-  String holdCodeActive;
-  int docModeActive;
-  bool processSuccess;
+  bool? isCashierTerminal;
+  bool? isClient;
+  String? holdCodeActive;
+  int? docModeActive;
+  bool? processSuccess;
 
   SyncDeviceModel(
       {required this.deviceId,

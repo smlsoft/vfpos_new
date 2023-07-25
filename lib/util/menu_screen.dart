@@ -210,9 +210,9 @@ class _MenuScreenState extends State<MenuScreen> {
     rebuildScreen();
     syncBillProcess();
     global.buffetModeLists = BuffetModeHelper().getAll();
-    global.getProfile().then((value) => setState(() {
-          loadConfigSuccess = true;
-        }));
+    global.getProfile().then((value) {
+      loadConfigSuccess = true;
+    });
   }
 
   @override
@@ -335,12 +335,12 @@ class _MenuScreenState extends State<MenuScreen> {
               foregroundColor: Colors.white,
               leading: Container(
                 margin: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green, width: 2),
-                ),
-                child: Image.file(
-                  File(global.getShopLogoPathName()),
-                ),
+                child: ((global.getShopLogoPathName().isNotEmpty) &&
+                        (File(global.getShopLogoPathName()).existsSync()))
+                    ? Image.file(
+                        File(global.getShopLogoPathName()),
+                      )
+                    : Container(),
               ),
               title: Text((global.appMode == global.AppModeEnum.posTerminal)
                   ? "${global.language("pos_terminal")} : $companyName"

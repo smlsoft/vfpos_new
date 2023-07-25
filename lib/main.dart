@@ -8,8 +8,8 @@ import 'package:dedepos/global.dart' as global;
 
 void main() async {
   F.appFlavor = Flavor.DEDEPOS;
-  initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
+  initializeEnvironmentConfig();
   Intl.defaultLocale = "th";
   global.applicationName = "DeDe POS";
   initializeDateFormatting();

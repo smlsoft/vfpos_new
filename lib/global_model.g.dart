@@ -337,6 +337,20 @@ Map<String, dynamic> _$ProfileSettingConfigSystemModelToJson(
       'footerreciptpos': instance.footerreciptpos,
     };
 
+ProfileSettingCompanyImageModel _$ProfileSettingCompanyImageModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileSettingCompanyImageModel(
+      xorder: json['xorder'] as int,
+      uri: json['uri'] as String,
+    );
+
+Map<String, dynamic> _$ProfileSettingCompanyImageModelToJson(
+        ProfileSettingCompanyImageModel instance) =>
+    <String, dynamic>{
+      'xorder': instance.xorder,
+      'uri': instance.uri,
+    };
+
 ProfileSettingCompanyModel _$ProfileSettingCompanyModelFromJson(
         Map<String, dynamic> json) =>
     ProfileSettingCompanyModel(
@@ -362,8 +376,10 @@ ProfileSettingCompanyModel _$ProfileSettingCompanyModelFromJson(
       longitude: json['longitude'] as String,
       usebranch: json['usebranch'] as bool,
       usedepartment: json['usedepartment'] as bool,
-      images:
-          (json['images'] as List<dynamic>).map((e) => e as String).toList(),
+      images: (json['images'] as List<dynamic>)
+          .map((e) => ProfileSettingCompanyImageModel.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
       logo: json['logo'] as String?,
     );
 
@@ -381,7 +397,7 @@ Map<String, dynamic> _$ProfileSettingCompanyModelToJson(
       'longitude': instance.longitude,
       'usebranch': instance.usebranch,
       'usedepartment': instance.usedepartment,
-      'images': instance.images,
+      'images': instance.images.map((e) => e.toJson()).toList(),
       'logo': instance.logo,
     };
 

@@ -336,17 +336,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         List<String> barcodeList = [];
         ProductCategoryObjectBoxStruct category = selectCodeList;
         for (var item in jsonDecode(category.codelist)) {
-          SyncCategoryCodeListModel code =
-              SyncCategoryCodeListModel.fromJson(item);
-          barcodeList.add(code.barcode);
+          barcodeList.add(item["barcode"]);
         }
         var selectProductByBarcodeList =
             await ProductBarcodeHelper().selectByBarcodeList(barcodeList);
         for (var item in jsonDecode(category.codelist)) {
-          SyncCategoryCodeListModel codeList =
-              SyncCategoryCodeListModel.fromJson(item);
           for (var product in selectProductByBarcodeList) {
-            if (product.barcode == codeList.barcode) {
+            if (product.barcode == item["barcode"]) {
               global.productListByCategory.add(product);
               break;
             }
@@ -1091,9 +1087,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               isalacarte: true,
               ordertypes: "",
               product_count: 0);
-      productOptions = (jsonDecode(product.options_json) as List)
-          .map((e) => ProductOptionModel.fromJson(e))
-          .toList();
+      productOptions = (product.options_json == "null")
+          ? []
+          : (jsonDecode(product.options_json) as List)
+              .map((e) => ProductOptionModel.fromJson(e))
+              .toList();
     }
     posCompileProcess(
             holdCode: global.posHoldActiveCode,

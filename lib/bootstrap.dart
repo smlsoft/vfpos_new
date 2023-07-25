@@ -86,8 +86,10 @@ Future<void> initializeEnvironmentConfig() async {
   server.startServer();
   // ตรวจสอบ Order จากระบบ Order OnLine
   Timer.periodic(const Duration(seconds: 1), (Timer t) async {
-    if (global.shopId.isNotEmpty && global.checkOrderActive == false) {
-      global.checkOrderOnline();
+    if (global.loginSuccess) {
+      if (global.shopId.isNotEmpty && global.checkOrderActive == false) {
+        global.checkOrderOnline();
+      }
     }
   });
 }

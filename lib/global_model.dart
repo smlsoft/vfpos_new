@@ -469,6 +469,19 @@ class ProfileSettingConfigSystemModel {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ProfileSettingCompanyImageModel {
+  int xorder;
+  String uri;
+
+  ProfileSettingCompanyImageModel({required this.xorder, required this.uri});
+
+  factory ProfileSettingCompanyImageModel.fromJson(Map<String, dynamic> json) =>
+      _$ProfileSettingCompanyImageModelFromJson(json);
+  Map<String, dynamic> toJson() =>
+      _$ProfileSettingCompanyImageModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class ProfileSettingCompanyModel {
   List<LanguageDataModel> names;
   String taxID;
@@ -481,7 +494,7 @@ class ProfileSettingCompanyModel {
   String longitude;
   bool usebranch;
   bool usedepartment;
-  List<String> images;
+  List<ProfileSettingCompanyImageModel> images;
   String? logo;
 
   ProfileSettingCompanyModel(

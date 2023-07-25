@@ -8,7 +8,6 @@ import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
 import 'package:dedepos/features/splash/domain/usecase/check_user_login_status.dart';
 import 'package:dedepos/flavors.dart';
-import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   await Future.delayed(const Duration(seconds: 1));
                   context
                       .read<AuthenticationBloc>()
-                      .add(AuthenticationEvent.authenticated(user: user!));
+                      .add(AuthenticationEvent.authenticated(user: user));
                 }
               }
               return;

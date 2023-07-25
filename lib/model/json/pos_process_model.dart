@@ -170,6 +170,15 @@ class PosProcessModel {
   /// ยอดรวมก่อนคำนวณภาษีสินค้ายกเว้น
   double total_calc_except_vat_amount;
 
+  /// รหัสลูกค้า
+  String customer_code;
+
+  /// ชื่อลูกค้า
+  String customer_name;
+
+  /// หมายเลขโทรศัพท์
+  String customer_phone;
+
   PosProcessModel(
       {this.total_piece = 0.0,
       this.total_amount = 0.0,
@@ -190,6 +199,9 @@ class PosProcessModel {
       this.total_item_except_vat_after_discount_amount = 0,
       this.total_calc_vat_amount = 0,
       this.total_calc_except_vat_amount = 0,
+      this.customer_code = "",
+      this.customer_name = "",
+      this.customer_phone = "",
       this.promotion_list = const []});
 
   factory PosProcessModel.fromJson(Map<String, dynamic> json) =>

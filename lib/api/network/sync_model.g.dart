@@ -25,13 +25,13 @@ Map<String, dynamic> _$SyncCustomerDisplayModelToJson(
 SyncDeviceModel _$SyncDeviceModelFromJson(Map<String, dynamic> json) =>
     SyncDeviceModel(
       deviceId: json['deviceId'] as String,
-      deviceName: json['deviceName'] as String,
+      deviceName: json['deviceName'] as String?,
       ip: json['ip'] as String,
       connected: json['connected'] as bool,
-      isCashierTerminal: json['isCashierTerminal'] as bool,
-      isClient: json['isClient'] as bool,
-      holdCodeActive: json['holdCodeActive'] as String,
-      docModeActive: json['docModeActive'] as int,
+      isCashierTerminal: json['isCashierTerminal'] as bool?,
+      isClient: json['isClient'] as bool?,
+      holdCodeActive: json['holdCodeActive'] as String?,
+      docModeActive: json['docModeActive'] as int?,
       processSuccess: json['processSuccess'] as bool? ?? true,
     );
 

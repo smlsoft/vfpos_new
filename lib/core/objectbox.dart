@@ -34,7 +34,7 @@ Future<void> objectBoxInit() async {
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
       try {
-        await objectBoxDirectory.delete(recursive: true);
+        // await objectBoxDirectory.delete(recursive: true);
       } catch (e) {
         dev.log(e.toString());
       }

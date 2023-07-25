@@ -28,8 +28,8 @@ Future<PosProcessResultModel> posCompileProcess(
     // คำนวณของ Client
     for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
       if (global.posRemoteDeviceList[index].processSuccess == false) {
-        String getHoldCode = global.posRemoteDeviceList[index].holdCodeActive;
-        int getDocMode = global.posRemoteDeviceList[index].docModeActive;
+        String getHoldCode = global.posRemoteDeviceList[index].holdCodeActive!;
+        int getDocMode = global.posRemoteDeviceList[index].docModeActive!;
         if (holdCode != getHoldCode) {
           int holdIndex = global.findPosHoldProcessResultIndex(getHoldCode);
           if (holdIndex != -1) {

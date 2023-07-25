@@ -95,6 +95,7 @@ class PosProcess {
       {required String holdCode,
       required int docMode,
       required String discountFormula}) async {
+    DateTime processStart = DateTime.now();
     double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
@@ -153,7 +154,7 @@ class PosProcess {
           }
           break;
         case 1:
-          int findIndex = 0;
+          int findIndex = -1;
           // 1=เพิ่มสินค้า
           // กรณี เป็น New Line ให้เพิ่มบรรทัดใหม่
           ProductBarcodeObjectBoxStruct productBarcode = await global
@@ -195,19 +196,21 @@ class PosProcess {
             findIndex = -1;
           } else {
             // กรณีมี Extra ให้เพิ่มบรรทัดใหม่
-            var valueOption = jsonDecode(productBarcode.options_json);
-            if (valueOption.isNotEmpty) {
-              findIndex = -1;
-            } else {
-              if (global.posScreenNewDataStyle ==
-                  global.PosScreenNewDataStyleEnum.addLastLine) {
-                findIndex = findByBarCodeAndPrice(
-                    logData.barcode, logData.price,
-                    lastLineOnly: true);
-              } else if (global.posScreenNewDataStyle ==
-                  global.PosScreenNewDataStyleEnum.addAllLine) {
-                findIndex =
-                    findByBarCodeAndPrice(logData.barcode, logData.price);
+            if (productBarcode.options_json != "null") {
+              var valueOption = jsonDecode(productBarcode.options_json);
+              if (valueOption.isNotEmpty) {
+                findIndex = -1;
+              } else {
+                if (global.posScreenNewDataStyle ==
+                    global.PosScreenNewDataStyleEnum.addLastLine) {
+                  findIndex = findByBarCodeAndPrice(
+                      logData.barcode, logData.price,
+                      lastLineOnly: true);
+                } else if (global.posScreenNewDataStyle ==
+                    global.PosScreenNewDataStyleEnum.addAllLine) {
+                  findIndex =
+                      findByBarCodeAndPrice(logData.barcode, logData.price);
+                }
               }
             }
           }
@@ -436,6 +439,8 @@ class PosProcess {
         (totalItemVatAmount * processResult.vat_rate) /
             (100 + processResult.vat_rate);
     processResult.total_amount = totalAmount - processResult.total_discount;
+    print(
+        "Process Stop : " + DateTime.now().difference(processStart).toString());
     return processResult;
   }
 }
