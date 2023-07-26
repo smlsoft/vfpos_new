@@ -146,5 +146,6 @@ Future<void> syncProductBarcodeCompare(
     }
     global.appStorage
         .write(global.syncProductBarcodeTimeName, getLastUpdateTime);
+    global.rebuildProductBarcodeStatus = true;
   }
 }

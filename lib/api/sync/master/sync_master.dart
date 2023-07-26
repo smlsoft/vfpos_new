@@ -16,8 +16,9 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_status_struct.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
+import 'package:dedepos/objectbox.g.dart';
 
-Future syncMasterData() async {
+Future<void> syncMasterData() async {
   ApiRepository apiRepository = ApiRepository();
   global.syncDataProcess = true;
   try {
@@ -32,38 +33,48 @@ Future syncMasterData() async {
     global.syncDataSuccess = true;
     global.syncDataProcess = false;
     if (1 == 1) {
-      // กรณีเป็นระบบร้านอาหาร จะทำการสร้าง ProductBarcodeStatusObjectBoxStruct
-      List<ProductBarcodeObjectBoxStruct> productBarcode =
-          ProductBarcodeHelper().getAll();
-      List<ProductBarcodeStatusObjectBoxStruct> productBarcodeStatus =
-          ProductBarcodeStatusHelper().getAll();
-      List<ProductBarcodeStatusObjectBoxStruct> productBarcodeStatusInsertMany =
-          [];
-      // ค้นหา ถ้าไม่มีให้เพิ่ม
-      for (ProductBarcodeObjectBoxStruct productBarcodeItem in productBarcode) {
-        bool found = false;
-        // find
-        for (ProductBarcodeStatusObjectBoxStruct productBarcodeStatusItem
-            in productBarcodeStatus) {
-          if (productBarcodeItem.barcode == productBarcodeStatusItem.barcode) {
-            found = true;
-            break;
+      if (global.rebuildProductBarcodeStatus) {
+        global.rebuildProductBarcodeStatus = false;
+        // กรณีเป็นระบบร้านอาหาร จะทำการสร้าง ProductBarcodeStatusObjectBoxStruct
+        List<ProductBarcodeObjectBoxStruct> productBarcode = global
+            .objectBoxStore
+            .box<ProductBarcodeObjectBoxStruct>()
+            .query(ProductBarcodeObjectBoxStruct_.isalacarte.equals(true))
+            .build()
+            .find();
+        List<ProductBarcodeStatusObjectBoxStruct> productBarcodeStatus =
+            ProductBarcodeStatusHelper().getAll();
+        List<ProductBarcodeStatusObjectBoxStruct>
+            productBarcodeStatusInsertMany = [];
+        // ค้นหา ถ้าไม่มีให้เพิ่ม
+        for (ProductBarcodeObjectBoxStruct productBarcodeItem
+            in productBarcode) {
+          bool found = false;
+          // find
+          for (ProductBarcodeStatusObjectBoxStruct productBarcodeStatusItem
+              in productBarcodeStatus) {
+            if (productBarcodeItem.barcode ==
+                productBarcodeStatusItem.barcode) {
+              found = true;
+              break;
+            }
+          }
+          if (found == false) {
+            productBarcodeStatusInsertMany.add(
+                ProductBarcodeStatusObjectBoxStruct(
+                    barcode: productBarcodeItem.barcode,
+                    qtyBalance: 0,
+                    orderAutoStock: false,
+                    qtyMin: 0,
+                    orderDisable: false,
+                    qtyStart: 0,
+                    orderStatus: 0));
           }
         }
-        if (found == false) {
-          productBarcodeStatusInsertMany.add(
-              ProductBarcodeStatusObjectBoxStruct(
-                  barcode: productBarcodeItem.barcode,
-                  qtyBalance: 0,
-                  orderAutoStock: false,
-                  qtyMin: 0,
-                  orderDisable: false,
-                  qtyStart: 0,
-                  orderStatus: 0));
+        if (productBarcodeStatusInsertMany.isNotEmpty) {
+          ProductBarcodeStatusHelper()
+              .insertMany(productBarcodeStatusInsertMany);
         }
-      }
-      if (productBarcodeStatusInsertMany.isNotEmpty) {
-        ProductBarcodeStatusHelper().insertMany(productBarcodeStatusInsertMany);
       }
     }
   } catch (e) {
@@ -104,7 +115,9 @@ Future syncMasterProcess() async {
       if (global.apiConnected == true &&
           global.loginSuccess == true &&
           global.syncDataProcess == false) {
+        print("---- Start Sync ---");
         syncMasterData();
+        print("---- Stop Sync ---");
       }
     }
   }

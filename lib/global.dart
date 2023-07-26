@@ -200,6 +200,7 @@ String formFullTaxDefaultCode =
     "DEDE-02-88"; // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม
 String formSummeryDefaultCode = "DEDE-05-88"; // ใบสรุปยอด
 bool posScreenAutoRefresh = false;
+bool rebuildProductBarcodeStatus = true;
 
 enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
@@ -1019,8 +1020,8 @@ Future<void> startLoading() async {
   int xxx = ProductBarcodeHelper().count();
   {
     /// Sync Master (ข้อมูลหลัก)
-    /*int syncMasterSecondCount = 0;
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    int syncMasterSecondCount = 0;
+    Timer.periodic(const Duration(seconds: 10), (timer) {
       if (loginSuccess && syncDataProcess == false) {
         print('Sync Data Master : ' + DateTime.now().toString());
         syncMasterSecondCount++;
@@ -1033,7 +1034,7 @@ Future<void> startLoading() async {
           syncMasterSecondCount = 0;
         }
       }
-    });*/
+    });
   }
   Timer.periodic(const Duration(seconds: 1), (timer) async {
     if (loginSuccess) {

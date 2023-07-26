@@ -285,6 +285,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   void onSubmit(String number) {
+    number = number.trim().replaceAll("*", "X");
     String qty = "1.0";
 
     if (number.trim().isNotEmpty) {
@@ -4255,6 +4256,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     );
     String customerCode = "";
     String customerName = "";
+    String customerPhone = "";
     String saleCode = "";
     String saleName = "";
     int holdIndex =
@@ -4262,6 +4264,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     if (holdIndex != -1) {
       customerCode = global.posHoldProcessResult[holdIndex].customerCode.trim();
       customerName = global.posHoldProcessResult[holdIndex].customerName.trim();
+      customerPhone =
+          global.posHoldProcessResult[holdIndex].customerPhone.trim();
       saleCode = global.posHoldProcessResult[holdIndex].saleCode.trim();
       saleName = global.posHoldProcessResult[holdIndex].saleName.trim();
     }
@@ -4313,8 +4317,42 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                         setState(() {
                           int holdIndex = global.findPosHoldProcessResultIndex(
                               global.posHoldActiveCode);
-                          global.posHoldProcessResult[holdIndex].saleCode = "";
-                          global.posHoldProcessResult[holdIndex].saleName = "";
+                          global.posHoldProcessResult[holdIndex].customerCode =
+                              "";
+                          global.posHoldProcessResult[holdIndex].customerName =
+                              "";
+                        });
+                      },
+                    )
+                  ]),
+                if (customerCode.isEmpty && customerPhone.isNotEmpty)
+                  Row(children: [
+                    Expanded(
+                        child: Row(children: [
+                      Text(
+                        '${global.language('customer_phone')} :',
+                        style:
+                            const TextStyle(fontSize: 20, color: Colors.black),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        "$customerName ($customerPhone)",
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ])),
+                    IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        setState(() {
+                          int holdIndex = global.findPosHoldProcessResultIndex(
+                              global.posHoldActiveCode);
+                          global.posHoldProcessResult[holdIndex].customerPhone =
+                              "";
+                          global.posHoldProcessResult[holdIndex].customerName =
+                              "";
                         });
                       },
                     )

@@ -101,10 +101,8 @@ class _PayScreenPageState extends State<PayScreenPage>
                   .toDouble());
       var jsonData = HttpPost(
           command: "pay_screen",
-          data: jsonEncode(global
-              .posHoldProcessResult[global
+          data: jsonEncode(global.posHoldProcessResult[global
                   .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-              .posProcess
               .toJson()));
       global.postToServer(
           ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});

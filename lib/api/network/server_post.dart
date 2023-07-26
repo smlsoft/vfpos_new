@@ -1147,7 +1147,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         global
             .posHoldProcessResult[
                 global.findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-            .customerCode = customerCode;
+            .customerCode = "";
         global
             .posHoldProcessResult[
                 global.findPosHoldProcessResultIndex(global.posHoldActiveCode)]
@@ -1164,6 +1164,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
                 .posProcess);
         if (global.functionPosScreenRefresh != null) {
           global.functionPosScreenRefresh!(global.posHoldActiveCode);
+          global.sendProcessToCustomerDisplay();
         }
       } catch (e) {
         serviceLocator<Log>().error(e);
