@@ -1292,11 +1292,11 @@ Future<void> checkOrderOnline() async {
   checkOrderActive = true;
   {
     List<OrderTempDataModel> orderTemp = [];
-    List<OrderTempDataModel> orderSave = [];
+    List<OrderTempObjectBoxStruct> orderSave = [];
     try {
       // ดึง Order ลูกค้าสั่งเอง
       String selectQuery =
-          "select orderid,barcode,sum(qty) as qty,optionselected,remark from ordertemp where shopid='$shopId' and isclose=1 group by orderid,barcode,optionselected,remark order by barcode";
+          "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
       var value = await clickHouseSelect(selectQuery);
       ResponseDataModel responseData = ResponseDataModel.fromJson(value);
       // Print
@@ -1305,14 +1305,54 @@ Future<void> checkOrderOnline() async {
       for (var order in responseData.data) {
         orderId = order["orderid"];
         OrderTempDataModel orderData = OrderTempDataModel(
-          orderGuid: Uuid().v4(),
+          orderId: order["orderid"],
+          orderGuid: order["orderguid"],
           barcode: order["barcode"],
           qty: double.tryParse(order["qty"].toString()) ?? 0,
           optionSelected: order["optionselected"],
           remark: order["remark"],
+          orderDateTime: DateTime.parse(order["orderdatetime"]),
+          price: double.tryParse(order["price"].toString()) ?? 0,
+          amount: double.tryParse(order["amount"].toString()) ?? 0,
+          isTakeAway: order["istakeaway"],
         );
         orderTemp.add(orderData);
-        orderSave.add(orderData);
+        ProductBarcodeObjectBoxStruct? productBarcode =
+            await ProductBarcodeHelper()
+                .selectByBarcodeFirst(orderData.barcode);
+        orderSave.add(OrderTempObjectBoxStruct(
+          id: 0,
+          orderId: "1",
+          orderIdMain: "",
+          orderGuid: orderData.orderGuid,
+          machineId: "",
+          orderDateTime: orderData.orderDateTime,
+          barcode: orderData.barcode,
+          qty: orderData.qty,
+          price: orderData.price,
+          amount: orderData.amount,
+          isOrder: false,
+          isPaySuccess: false,
+          optionSelected: orderData.optionSelected,
+          remark: orderData.remark,
+          names: productBarcode?.names ?? "",
+          takeAway: (orderData.isTakeAway == 1) ? true : false,
+          unitCode: productBarcode?.unit_code ?? "",
+          unitName: productBarcode?.unit_names ?? "",
+          imageUri: productBarcode?.images_url ?? "",
+          kdsSuccessTime: DateTime.now(),
+          kdsSuccess: false,
+          isOrderSuccess: true,
+          isOrderSendKdsSuccess: false,
+          kdsId: "",
+          cancelQty: 0,
+          orderQty: orderData.qty,
+          deliveryNumber: "",
+          deliveryCode: "",
+          isOrderReadySendKds: true,
+          deliveryName: "",
+          lastUpdateDateTime: DateTime.now(),
+        ));
         if (orderToKitchenPrintMode == 0) {
           // พิมพ์แยกใบ
           await sendToKitchen(orderId: orderId, orderList: orderTemp);
@@ -1333,7 +1373,7 @@ Future<void> checkOrderOnline() async {
     } catch (e) {
       serviceLocator<Log>().error(e.toString());
     }
-    //saveOrderToHoldBill(orderSave);
+    saveOrderToHoldBill(orderSave);
   }
   {
     // Order Staff สั่ง
@@ -1426,6 +1466,11 @@ Future<void> checkOrderOnline() async {
           qty: data.qty,
           optionSelected: data.optionSelected,
           remark: data.remark,
+          orderId: data.orderId,
+          orderDateTime: data.orderDateTime,
+          price: data.price,
+          amount: data.amount,
+          isTakeAway: (data.takeAway) ? 1 : 0,
         ));
         // update สถานะ
         data.isOrderSendKdsSuccess = true;

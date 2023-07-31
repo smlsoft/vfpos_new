@@ -321,18 +321,28 @@ class ResponseDataModel {
 }
 
 class OrderTempDataModel {
+  final String orderId;
   final String orderGuid;
   final String barcode;
   final double qty;
   final String optionSelected;
   final String remark;
+  final DateTime orderDateTime;
+  final double price;
+  final double amount;
+  final int isTakeAway;
 
   OrderTempDataModel({
+    required this.orderId,
     required this.orderGuid,
     required this.barcode,
     required this.qty,
     required this.remark,
     required this.optionSelected,
+    required this.orderDateTime,
+    required this.price,
+    required this.amount,
+    required this.isTakeAway,
   });
 }
 

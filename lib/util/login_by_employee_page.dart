@@ -26,8 +26,8 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
     super.initState();
     global.loginSuccess = false;
     global.syncDataSuccess = false;
-    userController.text = 'SSS222';
-    passwordController.text = '12345678';
+    userController.text = '001';
+    passwordController.text = '12345';
   }
 
   @override
