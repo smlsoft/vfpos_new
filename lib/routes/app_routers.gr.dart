@@ -15,22 +15,52 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
-    AuthenticationRoute.name: (routeData) {
+    RegisterPosTerminalRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const AuthenticationPage(),
+        child: const RegisterPosTerminalPage(),
+      );
+    },
+    EmployeeChangePasswordRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const EmployeeChangePasswordPage(),
+      );
+    },
+    MenuRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const MenuScreen(),
+      );
+    },
+    LoginByEmployeeRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const LoginByEmployeePage(),
+      );
+    },
+    SplashRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SplashScreen(),
+      );
+    },
+    SelectShopRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const SelectShopScreen(),
+      );
+    },
+    InitShopRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const InitShopScreen(),
       );
     },
     DashboardRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const DashboardScreen(),
-      );
-    },
-    InitPOSRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const InitPOSScreen(),
       );
     },
     POSLoginRoute.name: (routeData) {
@@ -49,28 +79,22 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    InitPOSRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const InitPOSScreen(),
+      );
+    },
     PosSecondaryRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const PosSecondaryScreen(),
       );
     },
-    InitShopRoute.name: (routeData) {
+    AuthenticationRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const InitShopScreen(),
-      );
-    },
-    SelectShopRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SelectShopScreen(),
-      );
-    },
-    SplashRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SplashScreen(),
+        child: const AuthenticationPage(),
       );
     },
     PrinterConfigRoute.name: (routeData) {
@@ -79,43 +103,103 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const PrinterConfigScreen(),
       );
     },
-    EmployeeChangePasswordRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const EmployeeChangePasswordPage(),
-      );
-    },
-    LoginByEmployeeRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const LoginByEmployeePage(),
-      );
-    },
-    MenuRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const MenuScreen(),
-      );
-    },
-    RegisterPosTerminalRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const RegisterPosTerminalPage(),
-      );
-    },
   };
 }
 
 /// generated route for
-/// [AuthenticationPage]
-class AuthenticationRoute extends PageRouteInfo<void> {
-  const AuthenticationRoute({List<PageRouteInfo>? children})
+/// [RegisterPosTerminalPage]
+class RegisterPosTerminalRoute extends PageRouteInfo<void> {
+  const RegisterPosTerminalRoute({List<PageRouteInfo>? children})
       : super(
-          AuthenticationRoute.name,
+          RegisterPosTerminalRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'AuthenticationRoute';
+  static const String name = 'RegisterPosTerminalRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [EmployeeChangePasswordPage]
+class EmployeeChangePasswordRoute extends PageRouteInfo<void> {
+  const EmployeeChangePasswordRoute({List<PageRouteInfo>? children})
+      : super(
+          EmployeeChangePasswordRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'EmployeeChangePasswordRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [MenuScreen]
+class MenuRoute extends PageRouteInfo<void> {
+  const MenuRoute({List<PageRouteInfo>? children})
+      : super(
+          MenuRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'MenuRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [LoginByEmployeePage]
+class LoginByEmployeeRoute extends PageRouteInfo<void> {
+  const LoginByEmployeeRoute({List<PageRouteInfo>? children})
+      : super(
+          LoginByEmployeeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginByEmployeeRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SplashScreen]
+class SplashRoute extends PageRouteInfo<void> {
+  const SplashRoute({List<PageRouteInfo>? children})
+      : super(
+          SplashRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SplashRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [SelectShopScreen]
+class SelectShopRoute extends PageRouteInfo<void> {
+  const SelectShopRoute({List<PageRouteInfo>? children})
+      : super(
+          SelectShopRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SelectShopRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [InitShopScreen]
+class InitShopRoute extends PageRouteInfo<void> {
+  const InitShopRoute({List<PageRouteInfo>? children})
+      : super(
+          InitShopRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'InitShopRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -130,20 +214,6 @@ class DashboardRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'DashboardRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [InitPOSScreen]
-class InitPOSRoute extends PageRouteInfo<void> {
-  const InitPOSRoute({List<PageRouteInfo>? children})
-      : super(
-          InitPOSRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'InitPOSRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -200,6 +270,20 @@ class PosRouteArgs {
 }
 
 /// generated route for
+/// [InitPOSScreen]
+class InitPOSRoute extends PageRouteInfo<void> {
+  const InitPOSRoute({List<PageRouteInfo>? children})
+      : super(
+          InitPOSRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'InitPOSRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
 /// [PosSecondaryScreen]
 class PosSecondaryRoute extends PageRouteInfo<void> {
   const PosSecondaryRoute({List<PageRouteInfo>? children})
@@ -214,43 +298,15 @@ class PosSecondaryRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [InitShopScreen]
-class InitShopRoute extends PageRouteInfo<void> {
-  const InitShopRoute({List<PageRouteInfo>? children})
+/// [AuthenticationPage]
+class AuthenticationRoute extends PageRouteInfo<void> {
+  const AuthenticationRoute({List<PageRouteInfo>? children})
       : super(
-          InitShopRoute.name,
+          AuthenticationRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'InitShopRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [SelectShopScreen]
-class SelectShopRoute extends PageRouteInfo<void> {
-  const SelectShopRoute({List<PageRouteInfo>? children})
-      : super(
-          SelectShopRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'SelectShopRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [SplashScreen]
-class SplashRoute extends PageRouteInfo<void> {
-  const SplashRoute({List<PageRouteInfo>? children})
-      : super(
-          SplashRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'SplashRoute';
+  static const String name = 'AuthenticationRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }
@@ -265,62 +321,6 @@ class PrinterConfigRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'PrinterConfigRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [EmployeeChangePasswordPage]
-class EmployeeChangePasswordRoute extends PageRouteInfo<void> {
-  const EmployeeChangePasswordRoute({List<PageRouteInfo>? children})
-      : super(
-          EmployeeChangePasswordRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'EmployeeChangePasswordRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [LoginByEmployeePage]
-class LoginByEmployeeRoute extends PageRouteInfo<void> {
-  const LoginByEmployeeRoute({List<PageRouteInfo>? children})
-      : super(
-          LoginByEmployeeRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'LoginByEmployeeRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [MenuScreen]
-class MenuRoute extends PageRouteInfo<void> {
-  const MenuRoute({List<PageRouteInfo>? children})
-      : super(
-          MenuRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'MenuRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [RegisterPosTerminalPage]
-class RegisterPosTerminalRoute extends PageRouteInfo<void> {
-  const RegisterPosTerminalRoute({List<PageRouteInfo>? children})
-      : super(
-          RegisterPosTerminalRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'RegisterPosTerminalRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

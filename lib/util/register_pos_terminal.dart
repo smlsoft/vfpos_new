@@ -101,7 +101,8 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
           if (response.isRight()) {
             // save user cache
             User remoteUser = response.getOrElse(() => User());
-            remoteUser = remoteUser.copyWith(token: accessToken);
+            remoteUser =
+                remoteUser.copyWith(token: accessToken, isDev: isDev ? 1 : 0);
 
             await serviceLocator<UserCacheService>().saveUser(remoteUser);
             // select shop

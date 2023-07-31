@@ -3,6 +3,8 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/core/environment.dart';
+import 'package:dedepos/core/request.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
@@ -38,6 +40,18 @@ class _SplashScreenState extends State<SplashScreen> {
         .then((isUserLoggedIn) async {
       if (isUserLoggedIn) {
         final user = await serviceLocator<UserCacheService>().getUser();
+
+        if (F.appFlavor == Flavor.DEDEPOS) {
+          if (user != null) {
+            if (user.isDev == 1) {
+              Environment().initConfig("DEV");
+              serviceLocator<Request>().updateEndpoint();
+            } else {
+              Environment().initConfig("PROD");
+              serviceLocator<Request>().updateEndpoint();
+            }
+          }
+        }
 
         context
             .read<AuthenticationBloc>()
