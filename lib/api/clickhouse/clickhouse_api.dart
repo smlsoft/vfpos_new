@@ -67,6 +67,10 @@ Future<Map<String, dynamic>> clickHouseSelect(String query) async {
   return {};
 }
 
+void clickHouseUpdate(String query) {
+  clickHouseExecute(query);
+}
+
 void clickHouseUpdateTable(TableProcessObjectBoxStruct table) async {
   {
     /// ลบข้อมูลเก่า

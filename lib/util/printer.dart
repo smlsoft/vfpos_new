@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/db/shift_helper.dart';
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/form_design_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/services/print_process.dart';
@@ -247,13 +249,13 @@ class PrinterClass {
   }
 }
 
-void printTableQrCode(
+Future<void> printTableQrCode(
     {required global.TableManagerEnum tableManagerMode,
     required TableProcessObjectBoxStruct table,
     bool fullDetail = true,
     String qrCode = "",
     String fromTable = "",
-    String toTable = ""}) {
+    String toTable = ""}) async {
   // printerIndex 1 = Ticket Printer
   PrinterClass printer = PrinterClass(printerIndex: 1, qrCode: qrCode);
   print(printer.qrCode);
@@ -271,7 +273,7 @@ void printTableQrCode(
       ]));
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 24,
@@ -300,7 +302,7 @@ void printTableQrCode(
   }
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 40,
@@ -311,7 +313,7 @@ void printTableQrCode(
 
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 30,
@@ -323,7 +325,7 @@ void printTableQrCode(
   if (table.table_al_la_crate_mode == false) {
     printer.addCommand(PosPrintBillCommandModel(
         mode: 2,
-        posStyles: PosStyles(bold: true),
+        posStyles: const PosStyles(bold: true),
         columns: [
           FormDesignColumnModel(
               font_size: 30,
@@ -336,7 +338,7 @@ void printTableQrCode(
         .add(Duration(minutes: global.buffetMaxMinute)));
     printer.addCommand(PosPrintBillCommandModel(
         mode: 2,
-        posStyles: PosStyles(bold: true),
+        posStyles: const PosStyles(bold: true),
         columns: [
           FormDesignColumnModel(
               font_size: 30,
@@ -360,7 +362,7 @@ void printTableQrCode(
     if (countPeople.isNotEmpty) {
       printer.addCommand(PosPrintBillCommandModel(
           mode: 2,
-          posStyles: PosStyles(bold: true),
+          posStyles: const PosStyles(bold: true),
           columns: [
             FormDesignColumnModel(
                 font_size: 30,
@@ -382,7 +384,7 @@ void printTableQrCode(
   }
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 30,
@@ -395,6 +397,19 @@ void printTableQrCode(
     value: 80,
   ));
   printer.sendToPrinter();
+  {
+    // update clickhouse โต๊ะ
+    String query =
+        "select tablenumber from dedeorder.tableinfo where tablenumber='${table.number}' and shopid='${global.shopId}'";
+    var value = await clickHouseSelect(query);
+    ResponseDataModel responseData = ResponseDataModel.fromJson(value);
+    if (responseData.data.isNotEmpty) {
+      // ถ้ามีโต๊ะแล้ว ให้ update qr code
+      query =
+          "alter table dedeorder.tableinfo update qrcode='${printer.qrCode}',tablestatus=1 where tablenumber='${table.number}' and shopid='${global.shopId}'";
+      clickHouseUpdate(query);
+    }
+  }
 }
 
 void shiftAndMoneyPrint(String guid) {
@@ -415,7 +430,7 @@ void shiftAndMoneyPrint(String guid) {
       ]));
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 24,
@@ -441,7 +456,7 @@ void shiftAndMoneyPrint(String guid) {
   }
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 40,
@@ -452,7 +467,7 @@ void shiftAndMoneyPrint(String guid) {
 
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: false),
+      posStyles: const PosStyles(bold: false),
       columns: [
         FormDesignColumnModel(
             font_size: 32,
@@ -462,7 +477,7 @@ void shiftAndMoneyPrint(String guid) {
       ]));
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: false),
+      posStyles: const PosStyles(bold: false),
       columns: [
         FormDesignColumnModel(
             font_size: 32,
@@ -473,7 +488,7 @@ void shiftAndMoneyPrint(String guid) {
   if (data.remark.isNotEmpty) {
     printer.addCommand(PosPrintBillCommandModel(
         mode: 2,
-        posStyles: PosStyles(bold: false),
+        posStyles: const PosStyles(bold: false),
         columns: [
           FormDesignColumnModel(
               font_size: 32,
@@ -484,7 +499,7 @@ void shiftAndMoneyPrint(String guid) {
   }
   printer.addCommand(PosPrintBillCommandModel(
       mode: 2,
-      posStyles: PosStyles(bold: true),
+      posStyles: const PosStyles(bold: true),
       columns: [
         FormDesignColumnModel(
             font_size: 32,

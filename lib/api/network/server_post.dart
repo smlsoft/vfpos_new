@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/sync_model.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/core.dart';
@@ -846,6 +847,12 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
               syncBillProcess();
             }
           });
+          {
+            // update สถานะโต๊ะ = 2 รอคิดเงิน (order online)
+            String query =
+                "alter table dedeorder.tableinfo update tablestatus=2 where tablenumber='${closeData.table.number}' and shopid='${global.shopId}'";
+            clickHouseUpdate(query);
+          }
         }
         response.write(docNumber);
       }

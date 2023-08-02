@@ -1296,7 +1296,7 @@ Future<void> checkOrderOnline() async {
     try {
       // ดึง Order ลูกค้าสั่งเอง
       String selectQuery =
-          "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
+          "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
       var value = await clickHouseSelect(selectQuery);
       ResponseDataModel responseData = ResponseDataModel.fromJson(value);
       // Print
@@ -1320,10 +1320,12 @@ Future<void> checkOrderOnline() async {
         ProductBarcodeObjectBoxStruct? productBarcode =
             await ProductBarcodeHelper()
                 .selectByBarcodeFirst(orderData.barcode);
+        List<String> orderIdSplit = orderData.orderId.split("#");
+        String orderIdMain = (orderIdSplit.isNotEmpty) ? orderIdSplit[0] : "";
         orderSave.add(OrderTempObjectBoxStruct(
           id: 0,
-          orderId: "1",
-          orderIdMain: "",
+          orderId: orderData.orderId,
+          orderIdMain: orderIdMain,
           orderGuid: orderData.orderGuid,
           machineId: "",
           orderDateTime: orderData.orderDateTime,
@@ -1370,9 +1372,16 @@ Future<void> checkOrderOnline() async {
             "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
         await clickHouseExecute(updateQuery);
       }
+      // save to objectbox
+      global.objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
+          .putMany(orderSave, mode: PutMode.insert);
+      // คำนวณยอดใหม่
+      global.orderSumAndUpdateTable(orderId);
     } catch (e) {
       serviceLocator<Log>().error(e.toString());
     }
+    // save to holdbill
     saveOrderToHoldBill(orderSave);
   }
   {
