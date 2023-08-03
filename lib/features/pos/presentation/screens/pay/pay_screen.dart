@@ -494,8 +494,7 @@ class _PayScreenPageState extends State<PayScreenPage>
     await posUtil
         .saveBill(
             cashAmount: global.payScreenData.cash_amount,
-            discountFormula: global.payScreenData.discount_formula,
-            discountAmount: global.payScreenData.discount_amount)
+            discountFormula: global.payScreenData.discount_formula)
         .then((value) async {
       if (value.docNumber.isNotEmpty) {
         printBill(

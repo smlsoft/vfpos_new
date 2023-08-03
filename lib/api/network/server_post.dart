@@ -805,8 +805,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
           // สร้างบิล และพิมพ์ใบเสร็จ
           await saveBill(
                   cashAmount: closeData.process.total_amount,
-                  discountFormula: closeData.discountFormula,
-                  discountAmount: closeData.process.total_discount)
+                  discountFormula: closeData.discountFormula)
               .then((value) async {
             if (value.docNumber.isNotEmpty) {
               docNumber = value.docNumber;

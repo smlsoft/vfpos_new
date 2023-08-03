@@ -154,7 +154,7 @@ class PosPrintHoldBillClass {
     result = result.replaceAll(
         "&total_itm_except_vat_amount_name&", "รวมสินค้ายกเว้นภาษี");
     result = result.replaceAll("&total_itm_except_vat_amount&",
-        global.moneyFormatAndDot.format(value.total_item_except_amount));
+        global.moneyFormatAndDot.format(value.total_item_except_vat_amount));
     // ภาษี
     result = result.replaceAll("&total_vat_name&",
         "ภาษีมูลค่าเพิ่ม : ${global.moneyFormat.format(value.vat_rate)}%");
@@ -451,8 +451,8 @@ class PosPrintHoldBillClass {
   }
 
   Future<void> printHoldBill() async {
-    PosProcessModel processResult =
-        await PosProcess().process(holdCode: holdNumber, docMode: 1,discountFormula: "");
+    PosProcessModel processResult = await PosProcess()
+        .process(holdCode: holdNumber, docMode: 1, discountFormula: "");
     switch (global.printerLocalStrongData[0].printerConnectType) {
       case global.PrinterConnectEnum.ip:
         printBillByIpImageMode(processResult);

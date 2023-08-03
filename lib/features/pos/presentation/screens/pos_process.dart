@@ -91,12 +91,86 @@ class PosProcess {
     }
   }
 
+  PosProcessModel processSummery(
+      PosProcessModel process, String discountFormula) {
+    // รวม
+    double totalAmount = 0;
+    double totalPiece = 0;
+    double totalItemVatAmount = 0;
+    double totalItemExceptVatAmount = 0;
+    for (int index = 0; index < processResult.details.length; index++) {
+      if (processResult.details[index].is_void == false) {
+        totalAmount += processResult.details[index].total_amount;
+        if (processResult.details[index].exclude_vat == false) {
+          totalItemVatAmount += processResult.details[index].total_amount;
+        } else {
+          totalItemExceptVatAmount += processResult.details[index].total_amount;
+        }
+        totalPiece += processResult.details[index].qty;
+        for (int extraIndex = 0;
+            extraIndex < processResult.details[index].extra.length;
+            extraIndex++) {
+          if (processResult.details[index].extra[extraIndex].is_void == false) {
+            totalAmount +=
+                processResult.details[index].extra[extraIndex].total_amount;
+          }
+        }
+      }
+    }
+    // Test Discount
+    totalItemVatAmount = 500;
+    totalItemExceptVatAmount = 1000;
+    discountFormula = "100";
+    //
+    processResult.vat_rate = 7;
+    processResult.total_piece = totalPiece;
+    processResult.total_item_vat_amount = totalItemVatAmount;
+    processResult.total_item_except_vat_amount = totalItemExceptVatAmount;
+    processResult.discount_formula = discountFormula;
+    processResult.total_discount = global.calcDiscountFormula(
+        totalAmount: totalAmount, discountText: discountFormula);
+    // เฉลี่ยส่วนลด
+    double discountVatAmount = (100 * totalItemVatAmount) /
+        (totalItemVatAmount + totalItemExceptVatAmount);
+    {
+      // ภาษีรวมใน
+      // สินค้ามีภาษี (คำนวณภาษี)
+      double calcVatAmount = (discountVatAmount * processResult.vat_rate) /
+          (100 + processResult.vat_rate);
+      double calcDiscountVatAmount = discountVatAmount - calcVatAmount;
+
+      /// ยอดรวมสินค้ามีภาษี หลังหักส่วนลด
+      processResult.total_item_vat_after_discount_amount =
+          processResult.total_item_vat_amount -
+              (calcVatAmount + calcDiscountVatAmount);
+      // ส่วนลดสินค้ามีภาษี
+      processResult.total_discount_vat_amount = calcDiscountVatAmount;
+      // สินค้ายกเว้นภาษี
+      // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
+      double calcDiscountExceptVatAmount = processResult.total_discount -
+          (calcDiscountVatAmount + calcVatAmount);
+      // ส่วนลดสินค้ายกเว้นภาษี
+      processResult.total_discount_except_vat_amount =
+          calcDiscountExceptVatAmount;
+      processResult.total_item_except_vat_after_discount_amount =
+          processResult.total_item_except_vat_amount -
+              calcDiscountExceptVatAmount;
+      // calc total
+      processResult.total_calc_vat_amount =
+          (processResult.total_item_vat_after_discount_amount *
+                  processResult.vat_rate) /
+              (100 + processResult.vat_rate);
+      processResult.total_amount =
+          processResult.total_item_vat_after_discount_amount +
+              processResult.total_item_except_vat_after_discount_amount;
+    }
+    return process;
+  }
+
   Future<PosProcessModel> process(
       {required String holdCode,
       required int docMode,
       required String discountFormula}) async {
-    DateTime processStart = DateTime.now();
-    double totalAmount = 0;
     // ค้นหา Barcode
     List<PosLogObjectBoxStruct> valueLog = global.posLogHelper
         .selectByHoldCodeIsVoidSuccess(
@@ -404,43 +478,6 @@ class PosProcess {
         }
       }
     }
-
-    // รวม
-    double totalPiece = 0;
-    double totalItemVatAmount = 0;
-    double totalItemExceptVatAmount = 0;
-    for (int index = 0; index < processResult.details.length; index++) {
-      if (processResult.details[index].is_void == false) {
-        totalAmount += processResult.details[index].total_amount;
-        if (processResult.details[index].exclude_vat == false) {
-          totalItemVatAmount += processResult.details[index].total_amount;
-        } else {
-          totalItemExceptVatAmount += processResult.details[index].total_amount;
-        }
-        totalPiece += processResult.details[index].qty;
-        for (int extraIndex = 0;
-            extraIndex < processResult.details[index].extra.length;
-            extraIndex++) {
-          if (processResult.details[index].extra[extraIndex].is_void == false) {
-            totalAmount +=
-                processResult.details[index].extra[extraIndex].total_amount;
-          }
-        }
-      }
-    }
-    processResult.total_piece = totalPiece;
-    processResult.total_item_vat_amount = totalItemVatAmount;
-    processResult.total_item_except_amount = totalItemExceptVatAmount;
-    processResult.discount_formula = discountFormula;
-    processResult.total_discount = global.calcDiscountFormula(
-        totalAmount: totalAmount, discountText: discountFormula);
-    processResult.vat_rate = 7;
-    processResult.total_vat_amount =
-        (totalItemVatAmount * processResult.vat_rate) /
-            (100 + processResult.vat_rate);
-    processResult.total_amount = totalAmount - processResult.total_discount;
-    print(
-        "Process Stop : " + DateTime.now().difference(processStart).toString());
-    return processResult;
+    return processSummery(processResult, discountFormula);
   }
 }

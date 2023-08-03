@@ -110,6 +110,15 @@ class PosProcessPromotionModel {
 
 @JsonSerializable()
 class PosProcessModel {
+  /// รหัสลูกค้า
+  String customer_code;
+
+  /// ชื่อลูกค้า
+  String customer_name;
+
+  /// หมายเลขโทรศัพท์
+  String customer_phone;
+
   /// จำนวนชิ้น
   double total_piece;
 
@@ -132,7 +141,7 @@ class PosProcessModel {
   double total_item_vat_amount;
 
   /// ยอดรวมสินค้ายกเว้นภาษี
-  double total_item_except_amount;
+  double total_item_except_vat_amount;
 
   /// รายการสินค้า
   List<PosProcessDetailModel> details;
@@ -164,20 +173,8 @@ class PosProcessModel {
   // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
   double total_item_except_vat_after_discount_amount;
 
-  /// ยอดรวมก่อนคำนวณภาษีสินค้ามีภาษี
+  /// ยอดรวมก่อนคำนวณภาษี (สินค้ามีภาษี)
   double total_calc_vat_amount;
-
-  /// ยอดรวมก่อนคำนวณภาษีสินค้ายกเว้น
-  double total_calc_except_vat_amount;
-
-  /// รหัสลูกค้า
-  String customer_code;
-
-  /// ชื่อลูกค้า
-  String customer_name;
-
-  /// หมายเลขโทรศัพท์
-  String customer_phone;
 
   PosProcessModel(
       {this.total_piece = 0.0,
@@ -187,7 +184,7 @@ class PosProcessModel {
       this.vat_rate = 0,
       this.total_vat_amount = 0,
       this.total_item_vat_amount = 0,
-      this.total_item_except_amount = 0,
+      this.total_item_except_vat_amount = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
       this.vat_mode = 1,
@@ -198,7 +195,6 @@ class PosProcessModel {
       this.total_item_vat_after_discount_amount = 0,
       this.total_item_except_vat_after_discount_amount = 0,
       this.total_calc_vat_amount = 0,
-      this.total_calc_except_vat_amount = 0,
       this.customer_code = "",
       this.customer_name = "",
       this.customer_phone = "",
