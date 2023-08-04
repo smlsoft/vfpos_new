@@ -9,15 +9,14 @@ import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:flutter/material.dart';
 
-class saveBillResultClass {
+class SaveBillResultClass {
   late String docNumber;
   late DateTime docDate;
 }
 
-Future<saveBillResultClass> saveBill(
-    {required double cashAmount,
-    required String discountFormula}) async {
-  saveBillResultClass result = saveBillResultClass();
+Future<SaveBillResultClass> saveBill(
+    {required double cashAmount, required String discountFormula}) async {
+  SaveBillResultClass result = SaveBillResultClass();
   String docNumber = await global.billRunning();
   DateTime docDate = DateTime.now();
   result.docNumber = docNumber;
@@ -156,8 +155,6 @@ Future<saveBillResultClass> saveBill(
       woman_count: womanCount,
       man_count: manCount,
       buffet_code: buffetCode,
-      total_calc_vat_amount: posHoldProcess.posProcess.total_calc_vat_amount,
-      total_calc_except_vat_amount: 0,
       total_qty: posHoldProcess.posProcess.total_piece,
       print_copy_bill_date_time: [],
       date_time: docDate,
@@ -175,18 +172,15 @@ Future<saveBillResultClass> saveBill(
       pay_cash_amount: cashAmount,
       pay_cash_change: 0,
       is_sync: false,
-      total_item_vat_after_discount_amount:
-          posHoldProcess.posProcess.total_item_vat_after_discount_amount,
-      total_item_except_vat_after_discount_amount:
-          posHoldProcess.posProcess.total_item_except_vat_after_discount_amount,
+      amount_except_vat: 0,
+      amount_before_calc_vat: posHoldProcess.posProcess.amount_before_calc_vat,
+      amount_after_calc_vat: posHoldProcess.posProcess.amount_after_calc_vat,
       vat_rate: vatRate,
       total_item_vat_amount: posHoldProcess.posProcess.total_item_vat_amount,
       total_item_except_vat_amount:
           posHoldProcess.posProcess.total_item_except_vat_amount,
       total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
       discount_formula: discountFormula,
-      total_except_amount:
-          posHoldProcess.posProcess.total_item_except_vat_after_discount_amount,
       total_discount: posHoldProcess.posProcess.total_discount,
       total_discount_vat_amount:
           posHoldProcess.posProcess.total_discount_vat_amount,

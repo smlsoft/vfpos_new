@@ -86,7 +86,7 @@ Map<String, dynamic> _$FormDesignFooterModelToJson(
 FormDesignColumnModel _$FormDesignColumnModelFromJson(
         Map<String, dynamic> json) =>
     FormDesignColumnModel(
-      command: json['command'] as String? ?? "",
+      command_text: json['command_text'] as String? ?? "",
       width: (json['width'] as num?)?.toDouble() ?? 1,
       text: json['text'] as String? ?? "",
       header_names: (json['header_names'] as List<dynamic>?)
@@ -111,7 +111,7 @@ Map<String, dynamic> _$FormDesignColumnModelToJson(
     <String, dynamic>{
       'header_names': instance.header_names.map((e) => e.toJson()).toList(),
       'text': instance.text,
-      'command': instance.command,
+      'command_text': instance.command_text,
       'width': instance.width,
       'font_size': instance.font_size,
       'font_family': instance.font_family,

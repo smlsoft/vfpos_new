@@ -159,12 +159,12 @@ class PosPrintBillClass {
         "&total_piece&", global.moneyFormatAndDot.format(value.total_qty));
     // ยอดรวมสินค้ามีภาษี
     result =
-        result.replaceAll("&total_item_vat_amount_name&", "รวมสินค้ามีภาษี");
+        result.replaceAll("&total_item_vat_amount_name&", "มูลค่าสินค้ามีภาษี");
     result = result.replaceAll("&total_item_vat_amount&",
         global.moneyFormatAndDot.format(value.total_item_vat_amount));
     // ยอดรวมสินค้ายกเว้นภาษี
     result = result.replaceAll(
-        "&total_itm_except_vat_amount_name&", "รวมสินค้ายกเว้นภาษี");
+        "&total_itm_except_vat_amount_name&", "มูลค่าสินค้ายกเว้นภาษี");
     result = result.replaceAll("&total_itm_except_vat_amount&",
         global.moneyFormatAndDot.format(value.total_item_except_vat_amount));
     // ส่วนลดสินค้ามีภาษี
@@ -185,34 +185,22 @@ class PosPrintBillClass {
         global.moneyFormatAndDot.format(value.total_discount));
     // ยอดรวมสินค้ามีภาษี หัก ส่วนลด
     result = result.replaceAll("&total_item_vat_amount_after_discount_name&",
-        "รวมสินค้ามีภาษี (หลังหักส่วนลด)");
+        "มูลค่าสินค้ามีภาษี (หลังหักส่วนลด)");
     result = result.replaceAll("&total_item_vat_amount_after_discount&",
-        global.moneyFormatAndDot.format(value.total_calc_vat_amount));
-    // ยอดรวมสินค้ายกเว้นภาษี หัก ส่วนลด
-    result = result.replaceAll(
-        "&total_itm_except_vat_amount_after_discount_name&",
-        "รวมสินค้ายกเว้นภาษี (หลังหักส่วนลด)");
-    result = result.replaceAll("&total_itm_except_vat_amount_after_discount&",
-        global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
-    // ยอดรวมหลังหักส่วนลด
-    result = result.replaceAll(
-        "&total_before_calc_vat_name&", "ยอดรวมหลังหักส่วนลด");
-    result = result.replaceAll("&total_before_calc_vat&",
-        global.moneyFormatAndDot.format(value.total_calc_vat_amount));
+        global.moneyFormatAndDot.format(value.amount_after_calc_vat));
     // รวมทั้งสิ้น
     result = result.replaceAll("&total_amount_name&", "ยอดรวมสุทธิ");
     result = result.replaceAll(
         "&total_amount&", global.moneyFormatAndDot.format(value.total_amount));
-    // ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี
+    // ยอดก่อนภาษีมูลค่าเพิ่ม สินค้ายกเว้นภาษี
     result = result.replaceAll(
         "&total_before_except_vat_name&", "ยอดก่อนภาษี สินค้ายกเว้นภาษี");
     result = result.replaceAll("&total_before_except_vat&",
-        global.moneyFormatAndDot.format(value.total_calc_except_vat_amount));
+        global.moneyFormatAndDot.format(value.amount_except_vat));
     // ยอดก่อนภาษีมูลค่าเพิ่ม
-    result = result.replaceAll(
-        "&total_before_vat_name&", "ยอดก่อนภาษี สินค้ามีภาษี");
+    result = result.replaceAll("&total_before_vat_name&", "มูลค่าก่อนภาษี");
     result = result.replaceAll("&total_before_vat&",
-        global.moneyFormatAndDot.format(value.total_calc_vat_amount));
+        global.moneyFormatAndDot.format(value.amount_before_calc_vat));
     // ภาษี
     result = result.replaceAll("&total_vat_name&",
         "ภาษีมูลค่าเพิ่ม : ${global.moneyFormat.format(value.vat_rate)}%");
@@ -383,7 +371,7 @@ class PosPrintBillClass {
         (jsonDecode(formDesign.detail_extra_json) as List)
             .map((e) => FormDesignColumnModel.fromJson(e))
             .toList();
-    List<List<FormDesignColumnModel>> formDetailColumnList =
+    List<List<FormDesignColumnModel>> formTotalColumnList =
         (jsonDecode(formDesign.detail_total_json) as List)
             .map((e) => (e as List)
                 .map((e) => FormDesignColumnModel.fromJson(e))
@@ -418,7 +406,7 @@ class PosPrintBillClass {
             columns.add(
               FormDesignColumnModel(
                   width: formDetail.width,
-                  text: findValueBillDetail(detail, formDetail.command),
+                  text: findValueBillDetail(detail, formDetail.command_text),
                   text_align: formDetail.text_align,
                   font_weight_bold: false,
                   font_size: formDetail.font_size),
@@ -439,8 +427,8 @@ class PosPrintBillClass {
             columns.add(
               FormDesignColumnModel(
                   width: formDetailExtra.width,
-                  text:
-                      findValueBillDetailExtra(extra, formDetailExtra.command),
+                  text: findValueBillDetailExtra(
+                      extra, formDetailExtra.command_text),
                   text_align: formDetailExtra.text_align,
                   font_weight_bold: formDetailExtra.font_weight_bold,
                   font_size: formDetailExtra.font_size),
@@ -453,24 +441,31 @@ class PosPrintBillClass {
     // Line
     commandList.add(PosPrintBillCommandModel(mode: 3));
     {
-      double sumQty = 0;
-      for (var detail in billDetails) {
-        sumQty += detail.qty;
-      }
-      for (var formDetailColumns in formDetailColumnList) {
-        List<FormDesignColumnModel> columns = [];
-        for (FormDesignColumnModel column in formDetailColumns) {
-          // พิมพ์ยอดรวม (รายการ
-          columns.add(
-            FormDesignColumnModel(
-                width: column.width,
-                text: findValueBillTotal(bill, column.command),
-                text_align: column.text_align,
-                font_weight_bold: column.font_weight_bold,
-                font_size: column.font_size),
-          );
+      // ยอดรวม
+      for (var formTotalColumns in formTotalColumnList) {
+        bool isZero = false;
+        if ((double.tryParse(
+                    findValueBillTotal(bill, formTotalColumns[1].command_text)
+                        .replaceAll(",", "")) ??
+                0) ==
+            0) {
+          isZero = true;
         }
-        commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+        if (isZero == false) {
+          List<FormDesignColumnModel> columns = [];
+          for (FormDesignColumnModel column in formTotalColumns) {
+            // พิมพ์ยอดรวม
+            columns.add(
+              FormDesignColumnModel(
+                  width: column.width,
+                  text: findValueBillTotal(bill, column.command_text),
+                  text_align: column.text_align,
+                  font_weight_bold: column.font_weight_bold,
+                  font_size: column.font_size),
+            );
+          }
+          commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
+        }
       }
     }
     // Line

@@ -93,7 +93,10 @@ Future syncBillData() async {
         whnames: [],
       ));
     }
-    List<BillPayObjectBoxStruct> payDetails = (jsonDecode(bill.pay_json) as List).map((e) => BillPayObjectBoxStruct.fromJson(e)).toList();
+    List<BillPayObjectBoxStruct> payDetails =
+        (jsonDecode(bill.pay_json) as List)
+            .map((e) => BillPayObjectBoxStruct.fromJson(e))
+            .toList();
     List<TransPaymentCreditCardModel> paymentCreditCards = [];
     List<TransPaymentTransferModel> paymentTransfers = [];
     for (var payDetail in payDetails) {
@@ -167,7 +170,7 @@ Future syncBillData() async {
         totalbeforevat: 0,
         totalcost: 0,
         totaldiscount: bill.total_discount,
-        totalexceptvat: bill.total_except_amount,
+        totalexceptvat: 0,
         totalvalue: bill.total_amount,
         totalvatvalue: bill.total_vat_amount,
         transflag: 0,
@@ -323,7 +326,8 @@ Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   Dio client = Client().init();
   //String jsonPayload = jsonEncode(trx.toJson());
   try {
-    final response = await client.post('/transaction/sale-invoice', data: trx.toJson());
+    final response =
+        await client.post('/transaction/sale-invoice', data: trx.toJson());
     try {
       final rawData = json.decode(response.toString());
 
@@ -358,12 +362,15 @@ Future syncBillProcess() async {
         if (!global.loginProcess) {
           global.loginProcess = true;
           UserRepository userRepository = UserRepository();
-          await userRepository.authenUser(global.apiUserName, global.apiUserPassword).then((result) async {
+          await userRepository
+              .authenUser(global.apiUserName, global.apiUserPassword)
+              .then((result) async {
             if (result.success) {
               global.apiConnected = true;
               global.appStorage.write("token", result.data["token"]);
               serviceLocator<Log>().debug("Login Success");
-              ApiResponse selectShop = await userRepository.selectShop(global.apiShopID);
+              ApiResponse selectShop =
+                  await userRepository.selectShop(global.apiShopID);
               if (selectShop.success) {
                 serviceLocator<Log>().debug("Select Shop Success");
               }

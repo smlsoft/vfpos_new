@@ -127,24 +127,31 @@ class PosProcess {
     processResult.total_item_vat_amount = totalItemVatAmount;
     processResult.total_item_except_vat_amount = totalItemExceptVatAmount;
     processResult.discount_formula = discountFormula;
-    processResult.total_discount = global.calcDiscountFormula(
-        totalAmount: totalAmount, discountText: discountFormula);
-    // เฉลี่ยส่วนลด
-    double discountVatAmount = (100 * totalItemVatAmount) /
-        (totalItemVatAmount + totalItemExceptVatAmount);
-    {
+    processResult.total_discount = global.roundDouble(
+        global.calcDiscountFormula(
+            totalAmount: totalAmount, discountText: discountFormula),
+        2);
+    // เฉลี่ยส่วนลด สินค้ามีภาษี
+    double discountVatAmount = global.roundDouble(
+        (100 * totalItemVatAmount) /
+            (totalItemVatAmount + totalItemExceptVatAmount),
+        2);
+    if (1 == 1) {
       // ภาษีรวมใน
       // สินค้ามีภาษี (คำนวณภาษี)
-      double calcVatAmount = (discountVatAmount * processResult.vat_rate) /
-          (100 + processResult.vat_rate);
+      double calcVatAmount = global.roundDouble(
+          (discountVatAmount * processResult.vat_rate) /
+              (100 + processResult.vat_rate),
+          2);
       double calcDiscountVatAmount = discountVatAmount - calcVatAmount;
 
       /// ยอดรวมสินค้ามีภาษี หลังหักส่วนลด
-      processResult.total_item_vat_after_discount_amount =
+      processResult.amount_after_calc_vat =
           processResult.total_item_vat_amount -
               (calcVatAmount + calcDiscountVatAmount);
       // ส่วนลดสินค้ามีภาษี
-      processResult.total_discount_vat_amount = calcDiscountVatAmount;
+      processResult.total_discount_vat_amount =
+          calcDiscountVatAmount + calcVatAmount;
       // สินค้ายกเว้นภาษี
       // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
       double calcDiscountExceptVatAmount = processResult.total_discount -
@@ -155,14 +162,40 @@ class PosProcess {
       processResult.total_item_except_vat_after_discount_amount =
           processResult.total_item_except_vat_amount -
               calcDiscountExceptVatAmount;
+      // มูลค่าหลังคิดภาษี
+      //processResult.amount_after_calc_vat = totalItemVatAmount + calcVatAmount;
       // calc total
-      processResult.total_calc_vat_amount =
-          (processResult.total_item_vat_after_discount_amount *
-                  processResult.vat_rate) /
-              (100 + processResult.vat_rate);
-      processResult.total_amount =
-          processResult.total_item_vat_after_discount_amount +
-              processResult.total_item_except_vat_after_discount_amount;
+      processResult.total_vat_amount = global.roundDouble(
+          (processResult.amount_after_calc_vat * processResult.vat_rate) /
+              (100 + processResult.vat_rate),
+          2);
+      processResult.total_amount = processResult.amount_after_calc_vat +
+          processResult.total_item_except_vat_after_discount_amount;
+    } else {
+      // ภาษีแยกนอก
+      // สินค้ามีภาษี (คำนวณภาษี)
+      double calcDiscountVatAmount = discountVatAmount;
+
+      /// ยอดรวมสินค้ามีภาษี หลังหักส่วนลด
+      processResult.amount_after_calc_vat =
+          (processResult.total_item_vat_amount - calcDiscountVatAmount);
+      // ส่วนลดสินค้ามีภาษี
+      processResult.total_discount_vat_amount = calcDiscountVatAmount;
+      // สินค้ายกเว้นภาษี
+      // ส่วนลดสินค้ายกเว้นภาษี
+      processResult.total_discount_except_vat_amount =
+          processResult.total_discount - calcDiscountVatAmount;
+      processResult.total_item_except_vat_after_discount_amount =
+          processResult.total_item_except_vat_amount -
+              processResult.total_discount_except_vat_amount;
+      // calc total
+      processResult.total_vat_amount = global.roundDouble(
+          (processResult.amount_after_calc_vat *
+              (processResult.vat_rate / 100)),
+          2);
+      processResult.total_amount = (processResult.amount_after_calc_vat +
+              processResult.total_vat_amount) +
+          processResult.total_item_except_vat_after_discount_amount;
     }
     return process;
   }

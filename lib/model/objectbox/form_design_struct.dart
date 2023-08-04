@@ -93,7 +93,7 @@ class FormDesignFooterModel {
 class FormDesignColumnModel {
   List<LanguageDataModel> header_names;
   String text;
-  String command;
+  String command_text;
   double width;
   double font_size;
   String font_family;
@@ -107,7 +107,7 @@ class FormDesignColumnModel {
   String font_color;
 
   FormDesignColumnModel({
-    this.command = "",
+    this.command_text = "",
     this.width = 1,
     this.text = "",
     this.header_names = const [],

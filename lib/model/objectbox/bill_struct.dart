@@ -50,17 +50,14 @@ class BillObjectBoxStruct {
   /// ส่วนลดสินค้ายกเว้นภาษี
   double total_discount_except_vat_amount;
 
-  /// ยอดรวมสินค้ามีภาษี หลังหักส่วนลด
-  double total_item_vat_after_discount_amount;
+  /// มูลค่าก่อนคิดภาษี (สินค้ามีภาษี)
+  double amount_before_calc_vat;
 
-  // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
-  double total_item_except_vat_after_discount_amount;
+  /// มูลค่าหลังคิดภาษี (สินค้ามีภาษี)
+  double amount_after_calc_vat;
 
-  /// ยอดรวมก่อนคำนวณภาษีสินค้ามีภาษี
-  double total_calc_vat_amount;
-
-  /// ยอดรวมก่อนคำนวณภาษีสินค้ายกเว้น
-  double total_calc_except_vat_amount;
+  // มูลค่า สินค้ายกเว้นภาษี
+  double amount_except_vat;
 
   /// ยอดรวมทั้งสิ้น
   double total_amount;
@@ -70,9 +67,6 @@ class BillObjectBoxStruct {
 
   /// อัตรา vat
   double vat_rate;
-
-  /// ยอดรวมสินค้ายกเว้น vat
-  double total_except_amount;
 
   /// รหัสพนักงานขาย
   String sale_code;
@@ -191,18 +185,16 @@ class BillObjectBoxStruct {
       required this.vat_rate,
       required this.total_amount,
       required this.total_vat_amount,
-      required this.total_except_amount,
       required this.cashier_code,
       required this.cashier_name,
       required this.sale_code,
-      required this.sale_name,
-      required this.total_calc_vat_amount,
-      required this.total_calc_except_vat_amount,
-      required this.vat_mode,
-      required this.total_item_vat_after_discount_amount,
-      required this.total_item_except_vat_after_discount_amount,
+      required this.amount_except_vat,
+      required this.amount_before_calc_vat,
+      required this.amount_after_calc_vat,
       required this.total_discount_vat_amount,
       required this.total_discount_except_vat_amount,
+      required this.sale_name,
+      required this.vat_mode,
       required this.total_qty,
       required this.is_sync,
       required this.discount_formula,

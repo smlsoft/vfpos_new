@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "71:7887005235775397265",
+      "lastPropertyId": "74:2733800475833554943",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -114,11 +114,6 @@
         {
           "id": "24:722289284511599717",
           "name": "vat_rate",
-          "type": 8
-        },
-        {
-          "id": "25:7257208570699036067",
-          "name": "total_except_amount",
           "type": 8
         },
         {
@@ -262,16 +257,6 @@
           "type": 8
         },
         {
-          "id": "62:7184901347809486783",
-          "name": "total_item_vat_after_discount_amount",
-          "type": 8
-        },
-        {
-          "id": "63:3735171330386112790",
-          "name": "total_item_except_vat_after_discount_amount",
-          "type": 8
-        },
-        {
           "id": "66:2418146863738338942",
           "name": "total_discount",
           "type": 8
@@ -287,13 +272,18 @@
           "type": 8
         },
         {
-          "id": "70:5863642082019305378",
-          "name": "total_calc_vat_amount",
+          "id": "72:4948889404428633914",
+          "name": "amount_after_calc_vat",
           "type": 8
         },
         {
-          "id": "71:7887005235775397265",
-          "name": "total_calc_except_vat_amount",
+          "id": "73:3627135643772289189",
+          "name": "amount_except_vat",
+          "type": 8
+        },
+        {
+          "id": "74:2733800475833554943",
+          "name": "amount_before_calc_vat",
           "type": 8
         }
       ],
@@ -2036,7 +2026,12 @@
     7361895675452458520,
     8195153540722984911,
     3179045193437887525,
-    7481048659880661150
+    7481048659880661150,
+    7887005235775397265,
+    7184901347809486783,
+    7257208570699036067,
+    3735171330386112790,
+    5863642082019305378
   ],
   "retiredRelationUids": [],
   "version": 1

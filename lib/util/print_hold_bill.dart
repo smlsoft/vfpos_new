@@ -267,7 +267,7 @@ class PosPrintHoldBillClass {
             columns.add(
               FormDesignColumnModel(
                   width: formDetail.width,
-                  text: findValueBillDetail(detail, formDetail.command),
+                  text: findValueBillDetail(detail, formDetail.command_text),
                   text_align: formDetail.text_align,
                   font_weight_bold: false,
                   font_size: formDetail.font_size),
@@ -284,8 +284,8 @@ class PosPrintHoldBillClass {
             columns.add(
               FormDesignColumnModel(
                   width: formDetailExtra.width,
-                  text:
-                      findValueBillDetailExtra(extra, formDetailExtra.command),
+                  text: findValueBillDetailExtra(
+                      extra, formDetailExtra.command_text),
                   text_align: formDetailExtra.text_align,
                   font_weight_bold: formDetailExtra.font_weight_bold,
                   font_size: formDetailExtra.font_size),
@@ -309,7 +309,7 @@ class PosPrintHoldBillClass {
           columns.add(
             FormDesignColumnModel(
                 width: column.width,
-                text: findValueBillTotal(processResult, column.command),
+                text: findValueBillTotal(processResult, column.command_text),
                 text_align: column.text_align,
                 font_weight_bold: column.font_weight_bold,
                 font_size: column.font_size),

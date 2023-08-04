@@ -20,7 +20,7 @@ Future<void> loadFormDesign() async {
     ]);
     List<FormDesignColumnModel> detailColumn = [
       FormDesignColumnModel(
-          command:
+          command_text:
               "&item_qty& &item_name&/&item_unit_name& &item_price_and_symbol& &item_discount&",
           header_names: [
             LanguageDataModel(code: "th", name: "รายละเอียด"),
@@ -29,7 +29,7 @@ Future<void> loadFormDesign() async {
           font_weight_bold: true,
           width: 5),
       FormDesignColumnModel(
-          command: "&item_total_amount&",
+          command_text: "&item_total_amount&",
           text_align: PrintColumnAlign.right,
           header_names: [
             LanguageDataModel(code: "th", name: "รวม"),
@@ -40,124 +40,115 @@ Future<void> loadFormDesign() async {
     ];
     List<FormDesignColumnModel> detailExtraColumn = [
       FormDesignColumnModel(
-          command:
+          command_text:
               " + &item_extra_name& &item_extra_qty& &item_extra_unit_name&",
           width: 5),
       FormDesignColumnModel(
-          command: "&item_extra_price&",
+          command_text: "&item_extra_price&",
           text_align: PrintColumnAlign.right,
           width: 1),
       FormDesignColumnModel(
-          command: "&item_extra_total_amount&",
+          command_text: "&item_extra_total_amount&",
           text_align: PrintColumnAlign.right,
           width: 2),
     ];
     List<List<FormDesignColumnModel>> detailTotalColumn = [
       [
         // จำนวนชิ้น
-        FormDesignColumnModel(command: "&total_piece_name&", width: 5),
+        FormDesignColumnModel(command_text: "&total_piece_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_piece&",
-            text_align: PrintColumnAlign.right,
-            width: 2),
-      ],
-      [
-        // ยอดรวมสินค้ายกเว้นภาษี
-        FormDesignColumnModel(
-            command: "&total_itm_except_vat_amount_name&", width: 5),
-        FormDesignColumnModel(
-            command: "&total_itm_except_vat_amount&",
+            command_text: "&total_piece&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดรวมสินค้ามีภาษี
         FormDesignColumnModel(
-            command: "&total_item_vat_amount_name&", width: 5),
+            command_text: "&total_item_vat_amount_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_item_vat_amount&",
+            command_text: "&total_item_vat_amount&",
+            text_align: PrintColumnAlign.right,
+            width: 2),
+      ],
+      [
+        // ยอดรวมสินค้ายกเว้นภาษี
+        FormDesignColumnModel(
+            command_text: "&total_itm_except_vat_amount_name&", width: 5),
+        FormDesignColumnModel(
+            command_text: "&total_itm_except_vat_amount&",
+            text_align: PrintColumnAlign.right,
+            width: 2),
+      ],
+      [
+        // ยอดส่วนลดสินค้ามีภาษี
+        FormDesignColumnModel(
+            command_text: "&total_discount_vat_name&", width: 5),
+        FormDesignColumnModel(
+            command_text: "&total_discount_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดส่วนลดสินค้ายกเว้นภาษี
         FormDesignColumnModel(
-            command: "&total_discount_vat_except_name&", width: 5),
+            command_text: "&total_discount_vat_except_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_discount_vat_except_amount&",
-            text_align: PrintColumnAlign.right,
-            width: 2),
-      ],
-      [
-        // ยอดส่วนลดสินค้ามีภาษี
-        FormDesignColumnModel(command: "&total_discount_vat_name&", width: 5),
-        FormDesignColumnModel(
-            command: "&total_discount_vat_amount&",
+            command_text: "&total_discount_vat_except_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดส่วนลดทั้งหมด
-        FormDesignColumnModel(command: "&total_discount_name&", width: 5),
+        FormDesignColumnModel(command_text: "&total_discount_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_discount_amount&",
+            command_text: "&total_discount_amount&",
             text_align: PrintColumnAlign.right,
             font_weight_bold: true,
             width: 2),
       ],
       [
-        // ยอดรวมสินค้ายกเว้นภาษี (หลังหักส่วนลด)
-        FormDesignColumnModel(
-            command: "&total_itm_except_vat_amount_after_discount_name&",
-            width: 5),
-        FormDesignColumnModel(
-            command: "&total_itm_except_vat_amount_after_discount&",
-            text_align: PrintColumnAlign.right,
-            width: 2),
-      ],
-      [
-        // ยอดรวมสินค้ามีภาษี (หลังหักส่วนลด)
-        FormDesignColumnModel(
-            command: "&total_item_vat_amount_after_discount_name&", width: 5),
-        FormDesignColumnModel(
-            command: "&total_before_calc_vat&",
-            text_align: PrintColumnAlign.right,
-            width: 2),
-      ],
-      [
-        // ยอดก่อนภาษีมูลค่าเพิ่มสินค้ายกเว้นภาษี
-        FormDesignColumnModel(
-            command: "&total_before_except_vat_name&", width: 5),
-        FormDesignColumnModel(
-            command: "&total_before_except_vat&",
-            text_align: PrintColumnAlign.right,
-            width: 2),
-      ],
-      [
         // ยอดก่อนภาษีมูลค่าเพิ่ม
-        FormDesignColumnModel(command: "&total_before_vat_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_before_vat&",
+            command_text: "&total_before_vat_name&", width: 5),
+        FormDesignColumnModel(
+            command_text: "&total_before_vat&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดภาษี
-        FormDesignColumnModel(command: "&total_vat_name&", width: 5),
+        FormDesignColumnModel(command_text: "&total_vat_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_vat&",
+            command_text: "&total_vat&",
+            text_align: PrintColumnAlign.right,
+            width: 2),
+      ],
+      [
+        // มูลค่าหลังคิดภาษี
+        FormDesignColumnModel(command_text: "&total_item_vat_amount_after_discount_name&", width: 5),
+        FormDesignColumnModel(
+            command_text: "&total_item_vat_amount_after_discount&",
+            text_align: PrintColumnAlign.right,
+            width: 2),
+      ],
+      [
+        // มูลค่ายกเว้นภาษี
+        FormDesignColumnModel(
+            command_text: "&total_after_except_vat_name&", width: 5),
+        FormDesignColumnModel(
+            command_text: "&total_after_except_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดรวมสุทธิ
         FormDesignColumnModel(
-            command: "&total_amount_name&",
+            command_text: "&total_amount_name&",
             width: 5,
             font_size: 32,
             font_weight_bold: true),
         FormDesignColumnModel(
-            command: "&total_amount&",
+            command_text: "&total_amount&",
             text_align: PrintColumnAlign.right,
             font_weight_bold: true,
             font_size: 32,
@@ -166,12 +157,12 @@ Future<void> loadFormDesign() async {
       [
         // ชำระเงินสด
         FormDesignColumnModel(
-            command: "&total_pay_cash_name&",
+            command_text: "&total_pay_cash_name&",
             width: 5,
             font_size: 32,
             font_weight_bold: true),
         FormDesignColumnModel(
-            command: "&total_pay_cash&",
+            command_text: "&total_pay_cash&",
             text_align: PrintColumnAlign.right,
             width: 2,
             font_size: 32,
@@ -180,12 +171,12 @@ Future<void> loadFormDesign() async {
       [
         // เงินทอน
         FormDesignColumnModel(
-            command: "&total_pay_cash_change_name&",
+            command_text: "&total_pay_cash_change_name&",
             width: 5,
             font_size: 32,
             font_weight_bold: true),
         FormDesignColumnModel(
-            command: "&total_pay_cash_change&",
+            command_text: "&total_pay_cash_change&",
             text_align: PrintColumnAlign.right,
             width: 2,
             font_size: 32,
@@ -249,7 +240,7 @@ Future<void> loadFormDesign() async {
   {
     List<FormDesignColumnModel> detailColumn = [
       FormDesignColumnModel(
-          command:
+          command_text:
               "&item_qty& &item_name&/&item_unit_name& &item_price_and_symbol& &item_discount&",
           header_names: [
             LanguageDataModel(code: "th", name: "รายละเอียด"),
@@ -258,7 +249,7 @@ Future<void> loadFormDesign() async {
           font_weight_bold: true,
           width: 5),
       FormDesignColumnModel(
-          command: "&item_total_amount&",
+          command_text: "&item_total_amount&",
           text_align: PrintColumnAlign.right,
           header_names: [
             LanguageDataModel(code: "th", name: "รวม"),
@@ -269,62 +260,62 @@ Future<void> loadFormDesign() async {
     ];
     List<FormDesignColumnModel> detailExtraColumn = [
       FormDesignColumnModel(
-          command:
+          command_text:
               " + &item_extra_name& &item_extra_qty& &item_extra_unit_name&",
           width: 5),
       FormDesignColumnModel(
-          command: "&item_extra_price&",
+          command_text: "&item_extra_price&",
           text_align: PrintColumnAlign.right,
           width: 1),
       FormDesignColumnModel(
-          command: "&item_extra_total_amount&",
+          command_text: "&item_extra_total_amount&",
           text_align: PrintColumnAlign.right,
           width: 2),
     ];
     List<List<FormDesignColumnModel>> detailTotalColumn = [
       [
         // จำนวนชิ้น
-        FormDesignColumnModel(command: "&total_piece_name&", width: 5),
+        FormDesignColumnModel(command_text: "&total_piece_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_piece&",
+            command_text: "&total_piece&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดรวมสินค้ายกเว้นภาษี
         FormDesignColumnModel(
-            command: "&total_itm_except_vat_amount_name&", width: 5),
+            command_text: "&total_itm_except_vat_amount_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_itm_except_vat_amount&",
+            command_text: "&total_itm_except_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดรวมสินค้ามีภาษี
         FormDesignColumnModel(
-            command: "&total_item_vat_amount_name&", width: 5),
+            command_text: "&total_item_vat_amount_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_item_vat_amount&",
+            command_text: "&total_item_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดภาษี
-        FormDesignColumnModel(command: "&total_vat_name&", width: 5),
+        FormDesignColumnModel(command_text: "&total_vat_name&", width: 5),
         FormDesignColumnModel(
-            command: "&total_vat&",
+            command_text: "&total_vat&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],
       [
         // ยอดรวมสุทธิ
         FormDesignColumnModel(
-            command: "&total_amount_name&",
+            command_text: "&total_amount_name&",
             width: 5,
             font_size: 32,
             font_weight_bold: true),
         FormDesignColumnModel(
-            command: "&total_amount&",
+            command_text: "&total_amount&",
             text_align: PrintColumnAlign.right,
             font_weight_bold: true,
             font_size: 32,
