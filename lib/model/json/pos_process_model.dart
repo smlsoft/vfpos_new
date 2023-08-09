@@ -169,13 +169,12 @@ class PosProcessModel {
 
   /// ยอดรวมก่อนคำนวณภาษี (สินค้ามีภาษี)
   double amount_before_calc_vat;
-  
+
   /// มูลค่าสินค้าหลังคิดภาษี
   double amount_after_calc_vat;
 
-  // ยอดรวมสินค้ายกเว้นภาษี หลังหักส่วนลด
-  double total_item_except_vat_after_discount_amount;
-
+  /// มูลค่าสินค้ายกเว้นภาษี
+  double amount_except_vat;
 
   PosProcessModel(
       {this.total_piece = 0.0,
@@ -186,6 +185,7 @@ class PosProcessModel {
       this.total_vat_amount = 0,
       this.total_item_vat_amount = 0,
       this.total_item_except_vat_amount = 0,
+      this.amount_except_vat = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
       this.vat_mode = 1,
@@ -194,7 +194,6 @@ class PosProcessModel {
       this.total_discount_vat_amount = 0,
       this.total_discount_except_vat_amount = 0,
       this.amount_after_calc_vat = 0,
-      this.total_item_except_vat_after_discount_amount = 0,
       this.amount_before_calc_vat = 0,
       this.customer_code = "",
       this.customer_name = "",

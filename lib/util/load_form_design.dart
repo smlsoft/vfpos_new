@@ -134,9 +134,9 @@ Future<void> loadFormDesign() async {
       [
         // มูลค่ายกเว้นภาษี
         FormDesignColumnModel(
-            command_text: "&total_after_except_vat_name&", width: 5),
+            command_text: "&total_item_except_vat_amount_after_discount_name&", width: 5),
         FormDesignColumnModel(
-            command_text: "&total_after_except_vat_amount&",
+            command_text: "&total_item_except_vat_amount_after_discount&",
             text_align: PrintColumnAlign.right,
             width: 2),
       ],

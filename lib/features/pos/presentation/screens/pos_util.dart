@@ -172,7 +172,7 @@ Future<SaveBillResultClass> saveBill(
       pay_cash_amount: cashAmount,
       pay_cash_change: 0,
       is_sync: false,
-      amount_except_vat: 0,
+      amount_except_vat: posHoldProcess.posProcess.amount_except_vat,
       amount_before_calc_vat: posHoldProcess.posProcess.amount_before_calc_vat,
       amount_after_calc_vat: posHoldProcess.posProcess.amount_after_calc_vat,
       vat_rate: vatRate,

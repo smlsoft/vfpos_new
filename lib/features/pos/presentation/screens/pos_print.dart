@@ -183,18 +183,24 @@ class PosPrintBillClass {
     result = result.replaceAll("&total_discount_name&", "ส่วนลดทั้งหมด");
     result = result.replaceAll("&total_discount_amount&",
         global.moneyFormatAndDot.format(value.total_discount));
-    // ยอดรวมสินค้ามีภาษี หัก ส่วนลด
-    result = result.replaceAll("&total_item_vat_amount_after_discount_name&",
-        "มูลค่าสินค้ามีภาษี (หลังหักส่วนลด)");
+    // มูลค่าสินค้าหลังคิดภาษี (หลังหักส่วนลด)
+    result = result.replaceAll(
+        "&total_item_vat_amount_after_discount_name&", "มูลค่าหลังคิดภาษี");
     result = result.replaceAll("&total_item_vat_amount_after_discount&",
         global.moneyFormatAndDot.format(value.amount_after_calc_vat));
+    // มูลค่าสินค้ายกเว้นภาษี (หลังหักส่วนลด)
+    result = result.replaceAll(
+        "&total_item_except_vat_amount_after_discount_name&",
+        "มูลค่ายกเว้นภาษี");
+    result = result.replaceAll("&total_item_except_vat_amount_after_discount&",
+        global.moneyFormatAndDot.format(value.amount_except_vat));
     // รวมทั้งสิ้น
     result = result.replaceAll("&total_amount_name&", "ยอดรวมสุทธิ");
     result = result.replaceAll(
         "&total_amount&", global.moneyFormatAndDot.format(value.total_amount));
     // ยอดก่อนภาษีมูลค่าเพิ่ม สินค้ายกเว้นภาษี
     result = result.replaceAll(
-        "&total_before_except_vat_name&", "ยอดก่อนภาษี สินค้ายกเว้นภาษี");
+        "&total_before_except_vat_name&", "มูลค่าสินค้ายกเว้นภาษี");
     result = result.replaceAll("&total_before_except_vat&",
         global.moneyFormatAndDot.format(value.amount_except_vat));
     // ยอดก่อนภาษีมูลค่าเพิ่ม
