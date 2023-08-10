@@ -118,9 +118,9 @@ class PosProcess {
       }
     }
     // Test Discount
-    totalItemVatAmount = 500;
-    totalItemExceptVatAmount = 1000;
-    discountFormula = "0";
+    totalItemVatAmount = 0;
+    totalItemExceptVatAmount = 300;
+    discountFormula = "100";
     //
     processResult.vat_rate = 7;
     processResult.total_piece = totalPiece;

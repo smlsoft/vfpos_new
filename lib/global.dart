@@ -214,6 +214,22 @@ enum DisplayMachineEnum { customerDisplay, posTerminal }
 
 enum PosScreenModeEnum { posSale, posReturn }
 
+enum ThaiTaxIncludeEnum {
+  normal,
+// สินค้ามีภาษี ไม่มีส่วนลด
+  productsNoDiscountsWithTax,
+// สินค้ามีภาษี มีส่วนลด
+  productsWithTaxAndDiscount,
+// สินค้าไม่มีภาษี ไม่มีส่วนลด
+  nonTaxedNonDiscountedProducts,
+// สินค้าไม่มีภาษี มีส่วนลด
+  nonTaxedDiscountedProducts,
+// สินค้ามีภาษี และสินค้าไม่มีภาษี มีส่วนลด
+  bothTaxTypesProductsWithDiscount,
+// สินค้ามีภาษี และสินค้าไม่มีภาษี ไม่มีส่วนลด
+  bothTaxTypesProductsWithoutDiscount
+}
+
 enum TableManagerEnum {
   openTable,
   closeTable,

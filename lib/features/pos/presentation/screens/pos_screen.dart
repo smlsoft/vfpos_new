@@ -3981,6 +3981,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         width: double.infinity,
         child: Row(children: [
           myButton(
+            backgroundColor:
+                (desktopWidgetMode == 0) ? Colors.orange : Colors.blue,
             child: const Icon(
               Icons.numbers,
             ),
@@ -3994,6 +3996,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           myButton(
+              backgroundColor:
+                  (desktopWidgetMode == 1) ? Colors.orange : Colors.blue,
               child: const Icon(Icons.search),
               onPressed: () {
                 setState(() {
@@ -4004,6 +4008,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           myButton(
+              backgroundColor:
+                  (desktopWidgetMode == 2) ? Colors.orange : Colors.blue,
               child: const Icon(Icons.grid_on),
               onPressed: () {
                 setState(() {
@@ -4014,6 +4020,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           myButton(
+              backgroundColor:
+                  (desktopWidgetMode == 3) ? Colors.orange : Colors.blue,
               child: const FaIcon(FontAwesomeIcons.addressBook),
               onPressed: () {
                 setState(() {
@@ -4059,12 +4067,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         });
   }
 
-  Widget myButton({required Widget child, required Function onPressed}) {
+  Widget myButton(
+      {required Widget child,
+      required Function onPressed,
+      Color backgroundColor = Colors.blue}) {
     return Expanded(
         child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Colors.blue,
+              backgroundColor: backgroundColor,
               minimumSize: Size.zero,
               padding: const EdgeInsets.only(top: 10, bottom: 10),
             ),
@@ -4089,6 +4100,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               width: 4,
             ),
           myButton(
+              backgroundColor: (tabletTabController.index == 0)
+                  ? Colors.orange
+                  : Colors.blue,
               child: const Icon(Icons.grid_on),
               onPressed: () {
                 setState(() {
@@ -4099,6 +4113,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           myButton(
+              backgroundColor: (tabletTabController.index == 1)
+                  ? Colors.orange
+                  : Colors.blue,
               child: const Icon(Icons.search),
               onPressed: () {
                 setState(() {
@@ -4109,6 +4126,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           myButton(
+              backgroundColor: (tabletTabController.index == 3)
+                  ? Colors.orange
+                  : Colors.blue,
               child: const FaIcon(FontAwesomeIcons.addressBook),
               onPressed: () {
                 setState(() {
