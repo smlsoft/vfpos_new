@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "74:2733800475833554943",
+      "lastPropertyId": "75:861736971837750701",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -285,6 +285,11 @@
           "id": "74:2733800475833554943",
           "name": "amount_before_calc_vat",
           "type": 8
+        },
+        {
+          "id": "75:861736971837750701",
+          "name": "is_vat_register",
+          "type": 1
         }
       ],
       "relations": []

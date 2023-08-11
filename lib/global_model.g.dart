@@ -424,6 +424,15 @@ PosConfigModel _$PosConfigModelFromJson(Map<String, dynamic> json) =>
       vattype: json['vattype'] as int,
       vatrate: (json['vatrate'] as num).toDouble(),
       docformattaxinv: json['docformattaxinv'] as String,
+      billheader: (json['billheader'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      billfooter: (json['billfooter'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      isvatregister: json['isvatregister'] as bool,
+      isejournal: json['isejournal'] as bool,
+      devicenumber: json['devicenumber'] as String,
     );
 
 Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
@@ -433,6 +442,11 @@ Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
       'vattype': instance.vattype,
       'vatrate': instance.vatrate,
       'docformattaxinv': instance.docformattaxinv,
+      'billheader': instance.billheader.map((e) => e.toJson()).toList(),
+      'billfooter': instance.billfooter.map((e) => e.toJson()).toList(),
+      'isejournal': instance.isejournal,
+      'devicenumber': instance.devicenumber,
+      'isvatregister': instance.isvatregister,
     };
 
 PosInformationModel _$PosInformationModelFromJson(Map<String, dynamic> json) =>

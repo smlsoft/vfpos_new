@@ -173,6 +173,8 @@ class BillObjectBoxStruct {
   /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
   int vat_mode;
 
+  bool is_vat_register;
+
   BillObjectBoxStruct(
       {required this.date_time,
       required this.table_open_date_time,
@@ -227,6 +229,7 @@ class BillObjectBoxStruct {
       required this.pay_json,
       required this.total_item_vat_amount,
       required this.total_item_except_vat_amount,
+      required this.is_vat_register,
       required this.print_copy_bill_date_time});
 }
 

@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(74, 2733800475833554943),
+      lastPropertyId: const IdUid(75, 861736971837750701),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -316,6 +316,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(74, 2733800475833554943),
             name: 'amount_before_calc_vat',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(75, 861736971837750701),
+            name: 'is_vat_register',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2114,7 +2119,7 @@ ModelDefinition getObjectBoxModel() {
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(75);
+          fbb.startTable(76);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -2170,6 +2175,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(71, object.amount_after_calc_vat);
           fbb.addFloat64(72, object.amount_except_vat);
           fbb.addFloat64(73, object.amount_before_calc_vat);
+          fbb.addBool(74, object.is_vat_register);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2239,6 +2245,7 @@ ModelDefinition getObjectBoxModel() {
               pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 104, ''),
               total_item_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 120, 0),
               total_item_except_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 124, 0),
+              is_vat_register: const fb.BoolReader().vTableGet(buffer, rootOffset, 152, false),
               print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -3624,6 +3631,10 @@ class BillObjectBoxStruct_ {
   /// see [BillObjectBoxStruct.amount_before_calc_vat]
   static final amount_before_calc_vat =
       QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[54]);
+
+  /// see [BillObjectBoxStruct.is_vat_register]
+  static final is_vat_register =
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[55]);
 }
 
 /// [EmployeeObjectBoxStruct] entity fields to define ObjectBox queries.

@@ -90,11 +90,6 @@ Future<SaveBillResultClass> saveBill(
     }
   }
 
-  // ภาษีมูลค่าเพิ่ม
-  int vatMode = 1; // 1=รวมใน,2=แยกนอก
-  double vatRate = posHoldProcess.posProcess.vat_rate;
-  vatRate = 7;
-
   // รายละเอียด
   int lineNumber = 1;
   List<BillDetailObjectBoxStruct> details = [];
@@ -136,7 +131,7 @@ Future<SaveBillResultClass> saveBill(
   // Save
   BillObjectBoxStruct billData = BillObjectBoxStruct(
       doc_mode: 1, // 1=ขาย,2=คืน
-      vat_mode: vatMode,
+      vat_mode: posHoldProcess.posProcess.vat_mode,
       is_cancel: false,
       cancel_date_time: "",
       cancel_user_code: "",
@@ -175,7 +170,8 @@ Future<SaveBillResultClass> saveBill(
       amount_except_vat: posHoldProcess.posProcess.amount_except_vat,
       amount_before_calc_vat: posHoldProcess.posProcess.amount_before_calc_vat,
       amount_after_calc_vat: posHoldProcess.posProcess.amount_after_calc_vat,
-      vat_rate: vatRate,
+      vat_rate: posHoldProcess.posProcess.vat_rate,
+      is_vat_register: posHoldProcess.posProcess.is_vat_register,
       total_item_vat_amount: posHoldProcess.posProcess.total_item_vat_amount,
       total_item_except_vat_amount:
           posHoldProcess.posProcess.total_item_except_vat_amount,
@@ -351,7 +347,7 @@ Widget posBillDetail({required String docNumber}) {
               TableRow(
                 children: [
                   Text(global.language("doc_date")),
-                  Text(global.dateTimeFormat(bill.date_time)),
+                  Text(global.dateTimeFormatFull(bill.date_time)),
                 ],
               ),
               TableRow(

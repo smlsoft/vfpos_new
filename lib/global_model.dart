@@ -553,6 +553,11 @@ class PosConfigModel {
   final int vattype;
   final double vatrate;
   final String docformattaxinv;
+  final List<LanguageDataModel> billheader;
+  final List<LanguageDataModel> billfooter;
+  final bool isejournal;
+  final String devicenumber;
+  final bool isvatregister;
 
   PosConfigModel({
     required this.code,
@@ -560,6 +565,11 @@ class PosConfigModel {
     required this.vattype,
     required this.vatrate,
     required this.docformattaxinv,
+    required this.billheader,
+    required this.billfooter,
+    required this.isvatregister,
+    required this.isejournal,
+    required this.devicenumber,
   });
 
   factory PosConfigModel.fromJson(Map<String, dynamic> json) =>

@@ -104,6 +104,8 @@ FormDesignColumnModel _$FormDesignColumnModelFromJson(
               PrintColumnAlign.left,
       background_color: json['background_color'] as String? ?? "",
       font_color: json['font_color'] as String? ?? "",
+      condition_join_is_vat_register:
+          json['condition_join_is_vat_register'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$FormDesignColumnModelToJson(
@@ -121,6 +123,7 @@ Map<String, dynamic> _$FormDesignColumnModelToJson(
       'text_align': _$PrintColumnAlignEnumMap[instance.text_align]!,
       'background_color': instance.background_color,
       'font_color': instance.font_color,
+      'condition_join_is_vat_register': instance.condition_join_is_vat_register,
     };
 
 const _$PrintColumnAlignEnumMap = {

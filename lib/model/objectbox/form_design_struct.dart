@@ -105,6 +105,8 @@ class FormDesignColumnModel {
   PrintColumnAlign text_align;
   String background_color;
   String font_color;
+  // การจดทะเบียนภาษี (0=แสดงทั้งหมดทุกเงื่อนไข,1=แสดงเฉพาะจดทะเบียนภาษี)
+  int condition_join_is_vat_register;
 
   FormDesignColumnModel({
     this.command_text = "",
@@ -119,6 +121,7 @@ class FormDesignColumnModel {
     this.text_align = PrintColumnAlign.left,
     this.background_color = "",
     this.font_color = "",
+    this.condition_join_is_vat_register = 0,
   });
 
   factory FormDesignColumnModel.fromJson(Map<String, dynamic> json) =>

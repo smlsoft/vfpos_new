@@ -119,7 +119,9 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
       total_discount_from_promotion:
           (json['total_discount_from_promotion'] as num?)?.toDouble() ?? 0,
       qr_code: json['qr_code'] as String? ?? "",
+      vat_type: json['vat_type'] as int? ?? 0,
       vat_rate: (json['vat_rate'] as num?)?.toDouble() ?? 0,
+      is_vat_register: json['is_vat_register'] as bool? ?? false,
       total_vat_amount: (json['total_vat_amount'] as num?)?.toDouble() ?? 0,
       total_item_vat_amount:
           (json['total_item_vat_amount'] as num?)?.toDouble() ?? 0,
@@ -168,6 +170,8 @@ Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
       'total_amount': instance.total_amount,
       'total_discount_from_promotion': instance.total_discount_from_promotion,
       'qr_code': instance.qr_code,
+      'is_vat_register': instance.is_vat_register,
+      'vat_type': instance.vat_type,
       'vat_rate': instance.vat_rate,
       'total_item_vat_amount': instance.total_item_vat_amount,
       'total_item_except_vat_amount': instance.total_item_except_vat_amount,

@@ -134,6 +134,12 @@ class PosProcessModel {
   // Qr Code
   String qr_code;
 
+  /// จดทะเบียนภาษีมูลค่าเพิ่ม
+  bool is_vat_register;
+
+  /// ประเภทภาษี
+  int vat_type;
+
   /// อัตราภาษี
   double vat_rate;
 
@@ -181,7 +187,9 @@ class PosProcessModel {
       this.total_amount = 0.0,
       this.total_discount_from_promotion = 0,
       this.qr_code = "",
+      this.vat_type = 0,
       this.vat_rate = 0,
+      this.is_vat_register = false,
       this.total_vat_amount = 0,
       this.total_item_vat_amount = 0,
       this.total_item_except_vat_amount = 0,

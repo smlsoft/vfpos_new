@@ -230,6 +230,18 @@ enum ThaiTaxIncludeEnum {
   bothTaxTypesProductsWithoutDiscount
 }
 
+/// ฟอร์มใบสรุปยอด
+String formSummery = "SLIP001";
+// ฟอร์มใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ
+String formReceiptsAndAbbreviatedTaxInvoices =
+    "SLIP002";
+// ฟอร์มใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม
+String formFullReceiptAndTaxInvoice = "SLIP003";
+// ใบเสร็จรับเงิน (ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม)
+String formReceipt = "SLIP004";
+/// ใบรับคืน
+String formReturn = "SLIP005";
+
 enum TableManagerEnum {
   openTable,
   closeTable,
@@ -729,12 +741,24 @@ Future<void> printQueueStartServer() async {
   }
 }
 
-String dateTimeFormat(DateTime dateTime, {bool showTime = true}) {
+String dateTimeFormatFull(DateTime dateTime, {bool showTime = true}) {
   var formatter = DateFormat.yMMMMEEEEd('th_TH');
   if (showTime) {
     return "${formatter.formatInBuddhistCalendarThai(dateTime)} - ${DateFormat.Hm().format(dateTime)}";
   } else {
     return formatter.formatInBuddhistCalendarThai(dateTime);
+  }
+}
+
+String dateTimeFormatShort(DateTime dateTime, {bool showTime = false}) {
+  NumberFormat formatter = NumberFormat("00");
+  String day = formatter.format(dateTime.day);
+  String month = formatter.format(dateTime.month);
+  String year = formatter.format(dateTime.year + 543).substring(2, 4);
+  if (showTime) {
+    return "$day/$month/$year ${DateFormat.Hm().format(dateTime)}";
+  } else {
+    return "$day/$month/$year";
   }
 }
 
@@ -1785,4 +1809,13 @@ Future<Directory> createPath(String mainPath, DateTime docDate) async {
     await dateDirectory.create();
   }
   return dateDirectory;
+}
+
+int findFormByGuid(String guid) {
+  for (var i = 0; i < global.formDesignList.length; i++) {
+    if (global.formDesignList[i].guid_fixed == guid) {
+      return i;
+    }
+  }
+  return -1;
 }

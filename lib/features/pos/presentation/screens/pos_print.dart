@@ -224,11 +224,23 @@ class PosPrintBillClass {
   }
 
   Future<List<PosPrintBillCommandModel>> buildCommand() async {
-    FormDesignObjectBoxStruct formDesign = global.formDesignList[0];
+    late FormDesignObjectBoxStruct formDesign;
     List<PosPrintBillCommandModel> commandList = [];
 
     BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(
         docNumber: docNo, posScreenMode: global.posScreenToInt());
+
+    if (bill!.is_vat_register) {
+      formDesign = (bill.vat_mode == 0)
+          ? global.formDesignList[global
+              .findFormByGuid(global.formReceiptsAndAbbreviatedTaxInvoices)]
+          : global.formDesignList[
+              global.findFormByGuid(global.formFullReceiptAndTaxInvoice)];
+    } else {
+      // ไม่จดทะเบียนภาษีมูลค่าเพิ่ม
+      formDesign =
+          global.formDesignList[global.findFormByGuid(global.formReceipt)];
+    }
 
     // Reset Printer
     commandList.add(PosPrintBillCommandModel(mode: 0));
@@ -267,13 +279,22 @@ class PosPrintBillClass {
           ],
           posTextSize: PosTextSize.size2));
     }
+    // ที่อยู่ร้าน
+    String address = global.getNameFromLanguage(
+        global.profileSetting.branch[0].names, languageCode);
+    if (global.posTicket.shop_address) {
+      address =
+          "$address ${global.getNameFromLanguage(global.profileSetting.company.addresses, languageCode)}";
+    }
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       FormDesignColumnModel(
           width: 1,
-          text: global.getNameFromLanguage(
-              global.profileSetting.branch[0].names, languageCode),
+          text: address,
+          font_weight_bold: false,
+          font_size: 18,
           text_align: PrintColumnAlign.center)
     ]));
+    //
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       FormDesignColumnModel(
           width: 1,
@@ -284,7 +305,7 @@ class PosPrintBillClass {
           text_align: PrintColumnAlign.center)
     ]));
     //
-    if (global.posTicket.shop_tax_id) {
+    if (global.posTicket.shop_tax_id && bill.is_vat_register) {
       // พิมพ์ เลขที่ผู้เสียภาษี
       if (global.profileSetting.company.taxID.trim().isNotEmpty) {
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
@@ -301,10 +322,12 @@ class PosPrintBillClass {
       // พิมพ์ เบอร์โทรศัพท์
       String phone = "";
       for (var item in global.profileSetting.company.phones) {
-        if (phone.isNotEmpty) {
-          phone += ",";
+        if (item.trim().isEmpty) {
+          if (phone.isNotEmpty) {
+            phone += ",";
+          }
+          phone += item;
         }
-        phone += item;
       }
       if (phone.isNotEmpty) {
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
@@ -318,17 +341,27 @@ class PosPrintBillClass {
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       FormDesignColumnModel(
           width: 1,
-          text: "หมายเลขเครื่อง POS : 11231220899223131",
+          text: "หมายเลขเครื่อง POS : ${global.posConfig.devicenumber}",
           text_align: PrintColumnAlign.center)
     ]));
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
       FormDesignColumnModel(
+          width: 1, text: bill!.doc_number, text_align: PrintColumnAlign.left),
+      FormDesignColumnModel(
           width: 1,
-          text: (bill!.vat_mode == 1)
-              ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)"
-              : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)",
-          text_align: PrintColumnAlign.center)
+          text: global.dateTimeFormatShort(bill.date_time),
+          text_align: PrintColumnAlign.right)
     ]));
+    if (bill.is_vat_register) {
+      commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+        FormDesignColumnModel(
+            width: 1,
+            text: (bill.vat_mode == 1)
+                ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)"
+                : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)",
+            text_align: PrintColumnAlign.center)
+      ]));
+    }
     // Header
     FormDesignHeaderModel headerDescriptionList =
         FormDesignHeaderModel.fromJson(jsonDecode(formDesign.header_json));
@@ -460,6 +493,18 @@ class PosPrintBillClass {
         if (isZero == false) {
           List<FormDesignColumnModel> columns = [];
           for (FormDesignColumnModel column in formTotalColumns) {
+            if (column.condition_join_is_vat_register == 0 ||
+                (column.condition_join_is_vat_register == 1 &&
+                    bill.is_vat_register)) {
+              columns.add(
+                FormDesignColumnModel(
+                    width: column.width,
+                    text: findValueBillTotal(bill, column.command_text),
+                    text_align: column.text_align,
+                    font_weight_bold: column.font_weight_bold,
+                    font_size: column.font_size),
+              );
+            }
             // พิมพ์ยอดรวม
             columns.add(
               FormDesignColumnModel(
@@ -487,6 +532,18 @@ class PosPrintBillClass {
             text_align: PrintColumnAlign.center)
       ]));
     }
+    // Line
+    commandList.add(PosPrintBillCommandModel(mode: 3));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
+      FormDesignColumnModel(
+          width: 1,
+          text: "${bill.cashier_code} ${bill.cashier_name}",
+          text_align: PrintColumnAlign.left),
+      FormDesignColumnModel(
+          width: 1,
+          text: global.dateTimeFormatShort(bill.date_time, showTime: true),
+          text_align: PrintColumnAlign.right)
+    ]));
     return commandList;
   }
 
