@@ -95,35 +95,20 @@ Future<void> loadFormDesign() async {
 
     // ใบสรุปยอด/ไม่ใช่ใบเสร็จรับเงิน
     global.formDesignList.add(FormDesignObjectBoxStruct(
-        type: 0,
-        guid_fixed: global.formSummery,
-        code: global.formSummeryDefaultCode,
+        guid_fixed: "",
+        code: global.formS01,
+        form_code: global.getPosFormCodeByCode(global.formS01),
         sum_by_type: true,
         sum_by_barcode: true,
         print_logo: true,
         print_prompt_pay: true,
-        names_json: jsonEncode(<LanguageDataModel>[
-          LanguageDataModel(code: "th", name: "สรุปยอดเพื่อตรวจสอบ"),
-          LanguageDataModel(code: "en", name: "Summary/non-receipt"),
-        ]),
-        header_json: "[{}]",
+        names_json: global.getPosFormNameByCode(global.formS01),
         detail_json: jsonEncode(detailColumn),
         detail_total_json: jsonEncode(detailTotalColumn),
         detail_extra_json: jsonEncode(detailExtraColumn),
-        detail_footer_json: "{}",
-        footer_json: "[{}]"));
+        detail_footer_json: "{}"));
   }
   {
-    FormDesignHeaderModel header = FormDesignHeaderModel(description: [
-      [
-        LanguageDataModel(code: "th", name: "สวัสดีปีใหม่ 2564"),
-        LanguageDataModel(code: "th", name: "Happy New Year 2021")
-      ],
-      [
-        LanguageDataModel(code: "th", name: "ยินดีแขกมาเยือน"),
-        LanguageDataModel(code: "th", name: "welcome guests")
-      ]
-    ]);
     List<FormDesignColumnModel> detailColumn = [
       FormDesignColumnModel(
           command_text:
@@ -174,6 +159,7 @@ Future<void> loadFormDesign() async {
             command_text: "&total_item_vat_amount_name&",
             width: 5),
         FormDesignColumnModel(
+            condition_join_is_vat_register: 1,
             command_text: "&total_item_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
@@ -181,8 +167,11 @@ Future<void> loadFormDesign() async {
       [
         // ยอดรวมสินค้ายกเว้นภาษี
         FormDesignColumnModel(
-            command_text: "&total_itm_except_vat_amount_name&", width: 5),
+            condition_join_is_vat_register: 1,
+            command_text: "&total_itm_except_vat_amount_name&",
+            width: 5),
         FormDesignColumnModel(
+            condition_join_is_vat_register: 1,
             command_text: "&total_itm_except_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
@@ -194,6 +183,7 @@ Future<void> loadFormDesign() async {
             command_text: "&total_discount_vat_name&",
             width: 5),
         FormDesignColumnModel(
+            condition_join_is_vat_register: 1,
             command_text: "&total_discount_vat_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
@@ -205,6 +195,7 @@ Future<void> loadFormDesign() async {
             command_text: "&total_discount_vat_except_name&",
             width: 5),
         FormDesignColumnModel(
+            condition_join_is_vat_register: 1,
             command_text: "&total_discount_vat_except_amount&",
             text_align: PrintColumnAlign.right,
             width: 2),
@@ -225,6 +216,7 @@ Future<void> loadFormDesign() async {
             command_text: "&total_before_vat_name&",
             width: 5),
         FormDesignColumnModel(
+            condition_join_is_vat_register: 1,
             command_text: "&total_before_vat&",
             text_align: PrintColumnAlign.right,
             width: 2),
@@ -308,79 +300,53 @@ Future<void> loadFormDesign() async {
             font_weight_bold: true),
       ],
     ];
-    FormDesignFooterModel footer = FormDesignFooterModel(description: [
-      [
-        LanguageDataModel(code: "th", name: "ขอบคุณที่ใช้บริการ"),
-        LanguageDataModel(code: "th", name: "Thank you for using the service.")
-      ],
-      [
-        LanguageDataModel(code: "th", name: "แล้วพบกันใหม่"),
-        LanguageDataModel(code: "th", name: "meet again")
-      ]
-    ], print_qr_doc_no: true);
 
     // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ
     global.formDesignList.add(FormDesignObjectBoxStruct(
-      type: 0,
-      guid_fixed: global.formReceiptsAndAbbreviatedTaxInvoices,
-      code: global.formTaxDefaultCode,
+      guid_fixed: "",
+      code: global.formS02,
+      form_code: global.getPosFormCodeByCode(global.formS02),
       sum_by_type: true,
       sum_by_barcode: true,
       print_logo: true,
       print_prompt_pay: true,
-      names_json: jsonEncode(<LanguageDataModel>[
-        LanguageDataModel(code: "th", name: "ใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ"),
-        LanguageDataModel(code: "en", name: "Receipt/Tax invoice (short form)"),
-      ]),
-      header_json: jsonEncode(header),
+      names_json: global.getPosFormNameByCode(global.formS02),
       detail_json: jsonEncode(detailColumn),
       detail_total_json: jsonEncode(detailTotalColumn),
       detail_extra_json: jsonEncode(detailExtraColumn),
       detail_footer_json: "{}",
-      footer_json: jsonEncode(footer),
     ));
 
     // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม (index = 2)
     global.formDesignList.add(FormDesignObjectBoxStruct(
-      type: 0,
-      guid_fixed: global.formFullReceiptAndTaxInvoice,
-      code: global.formFullTaxDefaultCode,
+      guid_fixed: "",
+      code: global.formS03,
+      form_code: global.getPosFormCodeByCode(global.formS03),
       sum_by_type: true,
       sum_by_barcode: true,
       print_logo: true,
       print_prompt_pay: true,
-      names_json: jsonEncode(<LanguageDataModel>[
-        LanguageDataModel(
-            code: "th", name: "ใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม"),
-        LanguageDataModel(code: "en", name: "Receipt/Full Tax Invoice"),
-      ]),
-      header_json: jsonEncode(header),
+      names_json: global.getPosFormNameByCode(global.formS03),
       detail_json: jsonEncode(detailColumn),
       detail_total_json: jsonEncode(detailTotalColumn),
       detail_extra_json: jsonEncode(detailExtraColumn),
       detail_footer_json: "{}",
-      footer_json: jsonEncode(footer),
     ));
 
     // ใบเสร็จรับเงิน (ไม่ได้จดทะเบียนเป็นผู้เสียภาษีมูลค่าเพิ่ม) (index = 3)
     global.formDesignList.add(FormDesignObjectBoxStruct(
-      type: 0,
-      guid_fixed: global.formReceipt,
-      code: global.formFullTaxDefaultCode,
+      guid_fixed: "",
+      code: global.formS04,
+      form_code: global.getPosFormCodeByCode(global.formS04),
       sum_by_type: true,
       sum_by_barcode: true,
       print_logo: true,
       print_prompt_pay: true,
-      names_json: jsonEncode(<LanguageDataModel>[
-        LanguageDataModel(code: "th", name: "ใบเสร็จรับเงิน"),
-        LanguageDataModel(code: "en", name: "Receipt"),
-      ]),
-      header_json: jsonEncode(header),
+      names_json: global.getPosFormNameByCode(global.formS04),
       detail_json: jsonEncode(detailColumn),
       detail_total_json: jsonEncode(detailTotalColumn),
       detail_extra_json: jsonEncode(detailExtraColumn),
       detail_footer_json: "{}",
-      footer_json: jsonEncode(footer),
     ));
   }
 }

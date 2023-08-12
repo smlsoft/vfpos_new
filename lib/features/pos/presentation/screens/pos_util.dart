@@ -129,9 +129,20 @@ Future<SaveBillResultClass> saveBill(
   String buffetCode = "";
   // ยอดรวมก่อนคำนวณภาษี
   // Save
+  int billTaxType = 0;
+  if (global.posConfig.isvatregister == false) {
+    // ถ้าไม่ลงทะเบียนภาษีมูลค่าเพิ่ม
+    billTaxType = 0;
+  } else {
+    // ถ้าลงทะเบียนภาษีแล้ว ให้เป็น 1=อย่างย่อ
+    billTaxType = 1;
+    // ในกรณีที่เป็นลูกหนี้ออกแบบเต็มแบบ Makro อัตโนมัติ
+    // billTaxType = 2;
+  }
   BillObjectBoxStruct billData = BillObjectBoxStruct(
       doc_mode: 1, // 1=ขาย,2=คืน
-      vat_mode: posHoldProcess.posProcess.vat_mode,
+      bill_tax_type: billTaxType,
+      vat_type: posHoldProcess.posProcess.vat_type,
       is_cancel: false,
       cancel_date_time: "",
       cancel_user_code: "",

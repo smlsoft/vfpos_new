@@ -97,8 +97,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                   .posHoldProcessResult[global
                       .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
                   .posProcess
-                  .total_amount
-                  .toDouble());
+                  .total_amount);
       var jsonData = HttpPost(
           command: "pay_screen",
           data: jsonEncode(global.posHoldProcessResult[global
@@ -903,8 +902,6 @@ class _PayScreenPageState extends State<PayScreenPage>
                             Text(moneySymbol, style: textStyle),
                           ],
                         ),
-                        // ยอดคงเหลือหรือปัดเศษ
-                        // if (_diffAmount != 0)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

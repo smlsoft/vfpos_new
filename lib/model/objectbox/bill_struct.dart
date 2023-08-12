@@ -17,6 +17,9 @@ class BillObjectBoxStruct {
   /// วันที่เอกสาร
   DateTime date_time;
 
+  /// 0=บิลทั่วไปไม่มีภาษี,1=ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ,2=ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างเต็ม
+  int bill_tax_type;
+
   /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
   int doc_mode;
 
@@ -171,7 +174,7 @@ class BillObjectBoxStruct {
   String pay_json;
 
   /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
-  int vat_mode;
+  int vat_type;
 
   bool is_vat_register;
 
@@ -182,6 +185,7 @@ class BillObjectBoxStruct {
       required this.doc_number,
       required this.doc_mode,
       required this.customer_code,
+      required this.bill_tax_type,
       required this.customer_name,
       required this.customer_telephone,
       required this.vat_rate,
@@ -196,7 +200,7 @@ class BillObjectBoxStruct {
       required this.total_discount_vat_amount,
       required this.total_discount_except_vat_amount,
       required this.sale_name,
-      required this.vat_mode,
+      required this.vat_type,
       required this.total_qty,
       required this.is_sync,
       required this.discount_formula,

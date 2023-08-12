@@ -231,15 +231,13 @@ class PosPrintBillClass {
         docNumber: docNo, posScreenMode: global.posScreenToInt());
 
     if (bill!.is_vat_register) {
-      formDesign = (bill.vat_mode == 0)
-          ? global.formDesignList[global
-              .findFormByGuid(global.formReceiptsAndAbbreviatedTaxInvoices)]
-          : global.formDesignList[
-              global.findFormByGuid(global.formFullReceiptAndTaxInvoice)];
+      // 1=แบบย่อ,2=แบบเต็ม
+      formDesign = (bill.bill_tax_type == 1)
+          ? global.formDesignList[global.findFormByCode(global.formS02)]
+          : global.formDesignList[global.findFormByCode(global.formS03)];
     } else {
       // ไม่จดทะเบียนภาษีมูลค่าเพิ่ม
-      formDesign =
-          global.formDesignList[global.findFormByGuid(global.formReceipt)];
+      formDesign = global.formDesignList[global.findFormByCode(global.formS04)];
     }
 
     // Reset Printer
@@ -247,7 +245,7 @@ class PosPrintBillClass {
 
     if (global.posTicket.logo) {
       // พิมพ์ Logo
-      io.File file = io.File(global.getShopLogoPathName());
+      io.File file = io.File(global.getPosLogoPathName());
       if (file.existsSync()) {
         Uint8List bytes = file.readAsBytesSync();
         /*ui.Image getImage = await decodeImageFromList(bytes);
@@ -356,20 +354,22 @@ class PosPrintBillClass {
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
         FormDesignColumnModel(
             width: 1,
-            text: (bill.vat_mode == 1)
+            text: (bill.vat_type == 0)
                 ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)"
                 : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)",
             text_align: PrintColumnAlign.center)
       ]));
     }
     // Header
-    FormDesignHeaderModel headerDescriptionList =
-        FormDesignHeaderModel.fromJson(jsonDecode(formDesign.header_json));
-    for (var headerDescription in headerDescriptionList.description) {
+    String headerDescription = global
+        .getNameFromLanguage(
+            global.posConfig.billheader, global.userScreenLanguage)
+        .trim();
+    if (headerDescription.isNotEmpty) {
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
         FormDesignColumnModel(
             width: 1,
-            text: global.getNameFromLanguage(headerDescription, languageCode),
+            text: headerDescription,
             text_align: PrintColumnAlign.center)
       ]));
     }
@@ -482,39 +482,33 @@ class PosPrintBillClass {
     {
       // ยอดรวม
       for (var formTotalColumns in formTotalColumnList) {
-        bool isZero = false;
-        if ((double.tryParse(
-                    findValueBillTotal(bill, formTotalColumns[1].command_text)
-                        .replaceAll(",", "")) ??
-                0) ==
-            0) {
-          isZero = true;
+        bool isZero = true;
+        List<FormDesignColumnModel> columns = [];
+        for (int index = 0; index < formTotalColumns.length; index++) {
+          FormDesignColumnModel formTotalColumn = formTotalColumns[index];
+          double value = (double.tryParse(
+                  findValueBillTotal(bill, formTotalColumn.command_text)
+                      .replaceAll(",", "")) ??
+              0);
+          if (value != 0) {
+            isZero = false;
+          }
+          // พิมพ์ยอดรวม
+          columns.add(
+            FormDesignColumnModel(
+                width: formTotalColumn.width,
+                text: findValueBillTotal(bill, formTotalColumn.command_text),
+                text_align: formTotalColumn.text_align,
+                font_weight_bold: formTotalColumn.font_weight_bold,
+                font_size: formTotalColumn.font_size),
+          );
+          // ถ้าไม่มีภาษี (1=ถ้าแบบฟอร์มไม่มีภาษีไม่ต้องพิมพ์)
+          if (formTotalColumn.condition_join_is_vat_register == 1 &&
+              bill.is_vat_register == false) {
+            isZero = true;
+          }
         }
         if (isZero == false) {
-          List<FormDesignColumnModel> columns = [];
-          for (FormDesignColumnModel column in formTotalColumns) {
-            if (column.condition_join_is_vat_register == 0 ||
-                (column.condition_join_is_vat_register == 1 &&
-                    bill.is_vat_register)) {
-              columns.add(
-                FormDesignColumnModel(
-                    width: column.width,
-                    text: findValueBillTotal(bill, column.command_text),
-                    text_align: column.text_align,
-                    font_weight_bold: column.font_weight_bold,
-                    font_size: column.font_size),
-              );
-            }
-            // พิมพ์ยอดรวม
-            columns.add(
-              FormDesignColumnModel(
-                  width: column.width,
-                  text: findValueBillTotal(bill, column.command_text),
-                  text_align: column.text_align,
-                  font_weight_bold: column.font_weight_bold,
-                  font_size: column.font_size),
-            );
-          }
           commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
         }
       }
@@ -522,13 +516,15 @@ class PosPrintBillClass {
     // Line
     commandList.add(PosPrintBillCommandModel(mode: 3));
     // Footer
-    FormDesignHeaderModel footerDescriptionList =
-        FormDesignHeaderModel.fromJson(jsonDecode(formDesign.footer_json));
-    for (var footerDescription in footerDescriptionList.description) {
+    String footerDescription = global
+        .getNameFromLanguage(
+            global.posConfig.billfooter, global.userScreenLanguage)
+        .trim();
+    if (footerDescription.isNotEmpty) {
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
         FormDesignColumnModel(
             width: 1,
-            text: global.getNameFromLanguage(footerDescription, languageCode),
+            text: footerDescription,
             text_align: PrintColumnAlign.center)
       ]));
     }

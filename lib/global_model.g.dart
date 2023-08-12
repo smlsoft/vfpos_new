@@ -417,6 +417,24 @@ Map<String, dynamic> _$OrderTempUpdateForSplitModelToJson(
       'sourceGuid': instance.sourceGuid,
     };
 
+PosConfigSlipModel _$PosConfigSlipModelFromJson(Map<String, dynamic> json) =>
+    PosConfigSlipModel(
+      code: json['code'] as String,
+      name: json['name'] as String,
+      formcode: json['formcode'] as String,
+      formnames: (json['formnames'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$PosConfigSlipModelToJson(PosConfigSlipModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'name': instance.name,
+      'formcode': instance.formcode,
+      'formnames': instance.formnames.map((e) => e.toJson()).toList(),
+    };
+
 PosConfigModel _$PosConfigModelFromJson(Map<String, dynamic> json) =>
     PosConfigModel(
       code: json['code'] as String,
@@ -433,6 +451,10 @@ PosConfigModel _$PosConfigModelFromJson(Map<String, dynamic> json) =>
       isvatregister: json['isvatregister'] as bool,
       isejournal: json['isejournal'] as bool,
       devicenumber: json['devicenumber'] as String,
+      slips: (json['slips'] as List<dynamic>)
+          .map((e) => PosConfigSlipModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      logourl: json['logourl'] as String,
     );
 
 Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
@@ -447,6 +469,8 @@ Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
       'isejournal': instance.isejournal,
       'devicenumber': instance.devicenumber,
       'isvatregister': instance.isvatregister,
+      'slips': instance.slips.map((e) => e.toJson()).toList(),
+      'logourl': instance.logourl,
     };
 
 PosInformationModel _$PosInformationModelFromJson(Map<String, dynamic> json) =>

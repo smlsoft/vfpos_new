@@ -137,7 +137,7 @@ class PosProcessModel {
   /// จดทะเบียนภาษีมูลค่าเพิ่ม
   bool is_vat_register;
 
-  /// ประเภทภาษี
+  /// ประเภทภาษีมูลค่าเพิ่ม 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
   int vat_type;
 
   /// อัตราภาษี
@@ -157,9 +157,6 @@ class PosProcessModel {
 
   /// รายการ Promotion ที่เลือก
   List<PosProcessPromotionModel> promotion_list;
-
-  /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
-  int vat_mode;
 
   /// สูตรส่วนลดท้ายบิล
   String discount_formula;
@@ -196,7 +193,6 @@ class PosProcessModel {
       this.amount_except_vat = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
-      this.vat_mode = 1,
       this.discount_formula = "",
       this.total_discount = 0,
       this.total_discount_vat_amount = 0,

@@ -11,18 +11,16 @@ FormDesignObjectBoxStruct _$FormDesignObjectBoxStructFromJson(
     FormDesignObjectBoxStruct(
       guid_fixed: json['guid_fixed'] as String,
       code: json['code'] as String,
-      type: json['type'] as int,
+      form_code: json['form_code'] as String,
       sum_by_type: json['sum_by_type'] as bool,
       sum_by_barcode: json['sum_by_barcode'] as bool,
       print_logo: json['print_logo'] as bool,
       print_prompt_pay: json['print_prompt_pay'] as bool,
       names_json: json['names_json'] as String,
-      header_json: json['header_json'] as String,
       detail_json: json['detail_json'] as String,
       detail_extra_json: json['detail_extra_json'] as String,
       detail_total_json: json['detail_total_json'] as String,
       detail_footer_json: json['detail_footer_json'] as String,
-      footer_json: json['footer_json'] as String,
     )..id = json['id'] as int;
 
 Map<String, dynamic> _$FormDesignObjectBoxStructToJson(
@@ -31,56 +29,16 @@ Map<String, dynamic> _$FormDesignObjectBoxStructToJson(
       'id': instance.id,
       'guid_fixed': instance.guid_fixed,
       'code': instance.code,
-      'type': instance.type,
+      'form_code': instance.form_code,
       'sum_by_type': instance.sum_by_type,
       'sum_by_barcode': instance.sum_by_barcode,
       'print_logo': instance.print_logo,
       'print_prompt_pay': instance.print_prompt_pay,
       'names_json': instance.names_json,
-      'header_json': instance.header_json,
       'detail_json': instance.detail_json,
       'detail_extra_json': instance.detail_extra_json,
       'detail_total_json': instance.detail_total_json,
       'detail_footer_json': instance.detail_footer_json,
-      'footer_json': instance.footer_json,
-    };
-
-FormDesignHeaderModel _$FormDesignHeaderModelFromJson(
-        Map<String, dynamic> json) =>
-    FormDesignHeaderModel(
-      description: (json['description'] as List<dynamic>)
-          .map((e) => (e as List<dynamic>)
-              .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
-              .toList())
-          .toList(),
-    );
-
-Map<String, dynamic> _$FormDesignHeaderModelToJson(
-        FormDesignHeaderModel instance) =>
-    <String, dynamic>{
-      'description': instance.description
-          .map((e) => e.map((e) => e.toJson()).toList())
-          .toList(),
-    };
-
-FormDesignFooterModel _$FormDesignFooterModelFromJson(
-        Map<String, dynamic> json) =>
-    FormDesignFooterModel(
-      description: (json['description'] as List<dynamic>)
-          .map((e) => (e as List<dynamic>)
-              .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
-              .toList())
-          .toList(),
-      print_qr_doc_no: json['print_qr_doc_no'] as bool,
-    );
-
-Map<String, dynamic> _$FormDesignFooterModelToJson(
-        FormDesignFooterModel instance) =>
-    <String, dynamic>{
-      'description': instance.description
-          .map((e) => e.map((e) => e.toJson()).toList())
-          .toList(),
-      'print_qr_doc_no': instance.print_qr_doc_no,
     };
 
 FormDesignColumnModel _$FormDesignColumnModelFromJson(

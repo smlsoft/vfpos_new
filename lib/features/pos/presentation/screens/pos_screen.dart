@@ -1267,6 +1267,45 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     }
   }
 
+  void billDiscountPadChange(String discount) async {
+    if (discount.isNotEmpty) {
+      if (double.tryParse(discount) != null) {
+        global.playSound(
+            word: global.language("discount") +
+                discount +
+                global.language("money_symbol"));
+      } else {
+        List<String> discountList = discount.split(",");
+        StringBuffer discountSpeech = StringBuffer();
+        for (var index = 0; index < discountList.length; index++) {
+          if (discountSpeech.isNotEmpty) {
+            discountSpeech.write(global.language("discount_plus"));
+          }
+          if (double.tryParse(discountList[index]) != null) {
+            discountSpeech
+                .write(discountList[index] + global.language("money_symbol"));
+          } else {
+            discountSpeech.write(discountList[index]);
+          }
+        }
+        global.playSound(
+            word: global.language("discount") + discountSpeech.toString());
+      }
+      logInsert(
+          commandCode: 6,
+          guid: findActiveLineByGuid,
+          discount: discount,
+          closeExtra: false);
+    } else {
+      global.playSound(word: global.language("discount_cancel"));
+      logInsert(
+          commandCode: 6,
+          guid: findActiveLineByGuid,
+          discount: '',
+          closeExtra: false);
+    }
+  }
+
   void checkOnline() async {
     global.isOnline = await global.hasNetwork();
   }
@@ -2058,36 +2097,88 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 7,
-                child: Text(
-                    "${global.language("total")} ${global.posHoldProcessResult[holdIndex].posProcess.details.length} ${global.language("line")}",
-                    style: textStyle.copyWith(fontSize: fontSize)),
-              ),
-              Expanded(flex: 1, child: Container()),
-              Expanded(
-                  flex: 1,
-                  child: Text(
-                      global.moneyFormat.format(global
-                          .posHoldProcessResult[holdIndex]
-                          .posProcess
-                          .total_piece),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
-              Expanded(flex: 1, child: Container()),
-              Expanded(
-                  flex: 2,
-                  child: Text(
-                      global.moneyFormat.format(global
-                          .posHoldProcessResult[holdIndex]
-                          .posProcess
-                          .total_amount),
-                      textAlign: TextAlign.right,
-                      style: textStyle.copyWith(fontSize: fontSize))),
-            ],
-          ));
+          child: (global.posConfig.isvatregister &&
+                  global.posConfig.vattype == 1)
+              ? Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 10,
+                          child: Text(
+                              "${global.language("total")} ${global.posHoldProcessResult[holdIndex].posProcess.details.length} ${global.language("line")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}",
+                              style: textStyle.copyWith(fontSize: fontSize)),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                                global.moneyFormat.format(global
+                                        .posHoldProcessResult[holdIndex]
+                                        .posProcess
+                                        .total_amount -
+                                    global.posHoldProcessResult[holdIndex]
+                                        .posProcess.total_vat_amount),
+                                textAlign: TextAlign.right,
+                                style: textStyle.copyWith(fontSize: fontSize))),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 10,
+                          child: Text("ภาษีมูลค่าเพิ่ม",
+                              style: textStyle.copyWith(fontSize: fontSize)),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                                global.moneyFormat.format(global
+                                    .posHoldProcessResult[holdIndex]
+                                    .posProcess
+                                    .total_vat_amount),
+                                textAlign: TextAlign.right,
+                                style: textStyle.copyWith(fontSize: fontSize))),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 10,
+                          child: Text(global.language("total"),
+                              style: textStyle.copyWith(fontSize: fontSize)),
+                        ),
+                        Expanded(
+                            flex: 2,
+                            child: Text(
+                                global.moneyFormat.format(global
+                                    .posHoldProcessResult[holdIndex]
+                                    .posProcess
+                                    .total_amount),
+                                textAlign: TextAlign.right,
+                                style: textStyle.copyWith(fontSize: fontSize))),
+                      ],
+                    )
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text(
+                          "${global.language("total")} ${global.posHoldProcessResult[holdIndex].posProcess.details.length} ${global.language("line")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}",
+                          style: textStyle.copyWith(fontSize: fontSize)),
+                    ),
+                    Expanded(
+                        flex: 2,
+                        child: Text(
+                            global.moneyFormat.format(global
+                                .posHoldProcessResult[holdIndex]
+                                .posProcess
+                                .total_amount),
+                            textAlign: TextAlign.right,
+                            style: textStyle.copyWith(fontSize: fontSize))),
+                  ],
+                ));
     });
   }
 
@@ -2925,6 +3016,43 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       width: 2,
     ));
     iconMenu.add(ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size.zero, // Set this
+          padding: const EdgeInsets.all(8) // and this
+          ),
+      onPressed: () async {
+        await showDialog(
+            context: context,
+            builder: (context) {
+              return StatefulBuilder(builder: (context, setState) {
+                return AlertDialog(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                  contentPadding: const EdgeInsets.all(10),
+                  content: SizedBox(
+                      height: 500,
+                      child: DiscountPad(
+                          header: global.language("discount"),
+                          title: const Text("ส่วนลดท้ายบิล",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              )),
+                          onChange: billDiscountPadChange)),
+                );
+              });
+            });
+      },
+      child: const FaIcon(Icons.discount),
+    ));
+    iconMenu.add(const SizedBox(
+      width: 2,
+    ));
+    iconMenu.add(ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size.zero, // Set this
+          padding: const EdgeInsets.all(8) // and this
+          ),
       onPressed: () async {
         payScreen(3);
       },
@@ -2934,9 +3062,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       width: 2,
     ));
     iconMenu.add(ElevatedButton(
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.zero,
-      ),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size.zero, // Set this
+          padding: const EdgeInsets.all(8) // and this
+          ),
       onPressed: () async {
         payScreen(2);
       },
@@ -2946,9 +3075,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       width: 2,
     ));
     iconMenu.add(ElevatedButton(
-      style: OutlinedButton.styleFrom(
-        padding: EdgeInsets.zero,
-      ),
+      style: ElevatedButton.styleFrom(
+          minimumSize: Size.zero, // Set this
+          padding: const EdgeInsets.all(8) // and this
+          ),
       onPressed: () async {
         printHoldBill(context: context, holdNumber: global.posHoldActiveCode);
       },
@@ -2960,9 +3090,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         width: 2,
       ));
       iconMenu.add(ElevatedButton(
-        style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.zero,
-        ),
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size.zero, // Set this
+            padding: const EdgeInsets.all(8) // and this
+            ),
         onPressed: () async {
           await holdBill(holdType: 2);
         },
@@ -3358,7 +3489,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget transScreen({required int mode, String barcode = ""}) {
     late Widget logo;
-    var file = File("${global.applicationDocumentsDirectory.path}/logo.png");
+    var file = File(global.getShopLogoPathName());
     if (file.existsSync()) {
       logo = Image.file(
         file,

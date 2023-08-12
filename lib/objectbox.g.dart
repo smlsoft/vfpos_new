@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(75, 861736971837750701),
+      lastPropertyId: const IdUid(77, 5881428581487322600),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -273,11 +273,6 @@ final _entities = <ModelEntity>[
             type: 8,
             flags: 0),
         ModelProperty(
-            id: const IdUid(58, 5704992869450108965),
-            name: 'vat_mode',
-            type: 6,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(59, 2523971994597278549),
             name: 'total_item_vat_amount',
             type: 8,
@@ -321,6 +316,16 @@ final _entities = <ModelEntity>[
             id: const IdUid(75, 861736971837750701),
             name: 'is_vat_register',
             type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(76, 8872398729876814518),
+            name: 'vat_type',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(77, 5881428581487322600),
+            name: 'bill_tax_type',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1494,7 +1499,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(29, 6792595191811775261),
       name: 'FormDesignObjectBoxStruct',
-      lastPropertyId: const IdUid(18, 1992801089709445516),
+      lastPropertyId: const IdUid(19, 2983097984821373581),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1515,11 +1520,6 @@ final _entities = <ModelEntity>[
             flags: 2080,
             indexId: const IdUid(36, 4249010379526982022)),
         ModelProperty(
-            id: const IdUid(5, 677388877116863205),
-            name: 'header_json',
-            type: 9,
-            flags: 0),
-        ModelProperty(
             id: const IdUid(6, 3208617791083525605),
             name: 'detail_json',
             type: 9,
@@ -1527,11 +1527,6 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(7, 4642095601605103935),
             name: 'detail_footer_json',
-            type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(8, 1528751755365772755),
-            name: 'footer_json',
             type: 9,
             flags: 0),
         ModelProperty(
@@ -1543,11 +1538,6 @@ final _entities = <ModelEntity>[
             id: const IdUid(10, 7379806192158204431),
             name: 'detail_extra_json',
             type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(11, 4328362953661362414),
-            name: 'type',
-            type: 6,
             flags: 0),
         ModelProperty(
             id: const IdUid(12, 7497203689950258476),
@@ -1573,6 +1563,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(16, 2560715377767744935),
             name: 'print_prompt_pay',
             type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 2983097984821373581),
+            name: 'form_code',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2067,7 +2062,11 @@ ModelDefinition getObjectBoxModel() {
         7184901347809486783,
         7257208570699036067,
         3735171330386112790,
-        5863642082019305378
+        5863642082019305378,
+        4328362953661362414,
+        677388877116863205,
+        1528751755365772755,
+        5704992869450108965
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2119,7 +2118,7 @@ ModelDefinition getObjectBoxModel() {
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(76);
+          fbb.startTable(78);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -2166,7 +2165,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(50, pay_jsonOffset);
           fbb.addFloat64(51, object.total_qty);
           fbb.addFloat64(56, object.pay_cash_change);
-          fbb.addInt64(57, object.vat_mode);
           fbb.addFloat64(58, object.total_item_vat_amount);
           fbb.addFloat64(60, object.total_item_except_vat_amount);
           fbb.addFloat64(65, object.total_discount);
@@ -2176,6 +2174,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(72, object.amount_except_vat);
           fbb.addFloat64(73, object.amount_before_calc_vat);
           fbb.addBool(74, object.is_vat_register);
+          fbb.addInt64(75, object.vat_type);
+          fbb.addInt64(76, object.bill_tax_type);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2196,10 +2196,12 @@ ModelDefinition getObjectBoxModel() {
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 82, 0),
               customer_code: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, ''),
+              bill_tax_type:
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 156, 0),
               customer_name: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 12, ''),
-              customer_telephone: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
+              customer_telephone:
+                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
               vat_rate: const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0),
               total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
               total_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0),
@@ -2212,7 +2214,7 @@ ModelDefinition getObjectBoxModel() {
               total_discount_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 136, 0),
               total_discount_except_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 140, 0),
               sale_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 20, ''),
-              vat_mode: const fb.Int64Reader().vTableGet(buffer, rootOffset, 118, 0),
+              vat_type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 154, 0),
               total_qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 106, 0),
               is_sync: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
               discount_formula: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
@@ -3217,32 +3219,29 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (FormDesignObjectBoxStruct object, fb.Builder fbb) {
           final guid_fixedOffset = fbb.writeString(object.guid_fixed);
           final codeOffset = fbb.writeString(object.code);
-          final header_jsonOffset = fbb.writeString(object.header_json);
           final detail_jsonOffset = fbb.writeString(object.detail_json);
           final detail_footer_jsonOffset =
               fbb.writeString(object.detail_footer_json);
-          final footer_jsonOffset = fbb.writeString(object.footer_json);
           final names_jsonOffset = fbb.writeString(object.names_json);
           final detail_extra_jsonOffset =
               fbb.writeString(object.detail_extra_json);
           final detail_total_jsonOffset =
               fbb.writeString(object.detail_total_json);
-          fbb.startTable(19);
+          final form_codeOffset = fbb.writeString(object.form_code);
+          fbb.startTable(20);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_fixedOffset);
           fbb.addOffset(2, codeOffset);
-          fbb.addOffset(4, header_jsonOffset);
           fbb.addOffset(5, detail_jsonOffset);
           fbb.addOffset(6, detail_footer_jsonOffset);
-          fbb.addOffset(7, footer_jsonOffset);
           fbb.addOffset(8, names_jsonOffset);
           fbb.addOffset(9, detail_extra_jsonOffset);
-          fbb.addInt64(10, object.type);
           fbb.addOffset(11, detail_total_jsonOffset);
           fbb.addBool(12, object.sum_by_type);
           fbb.addBool(13, object.sum_by_barcode);
           fbb.addBool(14, object.print_logo);
           fbb.addBool(15, object.print_prompt_pay);
+          fbb.addOffset(18, form_codeOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3255,7 +3254,8 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 6, ''),
               code: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''),
-              type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0),
+              form_code: const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 40, ''),
               sum_by_type: const fb.BoolReader()
                   .vTableGet(buffer, rootOffset, 28, false),
               sum_by_barcode: const fb.BoolReader()
@@ -3266,14 +3266,10 @@ ModelDefinition getObjectBoxModel() {
                   .vTableGet(buffer, rootOffset, 34, false),
               names_json: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 20, ''),
-              header_json: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              detail_json:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
+              detail_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
               detail_extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               detail_total_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              detail_footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''),
-              footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 18, ''))
+              detail_footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3596,45 +3592,49 @@ class BillObjectBoxStruct_ {
   static final pay_cash_change =
       QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[45]);
 
-  /// see [BillObjectBoxStruct.vat_mode]
-  static final vat_mode =
-      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
-
   /// see [BillObjectBoxStruct.total_item_vat_amount]
   static final total_item_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[46]);
 
   /// see [BillObjectBoxStruct.total_item_except_vat_amount]
   static final total_item_except_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[48]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[47]);
 
   /// see [BillObjectBoxStruct.total_discount]
   static final total_discount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[49]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[48]);
 
   /// see [BillObjectBoxStruct.total_discount_vat_amount]
   static final total_discount_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[50]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[49]);
 
   /// see [BillObjectBoxStruct.total_discount_except_vat_amount]
   static final total_discount_except_vat_amount =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[51]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[50]);
 
   /// see [BillObjectBoxStruct.amount_after_calc_vat]
   static final amount_after_calc_vat =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[52]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[51]);
 
   /// see [BillObjectBoxStruct.amount_except_vat]
   static final amount_except_vat =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[53]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[52]);
 
   /// see [BillObjectBoxStruct.amount_before_calc_vat]
   static final amount_before_calc_vat =
-      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[54]);
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[53]);
 
   /// see [BillObjectBoxStruct.is_vat_register]
   static final is_vat_register =
-      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[55]);
+      QueryBooleanProperty<BillObjectBoxStruct>(_entities[0].properties[54]);
+
+  /// see [BillObjectBoxStruct.vat_type]
+  static final vat_type =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[55]);
+
+  /// see [BillObjectBoxStruct.bill_tax_type]
+  static final bill_tax_type =
+      QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[56]);
 }
 
 /// [EmployeeObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4546,57 +4546,49 @@ class FormDesignObjectBoxStruct_ {
   static final code = QueryStringProperty<FormDesignObjectBoxStruct>(
       _entities[16].properties[2]);
 
-  /// see [FormDesignObjectBoxStruct.header_json]
-  static final header_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[3]);
-
   /// see [FormDesignObjectBoxStruct.detail_json]
   static final detail_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[4]);
+      _entities[16].properties[3]);
 
   /// see [FormDesignObjectBoxStruct.detail_footer_json]
   static final detail_footer_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
-          _entities[16].properties[5]);
-
-  /// see [FormDesignObjectBoxStruct.footer_json]
-  static final footer_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[6]);
+          _entities[16].properties[4]);
 
   /// see [FormDesignObjectBoxStruct.names_json]
   static final names_json = QueryStringProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[7]);
+      _entities[16].properties[5]);
 
   /// see [FormDesignObjectBoxStruct.detail_extra_json]
   static final detail_extra_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
-          _entities[16].properties[8]);
-
-  /// see [FormDesignObjectBoxStruct.type]
-  static final type = QueryIntegerProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[9]);
+          _entities[16].properties[6]);
 
   /// see [FormDesignObjectBoxStruct.detail_total_json]
   static final detail_total_json =
       QueryStringProperty<FormDesignObjectBoxStruct>(
-          _entities[16].properties[10]);
+          _entities[16].properties[7]);
 
   /// see [FormDesignObjectBoxStruct.sum_by_type]
   static final sum_by_type = QueryBooleanProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[11]);
+      _entities[16].properties[8]);
 
   /// see [FormDesignObjectBoxStruct.sum_by_barcode]
   static final sum_by_barcode = QueryBooleanProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[12]);
+      _entities[16].properties[9]);
 
   /// see [FormDesignObjectBoxStruct.print_logo]
   static final print_logo = QueryBooleanProperty<FormDesignObjectBoxStruct>(
-      _entities[16].properties[13]);
+      _entities[16].properties[10]);
 
   /// see [FormDesignObjectBoxStruct.print_prompt_pay]
   static final print_prompt_pay =
       QueryBooleanProperty<FormDesignObjectBoxStruct>(
-          _entities[16].properties[14]);
+          _entities[16].properties[11]);
+
+  /// see [FormDesignObjectBoxStruct.form_code]
+  static final form_code = QueryStringProperty<FormDesignObjectBoxStruct>(
+      _entities[16].properties[12]);
 }
 
 /// [BillDetailObjectBoxStruct] entity fields to define ObjectBox queries.

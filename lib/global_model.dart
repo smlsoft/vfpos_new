@@ -547,6 +547,25 @@ class OrderTempUpdateForSplitModel {
 }
 
 @JsonSerializable(explicitToJson: true)
+class PosConfigSlipModel {
+  String code;
+  String name;
+  String formcode;
+  List<LanguageDataModel> formnames;
+
+  PosConfigSlipModel({
+    required this.code,
+    required this.name,
+    required this.formcode,
+    required this.formnames,
+  });
+
+  factory PosConfigSlipModel.fromJson(Map<String, dynamic> json) =>
+      _$PosConfigSlipModelFromJson(json);
+  Map<String, dynamic> toJson() => _$PosConfigSlipModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class PosConfigModel {
   final String code;
   final String doccode;
@@ -558,6 +577,8 @@ class PosConfigModel {
   final bool isejournal;
   final String devicenumber;
   final bool isvatregister;
+  final List<PosConfigSlipModel> slips;
+  final String logourl;
 
   PosConfigModel({
     required this.code,
@@ -570,11 +591,12 @@ class PosConfigModel {
     required this.isvatregister,
     required this.isejournal,
     required this.devicenumber,
+    required this.slips,
+    required this.logourl,
   });
 
   factory PosConfigModel.fromJson(Map<String, dynamic> json) =>
       _$PosConfigModelFromJson(json);
-
   Map<String, dynamic> toJson() => _$PosConfigModelToJson(this);
 }
 
@@ -593,4 +615,18 @@ class PosInformationModel {
       _$PosInformationModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PosInformationModelToJson(this);
+}
+
+/// ปัดเศษสตางค์
+
+class MoneyRoundPayModel {
+  double begin;
+  double end;
+  double value;
+
+  MoneyRoundPayModel({
+    required this.begin,
+    required this.end,
+    required this.value,
+  });
 }

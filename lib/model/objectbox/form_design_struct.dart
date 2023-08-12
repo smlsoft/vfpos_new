@@ -11,13 +11,15 @@ part 'form_design_struct.g.dart';
 @Entity()
 class FormDesignObjectBoxStruct {
   int id = 0;
+
   @Unique()
   String guid_fixed;
+
   @Unique()
   String code;
 
-  /// 0=ใบเสร็จรับเงิน,1=ใบสรุปยอด,2=ใบกำกับภาษีแบบเต็ม
-  int type;
+  /// รหัสแบบฟอร์ม
+  String form_code;
 
   /// True=รวมรายการตามประเภท, False=ไม่รวมตามประเภท  (อาหาร,เครื่องดื่ม,อื่นๆ)
   bool sum_by_type;
@@ -32,61 +34,29 @@ class FormDesignObjectBoxStruct {
   bool print_prompt_pay;
 
   String names_json;
-  String header_json;
   String detail_json;
   String detail_extra_json;
   String detail_total_json;
   String detail_footer_json;
-  String footer_json;
 
   FormDesignObjectBoxStruct({
     required this.guid_fixed,
     required this.code,
-    required this.type,
+    required this.form_code,
     required this.sum_by_type,
     required this.sum_by_barcode,
     required this.print_logo,
     required this.print_prompt_pay,
     required this.names_json,
-    required this.header_json,
     required this.detail_json,
     required this.detail_extra_json,
     required this.detail_total_json,
     required this.detail_footer_json,
-    required this.footer_json,
   });
 
   factory FormDesignObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
       _$FormDesignObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$FormDesignObjectBoxStructToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FormDesignHeaderModel {
-  List<List<LanguageDataModel>> description;
-
-  FormDesignHeaderModel({
-    required this.description,
-  });
-
-  factory FormDesignHeaderModel.fromJson(Map<String, dynamic> json) =>
-      _$FormDesignHeaderModelFromJson(json);
-  Map<String, dynamic> toJson() => _$FormDesignHeaderModelToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class FormDesignFooterModel {
-  List<List<LanguageDataModel>> description;
-  bool print_qr_doc_no;
-
-  FormDesignFooterModel({
-    required this.description,
-    required this.print_qr_doc_no,
-  });
-
-  factory FormDesignFooterModel.fromJson(Map<String, dynamic> json) =>
-      _$FormDesignFooterModelFromJson(json);
-  Map<String, dynamic> toJson() => _$FormDesignFooterModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)

@@ -1,6 +1,7 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
@@ -244,9 +245,9 @@ class PosProcess {
       processResult.amount_before_calc_vat = amountAfterCalcVat;
       // คำนวณยอดภาษี
       processResult.total_vat_amount = 0;
+      processResult.amount_after_calc_vat = amountAfterCalcVat;
       processResult.total_amount =
           amountAfterCalcVat + processResult.amount_except_vat;
-      processResult.amount_after_calc_vat = amountAfterCalcVat;
     }
     return process;
   }

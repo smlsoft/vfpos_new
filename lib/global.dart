@@ -192,15 +192,22 @@ String printerConfigCashierCode = "printer_config_cashier";
 String printerConfigTicketCode = "printer_config_ticket";
 String shopId = "";
 bool checkOrderActive = false;
-int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
+// ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
+int orderToKitchenPrintMode = 1;
 String posTerminalPinCode = "";
 String posTerminalPinTokenId = "";
-String formTaxDefaultCode = "DEDE-01-88"; // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ
-String formFullTaxDefaultCode =
-    "DEDE-02-88"; // ใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม
-String formSummeryDefaultCode = "DEDE-05-88"; // ใบสรุปยอด
 bool posScreenAutoRefresh = false;
 bool rebuildProductBarcodeStatus = true;
+// วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษ
+int payTotalMoneyRoundType = 1;
+// Step การปัดเศษ ค่าว่าง=จำนวนเต็มอัตโนมัติ,0.25,0.5,0.75
+List<MoneyRoundPayModel> payTotalMoneyRoundStep = [
+  MoneyRoundPayModel(begin: 0.01, end: 0.12, value: 0),
+  MoneyRoundPayModel(begin: 0.13, end: 0.37, value: 0.25),
+  MoneyRoundPayModel(begin: 0.38, end: 0.62, value: 0.5),
+  MoneyRoundPayModel(begin: 0.63, end: 0.87, value: 0.75),
+  MoneyRoundPayModel(begin: 0.88, end: 0.99, value: 1.0),
+];
 
 enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
@@ -214,32 +221,15 @@ enum DisplayMachineEnum { customerDisplay, posTerminal }
 
 enum PosScreenModeEnum { posSale, posReturn }
 
-enum ThaiTaxIncludeEnum {
-  normal,
-// สินค้ามีภาษี ไม่มีส่วนลด
-  productsNoDiscountsWithTax,
-// สินค้ามีภาษี มีส่วนลด
-  productsWithTaxAndDiscount,
-// สินค้าไม่มีภาษี ไม่มีส่วนลด
-  nonTaxedNonDiscountedProducts,
-// สินค้าไม่มีภาษี มีส่วนลด
-  nonTaxedDiscountedProducts,
-// สินค้ามีภาษี และสินค้าไม่มีภาษี มีส่วนลด
-  bothTaxTypesProductsWithDiscount,
-// สินค้ามีภาษี และสินค้าไม่มีภาษี ไม่มีส่วนลด
-  bothTaxTypesProductsWithoutDiscount
-}
-
 /// ฟอร์มใบสรุปยอด
-String formSummery = "SLIP001";
+String formS01 = "S-01";
 // ฟอร์มใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ
-String formReceiptsAndAbbreviatedTaxInvoices =
-    "SLIP002";
+String formS02 = "S-02";
 // ฟอร์มใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม
-String formFullReceiptAndTaxInvoice = "SLIP003";
+String formS03 = "S-03";
 // ใบเสร็จรับเงิน (ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม)
-String formReceipt = "SLIP004";
-/// ใบรับคืน
+String formS04 = "S-04";
+// ใบรับคืน
 String formReturn = "SLIP005";
 
 enum TableManagerEnum {
@@ -923,7 +913,15 @@ Future<void> loadConfig() async {
   try {
     // POS Setting
     var value = await apiRepository.getPosSetting(deviceId);
+    print(jsonEncode(value.data));
     global.posConfig = PosConfigModel.fromJson(value.data);
+    // ดึง logo
+    if (global.posConfig.logourl.isNotEmpty) {
+      var url = global.posConfig.logourl;
+      var response = await http.get(Uri.parse(url));
+      var file = File(global.getPosLogoPathName());
+      await file.writeAsBytes(response.bodyBytes);
+    }
   } catch (e) {
     serviceLocator<Log>().error(e);
   }
@@ -1338,86 +1336,88 @@ Future<void> checkOrderOnline() async {
       String selectQuery =
           "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
       var value = await clickHouseSelect(selectQuery);
-      ResponseDataModel responseData = ResponseDataModel.fromJson(value);
-      // Print
-      String orderId = "";
-      bool updateOrder = false;
-      for (var order in responseData.data) {
-        orderId = order["orderid"];
-        OrderTempDataModel orderData = OrderTempDataModel(
-          orderId: order["orderid"],
-          orderGuid: order["orderguid"],
-          barcode: order["barcode"],
-          qty: double.tryParse(order["qty"].toString()) ?? 0,
-          optionSelected: order["optionselected"],
-          remark: order["remark"],
-          orderDateTime: DateTime.parse(order["orderdatetime"]),
-          price: double.tryParse(order["price"].toString()) ?? 0,
-          amount: double.tryParse(order["amount"].toString()) ?? 0,
-          isTakeAway: order["istakeaway"],
-        );
-        orderTemp.add(orderData);
-        ProductBarcodeObjectBoxStruct? productBarcode =
-            await ProductBarcodeHelper()
-                .selectByBarcodeFirst(orderData.barcode);
-        List<String> orderIdSplit = orderData.orderId.split("#");
-        String orderIdMain = (orderIdSplit.isNotEmpty) ? orderIdSplit[0] : "";
-        orderSave.add(OrderTempObjectBoxStruct(
-          id: 0,
-          orderId: orderData.orderId,
-          orderIdMain: orderIdMain,
-          orderGuid: orderData.orderGuid,
-          machineId: "",
-          orderDateTime: orderData.orderDateTime,
-          barcode: orderData.barcode,
-          qty: orderData.qty,
-          price: orderData.price,
-          amount: orderData.amount,
-          isOrder: false,
-          isPaySuccess: false,
-          optionSelected: orderData.optionSelected,
-          remark: orderData.remark,
-          names: productBarcode?.names ?? "",
-          takeAway: (orderData.isTakeAway == 1) ? true : false,
-          unitCode: productBarcode?.unit_code ?? "",
-          unitName: productBarcode?.unit_names ?? "",
-          imageUri: productBarcode?.images_url ?? "",
-          kdsSuccessTime: DateTime.now(),
-          kdsSuccess: false,
-          isOrderSuccess: true,
-          isOrderSendKdsSuccess: false,
-          kdsId: "",
-          cancelQty: 0,
-          orderQty: orderData.qty,
-          deliveryNumber: "",
-          deliveryCode: "",
-          isOrderReadySendKds: true,
-          deliveryName: "",
-          lastUpdateDateTime: DateTime.now(),
-        ));
-        if (orderToKitchenPrintMode == 0) {
-          // พิมพ์แยกใบ
+      if (value.isNotEmpty) {
+        ResponseDataModel responseData = ResponseDataModel.fromJson(value);
+        // Print
+        String orderId = "";
+        bool updateOrder = false;
+        for (var order in responseData.data) {
+          orderId = order["orderid"];
+          OrderTempDataModel orderData = OrderTempDataModel(
+            orderId: order["orderid"],
+            orderGuid: order["orderguid"],
+            barcode: order["barcode"],
+            qty: double.tryParse(order["qty"].toString()) ?? 0,
+            optionSelected: order["optionselected"],
+            remark: order["remark"],
+            orderDateTime: DateTime.parse(order["orderdatetime"]),
+            price: double.tryParse(order["price"].toString()) ?? 0,
+            amount: double.tryParse(order["amount"].toString()) ?? 0,
+            isTakeAway: order["istakeaway"],
+          );
+          orderTemp.add(orderData);
+          ProductBarcodeObjectBoxStruct? productBarcode =
+              await ProductBarcodeHelper()
+                  .selectByBarcodeFirst(orderData.barcode);
+          List<String> orderIdSplit = orderData.orderId.split("#");
+          String orderIdMain = (orderIdSplit.isNotEmpty) ? orderIdSplit[0] : "";
+          orderSave.add(OrderTempObjectBoxStruct(
+            id: 0,
+            orderId: orderData.orderId,
+            orderIdMain: orderIdMain,
+            orderGuid: orderData.orderGuid,
+            machineId: "",
+            orderDateTime: orderData.orderDateTime,
+            barcode: orderData.barcode,
+            qty: orderData.qty,
+            price: orderData.price,
+            amount: orderData.amount,
+            isOrder: false,
+            isPaySuccess: false,
+            optionSelected: orderData.optionSelected,
+            remark: orderData.remark,
+            names: productBarcode?.names ?? "",
+            takeAway: (orderData.isTakeAway == 1) ? true : false,
+            unitCode: productBarcode?.unit_code ?? "",
+            unitName: productBarcode?.unit_names ?? "",
+            imageUri: productBarcode?.images_url ?? "",
+            kdsSuccessTime: DateTime.now(),
+            kdsSuccess: false,
+            isOrderSuccess: true,
+            isOrderSendKdsSuccess: false,
+            kdsId: "",
+            cancelQty: 0,
+            orderQty: orderData.qty,
+            deliveryNumber: "",
+            deliveryCode: "",
+            isOrderReadySendKds: true,
+            deliveryName: "",
+            lastUpdateDateTime: DateTime.now(),
+          ));
+          if (orderToKitchenPrintMode == 0) {
+            // พิมพ์แยกใบ
+            await sendToKitchen(orderId: orderId, orderList: orderTemp);
+            updateOrder = true;
+            orderTemp.clear();
+          }
+        }
+        if (orderTemp.isNotEmpty) {
           await sendToKitchen(orderId: orderId, orderList: orderTemp);
           updateOrder = true;
-          orderTemp.clear();
         }
+        if (updateOrder) {
+          // update สถานะ ว่า ส่งไปที่ครัวแล้ว
+          String updateQuery =
+              "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
+          await clickHouseExecute(updateQuery);
+        }
+        // save to objectbox
+        global.objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .putMany(orderSave, mode: PutMode.insert);
+        // คำนวณยอดใหม่
+        global.orderSumAndUpdateTable(orderId);
       }
-      if (orderTemp.isNotEmpty) {
-        await sendToKitchen(orderId: orderId, orderList: orderTemp);
-        updateOrder = true;
-      }
-      if (updateOrder) {
-        // update สถานะ ว่า ส่งไปที่ครัวแล้ว
-        String updateQuery =
-            "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
-        await clickHouseExecute(updateQuery);
-      }
-      // save to objectbox
-      global.objectBoxStore
-          .box<OrderTempObjectBoxStruct>()
-          .putMany(orderSave, mode: PutMode.insert);
-      // คำนวณยอดใหม่
-      global.orderSumAndUpdateTable(orderId);
     } catch (e) {
       serviceLocator<Log>().error(e.toString());
     }
@@ -1758,11 +1758,6 @@ Future<void> loadEmployee() async {
   }
 }
 
-double roundDouble(double value, int places) {
-  num mod = pow(10.0, places);
-  return ((value * mod).round().toDouble() / mod);
-}
-
 String findBankLogo(String code) {
   BankObjectBoxStruct? bankDataList = BankHelper().selectByCode(code: code);
   if (bankDataList != null) {
@@ -1784,6 +1779,10 @@ double paperWidth(int paperType) {
 
 String getShopLogoPathName() {
   return "${applicationDocumentsDirectory.path}/logo.png";
+}
+
+String getPosLogoPathName() {
+  return "${applicationDocumentsDirectory.path}/poslogo.png";
 }
 
 String qrCodeOrderOnline(String qrCode) {
@@ -1811,11 +1810,59 @@ Future<Directory> createPath(String mainPath, DateTime docDate) async {
   return dateDirectory;
 }
 
-int findFormByGuid(String guid) {
+int findFormByCode(String code) {
   for (var i = 0; i < global.formDesignList.length; i++) {
-    if (global.formDesignList[i].guid_fixed == guid) {
+    if (global.formDesignList[i].code == code) {
       return i;
     }
   }
   return -1;
+}
+
+String getPosFormCodeByCode(String code) {
+  for (var i = 0; i < global.posConfig.slips.length; i++) {
+    if (global.posConfig.slips[i].code == code) {
+      return global.posConfig.slips[i].formcode;
+    }
+  }
+  return "";
+}
+
+String getPosFormNameByCode(String code) {
+  for (var i = 0; i < global.posConfig.slips.length; i++) {
+    if (global.posConfig.slips[i].code == code) {
+      return jsonEncode(global.posConfig.slips[i].formnames);
+    }
+  }
+  return "[{}]";
+}
+
+double roundDouble(double value, int places) {
+  num mod = pow(10.0, places);
+  return ((value * mod).round().toDouble() / mod);
+}
+
+double roundDoubleDown(double value, int precision) {
+  final divideBy = pow(10, precision);
+  return ((value * divideBy).floorToDouble() / divideBy);
+}
+
+double roundMoneyForPay(double value) {
+  double result = value;
+  if (payTotalMoneyRoundStep.isEmpty) {
+    // ถ้าเป็นค่าว่าง ให้ปัดจำนวนเต็มอัตโนมัติ
+    result = roundDouble(value, 0);
+  } else {
+    value = roundDouble(value, 2);
+    double calcRound = roundDouble(value - value.floorToDouble(), 2);
+    for (int index = 0; index < payTotalMoneyRoundStep.length; index++) {
+      if (calcRound >= payTotalMoneyRoundStep[index].begin &&
+          calcRound <= payTotalMoneyRoundStep[index].end) {
+        result =
+            roundDoubleDown(value, 0) + payTotalMoneyRoundStep[index].value;
+        break;
+      }
+    }
+  }
+  return result;
 }

@@ -139,7 +139,6 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
                   (e) => PromotionTempModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      vat_mode: json['vat_mode'] as int? ?? 1,
       discount_formula: json['discount_formula'] as String? ?? "",
       total_discount: (json['total_discount'] as num?)?.toDouble() ?? 0,
       total_discount_vat_amount:
@@ -178,7 +177,6 @@ Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
       'details': instance.details,
       'select_promotion_temp_list': instance.select_promotion_temp_list,
       'promotion_list': instance.promotion_list,
-      'vat_mode': instance.vat_mode,
       'discount_formula': instance.discount_formula,
       'total_discount': instance.total_discount,
       'total_discount_vat_amount': instance.total_discount_vat_amount,
