@@ -22,10 +22,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
       width: 175,
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-          color: Colors.blue[100],
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.grey, width: 1)),
+      decoration: BoxDecoration(color: Colors.blue[100], borderRadius: BorderRadius.circular(4), border: Border.all(color: Colors.grey, width: 1)),
       child: Column(
         children: [
           Text(
@@ -39,46 +36,25 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
               width: double.infinity,
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: global.printerLocalStrongData[index]
-                            .isConfigConnectSuccess
-                        ? Colors.green
-                        : Colors.red,
+                    backgroundColor: global.printerLocalStrongData[index].isConfigConnectSuccess ? Colors.green : Colors.red,
                   ),
                   onPressed: () async {
-                    if (global
-                        .printerLocalStrongData[index].isConfigConnectSuccess) {
+                    if (global.printerLocalStrongData[index].isConfigConnectSuccess) {
                       // ยกเลิกข้อมูลเครื่องพิมพ์
-                      global.printerLocalStrongData[index]
-                          .isConfigConnectSuccess = false;
-                      await global.appStorage
-                          .remove(global.printerLocalStrongData[index].code);
-                      var jsonString = const JsonEncoder().convert(
-                          global.printerLocalStrongData[index].toJson());
-                      await global.appStorage.write(
-                          global.printerLocalStrongData[index].code,
-                          jsonString);
+                      global.printerLocalStrongData[index].isConfigConnectSuccess = false;
+                      await global.appStorage.remove(global.printerLocalStrongData[index].code);
+                      var jsonString = const JsonEncoder().convert(global.printerLocalStrongData[index].toJson());
+                      await global.appStorage.write(global.printerLocalStrongData[index].code, jsonString);
                       await global.loadPrinter();
                       setState(() {});
                       return;
                     }
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                PrinterConfigSelectPrinterScreen(
-                                    printerCode: global
-                                        .printerLocalStrongData[index].code,
-                                    printerName: global
-                                        .printerLocalStrongData[index]
-                                        .name))).then((value) async {
+                    await Navigator.push(context, MaterialPageRoute(builder: (context) => PrinterConfigSelectPrinterScreen(printerCode: global.printerLocalStrongData[index].code, printerName: global.printerLocalStrongData[index].name))).then((value) async {
                       await global.loadPrinter();
                       setState(() {});
                     });
                   },
-                  child: (global
-                          .printerLocalStrongData[index].isConfigConnectSuccess)
-                      ? Text(global.language("printer_remove"))
-                      : Text(global.language("printer_connect")))),
+                  child: (global.printerLocalStrongData[index].isConfigConnectSuccess) ? Text(global.language("printer_remove")) : Text(global.language("printer_connect")))),
           const SizedBox(
             height: 5,
           ),
@@ -90,13 +66,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () async {
-                      await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PrinterConfigSelectFormPage(
-                                  printer: global
-                                      .printerLocalStrongData[index]))).then(
-                          (value) async {
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) => PrinterConfigSelectFormPage(printer: global.printerLocalStrongData[index]))).then((value) async {
                         await global.loadPrinter();
                         setState(() {});
                       });
@@ -112,19 +82,10 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                 padding: const EdgeInsets.all(4),
                 child: Column(
                   children: [
-                    if (global
-                        .printerLocalStrongData[index].ipAddress.isNotEmpty)
-                      Text(
-                          "${global.printerLocalStrongData[index].ipAddress}:${global.printerLocalStrongData[index].ipPort}"),
-                    if (global
-                        .printerLocalStrongData[index].deviceId.isNotEmpty)
-                      Text(global.printerLocalStrongData[index].deviceId),
-                    if (global
-                        .printerLocalStrongData[index].deviceName.isNotEmpty)
-                      Text(global.printerLocalStrongData[index].deviceName),
-                    if (global
-                        .printerLocalStrongData[index].manufacturer.isNotEmpty)
-                      Text(global.printerLocalStrongData[index].manufacturer)
+                    if (global.printerLocalStrongData[index].ipAddress.isNotEmpty) Text("${global.printerLocalStrongData[index].ipAddress}:${global.printerLocalStrongData[index].ipPort}"),
+                    if (global.printerLocalStrongData[index].deviceId.isNotEmpty) Text(global.printerLocalStrongData[index].deviceId),
+                    if (global.printerLocalStrongData[index].deviceName.isNotEmpty) Text(global.printerLocalStrongData[index].deviceName),
+                    if (global.printerLocalStrongData[index].manufacturer.isNotEmpty) Text(global.printerLocalStrongData[index].manufacturer)
                   ],
                 ))
         ],
@@ -151,10 +112,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                   spacing: 10,
                   runSpacing: 10,
                   children: [
-                    for (int index = 0;
-                        index < global.printerLocalStrongData.length;
-                        index++)
-                      printer(index)
+                    for (int index = 0; index < global.printerLocalStrongData.length; index++) printer(index)
                   ],
                 ))));
   }

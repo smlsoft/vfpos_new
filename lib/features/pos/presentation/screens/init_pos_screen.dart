@@ -27,11 +27,9 @@ class _InitPOSScreenState extends State<InitPOSScreen> {
         Navigator.of(context).pushReplacementNamed('client');
       });
     } else {
-      timerSwitchToMenu =
-          Timer.periodic(const Duration(seconds: 1), (timer) async {
+      timerSwitchToMenu = Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
-          context.router.replace(
-              PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
+          context.router.replace(PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
         }
         setState(() {});
       });

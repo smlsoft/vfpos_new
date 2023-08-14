@@ -95,16 +95,16 @@ class PosProcess {
   PosProcessModel processSummery(
       PosProcessModel process, String discountFormula) {
     // รวม
-    double totalAmount = 0;
     double totalPiece = 0;
     double totalItemVatAmount = 0;
     double totalItemExceptVatAmount = 0;
     for (int index = 0; index < processResult.details.length; index++) {
       if (processResult.details[index].is_void == false) {
-        totalAmount += processResult.details[index].total_amount;
-        if (processResult.details[index].exclude_vat == false) {
+        if (processResult.details[index].is_except_vat == false) {
+          // สินค้ามี vat
           totalItemVatAmount += processResult.details[index].total_amount;
         } else {
+          // สินค้าไม่มี vat
           totalItemExceptVatAmount += processResult.details[index].total_amount;
         }
         totalPiece += processResult.details[index].qty;
@@ -112,8 +112,16 @@ class PosProcess {
             extraIndex < processResult.details[index].extra.length;
             extraIndex++) {
           if (processResult.details[index].extra[extraIndex].is_void == false) {
-            totalAmount +=
-                processResult.details[index].extra[extraIndex].total_amount;
+            if (processResult.details[index].extra[extraIndex].is_except_vat ==
+                false) {
+              // สินค้ามี vat
+              totalItemVatAmount +=
+                  processResult.details[index].extra[extraIndex].total_amount;
+            } else {
+              // สินค้าไม่มี vat
+              totalItemExceptVatAmount +=
+                  processResult.details[index].extra[extraIndex].total_amount;
+            }
           }
         }
       }
@@ -132,7 +140,8 @@ class PosProcess {
     processResult.discount_formula = discountFormula;
     processResult.total_discount = global.roundDouble(
         global.calcDiscountFormula(
-            totalAmount: totalAmount, discountText: discountFormula),
+            totalAmount: totalItemVatAmount + totalItemExceptVatAmount,
+            discountText: discountFormula),
         2);
     if (processResult.is_vat_register) {
       if (processResult.vat_type == 0) {
@@ -288,26 +297,26 @@ class PosProcess {
             int findIndex = findByGuid(logData.guid_ref);
             if (findIndex != -1) {
               // เพิ่มบรรทัด (Extra)
-              PosProcessDetailExtraModel extra = PosProcessDetailExtraModel();
-              extra.index = processResult.details[findIndex].extra.length + 1;
-              extra.guid_auto_fixed = logData.code;
-              extra.guid_code_or_ref = logData.guid_code_ref;
-              extra.barcode = "";
-              extra.item_code = logData.code;
-              extra.item_name = logData.name;
-              extra.price = logData.price;
-              extra.qty = logData.qty;
-              extra.qty_fixed = logData.qty_fixed;
-              extra.total_amount =
-                  double.parse((extra.price * extra.qty).toStringAsFixed(2));
-              extra.unit_code = "";
-              extra.unit_name = "";
-              extra.guid_auto_fixed = logData.guid_auto_fixed;
-              extra.is_void = processResult.details[findIndex].is_void;
-              double calc = double.parse((extra.price).toStringAsFixed(2));
-              extra.total_amount = double.parse(
-                  (calc * processResult.details[findIndex].qty)
-                      .toStringAsFixed(2));
+              PosProcessDetailExtraModel extra = PosProcessDetailExtraModel(
+                  index: processResult.details[findIndex].extra.length + 1,
+                  guid_code_or_ref: logData.guid_code_ref,
+                  barcode: logData.barcode,
+                  item_code: logData.code,
+                  item_name: logData.name,
+                  price: logData.price,
+                  qty: logData.qty,
+                  qty_fixed: logData.qty_fixed,
+                  unit_code: logData.unit_code,
+                  unit_name: logData.unit_name,
+                  guid_category: "",
+                  price_exclude_vat: logData.price_exclude_vat,
+                  is_except_vat: logData.is_except_vat,
+                  guid_auto_fixed: logData.guid_auto_fixed,
+                  is_void: processResult.details[findIndex].is_void,
+                  total_amount: double.parse(
+                      (double.parse((logData.price).toStringAsFixed(2)) *
+                              processResult.details[findIndex].qty)
+                          .toStringAsFixed(2)));
               processResult.details[findIndex].extra.add(extra);
             }
           }
@@ -375,21 +384,28 @@ class PosProcess {
           }
           if (findIndex == -1) {
             // เพิ่มบรรทัด
-            PosProcessDetailModel detail = PosProcessDetailModel(extra: []);
-            detail.index = count++;
-            detail.barcode = logData.barcode;
-            detail.item_code = logData.code;
-            detail.item_name = logData.name;
-            detail.price = logData.price;
-            detail.price_original = logData.price;
-            detail.qty = logData.qty;
-            detail.total_amount =
-                double.parse((logData.price * logData.qty).toStringAsFixed(2));
-            detail.unit_code = logData.unit_code;
-            detail.unit_name = logData.unit_name;
-            detail.guid = logData.guid_auto_fixed;
-            detail.image_url = productBarcode.images_url;
-            detail.exclude_vat = logData.exclude_vat;
+            PosProcessDetailModel detail = PosProcessDetailModel(
+                extra: [],
+                index: count++,
+                barcode: logData.barcode,
+                item_code: logData.code,
+                item_name: logData.name,
+                price: logData.price,
+                price_original: logData.price,
+                qty: logData.qty,
+                total_amount: double.parse(
+                    (logData.price * logData.qty).toStringAsFixed(2)),
+                unit_code: logData.unit_code,
+                unit_name: logData.unit_name,
+                guid: logData.guid_auto_fixed,
+                discount_text: "",
+                discount: 0.0,
+                total_amount_with_extra: 0,
+                is_void: false,
+                remark: "",
+                image_url: productBarcode.images_url,
+                price_exclude_vat: logData.price_exclude_vat,
+                is_except_vat: logData.is_except_vat);
             processResult.details.add(detail);
             result.lineGuid = detail.guid;
           } else {

@@ -45,16 +45,13 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
                   (index) => ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: (dataList[index].is_cancel)
-                          ? Colors.red.shade100
-                          : Colors.blue.shade100,
+                      backgroundColor: (dataList[index].is_cancel) ? Colors.red.shade100 : Colors.blue.shade100,
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosReprintBillDetailScreen(
-                              docNumber: dataList[index].doc_number),
+                          builder: (context) => PosReprintBillDetailScreen(docNumber: dataList[index].doc_number),
                         ),
                       );
                     },

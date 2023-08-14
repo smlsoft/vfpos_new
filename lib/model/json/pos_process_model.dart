@@ -7,45 +7,51 @@ part 'pos_process_model.g.dart';
 
 @JsonSerializable()
 class PosProcessDetailModel {
-  late String guid;
-  late int index;
-  late String barcode;
-  late String item_code;
-  late String item_name;
-  late String unit_code;
-  late String unit_name;
-  late double qty;
-  late double price;
-  late double price_original;
-  late String discount_text;
-  late double discount;
-  late double total_amount;
-  late double total_amount_with_extra;
-  late bool is_void;
-  late String remark;
-  late String image_url;
-  late bool exclude_vat;
-  late List<PosProcessDetailExtraModel> extra;
+  String guid;
+  int index;
+  String barcode;
+  String item_code;
+  String item_name;
+  String unit_code;
+  String unit_name;
+  double qty;
+  double price;
+  double price_original;
+  String discount_text;
+  double discount;
+  double total_amount;
+  double total_amount_with_extra;
+  bool is_void;
+  String remark;
+  String image_url;
+
+  /// ราคารวมภาษี (True = ราคารวมภาษี, False = ราคาไม่รวมภาษี)
+  bool price_exclude_vat;
+
+  /// สินค้ายกเว้นภาษี (True = สินค้ายกเว้นภาษี, False = สินค้าไม่ยกเว้นภาษี)
+  bool is_except_vat;
+  List<PosProcessDetailExtraModel> extra;
 
   PosProcessDetailModel({
-    this.guid = '',
-    this.index = 0,
-    this.barcode = '',
-    this.item_code = '',
-    this.item_name = '',
-    this.unit_code = '',
-    this.unit_name = '',
-    this.qty = 0,
-    this.price = 0,
-    this.price_original = 0,
-    this.discount_text = '',
-    this.discount = 0,
-    this.total_amount = 0,
-    this.total_amount_with_extra = 0,
-    this.is_void = false,
-    this.remark = "",
-    this.image_url = "",
-    this.exclude_vat = false,
+    required this.guid,
+    required this.index,
+    required this.barcode,
+    required this.item_code,
+    required this.item_name,
+    required this.unit_code,
+    required this.unit_name,
+    required this.qty,
+    required this.price,
+    required this.price_original,
+    required this.discount_text,
+    required this.discount,
+    required this.total_amount,
+    required this.total_amount_with_extra,
+    required this.is_void,
+    required this.remark,
+    required this.image_url,
+    required this.price_exclude_vat,
+    required this.is_except_vat,
     required this.extra,
   });
 
@@ -56,36 +62,44 @@ class PosProcessDetailModel {
 
 @JsonSerializable()
 class PosProcessDetailExtraModel {
-  late String guid_auto_fixed;
-  late String guid_code_or_ref;
-  late String guid_category;
-  late int index;
-  late String barcode;
-  late String item_code;
-  late String item_name;
-  late String unit_code;
-  late String unit_name;
-  late double qty;
-  late double qty_fixed;
-  late double price;
-  late double total_amount;
-  late bool is_void;
+  String guid_auto_fixed;
+  String guid_code_or_ref;
+  String guid_category;
+  int index;
+  String barcode;
+  String item_code;
+  String item_name;
+  String unit_code;
+  String unit_name;
+  double qty;
+  double qty_fixed;
+  double price;
+  double total_amount;
+  bool is_void;
+
+  /// ราคารวมภาษี (True = ราคารวมภาษี, False = ราคาไม่รวมภาษี)
+  bool price_exclude_vat;
+
+  /// สินค้ายกเว้นภาษี (True = สินค้ายกเว้นภาษี, False = สินค้าไม่ยกเว้นภาษี)
+  bool is_except_vat;
 
   PosProcessDetailExtraModel(
-      {this.guid_auto_fixed = '',
-      this.guid_category = '',
-      this.guid_code_or_ref = '',
-      this.index = 0,
-      this.barcode = '',
-      this.item_code = '',
-      this.item_name = '',
-      this.unit_code = '',
-      this.unit_name = '',
-      this.qty = 0,
-      this.qty_fixed = 0,
-      this.price = 0,
-      this.total_amount = 0,
-      this.is_void = false});
+      {required this.guid_auto_fixed,
+      required this.guid_category,
+      required this.guid_code_or_ref,
+      required this.index,
+      required this.barcode,
+      required this.item_code,
+      required this.item_name,
+      required this.unit_code,
+      required this.unit_name,
+      required this.qty,
+      required this.qty_fixed,
+      required this.price,
+      required this.total_amount,
+      required this.price_exclude_vat,
+      required this.is_except_vat,
+      required this.is_void});
 
   factory PosProcessDetailExtraModel.fromJson(Map<String, dynamic> json) =>
       _$PosProcessDetailExtraModelFromJson(json);

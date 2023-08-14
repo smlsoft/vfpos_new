@@ -9,25 +9,26 @@ part of 'pos_process_model.dart';
 PosProcessDetailModel _$PosProcessDetailModelFromJson(
         Map<String, dynamic> json) =>
     PosProcessDetailModel(
-      guid: json['guid'] as String? ?? '',
-      index: json['index'] as int? ?? 0,
-      barcode: json['barcode'] as String? ?? '',
-      item_code: json['item_code'] as String? ?? '',
-      item_name: json['item_name'] as String? ?? '',
-      unit_code: json['unit_code'] as String? ?? '',
-      unit_name: json['unit_name'] as String? ?? '',
-      qty: (json['qty'] as num?)?.toDouble() ?? 0,
-      price: (json['price'] as num?)?.toDouble() ?? 0,
-      price_original: (json['price_original'] as num?)?.toDouble() ?? 0,
-      discount_text: json['discount_text'] as String? ?? '',
-      discount: (json['discount'] as num?)?.toDouble() ?? 0,
-      total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0,
+      guid: json['guid'] as String,
+      index: json['index'] as int,
+      barcode: json['barcode'] as String,
+      item_code: json['item_code'] as String,
+      item_name: json['item_name'] as String,
+      unit_code: json['unit_code'] as String,
+      unit_name: json['unit_name'] as String,
+      qty: (json['qty'] as num).toDouble(),
+      price: (json['price'] as num).toDouble(),
+      price_original: (json['price_original'] as num).toDouble(),
+      discount_text: json['discount_text'] as String,
+      discount: (json['discount'] as num).toDouble(),
+      total_amount: (json['total_amount'] as num).toDouble(),
       total_amount_with_extra:
-          (json['total_amount_with_extra'] as num?)?.toDouble() ?? 0,
-      is_void: json['is_void'] as bool? ?? false,
-      remark: json['remark'] as String? ?? "",
-      image_url: json['image_url'] as String? ?? "",
-      exclude_vat: json['exclude_vat'] as bool? ?? false,
+          (json['total_amount_with_extra'] as num).toDouble(),
+      is_void: json['is_void'] as bool,
+      remark: json['remark'] as String,
+      image_url: json['image_url'] as String,
+      price_exclude_vat: json['price_exclude_vat'] as bool,
+      is_except_vat: json['is_except_vat'] as bool,
       extra: (json['extra'] as List<dynamic>)
           .map((e) =>
               PosProcessDetailExtraModel.fromJson(e as Map<String, dynamic>))
@@ -54,27 +55,30 @@ Map<String, dynamic> _$PosProcessDetailModelToJson(
       'is_void': instance.is_void,
       'remark': instance.remark,
       'image_url': instance.image_url,
-      'exclude_vat': instance.exclude_vat,
+      'price_exclude_vat': instance.price_exclude_vat,
+      'is_except_vat': instance.is_except_vat,
       'extra': instance.extra,
     };
 
 PosProcessDetailExtraModel _$PosProcessDetailExtraModelFromJson(
         Map<String, dynamic> json) =>
     PosProcessDetailExtraModel(
-      guid_auto_fixed: json['guid_auto_fixed'] as String? ?? '',
-      guid_category: json['guid_category'] as String? ?? '',
-      guid_code_or_ref: json['guid_code_or_ref'] as String? ?? '',
-      index: json['index'] as int? ?? 0,
-      barcode: json['barcode'] as String? ?? '',
-      item_code: json['item_code'] as String? ?? '',
-      item_name: json['item_name'] as String? ?? '',
-      unit_code: json['unit_code'] as String? ?? '',
-      unit_name: json['unit_name'] as String? ?? '',
-      qty: (json['qty'] as num?)?.toDouble() ?? 0,
-      qty_fixed: (json['qty_fixed'] as num?)?.toDouble() ?? 0,
-      price: (json['price'] as num?)?.toDouble() ?? 0,
-      total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0,
-      is_void: json['is_void'] as bool? ?? false,
+      guid_auto_fixed: json['guid_auto_fixed'] as String,
+      guid_category: json['guid_category'] as String,
+      guid_code_or_ref: json['guid_code_or_ref'] as String,
+      index: json['index'] as int,
+      barcode: json['barcode'] as String,
+      item_code: json['item_code'] as String,
+      item_name: json['item_name'] as String,
+      unit_code: json['unit_code'] as String,
+      unit_name: json['unit_name'] as String,
+      qty: (json['qty'] as num).toDouble(),
+      qty_fixed: (json['qty_fixed'] as num).toDouble(),
+      price: (json['price'] as num).toDouble(),
+      total_amount: (json['total_amount'] as num).toDouble(),
+      price_exclude_vat: json['price_exclude_vat'] as bool,
+      is_except_vat: json['is_except_vat'] as bool,
+      is_void: json['is_void'] as bool,
     );
 
 Map<String, dynamic> _$PosProcessDetailExtraModelToJson(
@@ -94,6 +98,8 @@ Map<String, dynamic> _$PosProcessDetailExtraModelToJson(
       'price': instance.price,
       'total_amount': instance.total_amount,
       'is_void': instance.is_void,
+      'price_exclude_vat': instance.price_exclude_vat,
+      'is_except_vat': instance.is_except_vat,
     };
 
 PosProcessPromotionModel _$PosProcessPromotionModelFromJson(

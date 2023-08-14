@@ -388,7 +388,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(9, 5736757595189524590),
       name: 'PosLogObjectBoxStruct',
-      lastPropertyId: const IdUid(31, 7795975958565552946),
+      lastPropertyId: const IdUid(33, 3835049006093111442),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -509,8 +509,13 @@ final _entities = <ModelEntity>[
             flags: 2048,
             indexId: const IdUid(29, 7684323603419779677)),
         ModelProperty(
-            id: const IdUid(31, 7795975958565552946),
-            name: 'exclude_vat',
+            id: const IdUid(32, 2645016235495052160),
+            name: 'price_exclude_vat',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(33, 3835049006093111442),
+            name: 'is_except_vat',
             type: 1,
             flags: 0)
       ],
@@ -1575,7 +1580,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(30, 8931092861744922825),
       name: 'BillDetailObjectBoxStruct',
-      lastPropertyId: const IdUid(15, 7911156860291555729),
+      lastPropertyId: const IdUid(16, 1370355419232149970),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1652,6 +1657,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(15, 7911156860291555729),
             name: 'extra_json',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 1370355419232149970),
+            name: 'is_except_vat',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2066,7 +2076,8 @@ ModelDefinition getObjectBoxModel() {
         4328362953661362414,
         677388877116863205,
         1528751755365772755,
-        5704992869450108965
+        5704992869450108965,
+        7795975958565552946
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -2328,7 +2339,7 @@ ModelDefinition getObjectBoxModel() {
           final barcodeOffset = fbb.writeString(object.barcode);
           final discount_textOffset = fbb.writeString(object.discount_text);
           final hold_codeOffset = fbb.writeString(object.hold_code);
-          fbb.startTable(32);
+          fbb.startTable(34);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_auto_fixedOffset);
           fbb.addOffset(2, guid_refOffset);
@@ -2352,7 +2363,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(25, discount_textOffset);
           fbb.addInt64(28, object.doc_mode);
           fbb.addOffset(29, hold_codeOffset);
-          fbb.addBool(30, object.exclude_vat);
+          fbb.addBool(31, object.price_exclude_vat);
+          fbb.addBool(32, object.is_except_vat);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2392,7 +2404,8 @@ ModelDefinition getObjectBoxModel() {
               extra_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
               unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
               unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
-              exclude_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false))
+              price_exclude_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false),
+              is_except_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false))
             ..guid_auto_fixed = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, '');
 
           return object;
@@ -3292,7 +3305,7 @@ ModelDefinition getObjectBoxModel() {
           final skuOffset = fbb.writeString(object.sku);
           final discount_textOffset = fbb.writeString(object.discount_text);
           final extra_jsonOffset = fbb.writeString(object.extra_json);
-          fbb.startTable(16);
+          fbb.startTable(17);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.line_number);
@@ -3308,6 +3321,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(12, object.discount);
           fbb.addFloat64(13, object.total_amount);
           fbb.addOffset(14, extra_jsonOffset);
+          fbb.addBool(15, object.is_except_vat);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3336,6 +3350,7 @@ ModelDefinition getObjectBoxModel() {
               price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
               discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
               discount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
+              is_except_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false),
               extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''),
               total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
@@ -3770,9 +3785,13 @@ class PosLogObjectBoxStruct_ {
   static final hold_code =
       QueryStringProperty<PosLogObjectBoxStruct>(_entities[2].properties[22]);
 
-  /// see [PosLogObjectBoxStruct.exclude_vat]
-  static final exclude_vat =
+  /// see [PosLogObjectBoxStruct.price_exclude_vat]
+  static final price_exclude_vat =
       QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[2].properties[23]);
+
+  /// see [PosLogObjectBoxStruct.is_except_vat]
+  static final is_except_vat =
+      QueryBooleanProperty<PosLogObjectBoxStruct>(_entities[2].properties[24]);
 }
 
 /// [PrinterObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4652,6 +4671,10 @@ class BillDetailObjectBoxStruct_ {
   /// see [BillDetailObjectBoxStruct.extra_json]
   static final extra_json = QueryStringProperty<BillDetailObjectBoxStruct>(
       _entities[17].properties[14]);
+
+  /// see [BillDetailObjectBoxStruct.is_except_vat]
+  static final is_except_vat = QueryBooleanProperty<BillDetailObjectBoxStruct>(
+      _entities[17].properties[15]);
 }
 
 /// [WalletObjectBoxStruct] entity fields to define ObjectBox queries.

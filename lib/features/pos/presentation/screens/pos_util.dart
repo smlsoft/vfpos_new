@@ -103,6 +103,8 @@ Future<SaveBillResultClass> saveBill(
           unit_code: element.unit_code,
           unit_name: element.unit_name,
           qty: element.qty,
+          price: element.price,
+          is_except_vat: element.is_except_vat,
           total_amount: element.total_amount));
     }
     details.add(BillDetailObjectBoxStruct(
@@ -118,6 +120,7 @@ Future<SaveBillResultClass> saveBill(
         price: value.price,
         discount_text: value.discount_text,
         discount: value.discount,
+        is_except_vat: value.is_except_vat,
         extra_json: jsonEncode(detailExtras),
         total_amount: value.total_amount));
     lineNumber++;

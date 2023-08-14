@@ -45,16 +45,13 @@ class _PosCancelBillScreenState extends State<PosCancelBillScreen> {
                   (index) => ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: (dataList[index].is_cancel)
-                          ? Colors.red.shade100
-                          : Colors.blue.shade100,
+                      backgroundColor: (dataList[index].is_cancel) ? Colors.red.shade100 : Colors.blue.shade100,
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosCancelBillDetailScreen(
-                              docNumber: dataList[index].doc_number),
+                          builder: (context) => PosCancelBillDetailScreen(docNumber: dataList[index].doc_number),
                         ),
                       );
                     },

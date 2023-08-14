@@ -60,11 +60,11 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
   @override
   Widget build(BuildContext context) {
     final userAuthenticationState = context.select((AuthenticationBloc bloc) => bloc.state);
-    late double textsize;
+    late double textSize;
     if (Util.isLandscape(context)) {
-      textsize = 25;
+      textSize = 25;
     } else {
-      textsize = 18;
+      textSize = 18;
     }
 
     if (userAuthenticationState is AuthenticationLoadedState) {
@@ -106,7 +106,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
             title: Center(
               child: Text(
                 ' ',
-                style: TextStyle(fontSize: textsize, color: Colors.black, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: textSize, color: Colors.black, fontWeight: FontWeight.w700),
               ),
             ),
             leading: isSelectionMode
@@ -209,7 +209,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
                           padding: const EdgeInsets.only(top: 10),
                           child: Text(
                             'เลือกกิจการที่ต้องการทำรายการ ',
-                            style: TextStyle(fontSize: textsize, color: Colors.black, fontWeight: FontWeight.w700),
+                            style: TextStyle(fontSize: textSize, color: Colors.black, fontWeight: FontWeight.w700),
                           ),
                         ),
                         // IconButton(

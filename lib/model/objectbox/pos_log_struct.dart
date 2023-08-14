@@ -80,8 +80,11 @@ class PosLogObjectBoxStruct {
   /// Barcode
   String barcode;
 
-  /// exclude vat (สินค้ายกเว้นภาษี)
-  bool exclude_vat;
+  /// exclude vat (ราคาไม่รวมภาษี True=ไม่รวมภาษี, False=รวมภาษี)
+  bool price_exclude_vat;
+
+  /// สินค้ายกเว้นภาษี (True=ยกเว้นภาษี,False=ไม่ยกเว้นภาษี)
+  bool is_except_vat;
 
   /* 
       -- command
@@ -122,7 +125,8 @@ class PosLogObjectBoxStruct {
     this.extra_code = "",
     this.unit_code = "",
     this.unit_name = "",
-    this.exclude_vat = false,
+    this.price_exclude_vat = false,
+    this.is_except_vat = false,
   }) {
     guid_auto_fixed = const Uuid().v4();
   }

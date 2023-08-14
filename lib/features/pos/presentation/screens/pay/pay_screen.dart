@@ -35,16 +35,13 @@ class PayScreenPage extends StatefulWidget {
   final PosProcessModel posProcess;
   final int defaultTabIndex;
 
-  const PayScreenPage(
-      {Key? key, required this.posProcess, required this.defaultTabIndex})
-      : super(key: key);
+  const PayScreenPage({Key? key, required this.posProcess, required this.defaultTabIndex}) : super(key: key);
 
   @override
   State<PayScreenPage> createState() => _PayScreenPageState();
 }
 
-class _PayScreenPageState extends State<PayScreenPage>
-    with TickerProviderStateMixin {
+class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateMixin {
   String _textInputCash = "";
   late TabController tabBarMenuController;
   double sumTotalPayAmount = 0;
@@ -67,8 +64,7 @@ class _PayScreenPageState extends State<PayScreenPage>
     Timer(const Duration(milliseconds: 200), () {
       reCalc();
       if (widget.defaultTabIndex == 2) {
-        posQrGlobalKey.currentState!.promptPay(
-            amount: diffAmount, provider: global.qrPaymentProviderList[0]);
+        posQrGlobalKey.currentState!.promptPay(amount: diffAmount, provider: global.qrPaymentProviderList[0]);
       }
     });
   }
@@ -81,43 +77,22 @@ class _PayScreenPageState extends State<PayScreenPage>
   }
 
   Future<void> sendPayScreenCommandToCustomerDisplay() async {
-    for (int index = 0;
-        index < global.customerDisplayDeviceList.length;
-        index++) {
-      dev.log(
-          "sendPayScreenCommandToCustomerDisplay : ${global.customerDisplayDeviceList[index].ip}");
+    for (int index = 0; index < global.customerDisplayDeviceList.length; index++) {
+      dev.log("sendPayScreenCommandToCustomerDisplay : ${global.customerDisplayDeviceList[index].ip}");
       var url = "${global.customerDisplayDeviceList[index].ip}:5041";
-      global
-              .posHoldProcessResult[global
-                  .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-              .posProcess
-              .qr_code =
-          PromptPay.generateQRData("0899223131",
-              amount: global
-                  .posHoldProcessResult[global
-                      .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-                  .posProcess
-                  .total_amount);
-      var jsonData = HttpPost(
-          command: "pay_screen",
-          data: jsonEncode(global.posHoldProcessResult[global
-                  .findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-              .toJson()));
-      global.postToServer(
-          ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
+      global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess.qr_code = PromptPay.generateQRData("0899223131", amount: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess.total_amount);
+      var jsonData = HttpPost(command: "pay_screen", data: jsonEncode(global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].toJson()));
+      global.postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: () {});
     }
   }
 
   Widget moneyButton(double value) {
-    String imagePath =
-        ('assets/images/moneythai${value.toStringAsFixed(0)}.gif')
-            .toLowerCase();
+    String imagePath = ('assets/images/moneythai${value.toStringAsFixed(0)}.gif').toLowerCase();
     return PayButton(
         primary: Colors.blue[400],
         onPressed: () {
           setState(() {
-            global.payScreenData.cash_amount =
-                global.payScreenData.cash_amount + value;
+            global.payScreenData.cash_amount = global.payScreenData.cash_amount + value;
           });
         },
         label: "+${value.toStringAsFixed(0)}",
@@ -130,8 +105,7 @@ class _PayScreenPageState extends State<PayScreenPage>
   void cashTextInputAdd(String word) {
     setState(() {
       _textInputCash = _textInputCash + word;
-      global.payScreenData.cash_amount =
-          global.calcTextToNumber(_textInputCash);
+      global.payScreenData.cash_amount = global.calcTextToNumber(_textInputCash);
     });
   }
 
@@ -145,17 +119,23 @@ class _PayScreenPageState extends State<PayScreenPage>
               Expanded(
                   child: NumPadButton(
                 text: '7',
-                callBack: () => {cashTextInputAdd("7")},
+                callBack: () => {
+                  cashTextInputAdd("7")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '8',
-                callBack: () => {cashTextInputAdd("8")},
+                callBack: () => {
+                  cashTextInputAdd("8")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '9',
-                callBack: () => {cashTextInputAdd("9")},
+                callBack: () => {
+                  cashTextInputAdd("9")
+                },
               )),
               // Expanded(
               //   child: NumpadButton(
@@ -173,17 +153,23 @@ class _PayScreenPageState extends State<PayScreenPage>
               Expanded(
                   child: NumPadButton(
                 text: '4',
-                callBack: () => {cashTextInputAdd("4")},
+                callBack: () => {
+                  cashTextInputAdd("4")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '5',
-                callBack: () => {cashTextInputAdd("5")},
+                callBack: () => {
+                  cashTextInputAdd("5")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '6',
-                callBack: () => {cashTextInputAdd("6")},
+                callBack: () => {
+                  cashTextInputAdd("6")
+                },
               )),
               // Expanded(
               //   child: NumpadButton(
@@ -206,17 +192,23 @@ class _PayScreenPageState extends State<PayScreenPage>
               Expanded(
                   child: NumPadButton(
                 text: '1',
-                callBack: () => {cashTextInputAdd("1")},
+                callBack: () => {
+                  cashTextInputAdd("1")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '2',
-                callBack: () => {cashTextInputAdd("2")},
+                callBack: () => {
+                  cashTextInputAdd("2")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '3',
-                callBack: () => {cashTextInputAdd("3")},
+                callBack: () => {
+                  cashTextInputAdd("3")
+                },
               )),
               // Expanded(
               //   child: NumpadButton(
@@ -245,12 +237,16 @@ class _PayScreenPageState extends State<PayScreenPage>
               Expanded(
                   child: NumPadButton(
                 text: '0',
-                callBack: () => {cashTextInputAdd("0")},
+                callBack: () => {
+                  cashTextInputAdd("0")
+                },
               )),
               Expanded(
                   child: NumPadButton(
                 text: '.',
-                callBack: () => {cashTextInputAdd(".")},
+                callBack: () => {
+                  cashTextInputAdd(".")
+                },
               )),
               // Expanded(
               //   child: NumpadButton(
@@ -287,10 +283,8 @@ class _PayScreenPageState extends State<PayScreenPage>
                   if (_textInputCash.isNotEmpty)
                     {
                       setState(() {
-                        _textInputCash = _textInputCash.substring(
-                            0, _textInputCash.length - 1);
-                        global.payScreenData.cash_amount =
-                            global.calcTextToNumber(_textInputCash);
+                        _textInputCash = _textInputCash.substring(0, _textInputCash.length - 1);
+                        global.payScreenData.cash_amount = global.calcTextToNumber(_textInputCash);
                       })
                     }
                 },
@@ -335,8 +329,7 @@ class _PayScreenPageState extends State<PayScreenPage>
 
   void paySuccessDialog() {
     String moneySymbol = global.language('money_symbol');
-    double fontSize =
-        (global.isDesktopScreen() || global.isTabletScreen()) ? 32 : 24;
+    double fontSize = (global.isDesktopScreen() || global.isTabletScreen()) ? 32 : 24;
 
     showDialog(
       barrierDismissible: false,
@@ -381,8 +374,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                       ),
                       Expanded(
                         child: Text(
-                          global.moneyFormat
-                              .format(widget.posProcess.total_amount),
+                          global.moneyFormat.format(widget.posProcess.total_amount),
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: fontSize,
@@ -475,13 +467,7 @@ class _PayScreenPageState extends State<PayScreenPage>
   }
 
   void reCalc() {
-    sumTotalPayAmount = global.payScreenData.cash_amount +
-        sumCoupon() +
-        sumCreditCard() +
-        sumTransfer() +
-        sumCheque() +
-        sumQr() +
-        global.payScreenData.discount_amount;
+    sumTotalPayAmount = global.payScreenData.cash_amount + sumCoupon() + sumCreditCard() + sumTransfer() + sumCheque() + sumQr() + global.payScreenData.discount_amount;
     diffAmount = widget.posProcess.total_amount - sumTotalPayAmount;
     if (posPayCashGlobalKey.currentState != null) {
       posPayCashGlobalKey.currentState!.setPayAmount(diffAmount);
@@ -490,23 +476,12 @@ class _PayScreenPageState extends State<PayScreenPage>
 
   void payProcessSave() async {
     reCalc();
-    await posUtil
-        .saveBill(
-            cashAmount: global.payScreenData.cash_amount,
-            discountFormula: global.payScreenData.discount_formula)
-        .then((value) async {
+    await posUtil.saveBill(cashAmount: global.payScreenData.cash_amount, discountFormula: global.payScreenData.discount_formula).then((value) async {
       if (value.docNumber.isNotEmpty) {
-        printBill(
-            docDate: value.docDate,
-            docNo: value.docNumber,
-            languageCode: global.userScreenLanguage);
+        printBill(docDate: value.docDate, docNo: value.docNumber, languageCode: global.userScreenLanguage);
         // ร้านอาหาร update โต๊ะ
         final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
-        final result = box
-            .query(TableProcessObjectBoxStruct_.number
-                .equals(global.tableNumberSelected))
-            .build()
-            .findFirst();
+        final result = box.query(TableProcessObjectBoxStruct_.number.equals(global.tableNumberSelected)).build().findFirst();
         if (result != null) {
           // ถ้าเป็นโต๊ะเสริม ให้ลบออก
           if (result.number.contains("#")) {
@@ -517,26 +492,13 @@ class _PayScreenPageState extends State<PayScreenPage>
           }
         }
         // Update Order ให้เป็นชำระเงินแล้ว
-        final boxOrder = global.objectBoxStore
-            .box<OrderTempObjectBoxStruct>()
-            .query(OrderTempObjectBoxStruct_.orderGuid
-                .equals(global.tableNumberSelected)
-                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
-            .build()
-            .find();
+        final boxOrder = global.objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderGuid.equals(global.tableNumberSelected).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))).build().find();
         for (var item in boxOrder) {
           item.isPaySuccess = true;
-          global.objectBoxStore
-              .box<OrderTempObjectBoxStruct>()
-              .put(item, mode: PutMode.update);
+          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(item, mode: PutMode.update);
         }
         // ลบรายการพักบิล
-        var posLog = global.objectBoxStore
-            .box<PosLogObjectBoxStruct>()
-            .query(PosLogObjectBoxStruct_.hold_code
-                .equals(global.posHoldActiveCode))
-            .build()
-            .find();
+        var posLog = global.objectBoxStore.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(global.posHoldActiveCode)).build().find();
         for (var item in posLog) {
           global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(item.id);
         }
@@ -579,10 +541,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                     global.language("payment_channel"), // รูปแบบการชำระ
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize:
-                          (global.isTabletScreen() || global.isDesktopScreen())
-                              ? 24
-                              : 14,
+                      fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 24 : 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -599,16 +558,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(global.language('total_pay_amount_discount'),
-                              style: textStyle),
+                          Text(global.language('total_pay_amount_discount'), style: textStyle),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                global.moneyFormat.format(
-                                    global.payScreenData.discount_amount),
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
+                                global.moneyFormat.format(global.payScreenData.discount_amount),
+                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -625,15 +581,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                       padding: const EdgeInsets.all(5),
                       child: Row(
                         children: [
-                          Text(global.language('total_pay_amount_coupon'),
-                              style: textStyle),
+                          Text(global.language('total_pay_amount_coupon'), style: textStyle),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
                                 global.moneyFormat.format(sumCoupon()),
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
+                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -650,16 +604,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(global.language('total_pay_amount_cash'),
-                            style: textStyle),
+                        Text(global.language('total_pay_amount_cash'), style: textStyle),
                         Expanded(
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Text(
-                              global.moneyFormat
-                                  .format(global.payScreenData.cash_amount),
-                              style: textStyle.copyWith(
-                                  fontWeight: FontWeight.bold),
+                              global.moneyFormat.format(global.payScreenData.cash_amount),
+                              style: textStyle.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -677,15 +628,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(global.language('total_pay_amount_card'),
-                              style: textStyle),
+                          Text(global.language('total_pay_amount_card'), style: textStyle),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
                                 global.moneyFormat.format(sumCreditCard()),
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
+                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -703,15 +652,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(global.language('total_pay_amount_transfer'),
-                              style: textStyle),
+                          Text(global.language('total_pay_amount_transfer'), style: textStyle),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
                                 global.moneyFormat.format(sumTransfer()),
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
+                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -729,15 +676,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(global.language('total_pay_amount_cheque'),
-                              style: textStyle),
+                          Text(global.language('total_pay_amount_cheque'), style: textStyle),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
                                 global.moneyFormat.format(sumCheque()),
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
+                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -755,15 +700,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(global.language('total_pay_amount_wallet'),
-                              style: textStyle),
+                          Text(global.language('total_pay_amount_wallet'), style: textStyle),
                           Expanded(
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
                                 global.moneyFormat.format(sumQr()),
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold),
+                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -796,8 +739,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                         alignment: Alignment.centerRight,
                         child: Text(
                           global.moneyFormat.format(sumTotalPayAmount),
-                          style:
-                              textStyle.copyWith(fontWeight: FontWeight.bold),
+                          style: textStyle.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -843,10 +785,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                   global.language("pay_channel"), // การชำระเงิน
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize:
-                        (global.isTabletScreen() || global.isDesktopScreen())
-                            ? 24
-                            : 14,
+                    fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 24 : 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -861,16 +800,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(global.language('total_amount'),
-                                style: textStyle),
+                            Text(global.language('total_amount'), style: textStyle),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  global.moneyFormat
-                                      .format(widget.posProcess.total_amount),
-                                  style: textStyle.copyWith(
-                                      fontWeight: FontWeight.bold),
+                                  global.moneyFormat.format(widget.posProcess.total_amount),
+                                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -884,15 +820,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(global.language('total_pay_amount'),
-                                style: textStyle),
+                            Text(global.language('total_pay_amount'), style: textStyle),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
                                   global.moneyFormat.format(sumTotalPayAmount),
-                                  style: textStyle.copyWith(
-                                      fontWeight: FontWeight.bold),
+                                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -905,15 +839,13 @@ class _PayScreenPageState extends State<PayScreenPage>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(global.language('total_pay_amount_diff'),
-                                style: textStyle),
+                            Text(global.language('total_pay_amount_diff'), style: textStyle),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
                                   global.moneyFormat.format(diffAmount),
-                                  style: textStyle.copyWith(
-                                      fontWeight: FontWeight.bold),
+                                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -942,10 +874,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Text(
                         global.language("back"),
                         style: TextStyle(
-                          fontSize: (global.isTabletScreen() ||
-                                  global.isDesktopScreen())
-                              ? 32.0
-                              : 12,
+                          fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 32.0 : 12,
                           fontWeight: FontWeight.bold,
                           shadows: const <Shadow>[
                             Shadow(
@@ -959,13 +888,8 @@ class _PayScreenPageState extends State<PayScreenPage>
                     ),
                   ),
                   SizedBox(
-                    width: (global.isTabletScreen() || global.isDesktopScreen())
-                        ? 10
-                        : 5,
-                    height:
-                        (global.isTabletScreen() || global.isDesktopScreen())
-                            ? 10
-                            : 5,
+                    width: (global.isTabletScreen() || global.isDesktopScreen()) ? 10 : 5,
+                    height: (global.isTabletScreen() || global.isDesktopScreen()) ? 10 : 5,
                   ),
                   Expanded(
                     child: ElevatedButton(
@@ -979,10 +903,7 @@ class _PayScreenPageState extends State<PayScreenPage>
                       child: Text(
                         global.language("pay"),
                         style: TextStyle(
-                          fontSize: (global.isTabletScreen() ||
-                                  global.isDesktopScreen())
-                              ? 32.0
-                              : 12,
+                          fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 32.0 : 12,
                           fontWeight: FontWeight.bold,
                           shadows: const <Shadow>[
                             Shadow(
@@ -1014,43 +935,31 @@ class _PayScreenPageState extends State<PayScreenPage>
     }
   }
 
-  Widget commandButton(
-      {required int index,
-      required Function onPressed,
-      String label = "",
-      IconData? icon}) {
+  Widget commandButton({required int index, required Function onPressed, String label = "", IconData? icon}) {
     return Expanded(
         child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: (index == tabBarMenuController.index)
-                    ? Colors.green
-                    : Colors.blue,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: const EdgeInsets.only(
-                    left: 2, right: 2, top: 0, bottom: 0)),
+            style: ElevatedButton.styleFrom(backgroundColor: (index == tabBarMenuController.index) ? Colors.green : Colors.blue, tapTargetSize: MaterialTapTargetSize.shrinkWrap, padding: const EdgeInsets.only(left: 2, right: 2, top: 0, bottom: 0)),
             onPressed: () {
               onPressed();
             },
             child: (icon != null)
                 ? FittedBox(
                     fit: BoxFit.fill,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          FaIcon(
-                            icon,
-                            size: 16,
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            label,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.clip,
-                            style: const TextStyle(fontSize: 12),
-                          )
-                        ]))
+                    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      FaIcon(
+                        icon,
+                        size: 16,
+                      ),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.clip,
+                        style: const TextStyle(fontSize: 12),
+                      )
+                    ]))
                 : FittedBox(
                     fit: BoxFit.fill,
                     child: Text(
@@ -1152,10 +1061,7 @@ class _PayScreenPageState extends State<PayScreenPage>
             height: 4,
           ));
         }
-        columns.add(IntrinsicHeight(
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: rows)));
+        columns.add(IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: rows)));
       }
       return Container(
           margin: const EdgeInsets.all(2),
@@ -1171,22 +1077,13 @@ class _PayScreenPageState extends State<PayScreenPage>
       blocContext: blocContext,
       key: posPayCashGlobalKey,
     ));
-    tabViewList.add(PayDiscountWidget(
-        posProcess: widget.posProcess, blocContext: blocContext));
-    tabViewList.add(PayQrWidget(
-        key: posQrGlobalKey,
-        posProcess: widget.posProcess,
-        blocContext: blocContext));
-    tabViewList.add(
-        PayCreditCard(posProcess: widget.posProcess, blocContext: blocContext));
-    tabViewList.add(
-        PayTransfer(posProcess: widget.posProcess, blocContext: blocContext));
-    tabViewList.add(
-        PayCheque(posProcess: widget.posProcess, blocContext: blocContext));
-    tabViewList.add(
-        PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
-    tabViewList.add(
-        PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayDiscountWidget(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayQrWidget(key: posQrGlobalKey, posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayCreditCard(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayTransfer(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayCheque(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
+    tabViewList.add(PayCoupon(posProcess: widget.posProcess, blocContext: blocContext));
 
     return Container(
         decoration: BoxDecoration(
@@ -1202,15 +1099,7 @@ class _PayScreenPageState extends State<PayScreenPage>
             ),
             child: Column(children: [
               commandWidget(),
-              Expanded(
-                  child: DefaultTabController(
-                      length: 7,
-                      child: Scaffold(
-                          backgroundColor: Colors.blue.shade100,
-                          resizeToAvoidBottomInset: false,
-                          body: TabBarView(
-                              controller: tabBarMenuController,
-                              children: tabViewList))))
+              Expanded(child: DefaultTabController(length: 7, child: Scaffold(backgroundColor: Colors.blue.shade100, resizeToAvoidBottomInset: false, body: TabBarView(controller: tabBarMenuController, children: tabViewList))))
             ])));
   }
 
@@ -1219,8 +1108,7 @@ class _PayScreenPageState extends State<PayScreenPage>
       switch (global.payScreenNumberPadWidget) {
         case PayScreenNumberPadWidgetEnum.number:
           global.payScreenNumberPadText = global.payScreenNumberPadText + word;
-          global.payScreenNumberPadAmount =
-              global.calcTextToNumber(global.payScreenNumberPadText);
+          global.payScreenNumberPadAmount = global.calcTextToNumber(global.payScreenNumberPadText);
           break;
         case PayScreenNumberPadWidgetEnum.text:
           global.payScreenNumberPadText = global.payScreenNumberPadText + word;
@@ -1249,48 +1137,29 @@ class _PayScreenPageState extends State<PayScreenPage>
           border: Border.all(color: Colors.green, width: 2),
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
-            BoxShadow(
-                offset: const Offset(0, 2),
-                color: Colors.blueGrey.shade200,
-                spreadRadius: 4,
-                blurRadius: 4)
+            BoxShadow(offset: const Offset(0, 2), color: Colors.blueGrey.shade200, spreadRadius: 4, blurRadius: 4)
           ],
         ),
         child: Column(
           children: [
             Padding(
-                padding:
-                    const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
                 child: Container(
                   height: 50,
                   width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      color: Colors.white70,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                            offset: const Offset(0, 2),
-                            color: Colors.blueGrey.shade200,
-                            spreadRadius: 4,
-                            blurRadius: 4)
-                      ]),
+                  decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(8), boxShadow: [
+                    BoxShadow(offset: const Offset(0, 2), color: Colors.blueGrey.shade200, spreadRadius: 4, blurRadius: 4)
+                  ]),
                   padding: const EdgeInsets.only(right: 15),
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(result,
-                        style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: fontSize,
-                            fontWeight: FontWeight.bold,
-                            shadows: const [
-                              Shadow(
-                                  offset: Offset(-1, -1), color: Colors.white),
-                              Shadow(
-                                  offset: Offset(1, -1), color: Colors.white),
-                              Shadow(offset: Offset(1, 1), color: Colors.white),
-                              Shadow(
-                                  offset: Offset(-1, 1), color: Colors.white),
-                            ])),
+                        style: TextStyle(color: Colors.blue, fontSize: fontSize, fontWeight: FontWeight.bold, shadows: const [
+                          Shadow(offset: Offset(-1, -1), color: Colors.white),
+                          Shadow(offset: Offset(1, -1), color: Colors.white),
+                          Shadow(offset: Offset(1, 1), color: Colors.white),
+                          Shadow(offset: Offset(-1, 1), color: Colors.white),
+                        ])),
                   ),
                 )),
             Expanded(
@@ -1300,17 +1169,23 @@ class _PayScreenPageState extends State<PayScreenPage>
                   Expanded(
                       child: NumPadButton(
                     text: '7',
-                    callBack: () => {numberPadTextAdd("7")},
+                    callBack: () => {
+                      numberPadTextAdd("7")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '8',
-                    callBack: () => {numberPadTextAdd("8")},
+                    callBack: () => {
+                      numberPadTextAdd("8")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '9',
-                    callBack: () => {numberPadTextAdd("9")},
+                    callBack: () => {
+                      numberPadTextAdd("9")
+                    },
                   )),
                 ],
               ),
@@ -1322,17 +1197,23 @@ class _PayScreenPageState extends State<PayScreenPage>
                   Expanded(
                       child: NumPadButton(
                     text: '4',
-                    callBack: () => {numberPadTextAdd("4")},
+                    callBack: () => {
+                      numberPadTextAdd("4")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '5',
-                    callBack: () => {numberPadTextAdd("5")},
+                    callBack: () => {
+                      numberPadTextAdd("5")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '6',
-                    callBack: () => {numberPadTextAdd("6")},
+                    callBack: () => {
+                      numberPadTextAdd("6")
+                    },
                   )),
                 ],
               ),
@@ -1344,17 +1225,23 @@ class _PayScreenPageState extends State<PayScreenPage>
                   Expanded(
                       child: NumPadButton(
                     text: '1',
-                    callBack: () => {numberPadTextAdd("1")},
+                    callBack: () => {
+                      numberPadTextAdd("1")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '2',
-                    callBack: () => {numberPadTextAdd("2")},
+                    callBack: () => {
+                      numberPadTextAdd("2")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '3',
-                    callBack: () => {numberPadTextAdd("3")},
+                    callBack: () => {
+                      numberPadTextAdd("3")
+                    },
                   )),
                 ],
               ),
@@ -1366,17 +1253,15 @@ class _PayScreenPageState extends State<PayScreenPage>
                   Expanded(
                       child: NumPadButton(
                     text: '0',
-                    callBack: () => {numberPadTextAdd("0")},
+                    callBack: () => {
+                      numberPadTextAdd("0")
+                    },
                   )),
                   Expanded(
                       child: NumPadButton(
                     text: '.',
                     callBack: () => {
-                      if (!global.payScreenNumberPadText.contains('.'))
-                        numberPadTextAdd(
-                            (global.payScreenNumberPadText.isNotEmpty)
-                                ? "."
-                                : "0.")
+                      if (!global.payScreenNumberPadText.contains('.')) numberPadTextAdd((global.payScreenNumberPadText.isNotEmpty) ? "." : "0.")
                     },
                   )),
                 ],
@@ -1394,11 +1279,8 @@ class _PayScreenPageState extends State<PayScreenPage>
                     callBack: () {
                       setState(() {
                         if (global.payScreenNumberPadText.isNotEmpty) {
-                          global.payScreenNumberPadText =
-                              global.payScreenNumberPadText.substring(
-                                  0, global.payScreenNumberPadText.length - 1);
-                          global.payScreenNumberPadAmount = global
-                              .calcTextToNumber(global.payScreenNumberPadText);
+                          global.payScreenNumberPadText = global.payScreenNumberPadText.substring(0, global.payScreenNumberPadText.length - 1);
+                          global.payScreenNumberPadAmount = global.calcTextToNumber(global.payScreenNumberPadText);
                           global.numberPadCallBack.call();
                         }
                       });
@@ -1427,8 +1309,7 @@ class _PayScreenPageState extends State<PayScreenPage>
   @override
   Widget build(BuildContext context) {
     reCalc();
-    return BlocBuilder<PayScreenBloc, PayScreenState>(
-        builder: (blocContext, state) {
+    return BlocBuilder<PayScreenBloc, PayScreenState>(builder: (blocContext, state) {
       if (state is PayScreenRefresh) {
         blocContext.read<PayScreenBloc>().add(PayScreenSuccess());
       }
@@ -1453,10 +1334,8 @@ class _PayScreenPageState extends State<PayScreenPage>
                             child: numberPadWidget(),
                             onDragEnd: (details) {
                               setState(() {
-                                global.payScreenNumberPadLeft =
-                                    details.offset.dx;
-                                global.payScreenNumberPadTop =
-                                    details.offset.dy;
+                                global.payScreenNumberPadLeft = details.offset.dx;
+                                global.payScreenNumberPadTop = details.offset.dy;
                               });
                             },
                           ))

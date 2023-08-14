@@ -9,14 +9,15 @@ part of 'bill_struct.dart';
 BillDetailExtraObjectBoxStruct _$BillDetailExtraObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     BillDetailExtraObjectBoxStruct(
-      barcode: json['barcode'] as String? ?? "",
-      item_code: json['item_code'] as String? ?? "",
-      item_name: json['item_name'] as String? ?? "",
-      unit_code: json['unit_code'] as String? ?? "",
-      unit_name: json['unit_name'] as String? ?? "",
-      qty: (json['qty'] as num?)?.toDouble() ?? 0,
-      price: (json['price'] as num?)?.toDouble() ?? 0,
-      total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0,
+      barcode: json['barcode'] as String,
+      item_code: json['item_code'] as String,
+      item_name: json['item_name'] as String,
+      unit_code: json['unit_code'] as String,
+      unit_name: json['unit_name'] as String,
+      qty: (json['qty'] as num).toDouble(),
+      price: (json['price'] as num).toDouble(),
+      is_except_vat: json['is_except_vat'] as bool,
+      total_amount: (json['total_amount'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$BillDetailExtraObjectBoxStructToJson(
@@ -30,6 +31,7 @@ Map<String, dynamic> _$BillDetailExtraObjectBoxStructToJson(
       'qty': instance.qty,
       'price': instance.price,
       'total_amount': instance.total_amount,
+      'is_except_vat': instance.is_except_vat,
     };
 
 BillPayObjectBoxStruct _$BillPayObjectBoxStructFromJson(
