@@ -66,6 +66,7 @@ class ProductBarcodeHelper {
           images_url: data.images_url,
           isalacarte: data.isalacarte,
           ordertypes: data.ordertypes,
+          is_except_vat: data.is_except_vat,
           product_count: 0);
       /*List<ProductOptionStruct> _jsonOption =  ProductOptionStruct.fromJson(jsonDecode(  _data.options));
       _data.options.forEach((_optionStr) {

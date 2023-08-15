@@ -3,24 +3,15 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_process.dart';
 
-Future<PosProcessResultModel> posCompileProcess(
-    {required String holdCode, required int docMode}) async {
+Future<PosProcessResultModel> posCompileProcess({required String holdCode, required int docMode, required String detailDiscountFormula}) async {
   PosProcessResultModel processResult = PosProcessResultModel();
   {
     // คำนวณของ Terminal หลัก
     PosProcess posProcess = PosProcess();
     int holdIndex = global.findPosHoldProcessResultIndex(holdCode);
     if (holdIndex != -1) {
-      global
-              .posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)]
-              .posProcess =
-          await posProcess.process(
-              holdCode: holdCode, docMode: docMode, discountFormula: "");
-      posProcess.sumCategoryCount(
-          value: global
-              .posHoldProcessResult[
-                  global.findPosHoldProcessResultIndex(holdCode)]
-              .posProcess);
+      global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)].posProcess = await posProcess.process(holdCode: holdCode, docMode: docMode, detailDiscountFormula: detailDiscountFormula, discountFormula: "");
+      posProcess.sumCategoryCount(value: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)].posProcess);
       processResult = posProcess.result;
     }
   }
@@ -34,19 +25,8 @@ Future<PosProcessResultModel> posCompileProcess(
           int holdIndex = global.findPosHoldProcessResultIndex(getHoldCode);
           if (holdIndex != -1) {
             PosProcess posProcess = PosProcess();
-            global
-                    .posHoldProcessResult[
-                        global.findPosHoldProcessResultIndex(getHoldCode)]
-                    .posProcess =
-                await posProcess.process(
-                    holdCode: getHoldCode,
-                    docMode: getDocMode,
-                    discountFormula: "");
-            posProcess.sumCategoryCount(
-                value: global
-                    .posHoldProcessResult[
-                        global.findPosHoldProcessResultIndex(getHoldCode)]
-                    .posProcess);
+            global.posHoldProcessResult[global.findPosHoldProcessResultIndex(getHoldCode)].posProcess = await posProcess.process(holdCode: getHoldCode, docMode: getDocMode, detailDiscountFormula: "", discountFormula: "");
+            posProcess.sumCategoryCount(value: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(getHoldCode)].posProcess);
           }
         }
         global.posRemoteDeviceList[index].processSuccess = true;

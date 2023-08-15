@@ -73,6 +73,9 @@ class ProductBarcodeObjectBoxStruct {
   /// สินค้าแบบอลาคาร์ท
   late bool isalacarte;
 
+  /// ประเภทสินค้ายกเว้นภาษี (True=ยกเว้น,False=ไม่ยกเว้น)
+  late bool is_except_vat;
+
   /// ประเภท (Buffet) JSON
   late String ordertypes;
 
@@ -97,6 +100,7 @@ class ProductBarcodeObjectBoxStruct {
       required this.isalacarte,
       required this.ordertypes,
       required this.vat_type,
+      required this.is_except_vat,
       required this.product_count});
 
   factory ProductBarcodeObjectBoxStruct.fromJson(Map<String, dynamic> json) =>

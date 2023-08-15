@@ -121,6 +121,11 @@ Map<String, dynamic> _$PosProcessPromotionModelToJson(
 PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
     PosProcessModel(
       total_piece: (json['total_piece'] as num?)?.toDouble() ?? 0.0,
+      detail_total_amount:
+          (json['detail_total_amount'] as num?)?.toDouble() ?? 0.0,
+      total_piece_except_vat:
+          (json['total_piece_except_vat'] as num?)?.toDouble() ?? 0,
+      total_piece_vat: (json['total_piece_vat'] as num?)?.toDouble() ?? 0,
       total_amount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
       total_discount_from_promotion:
           (json['total_discount_from_promotion'] as num?)?.toDouble() ?? 0,
@@ -145,6 +150,9 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
                   (e) => PromotionTempModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      detail_discount_formula: json['detail_discount_formula'] as String? ?? "",
+      detail_total_discount:
+          (json['detail_total_discount'] as num?)?.toDouble() ?? 0,
       discount_formula: json['discount_formula'] as String? ?? "",
       total_discount: (json['total_discount'] as num?)?.toDouble() ?? 0,
       total_discount_vat_amount:
@@ -171,7 +179,10 @@ Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
       'customer_name': instance.customer_name,
       'customer_phone': instance.customer_phone,
       'total_piece': instance.total_piece,
+      'total_piece_vat': instance.total_piece_vat,
+      'total_piece_except_vat': instance.total_piece_except_vat,
       'total_vat_amount': instance.total_vat_amount,
+      'detail_total_amount': instance.detail_total_amount,
       'total_amount': instance.total_amount,
       'total_discount_from_promotion': instance.total_discount_from_promotion,
       'qr_code': instance.qr_code,
@@ -183,6 +194,8 @@ Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
       'details': instance.details,
       'select_promotion_temp_list': instance.select_promotion_temp_list,
       'promotion_list': instance.promotion_list,
+      'detail_discount_formula': instance.detail_discount_formula,
+      'detail_total_discount': instance.detail_total_discount,
       'discount_formula': instance.discount_formula,
       'total_discount': instance.total_discount,
       'total_discount_vat_amount': instance.total_discount_vat_amount,

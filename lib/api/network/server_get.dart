@@ -208,7 +208,8 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         String holdCode = json["holdCode"];
         int docMode = json["docMode"];
         String discountFormula = json["discountFormula"];
-        PosProcessModel posProcess = await PosProcess().process(holdCode: holdCode, docMode: docMode, discountFormula: discountFormula);
+        String detailDiscountFormula = json["detailDiscountFormula"];
+        PosProcessModel posProcess = await PosProcess().process(holdCode: holdCode, docMode: docMode, detailDiscountFormula: detailDiscountFormula, discountFormula: discountFormula);
         response.write(jsonEncode(posProcess.toJson()));
         break;
       case "PosLogHelper.holdCount":

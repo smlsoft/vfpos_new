@@ -569,7 +569,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(11, 2320464900211169166),
       name: 'ProductBarcodeObjectBoxStruct',
-      lastPropertyId: const IdUid(32, 1503007406801578390),
+      lastPropertyId: const IdUid(33, 1118438584615380014),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -682,6 +682,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(32, 1503007406801578390),
             name: 'ordertypes',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(33, 1118438584615380014),
+            name: 'is_except_vat',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2483,7 +2488,7 @@ ModelDefinition getObjectBoxModel() {
                   fbb.writeString(object.color_select_hex);
               final pricesOffset = fbb.writeString(object.prices);
               final ordertypesOffset = fbb.writeString(object.ordertypes);
-              fbb.startTable(33);
+              fbb.startTable(34);
               fbb.addInt64(0, object.id);
               fbb.addOffset(1, barcodeOffset);
               fbb.addOffset(2, namesOffset);
@@ -2506,6 +2511,7 @@ ModelDefinition getObjectBoxModel() {
               fbb.addInt64(29, object.vat_type);
               fbb.addBool(30, object.isalacarte);
               fbb.addOffset(31, ordertypesOffset);
+              fbb.addBool(32, object.is_except_vat);
               fbb.finish(fbb.endTable());
               return object.id;
             },
@@ -2541,6 +2547,7 @@ ModelDefinition getObjectBoxModel() {
                   isalacarte: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false),
                   ordertypes: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 66, ''),
                   vat_type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0),
+                  is_except_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false),
                   product_count: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0))
                 ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -3921,6 +3928,11 @@ class ProductBarcodeObjectBoxStruct_ {
   /// see [ProductBarcodeObjectBoxStruct.ordertypes]
   static final ordertypes = QueryStringProperty<ProductBarcodeObjectBoxStruct>(
       _entities[4].properties[21]);
+
+  /// see [ProductBarcodeObjectBoxStruct.is_except_vat]
+  static final is_except_vat =
+      QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
+          _entities[4].properties[22]);
 }
 
 /// [ProductCategoryObjectBoxStruct] entity fields to define ObjectBox queries.

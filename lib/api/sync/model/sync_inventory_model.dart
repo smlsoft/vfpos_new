@@ -11,8 +11,7 @@ class SyncPriceDataModel {
 
   SyncPriceDataModel({required this.keynumber, required this.price});
 
-  factory SyncPriceDataModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncPriceDataModelFromJson(json);
+  factory SyncPriceDataModel.fromJson(Map<String, dynamic> json) => _$SyncPriceDataModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncPriceDataModelToJson(this);
 }
@@ -58,8 +57,7 @@ class SyncProductChoiceModel {
     required this.isdefault,
   });
 
-  factory SyncProductChoiceModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncProductChoiceModelFromJson(json);
+  factory SyncProductChoiceModel.fromJson(Map<String, dynamic> json) => _$SyncProductChoiceModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncProductChoiceModelToJson(this);
 }
@@ -93,8 +91,7 @@ class SyncProductOptionModel {
     required this.choicetype,
   });
 
-  factory SyncProductOptionModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncProductOptionModelFromJson(json);
+  factory SyncProductOptionModel.fromJson(Map<String, dynamic> json) => _$SyncProductOptionModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncProductOptionModelToJson(this);
 }
@@ -111,10 +108,8 @@ class ProductOrderTypeFromServerModel {
     required this.price,
   });
 
-  factory ProductOrderTypeFromServerModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductOrderTypeFromServerModelFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$ProductOrderTypeFromServerModelToJson(this);
+  factory ProductOrderTypeFromServerModel.fromJson(Map<String, dynamic> json) => _$ProductOrderTypeFromServerModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProductOrderTypeFromServerModelToJson(this);
 }
 
 @JsonSerializable()
@@ -164,6 +159,9 @@ class SyncProductBarcodeModel {
 
   List<ProductOrderTypeFromServerModel>? ordertypes;
 
+  /// ประเภทภาษี 0=สินค้ามีภาษี,1=สินค้ายกเว้น
+  int vattype;
+
   SyncProductBarcodeModel({
     required this.guidfixed,
     required this.groupcode,
@@ -181,10 +179,10 @@ class SyncProductBarcodeModel {
     required this.prices,
     required this.isalacarte,
     required this.ordertypes,
+    required this.vattype,
   });
 
-  factory SyncProductBarcodeModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncProductBarcodeModelFromJson(json);
+  factory SyncProductBarcodeModel.fromJson(Map<String, dynamic> json) => _$SyncProductBarcodeModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncProductBarcodeModelToJson(this);
 }
@@ -219,8 +217,7 @@ class SyncCategoryModel {
     required this.codelist,
   });
 
-  factory SyncCategoryModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncCategoryModelFromJson(json);
+  factory SyncCategoryModel.fromJson(Map<String, dynamic> json) => _$SyncCategoryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncCategoryModelToJson(this);
 }
@@ -243,8 +240,7 @@ class SyncCategoryCodeListModel {
     required this.unitnames,
   });
 
-  factory SyncCategoryCodeListModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncCategoryCodeListModelFromJson(json);
+  factory SyncCategoryCodeListModel.fromJson(Map<String, dynamic> json) => _$SyncCategoryCodeListModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncCategoryCodeListModelToJson(this);
 }

@@ -131,7 +131,6 @@ class PosLogObjectBoxStruct {
     guid_auto_fixed = const Uuid().v4();
   }
 
-  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$PosLogObjectBoxStructFromJson(json);
+  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$PosLogObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$PosLogObjectBoxStructToJson(this);
 }

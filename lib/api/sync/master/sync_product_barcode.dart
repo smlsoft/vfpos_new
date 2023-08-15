@@ -51,6 +51,7 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
       color_select: newData.colorselect,
       vat_type: 1,
       isalacarte: newData.isalacarte!,
+      is_except_vat: (newData.vattype == 1) ? true : false,
       ordertypes:
           (newData.ordertypes == null) ? "" : jsonEncode(newData.ordertypes!),
       color_select_hex: newData.colorselecthex,

@@ -119,6 +119,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   late double listTextHeight = global.posScreenListHeightGet();
   late TabController phoneTabController;
   int cashierPrinterIndex = -1;
+  String detailDiscountFormula = "";
 
   /// 0=Desktop,1=Tablet,2=Phone
   int deviceMode = 0;
@@ -130,7 +131,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     processEventRefresh(holdCode);
   }
 
-  ProductBarcodeObjectBoxStruct product = ProductBarcodeObjectBoxStruct(barcode: "", color_select: "", image_or_color: true, color_select_hex: "", names: "", name_all: "", prices: "", images_url: "", unit_code: "", unit_names: "", new_line: 0, guid_fixed: "", item_code: "", item_guid: "", descriptions: "", item_unit_code: "", options_json: "", isalacarte: true, ordertypes: "", vat_type: 1, product_count: 0);
+  ProductBarcodeObjectBoxStruct product = ProductBarcodeObjectBoxStruct(barcode: "", color_select: "", image_or_color: true, color_select_hex: "", names: "", name_all: "", prices: "", images_url: "", unit_code: "", unit_names: "", new_line: 0, guid_fixed: "", item_code: "", item_guid: "", descriptions: "", item_unit_code: "", options_json: "", isalacarte: true, ordertypes: "", vat_type: 1, product_count: 0, is_except_vat: false);
   List<ProductOptionModel> productOptions = [];
 
   Future<void> checkSync() async {
@@ -393,7 +394,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           // เพิ่มรายการใหม่ (Extra Check Box)
           List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
           if (posLogSelect.isNotEmpty) {
-            await logHelper.insert(PosLogObjectBoxStruct(guid_code_ref: guidCodeRef, doc_mode: global.posScreenToInt(), guid_ref: guidRef, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, extra_code: extraCode, code: code, price: price, name: name, qty_fixed: qtyForCalc, qty: qtyForCalc, selected: selected));
+            await logHelper.insert(PosLogObjectBoxStruct(guid_code_ref: guidCodeRef, doc_mode: global.posScreenToInt(), guid_ref: guidRef, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, extra_code: extraCode, code: code, price: price, name: name, qty_fixed: qtyForCalc, qty: qtyForCalc, selected: selected, is_except_vat: false));
           }
         }
         break;
@@ -415,7 +416,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               unitCodeStr = productSelect.unit_code;
               unitNameStr = productSelect.unit_names;
               double price = global.getProductPrice(productSelect.prices, 1);
-              PosLogObjectBoxStruct data = PosLogObjectBoxStruct(log_date_time: DateTime.now(), doc_mode: global.posScreenToInt(), hold_code: global.posHoldActiveCode, command_code: commandCode, barcode: barcode, name: productNameStr, unit_code: unitCodeStr, unit_name: unitNameStr, qty: qtyForCalc, price: price);
+              PosLogObjectBoxStruct data = PosLogObjectBoxStruct(log_date_time: DateTime.now(), doc_mode: global.posScreenToInt(), hold_code: global.posHoldActiveCode, command_code: commandCode, barcode: barcode, name: productNameStr, unit_code: unitCodeStr, unit_name: unitNameStr, qty: qtyForCalc, price: price, is_except_vat: productSelect.is_except_vat);
               findActiveLineByGuid = data.guid_auto_fixed;
               await logHelper.insert(data);
               global.playSound(sound: global.SoundEnum.beep, word: productNameStr);
@@ -810,10 +811,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Future<void> processEvent({required String barcode, required String holdCode}) async {
     if (barcode.isNotEmpty) {
-      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ?? ProductBarcodeObjectBoxStruct(barcode: "", names: "", name_all: "", prices: "", unit_code: "", unit_names: "", vat_type: 1, new_line: 0, images_url: "", guid_fixed: "", item_code: "", item_guid: "", descriptions: "", item_unit_code: "", color_select: "", image_or_color: true, color_select_hex: "", options_json: "", isalacarte: true, ordertypes: "", product_count: 0);
+      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ?? ProductBarcodeObjectBoxStruct(barcode: "", names: "", name_all: "", prices: "", unit_code: "", unit_names: "", vat_type: 1, new_line: 0, images_url: "", guid_fixed: "", item_code: "", item_guid: "", descriptions: "", item_unit_code: "", color_select: "", image_or_color: true, color_select_hex: "", options_json: "", isalacarte: true, ordertypes: "", product_count: 0, is_except_vat: false);
       productOptions = (product.options_json == "null") ? [] : (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
     }
-    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt()).then((value) {
+    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((value) {
       if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
         findActiveLineByGuid = value.lineGuid;
       }
@@ -926,29 +927,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   void billDiscountPadChange(String discount) async {
-    if (discount.isNotEmpty) {
-      if (double.tryParse(discount) != null) {
-        global.playSound(word: global.language("discount") + discount + global.language("money_symbol"));
-      } else {
-        List<String> discountList = discount.split(",");
-        StringBuffer discountSpeech = StringBuffer();
-        for (var index = 0; index < discountList.length; index++) {
-          if (discountSpeech.isNotEmpty) {
-            discountSpeech.write(global.language("discount_plus"));
-          }
-          if (double.tryParse(discountList[index]) != null) {
-            discountSpeech.write(discountList[index] + global.language("money_symbol"));
-          } else {
-            discountSpeech.write(discountList[index]);
-          }
-        }
-        global.playSound(word: global.language("discount") + discountSpeech.toString());
-      }
-      logInsert(commandCode: 6, guid: findActiveLineByGuid, discount: discount, closeExtra: false);
-    } else {
-      global.playSound(word: global.language("discount_cancel"));
-      logInsert(commandCode: 6, guid: findActiveLineByGuid, discount: '', closeExtra: false);
-    }
+    detailDiscountFormula = discount;
+    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((value) {
+      setState(() {});
+    });
   }
 
   void checkOnline() async {
@@ -1548,9 +1530,231 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Widget detailFooterWidget() {
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-      double fontSize = (constraints.maxWidth / 50) * listTextHeight;
-      TextStyle textStyle = TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: fontSize);
+      double fontSize = (constraints.maxWidth / 70) * listTextHeight;
+      TextStyle textStyle = TextStyle(color: Colors.black, fontSize: fontSize);
       int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+      PosProcessModel process = global.posHoldProcessResult[holdIndex].posProcess;
+      Widget footer = Container();
+      if (global.posConfig.isvatregister) {
+        // จดทะเบียนภาษี
+        if (global.posConfig.vattype == 1) {
+          // จดทะเบียนภาษี และเป็นภาษีแยกนอก
+          footer = Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              )
+            ],
+          );
+        } else {
+          // จดทะเบียนภาษี และเป็นภาษีรวมใน
+          List<Widget> footerList = [];
+          footerList.add(
+            Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                ),
+                Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+              ],
+            ),
+          );
+          if (process.total_piece != process.total_piece_vat) {
+            // กรณีมีสินค้าทั้งประเภทภาษี และยกเว้นภาษี ให้แสดงรายละเอียด
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("สินค้ามีภาษี : ${global.moneyFormat.format(process.total_piece_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+            );
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("สินค้ายกเว้นภาษี : ${global.moneyFormat.format(process.total_piece_except_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+            );
+          }
+          if (process.detail_total_discount != 0) {
+            // มีส่วนลดสินค้า
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("ส่วนลดสินค้า : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+                ],
+              ),
+            );
+            if (process.total_discount_vat_amount != 0) {
+              // มีส่วนลดสินค้ามีภาษี
+              footerList.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("เฉลี่ยส่วนลดสินค้ามีภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                  ],
+                ),
+              );
+            }
+            if (process.total_discount_except_vat_amount != 0) {
+              // มีส่วนลดสินค้ายกเว้นภาษี
+              footerList.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("เฉลี่ยส่วนลดสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                  ],
+                ),
+              );
+            }
+          }
+          if (process.amount_before_calc_vat != 0) {
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("มูลค่าก่อนภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_before_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+            );
+          }
+          if (process.total_vat_amount != 0) {
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+                ],
+              ),
+            );
+          }
+          if (process.amount_after_calc_vat != 0 && process.amount_after_calc_vat != process.total_amount) {
+            // มูลค่าหลังคิดภาษี (สินค้ามีภาษี)
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("มูลค่าสินค้าหลังคิดภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_after_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+            );
+          }
+          if (process.amount_except_vat != 0 && process.amount_except_vat != process.total_amount) {
+            // มูลค่าสินค้ายกเว้นภาษี
+            footerList.add(
+              Row(
+                children: [
+                  Expanded(
+                    flex: 10,
+                    child: Text("มูลค่าสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                  ),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_except_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                ],
+              ),
+            );
+          }
+          footerList.add(Row(
+            children: [
+              Expanded(
+                flex: 10,
+                child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+              ),
+              Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+            ],
+          ));
+          footer = Column(
+            children: footerList,
+          );
+        }
+      } else {
+        footer = Column(
+          children: [
+            Row(children: [
+              Expanded(
+                flex: 10,
+                child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+              ),
+              Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+            ]),
+            (process.detail_total_discount != 0)
+                ? Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 10,
+                            child: Text("ส่วนลด : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize)),
+                          ),
+                          Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 10,
+                            child: Text("รวมทั้งสิ้น", style: textStyle.copyWith(fontSize: fontSize)),
+                          ),
+                          Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                        ],
+                      )
+                    ],
+                  )
+                : Container(),
+          ],
+        );
+      }
       return Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -1558,47 +1762,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
-          child: (global.posConfig.isvatregister && global.posConfig.vattype == 1)
-              ? Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 10,
-                          child: Text("${global.language("total")} ${global.posHoldProcessResult[holdIndex].posProcess.details.length} ${global.language("line")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
-                        ),
-                        Expanded(flex: 2, child: Text(global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_amount - global.posHoldProcessResult[holdIndex].posProcess.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 10,
-                          child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize)),
-                        ),
-                        Expanded(flex: 2, child: Text(global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 10,
-                          child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize)),
-                        ),
-                        Expanded(flex: 2, child: Text(global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                      ],
-                    )
-                  ],
-                )
-              : Row(
-                  children: [
-                    Expanded(
-                      flex: 10,
-                      child: Text("${global.language("total")} ${global.posHoldProcessResult[holdIndex].posProcess.details.length} ${global.language("line")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
-                    ),
-                    Expanded(flex: 2, child: Text(global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                  ],
-                ));
+          child: footer);
     });
   }
 
@@ -1664,6 +1828,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     double extraAmount = 0.0;
     TextStyle extraTextStyle = TextStyle(fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
     String description = "${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
+    if (detail.is_except_vat) {
+      description = description + " (ยกเว้นภาษี)";
+    }
     for (final extra in detail.extra) {
       extraAmount += extra.total_amount;
     }
@@ -1706,7 +1873,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   findActiveLineByGuid = global.posHoldProcessResult[holdIndex].posProcess.details[index].guid;
                   global.posHoldProcessResult[holdIndex].posProcess.select_promotion_temp_list.clear();
 
-                  product = await ProductBarcodeHelper().selectByBarcodeFirst(global.posHoldProcessResult[holdIndex].posProcess.details[index].barcode) ?? ProductBarcodeObjectBoxStruct(barcode: "", color_select: "", image_or_color: true, color_select_hex: "", names: "", name_all: "", images_url: "", prices: "", unit_code: "", unit_names: "", new_line: 0, guid_fixed: "", item_code: "", item_guid: "", vat_type: 1, descriptions: "", item_unit_code: "", options_json: "", isalacarte: true, ordertypes: "", product_count: 0);
+                  product = await ProductBarcodeHelper().selectByBarcodeFirst(global.posHoldProcessResult[holdIndex].posProcess.details[index].barcode) ?? ProductBarcodeObjectBoxStruct(barcode: "", color_select: "", image_or_color: true, color_select_hex: "", names: "", name_all: "", images_url: "", prices: "", unit_code: "", unit_names: "", new_line: 0, guid_fixed: "", item_code: "", item_guid: "", vat_type: 1, descriptions: "", item_unit_code: "", options_json: "", isalacarte: true, ordertypes: "", product_count: 0, is_except_vat: false);
                   setState(() {
                     productOptions = (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
                   });
@@ -2396,6 +2563,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   void restartClearData() {
+    detailDiscountFormula = "";
     global.posSaleChannelCode = "XXX";
     findActiveLineByGuid = "";
     activeLineNumber = -1;
@@ -3071,7 +3239,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     if (global.appMode == global.AppModeEnum.posTerminal) {
       if (holdIndex != -1) {
-        posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt()).then((_) {
+        posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((_) {
           PosProcess().sumCategoryCount(value: global.posHoldProcessResult[holdIndex].posProcess);
         });
       }

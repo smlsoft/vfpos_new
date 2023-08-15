@@ -541,7 +541,7 @@
     },
     {
       "id": "11:2320464900211169166",
-      "lastPropertyId": "32:1503007406801578390",
+      "lastPropertyId": "33:1118438584615380014",
       "name": "ProductBarcodeObjectBoxStruct",
       "properties": [
         {
@@ -656,6 +656,11 @@
           "id": "32:1503007406801578390",
           "name": "ordertypes",
           "type": 9
+        },
+        {
+          "id": "33:1118438584615380014",
+          "name": "is_except_vat",
+          "type": 1
         }
       ],
       "relations": []

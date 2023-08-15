@@ -29,6 +29,7 @@ ProductBarcodeObjectBoxStruct _$ProductBarcodeObjectBoxStructFromJson(
       isalacarte: json['isalacarte'] as bool,
       ordertypes: json['ordertypes'] as String,
       vat_type: json['vat_type'] as int,
+      is_except_vat: json['is_except_vat'] as bool,
       product_count: (json['product_count'] as num).toDouble(),
     )..id = json['id'] as int;
 
@@ -56,5 +57,6 @@ Map<String, dynamic> _$ProductBarcodeObjectBoxStructToJson(
       'color_select_hex': instance.color_select_hex,
       'vat_type': instance.vat_type,
       'isalacarte': instance.isalacarte,
+      'is_except_vat': instance.is_except_vat,
       'ordertypes': instance.ordertypes,
     };
