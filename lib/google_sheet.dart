@@ -96,11 +96,3 @@ Future<void> googleMultiLanguageSheetLoad() async {
     print(e);
   }
 }
-
-void createJsonFromGoogleSheet() {
-  googleMultiLanguageSheetLoad().then((_) {
-    String json = jsonEncode(global.languageSystemCode);
-    File file = File('assets/language.json');
-    file.writeAsString(json);
-  });
-}

@@ -75,6 +75,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late Timer messageTimer;
   late Timer deviceTimer;
+  bool showDetail = false;
   final ScrollController groupSelectListScrollController = ScrollController();
   late bool isVisible;
   //late QRViewController _scanController;
@@ -1534,226 +1535,211 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       TextStyle textStyle = TextStyle(color: Colors.black, fontSize: fontSize);
       int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
       PosProcessModel process = global.posHoldProcessResult[holdIndex].posProcess;
-      Widget footer = Container();
-      if (global.posConfig.isvatregister) {
-        // จดทะเบียนภาษี
-        if (global.posConfig.vattype == 1) {
-          // จดทะเบียนภาษี และเป็นภาษีแยกนอก
-          footer = Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              )
-            ],
-          );
-        } else {
-          // จดทะเบียนภาษี และเป็นภาษีรวมใน
-          List<Widget> footerList = [];
-          footerList.add(
-            Row(
+      List<Widget> footer = [];
+      if (showDetail) {
+        if (global.posConfig.isvatregister) {
+          // จดทะเบียนภาษี
+          if (global.posConfig.vattype == 1) {
+            // จดทะเบียนภาษี และเป็นภาษีแยกนอก
+            footer.add(Row(
               children: [
                 Expanded(
                   flex: 10,
-                  child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                  child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
                 ),
-                Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+                Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
               ],
-            ),
-          );
-          if (process.total_piece != process.total_piece_vat) {
-            // กรณีมีสินค้าทั้งประเภทภาษี และยกเว้นภาษี ให้แสดงรายละเอียด
-            footerList.add(
+            ));
+            footer.add(Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize)),
+                ),
+                Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+              ],
+            ));
+            footer.add(Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize)),
+                ),
+                Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+              ],
+            ));
+          } else {
+            // จดทะเบียนภาษี และเป็นภาษีรวมใน
+            footer.add(
               Row(
                 children: [
                   Expanded(
                     flex: 10,
-                    child: Text("สินค้ามีภาษี : ${global.moneyFormat.format(process.total_piece_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+                    child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
                   ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
                 ],
               ),
             );
-            footerList.add(
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("สินค้ายกเว้นภาษี : ${global.moneyFormat.format(process.total_piece_except_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              ),
-            );
-          }
-          if (process.detail_total_discount != 0) {
-            // มีส่วนลดสินค้า
-            footerList.add(
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("ส่วนลดสินค้า : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
-                ],
-              ),
-            );
-            if (process.total_discount_vat_amount != 0) {
-              // มีส่วนลดสินค้ามีภาษี
-              footerList.add(
+            if (process.total_piece != process.total_piece_vat) {
+              // กรณีมีสินค้าทั้งประเภทภาษี และยกเว้นภาษี ให้แสดงรายละเอียด
+              footer.add(
                 Row(
                   children: [
                     Expanded(
                       flex: 10,
-                      child: Text("เฉลี่ยส่วนลดสินค้ามีภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                      child: Text("สินค้ามีภาษี : ${global.moneyFormat.format(process.total_piece_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
                     ),
-                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
                   ],
                 ),
               );
-            }
-            if (process.total_discount_except_vat_amount != 0) {
-              // มีส่วนลดสินค้ายกเว้นภาษี
-              footerList.add(
+              footer.add(
                 Row(
                   children: [
                     Expanded(
                       flex: 10,
-                      child: Text("เฉลี่ยส่วนลดสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                      child: Text("สินค้ายกเว้นภาษี : ${global.moneyFormat.format(process.total_piece_except_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
                     ),
-                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
                   ],
                 ),
               );
             }
-          }
-          if (process.amount_before_calc_vat != 0) {
-            footerList.add(
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("มูลค่าก่อนภาษี", style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_before_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              ),
-            );
-          }
-          if (process.total_vat_amount != 0) {
-            footerList.add(
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
-                ],
-              ),
-            );
-          }
-          if (process.amount_after_calc_vat != 0 && process.amount_after_calc_vat != process.total_amount) {
-            // มูลค่าหลังคิดภาษี (สินค้ามีภาษี)
-            footerList.add(
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("มูลค่าสินค้าหลังคิดภาษี", style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_after_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              ),
-            );
-          }
-          if (process.amount_except_vat != 0 && process.amount_except_vat != process.total_amount) {
-            // มูลค่าสินค้ายกเว้นภาษี
-            footerList.add(
-              Row(
-                children: [
-                  Expanded(
-                    flex: 10,
-                    child: Text("มูลค่าสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
-                  ),
-                  Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_except_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                ],
-              ),
-            );
-          }
-          footerList.add(Row(
-            children: [
-              Expanded(
-                flex: 10,
-                child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
-              ),
-              Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
-            ],
-          ));
-          footer = Column(
-            children: footerList,
-          );
-        }
-      } else {
-        footer = Column(
-          children: [
-            Row(children: [
-              Expanded(
-                flex: 10,
-                child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
-              ),
-              Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-            ]),
-            (process.detail_total_discount != 0)
-                ? Column(
+            if (process.detail_total_discount != 0) {
+              // มีส่วนลดสินค้า
+              footer.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("ส่วนลดสินค้า : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+                  ],
+                ),
+              );
+              if (process.total_discount_vat_amount != 0) {
+                // มีส่วนลดสินค้ามีภาษี
+                footer.add(
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 10,
-                            child: Text("ส่วนลด : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize)),
-                          ),
-                          Expanded(flex: 2, child: Text(global.moneyFormat.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                        ],
+                      Expanded(
+                        flex: 10,
+                        child: Text("เฉลี่ยส่วนลดสินค้ามีภาษี", style: textStyle.copyWith(fontSize: fontSize)),
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 10,
-                            child: Text("รวมทั้งสิ้น", style: textStyle.copyWith(fontSize: fontSize)),
-                          ),
-                          Expanded(flex: 2, child: Text(global.moneyFormat.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
-                        ],
-                      )
+                      Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
                     ],
-                  )
-                : Container(),
+                  ),
+                );
+              }
+              if (process.total_discount_except_vat_amount != 0) {
+                // มีส่วนลดสินค้ายกเว้นภาษี
+                footer.add(
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 10,
+                        child: Text("เฉลี่ยส่วนลดสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                      ),
+                      Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                    ],
+                  ),
+                );
+              }
+            }
+            if (process.amount_before_calc_vat != 0) {
+              footer.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("มูลค่าก่อนภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_before_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                  ],
+                ),
+              );
+            }
+            if (process.total_vat_amount != 0) {
+              footer.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+                  ],
+                ),
+              );
+            }
+            if (process.amount_after_calc_vat != 0 && process.amount_after_calc_vat != process.total_amount) {
+              // มูลค่าหลังคิดภาษี (สินค้ามีภาษี)
+              footer.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("มูลค่าสินค้าหลังคิดภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_after_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                  ],
+                ),
+              );
+            }
+            if (process.amount_except_vat != 0 && process.amount_except_vat != process.total_amount) {
+              // มูลค่าสินค้ายกเว้นภาษี
+              footer.add(
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Text("มูลค่าสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                    ),
+                    Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_except_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+                  ],
+                ),
+              );
+            }
+            footer.add(Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+                ),
+                Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+              ],
+            ));
+          }
+        }
+      }
+      footer.add(Row(children: [
+        Expanded(
+          flex: 10,
+          child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+        ),
+        Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+      ]));
+      if (process.detail_total_discount != 0) {
+        footer.add(Row(
+          children: [
+            Expanded(
+              flex: 10,
+              child: Text("ส่วนลด : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize)),
+            ),
+            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
           ],
-        );
+        ));
+        footer.add(Row(
+          children: [
+            Expanded(
+              flex: 10,
+              child: Text("รวมทั้งสิ้น", style: textStyle.copyWith(fontSize: fontSize)),
+            ),
+            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+          ],
+        ));
       }
       return Container(
           width: double.infinity,
@@ -1762,7 +1748,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             color: Colors.blue.shade100,
           ),
           padding: const EdgeInsets.all(4),
-          child: footer);
+          child: Column(children: footer));
     });
   }
 
@@ -2060,7 +2046,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     builder: (context) {
                       return StatefulBuilder(
                         builder: (context, setState) {
-                          return AlertDialog(title: Text(global.language('delete')), content: Text('${detail.item_name} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${detail.unit_name} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')} ${global.language('delete_confirm')}'), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), actions: <Widget>[
+                          return AlertDialog(title: Text(global.language('delete')), content: Text('${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')} ${global.language('delete_confirm')}'), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), actions: <Widget>[
                             ElevatedButton(
                               child: Text(global.language('delete')),
                               onPressed: () async {
@@ -3494,7 +3480,28 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           posButtonSwitchDesktopTablet(),
+          const SizedBox(
+            width: 4,
+          ),
+          posButtonSwitchShowDetail(),
         ]));
+  }
+
+  Widget posButtonSwitchShowDetail() {
+    return myButton(
+        backgroundColor: (showDetail) ? Colors.orange : Colors.blue,
+        child: (showDetail)
+            ? const Icon(
+                Icons.remove_red_eye,
+              )
+            : const Icon(
+                Icons.remove_red_eye_outlined,
+              ),
+        onPressed: () {
+          setState(() {
+            showDetail = !showDetail;
+          });
+        });
   }
 
   Widget posLayoutBottomPhone() {
