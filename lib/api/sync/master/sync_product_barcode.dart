@@ -10,8 +10,7 @@ import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:intl/intl.dart';
 
-void syncProductBarcode(List<ItemRemoveModel> removeList,
-    List<SyncProductBarcodeModel> newDataList) {
+void syncProductBarcode(List<ItemRemoveModel> removeList, List<SyncProductBarcodeModel> newDataList) {
   List<String> manyForDelete = [];
   List<ProductBarcodeObjectBoxStruct> manyForInsert = [];
 
@@ -33,8 +32,7 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
     ProductBarcodeObjectBoxStruct newBarcode = ProductBarcodeObjectBoxStruct(
       guid_fixed: newData.guidfixed,
       names: jsonEncode(newData.names),
-      name_all:
-          (newData.names).map((e) => e.name).toList().join(" ").toString(),
+      name_all: (newData.names).map((e) => e.name).toList().join(" ").toString(),
       product_count: 0,
       barcode: newData.barcode,
       item_guid: "",
@@ -51,9 +49,8 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
       color_select: newData.colorselect,
       vat_type: 1,
       isalacarte: newData.isalacarte!,
-      is_except_vat: (newData.vattype == 1) ? true : false,
-      ordertypes:
-          (newData.ordertypes == null) ? "" : jsonEncode(newData.ordertypes!),
+      is_except_vat: (newData.vatcal == 1) ? true : false,
+      ordertypes: (newData.ordertypes == null) ? "" : jsonEncode(newData.ordertypes!),
       color_select_hex: newData.colorselecthex,
     );
     newBarcode.image_or_color = true;
@@ -61,13 +58,9 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
     manyForInsert.add(newBarcode);
     global.syncRefreshProductBarcode = true;
     // Update ข้อมูลใน Memory
-    for (int index = 0;
-        index < global.productCategoryCodeSelected.length;
-        index++) {
-      if (global.productCategoryCodeSelected[index].guid_fixed ==
-          newData.guidfixed) {
-        global.productCategoryCodeSelected[index].names =
-            jsonEncode(newData.names);
+    for (int index = 0; index < global.productCategoryCodeSelected.length; index++) {
+      if (global.productCategoryCodeSelected[index].guid_fixed == newData.guidfixed) {
+        global.productCategoryCodeSelected[index].names = jsonEncode(newData.names);
         global.productCategoryCodeSelected[index].image_url = newData.imageuri;
 
         /*global.productGroupCodeSelected[_index].xorder =
@@ -101,52 +94,38 @@ void syncProductBarcode(List<ItemRemoveModel> removeList,
   }*/
 }
 
-Future<void> syncProductBarcodeCompare(
-    List<SyncMasterStatusModel> masterStatus) async {
+Future<void> syncProductBarcodeCompare(List<SyncMasterStatusModel> masterStatus) async {
   // Sync Barcode
   ApiRepository apiRepository = ApiRepository();
-  String lastUpdateTime =
-      global.appStorage.read(global.syncProductBarcodeTimeName) ??
-          global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncProductBarcodeTimeName) ?? global.syncDateBegin;
   if (ProductBarcodeHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
-  var getLastUpdateTime =
-      global.syncFindLastUpdate(masterStatus, "productbarcode");
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "productbarcode");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await apiRepository
-          .serverProductBarcode(
-              offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await apiRepository.serverProductBarcode(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["productbarcode"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncProductBarcodeModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncProductBarcodeModel.fromJson(newCate))
-              .toList();
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncProductBarcodeModel> newDataList = (dataList["new"] as List).map((newCate) => SyncProductBarcodeModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncProductBarcode(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .debug("************************************************* Error");
+          serviceLocator<Log>().debug("************************************************* Error");
           loop = false;
         }
       });
       offset += limit;
     }
-    global.appStorage
-        .write(global.syncProductBarcodeTimeName, getLastUpdateTime);
+    global.appStorage.write(global.syncProductBarcodeTimeName, getLastUpdateTime);
     global.rebuildProductBarcodeStatus = true;
   }
 }

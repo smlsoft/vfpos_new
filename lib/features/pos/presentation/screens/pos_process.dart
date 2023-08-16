@@ -156,7 +156,7 @@ class PosProcess {
       } else {
         // ภาษีแยกนอก
         // เฉลี่ยส่วนลด สินค้ามีภาษี
-        double discountVatAmount = (processResult.detail_total_discount == 0) ? 0 : global.roundDouble((100 * totalItemVatAmount) / (totalItemVatAmount + totalItemExceptVatAmount), 2);
+        double discountVatAmount = (processResult.detail_total_discount == 0) ? 0 : global.roundDouble((processResult.detail_total_discount * totalItemVatAmount) / (totalItemVatAmount + totalItemExceptVatAmount), 2);
         // ยอดรวมสินค้ามีภาษีสุทธิ (หลังหักส่วนลด)
         double amountAfterCalcVat = processResult.total_item_vat_amount - discountVatAmount;
         // ส่วนลดสินค้ามีภาษี

@@ -126,7 +126,7 @@ SyncProductBarcodeModel _$SyncProductBarcodeModelFromJson(
           ?.map((e) => ProductOrderTypeFromServerModel.fromJson(
               e as Map<String, dynamic>))
           .toList(),
-      vattype: json['vattype'] as int,
+      vatcal: json['vatcal'] as int,
     );
 
 Map<String, dynamic> _$SyncProductBarcodeModelToJson(
@@ -148,7 +148,7 @@ Map<String, dynamic> _$SyncProductBarcodeModelToJson(
       'prices': instance.prices,
       'isalacarte': instance.isalacarte,
       'ordertypes': instance.ordertypes,
-      'vattype': instance.vattype,
+      'vatcal': instance.vatcal,
     };
 
 SyncCategoryModel _$SyncCategoryModelFromJson(Map<String, dynamic> json) =>

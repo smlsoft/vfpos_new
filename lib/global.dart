@@ -879,7 +879,7 @@ void posScreenListHeightSet(double value) {
   appStorage.write(posScreenListHeightName, value);
 }
 
-Future<void> loadConfig() async {
+Future<void> loadDeviceConfigFromServer() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   posTerminalPinCode = sharedPreferences.getString('pos_terminal_pin_code') ?? "";
   posTerminalPinTokenId = sharedPreferences.getString('pos_terminal_token') ?? "";
@@ -897,6 +897,14 @@ Future<void> loadConfig() async {
       var file = File(global.getPosLogoPathName());
       await file.writeAsBytes(response.bodyBytes);
     }
+  } catch (e) {
+    serviceLocator<Log>().error(e);
+  }
+}
+
+Future<void> loadConfig() async {
+  try {
+    await loadDeviceConfigFromServer();
   } catch (e) {
     serviceLocator<Log>().error(e);
   }

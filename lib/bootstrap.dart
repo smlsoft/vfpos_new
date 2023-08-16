@@ -39,14 +39,12 @@ Future<void> initializeApp() async {
 
   if (kDebugMode) {
     // Debug
-    // Load ภาษาจาก google sheet
-    await googleMultiLanguageSheetLoad();
     // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
-    /*await googleMultiLanguageSheetLoad().then((_) {
+    await googleMultiLanguageSheetLoad().then((_) {
       String json = jsonEncode(global.languageSystemCode);
       File file = File(jsonLanguageFileName);
       file.writeAsString(json);
-    });*/
+    });
   } else {
     // release
     // load ภาษาจาก assets (mode release)

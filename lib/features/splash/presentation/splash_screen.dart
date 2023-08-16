@@ -35,9 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void reload() {
-    serviceLocator<CheckUserLoginStatus>()
-        .checkIfUserLoggedIn()
-        .then((isUserLoggedIn) async {
+    serviceLocator<CheckUserLoginStatus>().checkIfUserLoggedIn().then((isUserLoggedIn) async {
       if (isUserLoggedIn) {
         final user = await serviceLocator<UserCacheService>().getUser();
 
@@ -53,9 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
           }
         }
 
-        context
-            .read<AuthenticationBloc>()
-            .add(AuthenticationEvent.authenticated(user: user!));
+        context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user!));
 
         await global.appStorage.write("token", user.token);
         global.apiConnected = true;
@@ -63,15 +59,12 @@ class _SplashScreenState extends State<SplashScreen> {
         global.loginProcess = true;
         // global.apiConnected = true;
 
-        serviceLocator<CheckUserLoginStatus>()
-            .checkIfUserSelectedShop()
-            .then((userSelectedShop) async {
+        serviceLocator<CheckUserLoginStatus>().checkIfUserSelectedShop().then((userSelectedShop) async {
           if (userSelectedShop != null) {
             global.apiShopID = userSelectedShop.guidfixed;
-            context.read<SelectShopBloc>().add(
-                SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
+            context.read<SelectShopBloc>().add(SelectShopEvent.onSelectShopRefresh(shop: userSelectedShop));
             if (F.appFlavor == Flavor.DEDEPOS) {
-              while (true) {
+              /*while (true) {
                 try {
                   await global.getProfile();
                   context.router.pushAndPopUntil(const LoginByEmployeeRoute(),
@@ -83,26 +76,26 @@ class _SplashScreenState extends State<SplashScreen> {
                       .read<AuthenticationBloc>()
                       .add(AuthenticationEvent.authenticated(user: user));
                 }
-              }
+              }*/
+              try {
+                await global.getProfile();
+              } catch (e) {}
+              context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
               return;
             } else {
-              context.router.pushAndPopUntil(const InitShopRoute(),
-                  predicate: (route) => false);
+              context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
             }
           } else {
-            context.router.pushAndPopUntil(const SelectShopRoute(),
-                predicate: (route) => false);
+            context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
           }
         });
       } else {
         // check flavor is dedepos
         if (F.appFlavor == Flavor.DEDEPOS) {
-          context.router.pushAndPopUntil(const RegisterPosTerminalRoute(),
-              predicate: (route) => false);
+          context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
           return;
         } else {
-          context.router.pushAndPopUntil(const AuthenticationRoute(),
-              predicate: (route) => false);
+          context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
         }
       }
     });

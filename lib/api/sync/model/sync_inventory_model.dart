@@ -160,7 +160,7 @@ class SyncProductBarcodeModel {
   List<ProductOrderTypeFromServerModel>? ordertypes;
 
   /// ประเภทภาษี 0=สินค้ามีภาษี,1=สินค้ายกเว้น
-  int vattype;
+  int vatcal;
 
   SyncProductBarcodeModel({
     required this.guidfixed,
@@ -179,7 +179,7 @@ class SyncProductBarcodeModel {
     required this.prices,
     required this.isalacarte,
     required this.ordertypes,
-    required this.vattype,
+    required this.vatcal,
   });
 
   factory SyncProductBarcodeModel.fromJson(Map<String, dynamic> json) => _$SyncProductBarcodeModelFromJson(json);

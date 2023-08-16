@@ -46,8 +46,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=restaurant-kitchen&offset=$offset&limit=$limit&action=all";
+      String query = "/master-sync/list?lastupdate=$lastupdate&module=restaurant-kitchen&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -73,8 +72,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=restaurant-table&offset=$offset&limit=$limit&action=all";
+      String query = "/master-sync/list?lastupdate=$lastupdate&module=restaurant-table&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -100,8 +98,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=ordertype&offset=$offset&limit=$limit&action=all";
+      String query = "/master-sync/list?lastupdate=$lastupdate&module=ordertype&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -127,8 +124,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=printer&offset=$offset&limit=$limit&action=all";
+      String query = "/master-sync/list?lastupdate=$lastupdate&module=printer&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -154,8 +150,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=productcategory&offset=$offset&limit=$limit&action=all";
+      String query = "/master-sync/list?lastupdate=$lastupdate&module=productcategory&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -181,8 +176,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      String query =
-          "/master-sync/list?lastupdate=$lastupdate&module=productbarcode&offset=$offset&limit=$limit&action=all";
+      String query = "/master-sync/list?lastupdate=$lastupdate&module=productbarcode&offset=$offset&limit=$limit&action=all";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());
@@ -228,13 +222,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getMasterUpdate(
-      {int page = 1, int limit = 50, String time = ""}) async {
+  Future<ApiResponse> getMasterUpdate({int page = 1, int limit = 50, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client
-          .get('/master-sync?lastUpdate=$time&page=$page&limit=$limit');
+      final response = await client.get('/master-sync?lastUpdate=$time&page=$page&limit=$limit');
       try {
         final rawData = json.decode(response.toString());
 
@@ -258,13 +250,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getInventoryFetchUpdate(
-      {int page = 0, int perPage = 1, String time = ""}) async {
+  Future<ApiResponse> getInventoryFetchUpdate({int page = 0, int perPage = 1, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get(
-          '/inventory/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
+      final response = await client.get('/inventory/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -288,13 +278,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getCategoryFetchUpdate(
-      {int page = 0, int limit = 1, String time = ""}) async {
+  Future<ApiResponse> getCategoryFetchUpdate({int page = 0, int limit = 1, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get(
-          '/category/fetchupdate?lastUpdate=$time&page=$page&limit=$limit');
+      final response = await client.get('/category/fetchupdate?lastUpdate=$time&page=$page&limit=$limit');
       try {
         final rawData = json.decode(response.toString());
 
@@ -318,13 +306,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getMemberFetchUpdate(
-      {int page = 0, int perPage = 1, String time = ""}) async {
+  Future<ApiResponse> getMemberFetchUpdate({int page = 0, int perPage = 1, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get(
-          '/member/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
+      final response = await client.get('/member/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -348,13 +334,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getPrinterFetchUpdate(
-      {int page = 0, int perPage = 1, String time = ""}) async {
+  Future<ApiResponse> getPrinterFetchUpdate({int page = 0, int perPage = 1, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get(
-          '/restaurant/printer/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
+      final response = await client.get('/restaurant/printer/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -378,13 +362,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getTableFetchUpdate(
-      {int page = 0, int perPage = 1, String time = ""}) async {
+  Future<ApiResponse> getTableFetchUpdate({int page = 0, int perPage = 1, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get(
-          '/restaurant/table/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
+      final response = await client.get('/restaurant/table/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -408,13 +390,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getZoneFetchUpdate(
-      {int page = 0, int perPage = 1, String time = ""}) async {
+  Future<ApiResponse> getZoneFetchUpdate({int page = 0, int perPage = 1, String time = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response = await client.get(
-          '/restaurant/zone/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
+      final response = await client.get('/restaurant/zone/fetchupdate?lastUpdate=$time&page=$page&limit=$perPage');
       try {
         final rawData = json.decode(response.toString());
 
@@ -446,8 +426,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      final response =
-          await client.get('/category?page=$page&limit=$perPage&q=$search');
+      final response = await client.get('/category?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
@@ -471,13 +450,11 @@ class ApiRepository {
     }
   }
 
-  Future<ApiResponse> getInventoryList(
-      {int page = 0, int perPage = 1, String search = ""}) async {
+  Future<ApiResponse> getInventoryList({int page = 0, int perPage = 1, String search = ""}) async {
     Dio client = Client().init();
 
     try {
-      final response =
-          await client.get('/inventory?page=$page&limit=$perPage&q=$search');
+      final response = await client.get('/inventory?page=$page&limit=$perPage&q=$search');
       try {
         final rawData = json.decode(response.toString());
 
@@ -557,14 +534,12 @@ class ApiRepository {
     }
   }
 
-  Future<List<FindMemberModel>> findMemberByTelName(
-      String word, int offset, int limit) async {
+  Future<List<FindMemberModel>> findMemberByTelName(String word, int offset, int limit) async {
     Dio client = Client().init();
     List<FindMemberModel> result = [];
     if (word.trim().isNotEmpty) {
       try {
-        final response = await client.get(
-            '/debtaccount/debtor/list?q=$word&offset=$offset&limit=$limit&lang=th');
+        final response = await client.get('/debtaccount/debtor/list?q=$word&offset=$offset&limit=$limit&lang=th');
         try {
           final rawData = json.decode(response.toString());
 
@@ -651,8 +626,7 @@ class ApiRepository {
     Dio client = Client().init();
 
     try {
-      final response =
-          await client.get('/pos/setting/code/' + posId.toUpperCase());
+      final response = await client.get('/pos/setting/code/' + posId.toUpperCase());
       try {
         final rawData = json.decode(response.toString());
 
@@ -708,8 +682,10 @@ class ApiRepository {
     bool result = false;
     Dio client = Client().init();
     try {
-      final response = await client.post('/employee/password',
-          data: {"code": code, "password": newPassword});
+      final response = await client.post('/employee/password', data: {
+        "code": code,
+        "password": newPassword
+      });
       try {
         final rawData = json.decode(response.toString());
         if (rawData['error'] != null) {
@@ -732,27 +708,15 @@ class ApiRepository {
 }
 
 class RestApiFindItemByCodeNameBarcode {
-  Future<List<FindItemModel>> findItemByCodeNameBarcode(
-      String word, int offset, int limit) async {
+  Future<List<FindItemModel>> findItemByCodeNameBarcode(String word, int offset, int limit) async {
     //String _fieldName = "barcode,code,name_1";
     List<FindItemModel> result = [];
     if (word.trim().isNotEmpty) {
       ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
-      List<ProductBarcodeObjectBoxStruct> select =
-          productBarcodeHelper.selectByCodeNameBarCode(
-              word: word.toString(), limit: limit, offset: offset, order: "");
+      List<ProductBarcodeObjectBoxStruct> select = productBarcodeHelper.selectByCodeNameBarCode(word: word.toString(), limit: limit, offset: offset, order: "");
       for (int index = 0; index < select.length; index++) {
         ProductBarcodeObjectBoxStruct source = select[index];
-        result.add(FindItemModel(
-            barcode: source.barcode,
-            item_code: source.item_code,
-            item_names: source.names,
-            unit_code: source.unit_code,
-            unit_names: source.unit_names,
-            unit_type: 0,
-            qty: 1.0,
-            prices: source.prices,
-            images_guid_list: []));
+        result.add(FindItemModel(barcode: source.barcode, item_code: source.item_code, item_names: source.names, unit_code: source.unit_code, unit_names: source.unit_names, unit_type: 0, qty: 1.0, prices: source.prices, images_guid_list: []));
       }
     }
     return result;
@@ -767,12 +731,7 @@ class RestApiFindEmployeeByWord {
     for (int index = 0; index < select.length; index++) {
       EmployeeObjectBoxStruct source = select[index];
       result.add(
-        FindEmployeeModel(
-            name: source.name,
-            code: source.code,
-            roles: "" /* _source.roles.toString()*/,
-            profile_picture: source.profile_picture,
-            username: source.name),
+        FindEmployeeModel(name: source.name, code: source.code, roles: "" /* _source.roles.toString()*/, profile_picture: source.profile_picture, username: source.name),
       );
     }
     return result;
