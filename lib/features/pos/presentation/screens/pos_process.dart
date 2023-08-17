@@ -86,7 +86,7 @@ class PosProcess {
       if (processResult.details[index].is_void == false) {
         if (processResult.details[index].is_except_vat == false) {
           // สินค้ามี vat
-          totalItemVatAmount += processResult.details[index].total_amount;
+          totalItemVatAmount += processResult.details[index].total_amount - processResult.details[index].discount;
           totalPieceVat += processResult.details[index].qty;
         } else {
           // สินค้าไม่มี vat

@@ -196,10 +196,10 @@ String printerConfigCashierCode = "printer_config_cashier";
 String printerConfigTicketCode = "printer_config_ticket";
 String shopId = "";
 bool checkOrderActive = false;
-// ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
-int orderToKitchenPrintMode = 1;
+int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
 String posTerminalPinCode = "";
 String posTerminalPinTokenId = "";
+bool useEdc = false; // เชื่อมต่อเครื่อง EDC
 bool posScreenAutoRefresh = false;
 bool rebuildProductBarcodeStatus = true;
 // วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษ
@@ -1747,4 +1747,21 @@ double roundMoneyForPay(double value) {
     }
   }
   return result;
+}
+
+Widget iconStatus(String pngFileName, bool status) {
+  return SizedBox(
+    width: 30,
+    height: 24,
+    child: Stack(children: [
+      Image.asset(
+        "assets/images/$pngFileName.png",
+      ),
+      Positioned(
+        bottom: 0,
+        right: 5,
+        child: Container(height: 10, width: 10, decoration: BoxDecoration(color: (status) ? Colors.greenAccent : Colors.redAccent, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white, width: 1))),
+      ),
+    ]),
+  );
 }

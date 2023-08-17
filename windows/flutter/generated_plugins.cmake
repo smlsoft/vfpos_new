@@ -11,6 +11,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   network_info_plus
   objectbox_flutter_libs
   permission_handler_windows
+  rive_common
   url_launcher_windows
 )
 

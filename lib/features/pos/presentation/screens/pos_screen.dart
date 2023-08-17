@@ -1740,7 +1740,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       } else {
         // กรณีไม่แสดงรายละเอียด ให้แสดงแบบคร่าวๆ
         if (global.posConfig.isvatregister) {
-          footer.addAll(detailFooterDetail(process: process, fontSize: fontSize, textStyle: textStyle, showVatAmount: true));
+          footer.addAll(detailFooterDetail(process: process, fontSize: fontSize, textStyle: textStyle, showVatAmount: (global.posConfig.vattype == 1) ? true : false));
         } else {
           footer.addAll(detailFooterDetail(process: process, fontSize: fontSize, textStyle: textStyle, showVatAmount: false));
         }
@@ -3388,6 +3388,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           posButtonSwitchDesktopTablet(),
+          const SizedBox(
+            width: 4,
+          ),
+          posButtonSwitchShowDetail(),
         ]));
   }
 
@@ -3542,6 +3546,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 2,
           ),
           posButtonListTextHeight(),
+          const SizedBox(
+            width: 2,
+          ),
+          posButtonSwitchShowDetail(),
         ]));
   }
 
@@ -4113,20 +4121,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     global.globalContext = context;
-    Widget printerStatus = (cashierPrinterIndex != -1)
-        ? Row(
-            children: [
-              Icon(
-                Icons.print,
-                color: (global.printerLocalStrongData[cashierPrinterIndex].isReady == true) ? Colors.white : Colors.red,
-                size: 20,
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-            ],
-          )
-        : Container();
     return MultiBlocListener(
         listeners: [
           BlocListener<ProductCategoryBloc, ProductCategoryState>(
@@ -4176,13 +4170,25 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     child: Scaffold(
                         appBar: AppBar(
                           toolbarHeight: 32,
+                          titleSpacing: 0,
                           automaticallyImplyLeading: false,
-                          backgroundColor: (global.posScreenMode == global.PosScreenModeEnum.posSale) ? Colors.blue : Colors.red,
+                          backgroundColor: (global.posScreenMode == global.PosScreenModeEnum.posSale) ? Colors.blue.shade200 : Colors.red.shade200,
                           title: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              printerStatus,
                               const SizedBox(
-                                width: 5,
+                                width: 10,
+                              ),
+                              Text(global.posConfig.code,
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, shadows: [
+                                    Shadow(
+                                      blurRadius: 10.0,
+                                      color: Colors.black54,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ])),
+                              const SizedBox(
+                                width: 10,
                               ),
                               if (global.posSaleChannelCode != "XXX")
                                 Container(
@@ -4215,14 +4221,31 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                     ),
                                   ])),
                               const Spacer(),
-                              Text("${global.applicationName} : ${global.userLogin!.name} (${global.userLogin!.code})",
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, shadows: [
+                              Text("${global.userLogin!.name} (${global.userLogin!.code})",
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, shadows: [
                                     Shadow(
                                       blurRadius: 10.0,
                                       color: Colors.black54,
                                       offset: Offset(2.0, 2.0),
                                     ),
                                   ])),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              global.iconStatus("internet_connect", true),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              (cashierPrinterIndex != -1) ? global.iconStatus("thermal_printer", global.printerLocalStrongData[cashierPrinterIndex].isReady) : Container(),
+                              if (global.useEdc)
+                                Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    global.iconStatus("edc", false),
+                                  ],
+                                )
                             ],
                           ),
                         ),
