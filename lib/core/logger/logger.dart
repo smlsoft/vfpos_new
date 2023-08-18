@@ -24,32 +24,20 @@ class LogImpl implements Log {
   );
 
   @override
-  void trace(dynamic message, {dynamic error, StackTrace? stackTrace}) {
-    logger.v(message, error, stackTrace);
-  }
+  void trace(dynamic message, {dynamic error, StackTrace? stackTrace}) {}
 
   @override
-  void debug(dynamic message, {dynamic error, StackTrace? stackTrace}) {
-    logger.d(message, error, stackTrace);
-  }
+  void debug(dynamic message, {dynamic error, StackTrace? stackTrace}) {}
 
   @override
-  void info(dynamic message, {dynamic error, StackTrace? stackTrace}) {
-    logger.i(message, error, stackTrace);
-  }
+  void info(dynamic message, {dynamic error, StackTrace? stackTrace}) {}
 
   @override
-  void warn(dynamic message, {dynamic error, StackTrace? stackTrace}) {
-    logger.w(message, error, stackTrace);
-  }
+  void warn(dynamic message, {dynamic error, StackTrace? stackTrace}) {}
 
   @override
-  void error(dynamic message, {dynamic error, StackTrace? stackTrace}) {
-    logger.e(message, error, stackTrace);
-  }
+  void error(dynamic message, {dynamic error, StackTrace? stackTrace}) {}
 
   @override
-  void dangerFailure(dynamic message, {dynamic error, StackTrace? stackTrace}) {
-    logger.wtf(message, error, stackTrace);
-  }
+  void dangerFailure(dynamic message, {dynamic error, StackTrace? stackTrace}) {}
 }
