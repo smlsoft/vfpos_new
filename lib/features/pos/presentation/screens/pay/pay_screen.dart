@@ -806,45 +806,45 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
                             Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
                           ],
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(global.language('total_pay_amount'), style: textStyle.copyWith(color: Colors.blue)),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  global.moneyFormatAndDot.format(sumTotalPayAmount),
-                                  style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.blue),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.blue)),
-                          ],
-                        ),
-                        if (diffAmount != 0)
+                        if (global.payScreenData.cash_amount != sumTotalPayAmount)
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(global.language('total_pay_amount_diff'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red)),
+                              Text(global.language('total_pay_amount'), style: textStyle.copyWith(color: Colors.blue)),
                               Expanded(
                                 child: Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    global.moneyFormatAndDot.format(diffAmount),
-                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+                                    global.moneyFormatAndDot.format(sumTotalPayAmount),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.blue),
                                   ),
                                 ),
                               ),
                               const SizedBox(
                                 width: 5,
                               ),
-                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red)),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.blue)),
                             ],
                           ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(global.language('total_pay_amount_diff'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red)),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  global.moneyFormatAndDot.format(diffAmount),
+                                  style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red)),
+                          ],
+                        ),
                       ],
                     ))),
             Padding(

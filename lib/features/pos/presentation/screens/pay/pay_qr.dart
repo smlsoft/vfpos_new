@@ -309,57 +309,59 @@ class PayQrWidgetState extends State<PayQrWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(left: 4, right: 4),
-        child: SingleChildScrollView(
-            child: Column(
-          children: [
-            Container(
-                width: double.infinity,
-                padding: const EdgeInsets.only(bottom: 4),
-                child: (global.payScreenData.qr.isEmpty)
-                    ? Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.green, width: 2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(children: [
-                          Container(
-                              width: double.infinity,
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
-                              ),
-                              child: Center(
-                                  child: Text(
-                                "${global.language("pay_qr_code_full_amount")} : ${global.moneyFormatAndDot.format(diffAmount())} ${global.language("money_symbol")}",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ))),
-                          qrList(diffAmount()),
-                        ]))
-                    : Container()),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return (global.qrPaymentProviderList.isNotEmpty || global.lugenPaymentProviderList.isNotEmpty)
+        ? Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(left: 4, right: 4),
+            child: SingleChildScrollView(
+                child: Column(
               children: [
-                formDetail(),
+                Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: (global.payScreenData.qr.isEmpty)
+                        ? Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.green, width: 2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(children: [
+                              Container(
+                                  width: double.infinity,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
+                                  ),
+                                  child: Center(
+                                      child: Text(
+                                    "${global.language("pay_qr_code_full_amount")} : ${global.moneyFormatAndDot.format(diffAmount())} ${global.language("money_symbol")}",
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ))),
+                              qrList(diffAmount()),
+                            ]))
+                        : Container()),
                 Column(
-                  children: <Widget>[
-                    ...global.payScreenData.qr.map((detail) {
-                      var index = global.payScreenData.qr.indexOf(detail);
-                      return buildCard(index: index);
-                    }).toList(),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    formDetail(),
+                    Column(
+                      children: <Widget>[
+                        ...global.payScreenData.qr.map((detail) {
+                          var index = global.payScreenData.qr.indexOf(detail);
+                          return buildCard(index: index);
+                        }).toList(),
+                      ],
+                    ),
                   ],
-                ),
+                )
               ],
-            )
-          ],
-        )));
+            )))
+        : Container();
   }
 }

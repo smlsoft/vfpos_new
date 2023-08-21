@@ -26,8 +26,6 @@ PODS:
     - Flutter
     - FlutterMacOS
   - ReachabilitySwift (5.0.0)
-  - rive_common (0.0.1):
-    - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -50,7 +48,6 @@ DEPENDENCIES:
   - network_info_plus (from `Flutter/ephemeral/.symlinks/plugins/network_info_plus/macos`)
   - objectbox_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/objectbox_flutter_libs/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
-  - rive_common (from `Flutter/ephemeral/.symlinks/plugins/rive_common/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `Flutter/ephemeral/.symlinks/plugins/sqflite/macos`)
   - text_to_speech_macos (from `Flutter/ephemeral/.symlinks/plugins/text_to_speech_macos/macos`)
@@ -83,8 +80,6 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/objectbox_flutter_libs/macos
   path_provider_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
-  rive_common:
-    :path: Flutter/ephemeral/.symlinks/plugins/rive_common/macos
   shared_preferences_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin
   sqflite:
@@ -108,7 +103,6 @@ SPEC CHECKSUMS:
   objectbox_flutter_libs: f89ab4878f0f764a49077cfaa59030be69ae1d7e
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  rive_common: acedcab7802c0ece4b0d838b71d7deb637e1309a
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   sqflite: a5789cceda41d54d23f31d6de539d65bb14100ea
   text_to_speech_macos: 83b12a215a4cdb60e089d7c9d38942e2c548b240
