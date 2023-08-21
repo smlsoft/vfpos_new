@@ -17,7 +17,7 @@ dependencies:
   
   desktop_window: ^0.4.0
   auto_size_text: ^3.0.0
-  awesome_dialog: ^3.0.2
+  # awesome_dialog: ^3.0.2
   cached_network_image: ^3.2.3  
   cupertino_icons: ^1.0.5
   dart_ping_ios: ^3.0.0

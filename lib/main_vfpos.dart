@@ -12,7 +12,6 @@ void main() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
   await initializeApp();
   runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
 }

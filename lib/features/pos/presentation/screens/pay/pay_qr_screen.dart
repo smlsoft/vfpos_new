@@ -6,25 +6,20 @@ import 'package:lugentpayment/lugentpay.dart';
 import 'package:lugentpayment/qrpayment_response.dart';
 import 'package:promptpay/promptpay.dart';
 import 'package:countdown_progress_indicator/countdown_progress_indicator.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class PayQrScreen extends StatefulWidget {
   final PaymentProviderModel provider;
   final double amount;
   final BuildContext context;
 
-  const PayQrScreen(
-      {Key? key,
-      required this.provider,
-      required this.amount,
-      required this.context})
-      : super(key: key);
+  const PayQrScreen({Key? key, required this.provider, required this.amount, required this.context}) : super(key: key);
 
   @override
   State<PayQrScreen> createState() => _PayQrScreenState();
 }
 
-class _PayQrScreenState extends State<PayQrScreen>
-    with TickerProviderStateMixin {
+class _PayQrScreenState extends State<PayQrScreen> with TickerProviderStateMixin {
   var promptPayDataWithAmount = "0899223131";
   final countDownController = CountDownController();
   String qrCodePayDataString = "";
@@ -32,48 +27,28 @@ class _PayQrScreenState extends State<PayQrScreen>
   Future<QRPaymentResponse> qrLugentPromptPay() async {
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
-    QRPaymentResponse qrPayment =
-        await lugentPay.CreateThaiQRPaymentTransaction(
-            lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-            "SMLSOFT",
-            Decimal.parse(widget.amount.toString()),
-            "");
+    QRPaymentResponse qrPayment = await lugentPay.CreateThaiQRPaymentTransaction(lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
   Future<QRPaymentResponse> qrLugentAliPay() async {
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
-    QRPaymentResponse qrPayment = await lugentPay.CreateAliPayTransaction(
-        lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-        "SMLSOFT",
-        Decimal.parse(widget.amount.toString()),
-        "");
+    QRPaymentResponse qrPayment = await lugentPay.CreateAliPayTransaction(lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
   Future<QRPaymentResponse> qrLugentTrueMoney() async {
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
-    QRPaymentResponse qrPayment = await lugentPay.CreateTrueMoneyTransaction(
-        "ค่าอาหาร",
-        "่ค่าบริการ",
-        "https://dedeposblosstorage.blob.core.windows.net/dedeposassets/app_logo.png",
-        lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-        "SMLSOFT",
-        Decimal.parse(widget.amount.toString()),
-        "");
+    QRPaymentResponse qrPayment = await lugentPay.CreateTrueMoneyTransaction("ค่าอาหาร", "่ค่าบริการ", "https://dedeposblosstorage.blob.core.windows.net/dedeposassets/app_logo.png", lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
   Future<QRPaymentResponse> qrLugentLinePay() async {
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
-    QRPaymentResponse qrPayment = await lugentPay.CreateLinePayTransaction(
-        lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-        "SMLSOFT",
-        Decimal.parse(widget.amount.toString()),
-        "");
+    QRPaymentResponse qrPayment = await lugentPay.CreateLinePayTransaction(lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
@@ -83,8 +58,7 @@ class _PayQrScreenState extends State<PayQrScreen>
     switch (widget.provider.wallettype) {
       case 101:
         // Promptpay ทั่วไป
-        qrCodePayDataString = PromptPay.generateQRData(promptPayDataWithAmount,
-            amount: widget.amount.toDouble());
+        qrCodePayDataString = PromptPay.generateQRData(promptPayDataWithAmount, amount: widget.amount.toDouble());
         break;
       case 201:
         // Promptpay ลูเจ้นท์ ไทย
@@ -151,19 +125,11 @@ class _PayQrScreenState extends State<PayQrScreen>
       SizedBox(
           height: 100,
           child: Image.asset(
-            ("assets/images/qrpay/${widget.provider.paymentcode}.png")
-                .toLowerCase(),
+            ("assets/images/qrpay/${widget.provider.paymentcode}.png").toLowerCase(),
           )),
-      Text(widget.provider.names[0].name,
-          style: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-      if (qrCodePayDataString.isNotEmpty)
-        // SizedBox(
-        //     width: 150,
-        //     height: 150,
-        //     child: QrImage(
-        //         data: qrCodePayDataString, versionData: QrVersions.auto)),
-        const SizedBox(height: 8),
+      Text(widget.provider.names[0].name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+      if (qrCodePayDataString.isNotEmpty) SizedBox(width: 150, height: 150, child: QrImageView(data: qrCodePayDataString, version: QrVersions.auto)),
+      const SizedBox(height: 8),
       SizedBox(
           width: 150,
           height: 150,
@@ -178,10 +144,7 @@ class _PayQrScreenState extends State<PayQrScreen>
               Navigator.pop(context, false);
             },
             timeFormatter: (seconds) {
-              return Duration(seconds: seconds)
-                  .toString()
-                  .split('.')[0]
-                  .padLeft(8, '0');
+              return Duration(seconds: seconds).toString().split('.')[0].padLeft(8, '0');
             },
           )),
       const SizedBox(height: 8),

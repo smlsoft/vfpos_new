@@ -238,7 +238,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					97C146ED1CF9000F007C117D = {
@@ -750,6 +750,7 @@
 				FLUTTER_BUILD_NAME = 1.2.2;
 				FLUTTER_BUILD_NUMBER = 12;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1390,6 +1391,7 @@
 				FLUTTER_BUILD_NAME = 1.2.2;
 				FLUTTER_BUILD_NUMBER = 12;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1425,6 +1427,7 @@
 				FLUTTER_BUILD_NAME = 1.2.2;
 				FLUTTER_BUILD_NUMBER = 12;
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1450,6 +1453,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 6WUC256236;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dev";
@@ -1460,6 +1464,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 6WUC256236;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-dev";
@@ -1470,6 +1475,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 6WUC256236;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-dev";
@@ -1480,6 +1486,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 6WUC256236;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dedepos";
@@ -1490,6 +1497,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 6WUC256236;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-dedepos";
@@ -1500,6 +1508,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 6WUC256236;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-dedepos";
@@ -1510,6 +1519,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-smlsuperpos";
@@ -1520,6 +1530,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-smlsuperpos";
@@ -1530,6 +1541,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-smlsuperpos";
@@ -1540,6 +1552,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-smlmobilesales";
@@ -1550,6 +1563,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-smlmobilesales";
@@ -1560,6 +1574,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-smlmobilesales";
@@ -1570,6 +1585,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-vfpos";
@@ -1580,6 +1596,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-vfpos";
@@ -1590,6 +1607,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
+				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-vfpos";

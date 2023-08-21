@@ -23,12 +23,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
         Navigator.of(context).pushReplacementNamed('client');
       });
     } else {
-      timerSwitchToMenu =
-          Timer.periodic(const Duration(seconds: 1), (timer) async {
+      timerSwitchToMenu = Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
           if (mounted) {
-            context.router.pushAndPopUntil(const MenuRoute(),
-                predicate: (route) => false);
+            context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
           }
         }
         setState(() {});
@@ -52,26 +50,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     global.getDeviceModel(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.blue,
-                  size: 200,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text("Data Synchronization"),
-              ],
-            ),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 200,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text("Data Synchronization"),
+            ],
           ),
         ),
       ),

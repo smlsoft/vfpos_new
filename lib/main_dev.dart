@@ -13,7 +13,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
   global.applicationName = "DeDe Pos (Dev)";
-  initializeDateFormatting();
   await setUpServiceLocator();
   await initializeApp();
   runApp(App());

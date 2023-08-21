@@ -40,32 +40,28 @@ class _PosClientState extends State<PosClient> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Column(children: [
-              TextField(
-                controller: posTerminalCodeController,
+    return SafeArea(
+      child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Column(children: [
+            TextField(
+              controller: posTerminalCodeController,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  List<String> split = posTerminalCodeController.text.split(',');
+                  global.scanServerById(split[0]);
+                  setState(() {
+                    scanStart = true;
+                  });
+                },
+                child: const Text("Connect Terminal")),
+            if (scanStart)
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 200,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    List<String> split =
-                        posTerminalCodeController.text.split(',');
-                    global.scanServerById(split[0]);
-                    setState(() {
-                      scanStart = true;
-                    });
-                  },
-                  child: const Text("Connect Terminal")),
-              if (scanStart)
-                LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.blue,
-                  size: 200,
-                ),
-            ])),
-      ),
+          ])),
     );
   }
 }

@@ -13,8 +13,7 @@ import 'package:network_to_file_image/network_to_file_image.dart';
 class PayTransfer extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
-  const PayTransfer(
-      {super.key, required this.posProcess, required this.blocContext});
+  const PayTransfer({super.key, required this.posProcess, required this.blocContext});
 
   @override
   State<PayTransfer> createState() => _PayTransferState();
@@ -38,11 +37,7 @@ class _PayTransferState extends State<PayTransfer> {
 
   bool saveData() {
     if (bankCode.trim().isNotEmpty && amount > 0) {
-      global.payScreenData.transfer!.add(PayTransferModel(
-          bank_code: bankCode,
-          bank_name: bankName,
-          account_number: "123123131312312",
-          amount: amount));
+      global.payScreenData.transfer.add(PayTransferModel(bank_code: bankCode, bank_name: bankName, account_number: "123123131312312", amount: amount));
       return true;
     } else {
       return false;
@@ -71,40 +66,24 @@ class _PayTransferState extends State<PayTransfer> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                title:
-                                    Text(global.language("please_select_bank")),
+                                title: Text(global.language("please_select_bank")),
                                 content: SizedBox(
                                     width: 350,
                                     height: 300,
                                     child: ListView.builder(
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
+                                      itemBuilder: (BuildContext context, int index) {
                                         return Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 4, bottom: 4),
+                                            padding: const EdgeInsets.only(top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
-                                                Container(
-                                                    alignment: Alignment.center,
-                                                    width: 100,
-                                                    height: 50,
-                                                    child: Image(
-                                                        image: NetworkToFileImage(
-                                                            url: global.findBankLogo(
-                                                                bankDataList[
-                                                                        index]
-                                                                    .code)))),
+                                                Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
                                                 const SizedBox(width: 10),
-                                                Text(bankDataList[index]
-                                                    .names[0])
+                                                Text(bankDataList[index].names[0])
                                               ]),
                                               onPressed: () {
-                                                global.payScreenNumberPadIsActive =
-                                                    false;
-                                                bankCode =
-                                                    bankDataList[index].code;
-                                                bankName = bankDataList[index]
-                                                    .names[0];
+                                                global.payScreenNumberPadIsActive = false;
+                                                bankCode = bankDataList[index].code;
+                                                bankName = bankDataList[index].names[0];
                                                 Navigator.of(context).pop();
                                                 refreshEvent();
                                               },
@@ -116,21 +95,9 @@ class _PayTransferState extends State<PayTransfer> {
                       },
                       child: Column(
                         children: [
-                          Expanded(
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  width: 100,
-                                  height: 50,
-                                  child: (bankCode.isNotEmpty)
-                                      ? Image(
-                                          image: NetworkToFileImage(
-                                              url: global
-                                                  .findBankLogo(bankCode)))
-                                      : Container())),
+                          Expanded(child: Container(alignment: Alignment.center, width: 100, height: 50, child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
                           Text(
-                            (bankName.isNotEmpty)
-                                ? bankName
-                                : global.language('bank_name'),
+                            (bankName.isNotEmpty) ? bankName : global.language('bank_name'),
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
@@ -146,33 +113,23 @@ class _PayTransferState extends State<PayTransfer> {
                             if (bankCode.isNotEmpty) {
                               global.numberPadCallBack = () {
                                 setState(() {
-                                  amount = global.calcTextToNumber(
-                                      global.payScreenNumberPadText);
+                                  amount = global.calcTextToNumber(global.payScreenNumberPadText);
                                 });
                               };
-                              if (global.payScreenNumberPadIsActive =
-                                  true && buttonIndex == 3) {
+                              if (global.payScreenNumberPadIsActive = true && buttonIndex == 3) {
                                 global.payScreenNumberPadIsActive = false;
                                 buttonIndex = 0;
                               } else {
                                 global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget =
-                                    PayScreenNumberPadWidgetEnum.number;
+                                global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
                                 global.payScreenNumberPadAmount = amount;
-                                final RenderBox renderBox = amountNumberKey
-                                    .currentContext
-                                    ?.findRenderObject() as RenderBox;
+                                final RenderBox renderBox = amountNumberKey.currentContext?.findRenderObject() as RenderBox;
                                 final Size size = renderBox.size;
-                                final Offset offset =
-                                    renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft =
-                                    offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop =
-                                    offset.dy - size.height;
+                                final Offset offset = renderBox.localToGlobal(Offset.zero);
+                                global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
+                                global.payScreenNumberPadTop = offset.dy - size.height;
                                 global.payScreenNumberPadAmount = amount;
-                                global.payScreenNumberPadText = (amount == 0)
-                                    ? ""
-                                    : amount.toString().replaceAll(".0", "");
+                                global.payScreenNumberPadText = (amount == 0) ? "" : amount.toString().replaceAll(".0", "");
                                 buttonIndex = 3;
                               }
                               refreshEvent();
@@ -248,18 +205,9 @@ class _PayTransferState extends State<PayTransfer> {
             child: ListTile(
               title: Row(
                 children: [
-                  SizedBox(
-                      width: 100,
-                      height: 50,
-                      child: Image(
-                          image: NetworkToFileImage(
-                              url: global.findBankLogo(global
-                                  .payScreenData.transfer![index].bank_code)))),
+                  SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.transfer[index].bank_code)))),
                   const SizedBox(width: 10),
-                  buildDetailsBlock(
-                      label: global.language('total_amount'),
-                      value: global.moneyFormat.format(
-                          global.payScreenData.transfer![index].amount)),
+                  buildDetailsBlock(label: global.language('total_amount'), value: global.moneyFormat.format(global.payScreenData.transfer[index].amount)),
                 ],
               ),
               trailing: IconButton(
@@ -286,8 +234,7 @@ class _PayTransferState extends State<PayTransfer> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.transfer!
-                                        .removeAt(index);
+                                    global.payScreenData.transfer.removeAt(index);
                                     refreshEvent();
                                   });
                                 },
@@ -309,17 +256,11 @@ class _PayTransferState extends State<PayTransfer> {
       children: <Widget>[
         Text(
           label,
-          style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 12,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Text(
           value,
-          style: TextStyle(
-              color: Colors.green.shade500,
-              fontSize: 18,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.green.shade500, fontSize: 18, fontWeight: FontWeight.bold),
         )
       ],
     );
@@ -334,13 +275,12 @@ class _PayTransferState extends State<PayTransfer> {
           child: Column(
             children: <Widget>[
               cardDetail(),
-              (global.payScreenData.transfer == null)
+              (global.payScreenData.transfer.isEmpty)
                   ? Container()
                   : Column(
                       children: <Widget>[
-                        ...global.payScreenData.transfer!.map((detail) {
-                          var index =
-                              global.payScreenData.transfer!.indexOf(detail);
+                        ...global.payScreenData.transfer.map((detail) {
+                          var index = global.payScreenData.transfer.indexOf(detail);
                           return buildTransferCard(index: index);
                         }).toList()
                       ],

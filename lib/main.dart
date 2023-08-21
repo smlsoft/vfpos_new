@@ -1,6 +1,5 @@
 import 'package:dedepos/bootstrap.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'app/app_view.dart';
 import 'flavors.dart';
@@ -12,7 +11,6 @@ void main() async {
   initializeEnvironmentConfig();
   Intl.defaultLocale = "th";
   global.applicationName = "DeDe POS";
-  initializeDateFormatting();
   await initializeApp();
   runApp(App());
 }

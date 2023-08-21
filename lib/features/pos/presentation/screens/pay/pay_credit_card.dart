@@ -49,7 +49,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
           card_number: cardNumber,
           approved_code: approveNumber,
           amount: cardAmount);
-      global.payScreenData.credit_card!.add(data);
+      global.payScreenData.credit_card.add(data);
       return true;
     } else {
       return false;
@@ -378,7 +378,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       child: Image(
                           image: NetworkToFileImage(
                               url: global.findBankLogo(global.payScreenData
-                                  .credit_card![index].bank_code)))),
+                                  .credit_card[index].bank_code)))),
                   const SizedBox(width: 10),
                   Text(
                     '${global.language('card_number')}  : ',
@@ -389,7 +389,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         fontFamily: 'CourrierPrime'),
                   ),
                   Text(
-                    global.payScreenData.credit_card![index].card_number,
+                    global.payScreenData.credit_card[index].card_number,
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -406,12 +406,12 @@ class _PayCreditCardState extends State<PayCreditCard> {
                     buildDetailsBlock(
                       label: global.language('authorization_code'),
                       value: global
-                          .payScreenData.credit_card![index].approved_code,
+                          .payScreenData.credit_card[index].approved_code,
                     ),
                     buildDetailsBlock(
                         label: global.language('amount'),
                         value: global.moneyFormat.format(
-                            global.payScreenData.credit_card![index].amount)),
+                            global.payScreenData.credit_card[index].amount)),
                   ],
                 ),
               ),
@@ -440,7 +440,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.credit_card!
+                                    global.payScreenData.credit_card
                                         .removeAt(index);
                                     refreshEvent();
                                   });
@@ -488,13 +488,13 @@ class _PayCreditCardState extends State<PayCreditCard> {
             child: Column(
           children: <Widget>[
             cardDetail(),
-            (global.payScreenData.credit_card == null)
+            (global.payScreenData.credit_card.isEmpty)
                 ? Container()
                 : Column(
                     children: <Widget>[
-                      ...global.payScreenData.credit_card!.map((detail) {
+                      ...global.payScreenData.credit_card.map((detail) {
                         var index =
-                            global.payScreenData.credit_card!.indexOf(detail);
+                            global.payScreenData.credit_card.indexOf(detail);
                         return buildCreditCard(index: index);
                       }).toList()
                     ],

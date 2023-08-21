@@ -1738,7 +1738,13 @@ final _entities = <ModelEntity>[
       backlinks: <ModelBacklink>[])
 ];
 
-/// Open an ObjectBox store with the model declared in this file.
+/// Shortcut for [Store.new] that passes [getObjectBoxModel] and for Flutter
+/// apps by default a [directory] using `defaultStoreDirectory()` from the
+/// ObjectBox Flutter library.
+///
+/// Note: for desktop apps it is recommended to specify a unique [directory].
+///
+/// See [Store.new] for an explanation of all parameters.
 Future<Store> openStore(
         {String? directory,
         int? maxDBSizeInKB,
@@ -1754,7 +1760,8 @@ Future<Store> openStore(
         queriesCaseSensitiveDefault: queriesCaseSensitiveDefault,
         macosApplicationGroup: macosApplicationGroup);
 
-/// ObjectBox model definition, pass it to [Store] - Store(getObjectBoxModel())
+/// Returns the ObjectBox model definition for this project for use with
+/// [Store.new].
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
@@ -2198,73 +2205,197 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final date_timeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
+          final table_open_date_timeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 96, 0));
+          final table_close_date_timeParam =
+              DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 98, 0));
+          final doc_numberParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final doc_modeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 82, 0);
+          final customer_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, '');
+          final bill_tax_typeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 156, 0);
+          final customer_nameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, '');
+          final customer_telephoneParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, '');
+          final vat_rateParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0);
+          final total_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          final total_vat_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0);
+          final cashier_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 24, '');
+          final cashier_nameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 26, '');
+          final sale_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 18, '');
+          final amount_except_vatParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 148, 0);
+          final amount_before_calc_vatParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 150, 0);
+          final amount_after_calc_vatParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 146, 0);
+          final total_discount_vat_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 136, 0);
+          final total_discount_except_vat_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 140, 0);
+          final sale_nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 20, '');
+          final vat_typeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 154, 0);
+          final total_qtyParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 106, 0);
+          final is_syncParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
+          final discount_formulaParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 30, '');
+          final pay_cash_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
+          final total_discountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 134, 0);
+          final sum_qr_codeParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0);
+          final sum_credit_cardParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0);
+          final sum_money_transferParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0);
+          final sum_couponParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 42, 0);
+          final sum_chequeParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0);
+          final is_cancelParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false);
+          final cancel_date_timeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 68, '');
+          final cancel_user_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 70, '');
+          final cancel_user_nameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 72, '');
+          final pay_cash_changeParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 116, 0);
+          final cancel_reasonParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 74, '');
+          final cancel_descriptionParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 80, '');
+          final full_vat_printParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 76, false);
+          final full_vat_doc_numberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 78, '');
+          final full_vat_nameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 54, '');
+          final full_vat_addressParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 56, '');
+          final full_vat_tax_idParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 58, '');
+          final full_vat_branch_numberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 60, '');
+          final table_numberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 84, '');
+          final child_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 90, 0);
+          final woman_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 88, 0);
+          final man_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 86, 0);
+          final table_al_la_crate_modeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false);
+          final buffet_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 94, '');
+          final pay_jsonParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 104, '');
+          final total_item_vat_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 120, 0);
+          final total_item_except_vat_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 124, 0);
+          final is_vat_registerParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 152, false);
+          final print_copy_bill_date_timeParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGet(buffer, rootOffset, 64, []);
           final object = BillObjectBoxStruct(
-              date_time: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)),
-              table_open_date_time: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 96, 0)),
-              table_close_date_time: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 98, 0)),
-              doc_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              doc_mode:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 82, 0),
-              customer_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              bill_tax_type:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 156, 0),
-              customer_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              customer_telephone:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
-              vat_rate: const fb.Float64Reader().vTableGet(buffer, rootOffset, 50, 0),
-              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              total_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 48, 0),
-              cashier_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              cashier_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              sale_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 18, ''),
-              amount_except_vat: const fb.Float64Reader().vTableGet(buffer, rootOffset, 148, 0),
-              amount_before_calc_vat: const fb.Float64Reader().vTableGet(buffer, rootOffset, 150, 0),
-              amount_after_calc_vat: const fb.Float64Reader().vTableGet(buffer, rootOffset, 146, 0),
-              total_discount_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 136, 0),
-              total_discount_except_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 140, 0),
-              sale_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 20, ''),
-              vat_type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 154, 0),
-              total_qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 106, 0),
-              is_sync: const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false),
-              discount_formula: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
-              pay_cash_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
-              total_discount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 134, 0),
-              sum_qr_code: const fb.Float64Reader().vTableGet(buffer, rootOffset, 44, 0),
-              sum_credit_card: const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
-              sum_money_transfer: const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0),
-              sum_coupon: const fb.Float64Reader().vTableGet(buffer, rootOffset, 42, 0),
-              sum_cheque: const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0),
-              is_cancel: const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false),
-              cancel_date_time: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 68, ''),
-              cancel_user_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 70, ''),
-              cancel_user_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 72, ''),
-              pay_cash_change: const fb.Float64Reader().vTableGet(buffer, rootOffset, 116, 0),
-              cancel_reason: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 74, ''),
-              cancel_description: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 80, ''),
-              full_vat_print: const fb.BoolReader().vTableGet(buffer, rootOffset, 76, false),
-              full_vat_doc_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 78, ''),
-              full_vat_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
-              full_vat_address: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
-              full_vat_tax_id: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 58, ''),
-              full_vat_branch_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 60, ''),
-              table_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 84, ''),
-              child_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 90, 0),
-              woman_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 88, 0),
-              man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 86, 0),
-              table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false),
-              buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 94, ''),
-              pay_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 104, ''),
-              total_item_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 120, 0),
-              total_item_except_vat_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 124, 0),
-              is_vat_register: const fb.BoolReader().vTableGet(buffer, rootOffset, 152, false),
-              print_copy_bill_date_time: const fb.ListReader<String>(fb.StringReader(asciiOptimization: true), lazy: false).vTableGet(buffer, rootOffset, 64, []))
+              date_time: date_timeParam,
+              table_open_date_time: table_open_date_timeParam,
+              table_close_date_time: table_close_date_timeParam,
+              doc_number: doc_numberParam,
+              doc_mode: doc_modeParam,
+              customer_code: customer_codeParam,
+              bill_tax_type: bill_tax_typeParam,
+              customer_name: customer_nameParam,
+              customer_telephone: customer_telephoneParam,
+              vat_rate: vat_rateParam,
+              total_amount: total_amountParam,
+              total_vat_amount: total_vat_amountParam,
+              cashier_code: cashier_codeParam,
+              cashier_name: cashier_nameParam,
+              sale_code: sale_codeParam,
+              amount_except_vat: amount_except_vatParam,
+              amount_before_calc_vat: amount_before_calc_vatParam,
+              amount_after_calc_vat: amount_after_calc_vatParam,
+              total_discount_vat_amount: total_discount_vat_amountParam,
+              total_discount_except_vat_amount:
+                  total_discount_except_vat_amountParam,
+              sale_name: sale_nameParam,
+              vat_type: vat_typeParam,
+              total_qty: total_qtyParam,
+              is_sync: is_syncParam,
+              discount_formula: discount_formulaParam,
+              pay_cash_amount: pay_cash_amountParam,
+              total_discount: total_discountParam,
+              sum_qr_code: sum_qr_codeParam,
+              sum_credit_card: sum_credit_cardParam,
+              sum_money_transfer: sum_money_transferParam,
+              sum_coupon: sum_couponParam,
+              sum_cheque: sum_chequeParam,
+              is_cancel: is_cancelParam,
+              cancel_date_time: cancel_date_timeParam,
+              cancel_user_code: cancel_user_codeParam,
+              cancel_user_name: cancel_user_nameParam,
+              pay_cash_change: pay_cash_changeParam,
+              cancel_reason: cancel_reasonParam,
+              cancel_description: cancel_descriptionParam,
+              full_vat_print: full_vat_printParam,
+              full_vat_doc_number: full_vat_doc_numberParam,
+              full_vat_name: full_vat_nameParam,
+              full_vat_address: full_vat_addressParam,
+              full_vat_tax_id: full_vat_tax_idParam,
+              full_vat_branch_number: full_vat_branch_numberParam,
+              table_number: table_numberParam,
+              child_count: child_countParam,
+              woman_count: woman_countParam,
+              man_count: man_countParam,
+              table_al_la_crate_mode: table_al_la_crate_modeParam,
+              buffet_code: buffet_codeParam,
+              pay_json: pay_jsonParam,
+              total_item_vat_amount: total_item_vat_amountParam,
+              total_item_except_vat_amount: total_item_except_vat_amountParam,
+              is_vat_register: is_vat_registerParam,
+              print_copy_bill_date_time: print_copy_bill_date_timeParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2300,24 +2431,32 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 24, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final profile_pictureParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 28, '');
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final emailParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
+          final is_enabledParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false);
+          final is_use_posParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 30, false);
+          final pin_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 34, '');
           final object = EmployeeObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 24, ''),
-              code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              profile_picture: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 28, ''),
-              name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              email: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              is_enabled: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 26, false),
-              is_use_pos: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 30, false),
-              pin_code:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''))
+              guidfixed: guidfixedParam,
+              code: codeParam,
+              profile_picture: profile_pictureParam,
+              name: nameParam,
+              email: emailParam,
+              is_enabled: is_enabledParam,
+              is_use_pos: is_use_posParam,
+              pin_code: pin_codeParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2376,42 +2515,84 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final doc_modeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 60, 0);
+          final guid_refParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final guid_code_refParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, '');
+          final log_date_timeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0));
+          final hold_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 62, '');
+          final command_codeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 48, '');
+          final is_voidParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
+          final successParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          final qtyParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0);
+          final qty_fixedParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0);
+          final priceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
+          final selectedParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false);
+          final remarkParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 24, '');
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 34, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 28, '');
+          final default_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 40, '');
+          final discount_textParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 54, '');
+          final extra_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 22, '');
+          final unit_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 44, '');
+          final unit_nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 46, '');
+          final price_exclude_vatParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false);
+          final is_except_vatParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false);
           final object = PosLogObjectBoxStruct(
-              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
-              doc_mode:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 60, 0),
-              guid_ref: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              guid_code_ref: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              log_date_time: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
-              hold_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 62, ''),
-              command_code:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 48, ''),
-              is_void:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              success:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 36, 0),
-              qty_fixed: const fb.Float64Reader().vTableGet(buffer, rootOffset, 38, 0),
-              price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0),
-              selected: const fb.BoolReader().vTableGet(buffer, rootOffset, 42, false),
-              remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
-              code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, ''),
-              default_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 40, ''),
-              discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
-              extra_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
-              unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
-              unit_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
-              price_exclude_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false),
-              is_except_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false))
-            ..guid_auto_fixed = const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 6, '');
+              id: idParam,
+              doc_mode: doc_modeParam,
+              guid_ref: guid_refParam,
+              guid_code_ref: guid_code_refParam,
+              log_date_time: log_date_timeParam,
+              hold_code: hold_codeParam,
+              command_code: command_codeParam,
+              barcode: barcodeParam,
+              is_void: is_voidParam,
+              success: successParam,
+              qty: qtyParam,
+              qty_fixed: qty_fixedParam,
+              price: priceParam,
+              selected: selectedParam,
+              remark: remarkParam,
+              name: nameParam,
+              code: codeParam,
+              default_code: default_codeParam,
+              discount_text: discount_textParam,
+              extra_code: extra_codeParam,
+              unit_code: unit_codeParam,
+              unit_name: unit_nameParam,
+              price_exclude_vat: price_exclude_vatParam,
+              is_except_vat: is_except_vatParam)
+            ..guid_auto_fixed = const fb.StringReader(asciiOptimization: true)
+                .vTableGet(buffer, rootOffset, 6, '');
 
           return object;
         }),
@@ -2443,178 +2624,237 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final name1Param = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final typeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          final printer_portParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          final print_ip_addressParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, '');
           final object = PrinterObjectBoxStruct(
-              guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              name1: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0),
-              printer_port:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              print_ip_address: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''))
+              guid_fixed: guid_fixedParam,
+              code: codeParam,
+              name1: name1Param,
+              type: typeParam,
+              printer_port: printer_portParam,
+              print_ip_address: print_ip_addressParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
         }),
-    ProductBarcodeObjectBoxStruct:
-        EntityDefinition<ProductBarcodeObjectBoxStruct>(
-            model: _entities[4],
-            toOneRelations: (ProductBarcodeObjectBoxStruct object) => [],
-            toManyRelations: (ProductBarcodeObjectBoxStruct object) => {},
-            getId: (ProductBarcodeObjectBoxStruct object) => object.id,
-            setId: (ProductBarcodeObjectBoxStruct object, int id) {
-              object.id = id;
-            },
-            objectToFB: (ProductBarcodeObjectBoxStruct object, fb.Builder fbb) {
-              final barcodeOffset = fbb.writeString(object.barcode);
-              final namesOffset = fbb.writeString(object.names);
-              final name_allOffset = fbb.writeString(object.name_all);
-              final guid_fixedOffset = fbb.writeString(object.guid_fixed);
-              final item_guidOffset = fbb.writeString(object.item_guid);
-              final descriptionsOffset = fbb.writeString(object.descriptions);
-              final item_codeOffset = fbb.writeString(object.item_code);
-              final item_unit_codeOffset =
-                  fbb.writeString(object.item_unit_code);
-              final unit_codeOffset = fbb.writeString(object.unit_code);
-              final unit_namesOffset = fbb.writeString(object.unit_names);
-              final options_jsonOffset = fbb.writeString(object.options_json);
-              final images_urlOffset = fbb.writeString(object.images_url);
-              final color_selectOffset = fbb.writeString(object.color_select);
-              final color_select_hexOffset =
-                  fbb.writeString(object.color_select_hex);
-              final pricesOffset = fbb.writeString(object.prices);
-              final ordertypesOffset = fbb.writeString(object.ordertypes);
-              fbb.startTable(34);
-              fbb.addInt64(0, object.id);
-              fbb.addOffset(1, barcodeOffset);
-              fbb.addOffset(2, namesOffset);
-              fbb.addOffset(3, name_allOffset);
-              fbb.addOffset(6, guid_fixedOffset);
-              fbb.addOffset(7, item_guidOffset);
-              fbb.addOffset(8, descriptionsOffset);
-              fbb.addOffset(9, item_codeOffset);
-              fbb.addOffset(10, item_unit_codeOffset);
-              fbb.addOffset(11, unit_codeOffset);
-              fbb.addOffset(12, unit_namesOffset);
-              fbb.addInt64(14, object.new_line);
-              fbb.addFloat64(15, object.product_count);
-              fbb.addOffset(16, options_jsonOffset);
-              fbb.addOffset(17, images_urlOffset);
-              fbb.addOffset(19, color_selectOffset);
-              fbb.addOffset(20, color_select_hexOffset);
-              fbb.addBool(23, object.image_or_color);
-              fbb.addOffset(26, pricesOffset);
-              fbb.addInt64(29, object.vat_type);
-              fbb.addBool(30, object.isalacarte);
-              fbb.addOffset(31, ordertypesOffset);
-              fbb.addBool(32, object.is_except_vat);
-              fbb.finish(fbb.endTable());
-              return object.id;
-            },
-            objectFromFB: (Store store, ByteData fbData) {
-              final buffer = fb.BufferContext(fbData);
-              final rootOffset = buffer.derefObject(0);
+    ProductBarcodeObjectBoxStruct: EntityDefinition<
+            ProductBarcodeObjectBoxStruct>(
+        model: _entities[4],
+        toOneRelations: (ProductBarcodeObjectBoxStruct object) => [],
+        toManyRelations: (ProductBarcodeObjectBoxStruct object) => {},
+        getId: (ProductBarcodeObjectBoxStruct object) => object.id,
+        setId: (ProductBarcodeObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ProductBarcodeObjectBoxStruct object, fb.Builder fbb) {
+          final barcodeOffset = fbb.writeString(object.barcode);
+          final namesOffset = fbb.writeString(object.names);
+          final name_allOffset = fbb.writeString(object.name_all);
+          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+          final item_guidOffset = fbb.writeString(object.item_guid);
+          final descriptionsOffset = fbb.writeString(object.descriptions);
+          final item_codeOffset = fbb.writeString(object.item_code);
+          final item_unit_codeOffset = fbb.writeString(object.item_unit_code);
+          final unit_codeOffset = fbb.writeString(object.unit_code);
+          final unit_namesOffset = fbb.writeString(object.unit_names);
+          final options_jsonOffset = fbb.writeString(object.options_json);
+          final images_urlOffset = fbb.writeString(object.images_url);
+          final color_selectOffset = fbb.writeString(object.color_select);
+          final color_select_hexOffset =
+              fbb.writeString(object.color_select_hex);
+          final pricesOffset = fbb.writeString(object.prices);
+          final ordertypesOffset = fbb.writeString(object.ordertypes);
+          fbb.startTable(34);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, barcodeOffset);
+          fbb.addOffset(2, namesOffset);
+          fbb.addOffset(3, name_allOffset);
+          fbb.addOffset(6, guid_fixedOffset);
+          fbb.addOffset(7, item_guidOffset);
+          fbb.addOffset(8, descriptionsOffset);
+          fbb.addOffset(9, item_codeOffset);
+          fbb.addOffset(10, item_unit_codeOffset);
+          fbb.addOffset(11, unit_codeOffset);
+          fbb.addOffset(12, unit_namesOffset);
+          fbb.addInt64(14, object.new_line);
+          fbb.addFloat64(15, object.product_count);
+          fbb.addOffset(16, options_jsonOffset);
+          fbb.addOffset(17, images_urlOffset);
+          fbb.addOffset(19, color_selectOffset);
+          fbb.addOffset(20, color_select_hexOffset);
+          fbb.addBool(23, object.image_or_color);
+          fbb.addOffset(26, pricesOffset);
+          fbb.addInt64(29, object.vat_type);
+          fbb.addBool(30, object.isalacarte);
+          fbb.addOffset(31, ordertypesOffset);
+          fbb.addBool(32, object.is_except_vat);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final name_allParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
+          final item_guidParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 18, '');
+          final descriptionsParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 20, '');
+          final item_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 22, '');
+          final item_unit_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 24, '');
+          final unit_namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 28, '');
+          final pricesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 56, '');
+          final new_lineParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0);
+          final unit_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 26, '');
+          final options_jsonParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 36, '');
+          final images_urlParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 38, '');
+          final image_or_colorParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 50, false);
+          final color_selectParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 42, '');
+          final color_select_hexParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 44, '');
+          final isalacarteParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false);
+          final ordertypesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 66, '');
+          final vat_typeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0);
+          final is_except_vatParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false);
+          final product_countParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0);
+          final object = ProductBarcodeObjectBoxStruct(
+              barcode: barcodeParam,
+              names: namesParam,
+              name_all: name_allParam,
+              guid_fixed: guid_fixedParam,
+              item_guid: item_guidParam,
+              descriptions: descriptionsParam,
+              item_code: item_codeParam,
+              item_unit_code: item_unit_codeParam,
+              unit_names: unit_namesParam,
+              prices: pricesParam,
+              new_line: new_lineParam,
+              unit_code: unit_codeParam,
+              options_json: options_jsonParam,
+              images_url: images_urlParam,
+              image_or_color: image_or_colorParam,
+              color_select: color_selectParam,
+              color_select_hex: color_select_hexParam,
+              isalacarte: isalacarteParam,
+              ordertypes: ordertypesParam,
+              vat_type: vat_typeParam,
+              is_except_vat: is_except_vatParam,
+              product_count: product_countParam)
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
-              final object = ProductBarcodeObjectBoxStruct(
-                  barcode: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 6, ''),
-                  names: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 8, ''),
-                  name_all: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 10, ''),
-                  guid_fixed: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 16, ''),
-                  item_guid: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 18, ''),
-                  descriptions: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 20, ''),
-                  item_code: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 22, ''),
-                  item_unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-                  unit_names: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 28, ''),
-                  prices: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
-                  new_line: const fb.Int64Reader().vTableGet(buffer, rootOffset, 32, 0),
-                  unit_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-                  options_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
-                  images_url: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
-                  image_or_color: const fb.BoolReader().vTableGet(buffer, rootOffset, 50, false),
-                  color_select: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, ''),
-                  color_select_hex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
-                  isalacarte: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false),
-                  ordertypes: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 66, ''),
-                  vat_type: const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0),
-                  is_except_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false),
-                  product_count: const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0))
-                ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          return object;
+        }),
+    ProductCategoryObjectBoxStruct: EntityDefinition<
+            ProductCategoryObjectBoxStruct>(
+        model: _entities[5],
+        toOneRelations: (ProductCategoryObjectBoxStruct object) => [],
+        toManyRelations: (ProductCategoryObjectBoxStruct object) => {},
+        getId: (ProductCategoryObjectBoxStruct object) => object.id,
+        setId: (ProductCategoryObjectBoxStruct object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ProductCategoryObjectBoxStruct object, fb.Builder fbb) {
+          final guid_fixedOffset = fbb.writeString(object.guid_fixed);
+          final image_urlOffset = fbb.writeString(object.image_url);
+          final colorselectOffset = fbb.writeString(object.colorselect);
+          final colorselecthexOffset = fbb.writeString(object.colorselecthex);
+          final codelistOffset = fbb.writeString(object.codelist);
+          final parent_guid_fixedOffset =
+              fbb.writeString(object.parent_guid_fixed);
+          final namesOffset = fbb.writeString(object.names);
+          fbb.startTable(21);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(2, guid_fixedOffset);
+          fbb.addOffset(4, image_urlOffset);
+          fbb.addOffset(10, colorselectOffset);
+          fbb.addOffset(11, colorselecthexOffset);
+          fbb.addOffset(14, codelistOffset);
+          fbb.addOffset(15, parent_guid_fixedOffset);
+          fbb.addBool(16, object.use_image_or_color);
+          fbb.addInt64(17, object.xorder);
+          fbb.addInt64(18, object.category_count);
+          fbb.addOffset(19, namesOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final parent_guid_fixedParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 34, '');
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 42, '');
+          final image_urlParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final category_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 40, 0);
+          final use_image_or_colorParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 36, false);
+          final xorderParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 38, 0);
+          final colorselectParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 24, '');
+          final colorselecthexParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 26, '');
+          final codelistParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 32, '');
+          final object = ProductCategoryObjectBoxStruct(
+              guid_fixed: guid_fixedParam,
+              parent_guid_fixed: parent_guid_fixedParam,
+              names: namesParam,
+              image_url: image_urlParam,
+              category_count: category_countParam,
+              use_image_or_color: use_image_or_colorParam,
+              xorder: xorderParam,
+              colorselect: colorselectParam,
+              colorselecthex: colorselecthexParam,
+              codelist: codelistParam)
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
-              return object;
-            }),
-    ProductCategoryObjectBoxStruct:
-        EntityDefinition<ProductCategoryObjectBoxStruct>(
-            model: _entities[5],
-            toOneRelations: (ProductCategoryObjectBoxStruct object) => [],
-            toManyRelations: (ProductCategoryObjectBoxStruct object) => {},
-            getId: (ProductCategoryObjectBoxStruct object) => object.id,
-            setId: (ProductCategoryObjectBoxStruct object, int id) {
-              object.id = id;
-            },
-            objectToFB:
-                (ProductCategoryObjectBoxStruct object, fb.Builder fbb) {
-              final guid_fixedOffset = fbb.writeString(object.guid_fixed);
-              final image_urlOffset = fbb.writeString(object.image_url);
-              final colorselectOffset = fbb.writeString(object.colorselect);
-              final colorselecthexOffset =
-                  fbb.writeString(object.colorselecthex);
-              final codelistOffset = fbb.writeString(object.codelist);
-              final parent_guid_fixedOffset =
-                  fbb.writeString(object.parent_guid_fixed);
-              final namesOffset = fbb.writeString(object.names);
-              fbb.startTable(21);
-              fbb.addInt64(0, object.id);
-              fbb.addOffset(2, guid_fixedOffset);
-              fbb.addOffset(4, image_urlOffset);
-              fbb.addOffset(10, colorselectOffset);
-              fbb.addOffset(11, colorselecthexOffset);
-              fbb.addOffset(14, codelistOffset);
-              fbb.addOffset(15, parent_guid_fixedOffset);
-              fbb.addBool(16, object.use_image_or_color);
-              fbb.addInt64(17, object.xorder);
-              fbb.addInt64(18, object.category_count);
-              fbb.addOffset(19, namesOffset);
-              fbb.finish(fbb.endTable());
-              return object.id;
-            },
-            objectFromFB: (Store store, ByteData fbData) {
-              final buffer = fb.BufferContext(fbData);
-              final rootOffset = buffer.derefObject(0);
-
-              final object = ProductCategoryObjectBoxStruct(
-                  guid_fixed: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 8, ''),
-                  parent_guid_fixed:
-                      const fb.StringReader(asciiOptimization: true)
-                          .vTableGet(buffer, rootOffset, 34, ''),
-                  names: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 42, ''),
-                  image_url: const fb.StringReader(asciiOptimization: true)
-                      .vTableGet(buffer, rootOffset, 12, ''),
-                  category_count: const fb.Int64Reader()
-                      .vTableGet(buffer, rootOffset, 40, 0),
-                  use_image_or_color: const fb.BoolReader()
-                      .vTableGet(buffer, rootOffset, 36, false),
-                  xorder:
-                      const fb.Int64Reader().vTableGet(buffer, rootOffset, 38, 0),
-                  colorselect: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-                  colorselecthex: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-                  codelist: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''))
-                ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-
-              return object;
-            }),
+          return object;
+        }),
     BankObjectBoxStruct: EntityDefinition<BankObjectBoxStruct>(
         model: _entities[6],
         toOneRelations: (BankObjectBoxStruct object) => [],
@@ -2641,18 +2881,21 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final logoParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final namesParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGet(buffer, rootOffset, 10, []);
           final object = BankObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              logo: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              names: const fb.ListReader<String>(
-                      fb.StringReader(asciiOptimization: true),
-                      lazy: false)
-                  .vTableGet(buffer, rootOffset, 10, []))
+              guidfixed: guidfixedParam,
+              code: codeParam,
+              logo: logoParam,
+              names: namesParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2691,33 +2934,53 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final logoParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 10, false);
+          final print_modeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 66, 0);
+          final printer_widthParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 68, 0);
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final ticket_nameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 64, '');
+          final shop_nameParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 70, false);
+          final shop_addressParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 72, false);
+          final shop_tax_idParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 74, false);
+          final shop_telParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 76, false);
+          final cashier_detailParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 78, false);
+          final customer_detailParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 80, false);
+          final customer_addressParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 82, false);
+          final customer_tax_idParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 84, false);
+          final sale_detailParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 90, false);
+          final doc_no_qr_codeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false);
           final object = PosTicketObjectBoxStruct(
-              logo: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 10, false),
-              print_mode:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 66, 0),
-              printer_width:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 68, 0),
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              ticket_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 64, ''),
-              shop_name: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 70, false),
-              shop_address: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 72, false),
-              shop_tax_id: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 74, false),
-              shop_tel: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 76, false),
-              cashier_detail:
-                  const fb.BoolReader().vTableGet(buffer, rootOffset, 78, false),
-              customer_detail: const fb.BoolReader().vTableGet(buffer, rootOffset, 80, false),
-              customer_address: const fb.BoolReader().vTableGet(buffer, rootOffset, 82, false),
-              customer_tax_id: const fb.BoolReader().vTableGet(buffer, rootOffset, 84, false),
-              sale_detail: const fb.BoolReader().vTableGet(buffer, rootOffset, 90, false),
-              doc_no_qr_code: const fb.BoolReader().vTableGet(buffer, rootOffset, 92, false))
+              logo: logoParam,
+              print_mode: print_modeParam,
+              printer_width: printer_widthParam,
+              guidfixed: guidfixedParam,
+              ticket_name: ticket_nameParam,
+              shop_name: shop_nameParam,
+              shop_address: shop_addressParam,
+              shop_tax_id: shop_tax_idParam,
+              shop_tel: shop_telParam,
+              cashier_detail: cashier_detailParam,
+              customer_detail: customer_detailParam,
+              customer_address: customer_addressParam,
+              customer_tax_id: customer_tax_idParam,
+              sale_detail: sale_detailParam,
+              doc_no_qr_code: doc_no_qr_codeParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2747,16 +3010,20 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final device_guidParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, '');
+          final device_ipParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
           final object = StaffClientObjectBoxStruct(
-              guid: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              device_guid: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              device_ip: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''))
+              guid: guidParam,
+              name: nameParam,
+              device_guid: device_guidParam,
+              device_ip: device_ipParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2788,22 +3055,27 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 18, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final namesParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGet(buffer, rootOffset, 16, []);
+          final adult_priceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          final child_priceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0);
+          final max_minuteParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
           final object = BuffetModeObjectBoxStruct(
-              guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              names: const fb.ListReader<String>(
-                      fb.StringReader(asciiOptimization: true),
-                      lazy: false)
-                  .vTableGet(buffer, rootOffset, 16, []),
-              adult_price:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              child_price:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              max_minute:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0))
+              guid_fixed: guid_fixedParam,
+              code: codeParam,
+              names: namesParam,
+              adult_price: adult_priceParam,
+              child_price: child_priceParam,
+              max_minute: max_minuteParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -2870,46 +3142,105 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final orderIdParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final orderIdMainParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 76, '');
+          final orderGuidParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final machineIdParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final orderDateTimeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0));
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final qtyParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          final priceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0);
+          final amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          final isOrderParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false);
+          final isPaySuccessParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 80, false);
+          final optionSelectedParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 24, '');
+          final remarkParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 26, '');
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 36, '');
+          final takeAwayParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 52, false);
+          final unitCodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 30, '');
+          final unitNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 38, '');
+          final imageUriParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 34, '');
+          final kdsSuccessTimeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 44, 0));
+          final kdsSuccessParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false);
+          final isOrderSuccessParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false);
+          final isOrderSendKdsSuccessParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false);
+          final kdsIdParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 50, '');
+          final cancelQtyParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 60, 0);
+          final orderQtyParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 62, 0);
+          final deliveryNumberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 54, '');
+          final deliveryCodeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 56, '');
+          final isOrderReadySendKdsParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 74, false);
+          final deliveryNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 58, '');
+          final lastUpdateDateTimeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 70, 0));
           final object = OrderTempObjectBoxStruct(
-              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
-              orderId: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              orderIdMain: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 76, ''),
-              orderGuid: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              machineId: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              orderDateTime: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0)),
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              qty:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 20, 0),
-              isOrder: const fb.BoolReader().vTableGet(buffer, rootOffset, 64, false),
-              isPaySuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 80, false),
-              optionSelected: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              names: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
-              takeAway: const fb.BoolReader().vTableGet(buffer, rootOffset, 52, false),
-              unitCode: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 30, ''),
-              unitName: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
-              imageUri: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
-              kdsSuccessTime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 44, 0)),
-              kdsSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 46, false),
-              isOrderSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 66, false),
-              isOrderSendKdsSuccess: const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false),
-              kdsId: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''),
-              cancelQty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 60, 0),
-              orderQty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 62, 0),
-              deliveryNumber: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 54, ''),
-              deliveryCode: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 56, ''),
-              isOrderReadySendKds: const fb.BoolReader().vTableGet(buffer, rootOffset, 74, false),
-              deliveryName: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 58, ''),
-              lastUpdateDateTime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 70, 0)));
+              id: idParam,
+              orderId: orderIdParam,
+              orderIdMain: orderIdMainParam,
+              orderGuid: orderGuidParam,
+              machineId: machineIdParam,
+              orderDateTime: orderDateTimeParam,
+              barcode: barcodeParam,
+              qty: qtyParam,
+              price: priceParam,
+              amount: amountParam,
+              isOrder: isOrderParam,
+              isPaySuccess: isPaySuccessParam,
+              optionSelected: optionSelectedParam,
+              remark: remarkParam,
+              names: namesParam,
+              takeAway: takeAwayParam,
+              unitCode: unitCodeParam,
+              unitName: unitNameParam,
+              imageUri: imageUriParam,
+              kdsSuccessTime: kdsSuccessTimeParam,
+              kdsSuccess: kdsSuccessParam,
+              isOrderSuccess: isOrderSuccessParam,
+              isOrderSendKdsSuccess: isOrderSendKdsSuccessParam,
+              kdsId: kdsIdParam,
+              cancelQty: cancelQtyParam,
+              orderQty: orderQtyParam,
+              deliveryNumber: deliveryNumberParam,
+              deliveryCode: deliveryCodeParam,
+              isOrderReadySendKds: isOrderReadySendKdsParam,
+              deliveryName: deliveryNameParam,
+              lastUpdateDateTime: lastUpdateDateTimeParam);
 
           return object;
         }),
@@ -2946,29 +3277,43 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final doctypeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
+          final docdateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0));
+          final remarkParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 20, '');
+          final usercodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final usernameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final creditcardParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0);
+          final promptpayParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0);
+          final transferParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0);
+          final chequeParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
+          final couponParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
           final object = ShiftObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              doctype:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              docdate: DateTime.fromMillisecondsSinceEpoch(
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0)),
-              remark: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, ''),
-              usercode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              username: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0),
-              creditcard:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              promptpay:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
-              transfer: const fb.Float64Reader().vTableGet(buffer, rootOffset, 26, 0),
-              cheque: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
-              coupon: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0))
+              guidfixed: guidfixedParam,
+              doctype: doctypeParam,
+              docdate: docdateParam,
+              remark: remarkParam,
+              usercode: usercodeParam,
+              username: usernameParam,
+              amount: amountParam,
+              creditcard: creditcardParam,
+              promptpay: promptpayParam,
+              transfer: transferParam,
+              cheque: chequeParam,
+              coupon: couponParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3002,22 +3347,26 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final productsParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGet(buffer, rootOffset, 16, []);
+          final zonesParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGet(buffer, rootOffset, 18, []);
           final object = KitchenObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              names: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              products: const fb.ListReader<String>(
-                      fb.StringReader(asciiOptimization: true),
-                      lazy: false)
-                  .vTableGet(buffer, rootOffset, 16, []),
-              zones: const fb.ListReader<String>(
-                      fb.StringReader(asciiOptimization: true),
-                      lazy: false)
-                  .vTableGet(buffer, rootOffset, 18, []))
+              guidfixed: guidfixedParam,
+              code: codeParam,
+              names: namesParam,
+              products: productsParam,
+              zones: zonesParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3049,22 +3398,28 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final orderStatusParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0);
+          final orderDisableParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 16, false);
+          final orderAutoStockParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
+          final qtyStartParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final qtyBalanceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          final qtyMinParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
           final object = ProductBarcodeStatusObjectBoxStruct(
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              orderStatus:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              orderDisable: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 16, false),
-              orderAutoStock: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 20, false),
-              qtyStart:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 10, 0),
-              qtyBalance:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 12, 0),
-              qtyMin:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0))
+              barcode: barcodeParam,
+              orderStatus: orderStatusParam,
+              orderDisable: orderDisableParam,
+              orderAutoStock: orderAutoStockParam,
+              qtyStart: qtyStartParam,
+              qtyBalance: qtyBalanceParam,
+              qtyMin: qtyMinParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3096,18 +3451,22 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final numberParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final numberMainParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final zoneParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
           final object = TableObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              numberMain: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              names: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              zone: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''))
+              guidfixed: guidfixedParam,
+              number: numberParam,
+              numberMain: numberMainParam,
+              names: namesParam,
+              zone: zoneParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3182,48 +3541,116 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guidfixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final numberParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final number_mainParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 70, '');
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final zoneParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final table_statusParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final order_countParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0);
+          final amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0);
+          final order_successParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false);
+          final qr_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 24, '');
+          final table_open_datetimeParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0));
+          final man_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0);
+          final woman_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0);
+          final child_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 30, 0);
+          final table_al_la_crate_modeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false);
+          final buffet_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 34, '');
+          final customer_code_or_telephoneParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 36, '');
+          final customer_nameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 38, '');
+          final customer_addressParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 40, '');
+          final delivery_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 42, '');
+          final delivery_numberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 46, '');
+          final delivery_ticket_numberParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 44, '');
+          final remarkParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 48, '');
+          final open_by_staff_codeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 50, '');
+          final make_food_immediatelyParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 52, false);
+          final is_deliveryParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 54, false);
+          final delivery_cook_successParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false);
+          final delivery_cook_success_datetimeParam =
+              DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0));
+          final delivery_send_successParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 60, false);
+          final delivery_send_success_datetimeParam =
+              DateTime.fromMillisecondsSinceEpoch(
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0));
+          final delivery_statusParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 64, 0);
+          final table_child_countParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 68, 0);
           final object = TableProcessObjectBoxStruct(
-              guidfixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              number_main: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 70, ''),
-              names: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              zone: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              table_status:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 14, 0),
-              order_count:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 16, 0),
-              amount:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 18, 0),
-              order_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 20, false),
-              qr_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 24, ''),
-              table_open_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0)),
-              man_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0),
-              woman_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 28, 0),
-              child_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 30, 0),
-              table_al_la_crate_mode: const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false),
-              buffet_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 34, ''),
-              customer_code_or_telephone: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 36, ''),
-              customer_name: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 38, ''),
-              customer_address: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 40, ''),
-              delivery_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 42, ''),
-              delivery_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 46, ''),
-              delivery_ticket_number: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 44, ''),
-              remark: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 48, ''),
-              open_by_staff_code: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 50, ''),
-              make_food_immediately: const fb.BoolReader().vTableGet(buffer, rootOffset, 52, false),
-              is_delivery: const fb.BoolReader().vTableGet(buffer, rootOffset, 54, false),
-              delivery_cook_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 56, false),
-              delivery_cook_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 58, 0)),
-              delivery_send_success: const fb.BoolReader().vTableGet(buffer, rootOffset, 60, false),
-              delivery_send_success_datetime: DateTime.fromMillisecondsSinceEpoch(const fb.Int64Reader().vTableGet(buffer, rootOffset, 62, 0)),
-              delivery_status: const fb.Int64Reader().vTableGet(buffer, rootOffset, 64, 0),
-              table_child_count: const fb.Int64Reader().vTableGet(buffer, rootOffset, 68, 0))
+              guidfixed: guidfixedParam,
+              number: numberParam,
+              number_main: number_mainParam,
+              names: namesParam,
+              zone: zoneParam,
+              table_status: table_statusParam,
+              order_count: order_countParam,
+              amount: amountParam,
+              order_success: order_successParam,
+              qr_code: qr_codeParam,
+              table_open_datetime: table_open_datetimeParam,
+              man_count: man_countParam,
+              woman_count: woman_countParam,
+              child_count: child_countParam,
+              table_al_la_crate_mode: table_al_la_crate_modeParam,
+              buffet_code: buffet_codeParam,
+              customer_code_or_telephone: customer_code_or_telephoneParam,
+              customer_name: customer_nameParam,
+              customer_address: customer_addressParam,
+              delivery_code: delivery_codeParam,
+              delivery_number: delivery_numberParam,
+              delivery_ticket_number: delivery_ticket_numberParam,
+              remark: remarkParam,
+              open_by_staff_code: open_by_staff_codeParam,
+              make_food_immediately: make_food_immediatelyParam,
+              is_delivery: is_deliveryParam,
+              delivery_cook_success: delivery_cook_successParam,
+              delivery_cook_success_datetime:
+                  delivery_cook_success_datetimeParam,
+              delivery_send_success: delivery_send_successParam,
+              delivery_send_success_datetime:
+                  delivery_send_success_datetimeParam,
+              delivery_status: delivery_statusParam,
+              table_child_count: table_child_countParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3268,28 +3695,47 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final form_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 40, '');
+          final sum_by_typeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 28, false);
+          final sum_by_barcodeParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 30, false);
+          final print_logoParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false);
+          final print_prompt_payParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false);
+          final names_jsonParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 20, '');
+          final detail_jsonParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 14, '');
+          final detail_extra_jsonParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 22, '');
+          final detail_total_jsonParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 26, '');
+          final detail_footer_jsonParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 16, '');
           final object = FormDesignObjectBoxStruct(
-              guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              form_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 40, ''),
-              sum_by_type: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 28, false),
-              sum_by_barcode: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 30, false),
-              print_logo: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 32, false),
-              print_prompt_pay: const fb.BoolReader()
-                  .vTableGet(buffer, rootOffset, 34, false),
-              names_json: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, ''),
-              detail_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 14, ''),
-              detail_extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 22, ''),
-              detail_total_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              detail_footer_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 16, ''))
+              guid_fixed: guid_fixedParam,
+              code: codeParam,
+              form_code: form_codeParam,
+              sum_by_type: sum_by_typeParam,
+              sum_by_barcode: sum_by_barcodeParam,
+              print_logo: print_logoParam,
+              print_prompt_pay: print_prompt_payParam,
+              names_json: names_jsonParam,
+              detail_json: detail_jsonParam,
+              detail_extra_json: detail_extra_jsonParam,
+              detail_total_json: detail_total_jsonParam,
+              detail_footer_json: detail_footer_jsonParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3335,31 +3781,53 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final doc_numberParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final line_numberParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          final barcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 10, '');
+          final item_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 12, '');
+          final item_nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final unit_codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
+          final unit_nameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 18, '');
+          final skuParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 20, '');
+          final qtyParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0);
+          final priceParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0);
+          final discount_textParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 26, '');
+          final discountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
+          final is_except_vatParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false);
+          final extra_jsonParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 32, '');
+          final total_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
           final object = BillDetailObjectBoxStruct(
-              doc_number: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              line_number:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0),
-              barcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              item_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              item_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 14, ''),
-              unit_code: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              unit_name: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              sku: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, ''),
-              qty: const fb.Float64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              price: const fb.Float64Reader().vTableGet(buffer, rootOffset, 24, 0),
-              discount_text: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 26, ''),
-              discount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0),
-              is_except_vat: const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false),
-              extra_json: const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 32, ''),
-              total_amount: const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0))
+              doc_number: doc_numberParam,
+              line_number: line_numberParam,
+              barcode: barcodeParam,
+              item_code: item_codeParam,
+              item_name: item_nameParam,
+              unit_code: unit_codeParam,
+              unit_name: unit_nameParam,
+              sku: skuParam,
+              qty: qtyParam,
+              price: priceParam,
+              discount_text: discount_textParam,
+              discount: discountParam,
+              is_except_vat: is_except_vatParam,
+              extra_json: extra_jsonParam,
+              total_amount: total_amountParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3398,26 +3866,41 @@ ModelDefinition getObjectBoxModel() {
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
-
+          final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final bankcodeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final bookbanknameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, '');
+          final countrycodeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 12, '');
+          final feerateParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0);
+          final namesParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
+          final paymentcodeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 18, '');
+          final paymentlogoParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 20, '');
+          final paymenttypeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0);
+          final wallettypeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
           final object = WalletObjectBoxStruct(
-              guid_fixed: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 6, ''),
-              bankcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 8, ''),
-              bookbankname: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 10, ''),
-              countrycode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 12, ''),
-              feerate:
-                  const fb.Float64Reader().vTableGet(buffer, rootOffset, 14, 0),
-              names: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 16, ''),
-              paymentcode: const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 18, ''),
-              paymentlogo:
-                  const fb.StringReader(asciiOptimization: true).vTableGet(buffer, rootOffset, 20, ''),
-              paymenttype: const fb.Int64Reader().vTableGet(buffer, rootOffset, 22, 0),
-              wallettype: const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0))
+              guid_fixed: guid_fixedParam,
+              bankcode: bankcodeParam,
+              bookbankname: bookbanknameParam,
+              countrycode: countrycodeParam,
+              feerate: feerateParam,
+              names: namesParam,
+              paymentcode: paymentcodeParam,
+              paymentlogo: paymentlogoParam,
+              paymenttype: paymenttypeParam,
+              wallettype: wallettypeParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;

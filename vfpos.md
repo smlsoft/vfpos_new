@@ -15,7 +15,6 @@ void main() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
   await setUpServiceLocator();
   await initializeApp();
   runApp(App());

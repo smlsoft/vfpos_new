@@ -14,16 +14,15 @@ class PayQrWidget extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
 
-  const PayQrWidget(
-      {super.key, required this.posProcess, required this.blocContext});
+  const PayQrWidget({super.key, required this.posProcess, required this.blocContext});
 
   @override
   PayQrWidgetState createState() => PayQrWidgetState();
 }
 
 class PayQrWidgetState extends State<PayQrWidget> {
-  final _descriptionController = TextEditingController();
-  double _amount = 0;
+  final descriptionController = TextEditingController();
+  double payAmount = 0;
   GlobalKey widgetKey = GlobalKey();
 
   @override
@@ -35,14 +34,10 @@ class PayQrWidgetState extends State<PayQrWidget> {
     widget.blocContext.read<PayScreenBloc>().add(PayScreenRefresh());
   }
 
-  bool saveData(String providerCode, String providerName) {
+  bool saveData({required String providerCode, required String providerName, required payAmount}) {
     global.payScreenNumberPadIsActive = false;
-    if (_amount > 0) {
-      global.payScreenData.qr!.add(PayQrModel(
-          provider_code: providerCode,
-          provider_name: providerName,
-          description: _descriptionController.text,
-          amount: _amount));
+    if (payAmount > 0) {
+      global.payScreenData.qr.add(PayQrModel(provider_code: providerCode, provider_name: providerName, description: descriptionController.text, amount: payAmount));
       return true;
     }
     return false;
@@ -59,15 +54,14 @@ class PayQrWidgetState extends State<PayQrWidget> {
           borderRadius: const BorderRadius.all(Radius.circular(4)),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(global.language(
-              'qr_code_split')), // กรณีชำระด้วย QR Code มากกว่า 1 รายการ (แบ่งจ่าย)
+          Text(global.language('qr_code_split')), // กรณีชำระด้วย QR Code มากกว่า 1 รายการ (แบ่งจ่าย)
           Container(
             padding: const EdgeInsets.only(left: 4, right: 4),
             child: Row(children: [
               Expanded(
                   flex: 2,
                   child: TextField(
-                    controller: _descriptionController,
+                    controller: descriptionController,
                     decoration: InputDecoration(
                       border: const UnderlineInputBorder(),
                       labelText: global.language('description'), // 'รายละเอียด'
@@ -82,28 +76,19 @@ class PayQrWidgetState extends State<PayQrWidget> {
                           onPressed: () {
                             global.numberPadCallBack = () {
                               setState(() {
-                                _amount = global.calcTextToNumber(
-                                    global.payScreenNumberPadText);
+                                payAmount = global.calcTextToNumber(global.payScreenNumberPadText);
                               });
                             };
-                            global.payScreenNumberPadIsActive =
-                                !global.payScreenNumberPadIsActive;
+                            global.payScreenNumberPadIsActive = !global.payScreenNumberPadIsActive;
                             FocusScope.of(context).unfocus();
-                            global.payScreenNumberPadWidget =
-                                PayScreenNumberPadWidgetEnum.number;
-                            final RenderBox renderBox = widgetKey.currentContext
-                                ?.findRenderObject() as RenderBox;
+                            global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
+                            final RenderBox renderBox = widgetKey.currentContext?.findRenderObject() as RenderBox;
                             final Size size = renderBox.size;
-                            final Offset offset =
-                                renderBox.localToGlobal(Offset.zero);
-                            global.payScreenNumberPadLeft =
-                                offset.dx + (size.width * 1.1);
-                            global.payScreenNumberPadTop =
-                                offset.dy - size.height;
-                            global.payScreenNumberPadAmount = _amount;
-                            global.payScreenNumberPadText = (_amount == 0)
-                                ? ""
-                                : _amount.toString().replaceAll(".0", "");
+                            final Offset offset = renderBox.localToGlobal(Offset.zero);
+                            global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
+                            global.payScreenNumberPadTop = offset.dy - size.height;
+                            global.payScreenNumberPadAmount = payAmount;
+                            global.payScreenNumberPadText = (payAmount == 0) ? "" : payAmount.toString().replaceAll(".0", "");
                             refreshEvent();
                           },
                           child: Column(
@@ -113,11 +98,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
-                              Text(global.moneyFormat.format(_amount),
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.right),
+                              Text(global.moneyFormatAndDot.format(payAmount), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.right),
                             ],
                           )))),
             ]),
@@ -135,18 +116,13 @@ class PayQrWidgetState extends State<PayQrWidget> {
                       padding: const EdgeInsets.all(2),
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(4),
-                            topRight: Radius.circular(4)),
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                         color: Colors.green,
                       ),
                       child: Center(
-                        child: Text(
-                            '${global.language('wallet_amount')} : ${global.moneyFormat.format(_amount)} ${global.language('money_symbol')}',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        child: Text('${global.language('wallet_amount')} : ${global.moneyFormatAndDot.format(payAmount)} ${global.language('money_symbol')}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       )),
-                  qrList(_amount),
+                  qrList(payAmount),
                 ],
               )),
         ]),
@@ -174,21 +150,17 @@ class PayQrWidgetState extends State<PayQrWidget> {
                 Column(
                   children: [
                     Image.asset(
-                      ("assets/images/qrpay/${global.payScreenData.qr![index].provider_code}.png")
-                          .toLowerCase(),
+                      ("assets/images/qrpay/${global.payScreenData.qr[index].provider_code}.png").toLowerCase(),
                       height: 40,
                     ),
-                    Text(global.payScreenData.qr![index].provider_name)
+                    Text(global.payScreenData.qr[index].provider_name)
                   ],
                 ),
                 buildDetailsBlock(
                   label: global.language('qr_description'),
-                  value: global.payScreenData.qr![index].description,
+                  value: global.payScreenData.qr[index].description,
                 ),
-                buildDetailsBlock(
-                    label: global.language('qr_amount'),
-                    value: global.moneyFormat
-                        .format(global.payScreenData.qr![index].amount)),
+                buildDetailsBlock(label: global.language('qr_amount'), value: global.moneyFormatAndDot.format(global.payScreenData.qr[index].amount)),
               ],
             ),
           ),
@@ -203,8 +175,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      content: Text(
-                          global.language("delete_confirm")),
+                      content: Text(global.language("delete_confirm")),
                       actions: [
                         TextButton(
                           child: Text(global.language("cancel")),
@@ -217,7 +188,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
                           onPressed: () {
                             setState(() {
                               Navigator.of(context).pop();
-                              global.payScreenData.qr!.removeAt(index);
+                              global.payScreenData.qr.removeAt(index);
                               refreshEvent();
                             });
                           },
@@ -238,15 +209,11 @@ class PayQrWidgetState extends State<PayQrWidget> {
       children: <Widget>[
         Text(
           label,
-          style: const TextStyle(
-              color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Text(
           value,
-          style: TextStyle(
-              color: Colors.green.shade500,
-              fontSize: 18,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.green.shade500, fontSize: 18, fontWeight: FontWeight.bold),
         )
       ],
     );
@@ -256,8 +223,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
     setState(() {});
   }
 
-  void promptPay(
-      {required double amount, required PaymentProviderModel provider}) {
+  void promptPay({required double amount, required PaymentProviderModel provider}) {
     refreshEvent();
     if (amount != 0.0) {
       showDialog(
@@ -266,16 +232,15 @@ class PayQrWidgetState extends State<PayQrWidget> {
           builder: (BuildContext context) {
             return StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
-                title: PayQrScreen(
-                    context: context, provider: provider, amount: amount),
+                title: PayQrScreen(context: context, provider: provider, amount: amount),
               );
             });
           }).then((value) {
         if (value) {
           if (value == true) {
-            if (saveData(provider.paymentcode, provider.names[0].name)) {
-              _descriptionController.text = '';
-              _amount = 0.0;
+            if (saveData(providerCode: provider.paymentcode, providerName: provider.names[0].name, payAmount: amount)) {
+              descriptionController.text = '';
+              payAmount = 0.0;
               global.payScreenNumberPadText = "";
               global.payScreenNumberPadAmount = 0;
             }
@@ -325,8 +290,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.green.shade100,
-          borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
+          borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(6), bottomRight: Radius.circular(6)),
         ),
         padding: const EdgeInsets.all(8),
         child: Wrap(spacing: 2, runSpacing: 2, children: [
@@ -335,12 +299,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
                 height: iconHeight,
                 width: iconWidth,
                 primaryColor: Colors.white,
-                label: (provider.providercode.isEmpty)
-                    ? "${provider.names[0].name} : ${provider.bookbankcode}"
-                    : "${provider.providercode} : ${provider.names[0].name}",
-                imgAssetPath:
-                    ("assets/images/qrpay/${provider.paymentcode}.png")
-                        .toLowerCase(),
+                label: (provider.providercode.isEmpty) ? "${provider.names[0].name} : ${provider.bookbankcode}" : "${provider.providercode} : ${provider.names[0].name}",
+                imgAssetPath: ("assets/images/qrpay/${provider.paymentcode}.png").toLowerCase(),
                 onPressed: () {
                   promptPay(amount: amount, provider: provider);
                 })
@@ -358,7 +318,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
             Container(
                 width: double.infinity,
                 padding: const EdgeInsets.only(bottom: 4),
-                child: (global.payScreenData.qr!.isEmpty)
+                child: (global.payScreenData.qr.isEmpty)
                     ? Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -371,13 +331,11 @@ class PayQrWidgetState extends State<PayQrWidget> {
                               width: double.infinity,
                               decoration: const BoxDecoration(
                                 color: Colors.green,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(4),
-                                    topRight: Radius.circular(4)),
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
                               ),
                               child: Center(
                                   child: Text(
-                                "${global.language("pay_qr_code_full_amount")} : ${global.moneyFormat.format(diffAmount())} ${global.language("money_symbol")}",
+                                "${global.language("pay_qr_code_full_amount")} : ${global.moneyFormatAndDot.format(diffAmount())} ${global.language("money_symbol")}",
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontSize: 18,
@@ -393,8 +351,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
                 formDetail(),
                 Column(
                   children: <Widget>[
-                    ...global.payScreenData.qr!.map((detail) {
-                      var index = global.payScreenData.qr!.indexOf(detail);
+                    ...global.payScreenData.qr.map((detail) {
+                      var index = global.payScreenData.qr.indexOf(detail);
                       return buildCard(index: index);
                     }).toList(),
                   ],

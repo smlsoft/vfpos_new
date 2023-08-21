@@ -1,4 +1,5 @@
 import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
+import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/util/print_hold_bill.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/safe_area_values.dart';
@@ -2553,11 +2554,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   void restartClearData() {
+    int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+
     detailDiscountFormula = "";
     global.posSaleChannelCode = "XXX";
     findActiveLineByGuid = "";
     activeLineNumber = -1;
     textInput = "";
+    global.posHoldProcessResult[holdIndex].payScreenData = PosPayModel();
+    global.payScreenData = PosPayModel();
     processEvent(barcode: "", holdCode: global.posHoldActiveCode);
   }
 
@@ -2590,7 +2595,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   void openCashDrawer() {
-    //logInsert(commandCode: 98);
+    logInsert(commandCode: 98);
     //global.openCashDrawer();
   }
 

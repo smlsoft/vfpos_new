@@ -66,7 +66,6 @@ void main() async {
   F.appFlavor = Flavor.DEDEPOS;
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
   await setUpServiceLocator();
   await initializeApp();
   //runApp(const App());

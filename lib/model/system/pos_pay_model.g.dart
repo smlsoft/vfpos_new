@@ -9,25 +9,28 @@ part of 'pos_pay_model.dart';
 PosPayModel _$PosPayModelFromJson(Map<String, dynamic> json) => PosPayModel(
       cash_amount_text: json['cash_amount_text'] as String? ?? "",
       cash_amount: (json['cash_amount'] as num?)?.toDouble() ?? 0,
+      total_after_discount:
+          (json['total_after_discount'] as num?)?.toDouble() ?? 0,
+      total_after_round: (json['total_after_round'] as num?)?.toDouble() ?? 0,
       discount_formula: json['discount_formula'] as String? ?? "",
       discount_amount: (json['discount_amount'] as num?)?.toDouble() ?? 0,
-      credit_card: (json['credit_card'] as List<dynamic>?)
-          ?.map((e) => PayCreditCardModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      transfer: (json['transfer'] as List<dynamic>?)
-          ?.map((e) => PayTransferModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      cheque: (json['cheque'] as List<dynamic>?)
-          ?.map((e) => PayChequeModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      coupon: (json['coupon'] as List<dynamic>?)
-          ?.map((e) => PayCouponModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      qr: (json['qr'] as List<dynamic>?)
-              ?.map((e) => PayQrModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-    );
+      round_amount: (json['round_amount'] as num?)?.toDouble() ?? 0,
+    )
+      ..credit_card = (json['credit_card'] as List<dynamic>)
+          .map((e) => PayCreditCardModel.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..transfer = (json['transfer'] as List<dynamic>)
+          .map((e) => PayTransferModel.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..cheque = (json['cheque'] as List<dynamic>)
+          .map((e) => PayChequeModel.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..coupon = (json['coupon'] as List<dynamic>)
+          .map((e) => PayCouponModel.fromJson(e as Map<String, dynamic>))
+          .toList()
+      ..qr = (json['qr'] as List<dynamic>)
+          .map((e) => PayQrModel.fromJson(e as Map<String, dynamic>))
+          .toList();
 
 Map<String, dynamic> _$PosPayModelToJson(PosPayModel instance) =>
     <String, dynamic>{
@@ -35,11 +38,14 @@ Map<String, dynamic> _$PosPayModelToJson(PosPayModel instance) =>
       'cash_amount': instance.cash_amount,
       'discount_formula': instance.discount_formula,
       'discount_amount': instance.discount_amount,
-      'credit_card': instance.credit_card?.map((e) => e.toJson()).toList(),
-      'transfer': instance.transfer?.map((e) => e.toJson()).toList(),
-      'cheque': instance.cheque?.map((e) => e.toJson()).toList(),
-      'coupon': instance.coupon?.map((e) => e.toJson()).toList(),
-      'qr': instance.qr?.map((e) => e.toJson()).toList(),
+      'total_after_discount': instance.total_after_discount,
+      'round_amount': instance.round_amount,
+      'total_after_round': instance.total_after_round,
+      'credit_card': instance.credit_card.map((e) => e.toJson()).toList(),
+      'transfer': instance.transfer.map((e) => e.toJson()).toList(),
+      'cheque': instance.cheque.map((e) => e.toJson()).toList(),
+      'coupon': instance.coupon.map((e) => e.toJson()).toList(),
+      'qr': instance.qr.map((e) => e.toJson()).toList(),
     };
 
 PayCouponModel _$PayCouponModelFromJson(Map<String, dynamic> json) =>

@@ -7,6 +7,7 @@ import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:promptpay/promptpay.dart';
 import 'dart:convert';
@@ -374,7 +375,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
                       ),
                       Expanded(
                         child: Text(
-                          global.moneyFormat.format(widget.posProcess.total_amount),
+                          global.moneyFormatAndDot.format(widget.posProcess.total_amount),
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: fontSize,
@@ -402,7 +403,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
                       ),
                       Expanded(
                         child: Text(
-                          '${global.moneyFormat.format(sumTotalPayAmount)} $moneySymbol',
+                          '${global.moneyFormatAndDot.format(sumTotalPayAmount)} $moneySymbol',
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: fontSize,
@@ -431,7 +432,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
                       Expanded(
                         flex: 1,
                         child: Text(
-                          '${global.moneyFormat.format(diffAmount)} $moneySymbol',
+                          '${global.moneyFormatAndDot.format(diffAmount)} $moneySymbol',
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: fontSize,
@@ -467,8 +468,27 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
   }
 
   void reCalc() {
-    sumTotalPayAmount = global.payScreenData.cash_amount + sumCoupon() + sumCreditCard() + sumTransfer() + sumCheque() + sumQr() + global.payScreenData.discount_amount;
-    diffAmount = widget.posProcess.total_amount - sumTotalPayAmount;
+    // ยอดรวมหลังหักส่วนลด
+    global.payScreenData.total_after_discount = widget.posProcess.total_amount - global.payScreenData.discount_amount;
+    //
+    sumTotalPayAmount = global.payScreenData.cash_amount + sumCoupon() + sumCreditCard() + sumTransfer() + sumCheque() + sumQr();
+    // ปัดเศษ
+    global.payScreenData.round_amount = 0;
+    switch (global.payTotalMoneyRoundType) {
+      case 0: // 0=ไม่ปัดเศษ
+        break;
+      case 1: // 1=ปัดเศษตามกฏหมาย
+        global.payScreenData.round_amount = global.roundMoneyForPay(global.payScreenData.total_after_discount) - global.payScreenData.total_after_discount;
+        break;
+      case 2: // 2=ปัดเศษขึ้นเป็นจำนวนเต็ม
+        break;
+      case 3: // 3=ปัดเศษลงเป็นจำนวนเต็ม
+        break;
+    }
+    // ยอดรวมหลังปัดเศษ
+    global.payScreenData.total_after_round = global.payScreenData.total_after_discount + global.payScreenData.round_amount;
+    //
+    diffAmount = global.payScreenData.total_after_round - sumTotalPayAmount;
     if (posPayCashGlobalKey.currentState != null) {
       posPayCashGlobalKey.currentState!.setPayAmount(diffAmount);
     }
@@ -525,254 +545,9 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
             border: Border.all(color: global.posTheme.background, width: 2),
             borderRadius: BorderRadius.circular(7),
           ),
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: global.posTheme.background,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(4.0),
-                    topRight: Radius.circular(4.0),
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    global.language("payment_channel"), // รูปแบบการชำระ
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 24 : 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              Expanded(
-                  child: Column(
-                children: [
-                  // หักส่วนลด
-                  if (global.payScreenData.discount_amount != 0)
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(global.language('total_pay_amount_discount'), style: textStyle),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                global.moneyFormat.format(global.payScreenData.discount_amount),
-                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(moneySymbol, style: textStyle),
-                        ],
-                      ),
-                    ),
-                  // คูปอง
-                  if (sumCoupon() != 0)
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        children: [
-                          Text(global.language('total_pay_amount_coupon'), style: textStyle),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                global.moneyFormat.format(sumCoupon()),
-                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(moneySymbol, style: textStyle),
-                        ],
-                      ),
-                    ),
-                  // ยอดชำระด้วยเงินสด
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(global.language('total_pay_amount_cash'), style: textStyle),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              global.moneyFormat.format(global.payScreenData.cash_amount),
-                              style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(moneySymbol, style: textStyle),
-                      ],
-                    ),
-                  ),
-                  // ยอดชำระด้วยบัตรเครดิต
-                  if (sumCreditCard() != 0)
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(global.language('total_pay_amount_card'), style: textStyle),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                global.moneyFormat.format(sumCreditCard()),
-                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(moneySymbol, style: textStyle),
-                        ],
-                      ),
-                    ),
-                  // ยอดชำระด้วยการโอน
-                  if (sumTransfer() != 0)
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(global.language('total_pay_amount_transfer'), style: textStyle),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                global.moneyFormat.format(sumTransfer()),
-                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(moneySymbol, style: textStyle),
-                        ],
-                      ),
-                    ),
-                  // ยอดชำระด้วยเช็ค
-                  if (sumCheque() != 0)
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(global.language('total_pay_amount_cheque'), style: textStyle),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                global.moneyFormat.format(sumCheque()),
-                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(moneySymbol, style: textStyle),
-                        ],
-                      ),
-                    ),
-                  // ยอดชำระด้วย Wallet
-                  if (sumQr() != 0)
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(global.language('total_pay_amount_wallet'), style: textStyle),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                global.moneyFormat.format(sumQr()),
-                                style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(moneySymbol, style: textStyle),
-                        ],
-                      ),
-                    ),
-                ],
-              )),
-
-              //ยอดชำระรวมทั้งสิ้น
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.green.shade300,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(4.0),
-                    bottomRight: Radius.circular(4.0),
-                  ),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(global.language('total_pay_amount'), style: textStyle),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          global.moneyFormat.format(sumTotalPayAmount),
-                          style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(moneySymbol, style: textStyle),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      (global.isTabletScreen() || global.isDesktopScreen())
-          ? const SizedBox(
-              width: 10,
-              height: 10,
-            )
-          : const SizedBox(
-              width: 2,
-              height: 2,
-            ),
-      // การชำระเงิน
-      Expanded(
-          child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: global.posTheme.background, width: 2),
-          borderRadius: BorderRadius.circular(7.0),
-        ),
-        child: Column(
-          children: [
+          child: Column(children: [
             Container(
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: global.posTheme.background,
                 borderRadius: const BorderRadius.only(
@@ -782,7 +557,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
               ),
               child: Center(
                 child: Text(
-                  global.language("pay_channel"), // การชำระเงิน
+                  global.language("pay_channel"),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 24 : 14,
@@ -792,8 +567,8 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
               ),
             ),
             Expanded(
-                child: Container(
-                    padding: const EdgeInsets.all(4),
+                child: Padding(
+                    padding: const EdgeInsets.all(5),
                     child: Column(
                       children: [
                         // ร่วมเงินทั้งสิ้น
@@ -805,7 +580,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  global.moneyFormat.format(widget.posProcess.total_amount),
+                                  global.moneyFormatAndDot.format(widget.posProcess.total_amount),
                                   style: textStyle.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -816,112 +591,339 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
                             Text(moneySymbol, style: textStyle),
                           ],
                         ),
-                        // ยอดรวมชำระทั้งสิ้น
+                        // หักส่วนลด
+                        if (global.payScreenData.discount_amount != 0)
+                          Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text("${global.language('total_pay_amount_discount')} ${global.payScreenData.discount_formula}", style: textStyle),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        global.moneyFormatAndDot.format(global.payScreenData.discount_amount),
+                                        style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(moneySymbol, style: textStyle),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text("ยอดรวมหลังหักส่วนลด", style: textStyle),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        global.moneyFormatAndDot.format(global.payScreenData.total_after_discount),
+                                        style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(moneySymbol, style: textStyle),
+                                ],
+                              ),
+                            ],
+                          ),
+                        // ปัดเศษ
+                        if (global.payScreenData.round_amount != 0)
+                          Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text("ปัดเศษ", style: textStyle),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        global.moneyFormatAndDot.format(global.payScreenData.round_amount),
+                                        style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(moneySymbol, style: textStyle),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text("ยอดรวมหลังปัดเศษ", style: textStyle),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        global.moneyFormatAndDot.format(global.payScreenData.total_after_round),
+                                        style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(moneySymbol, style: textStyle),
+                                ],
+                              ),
+                            ],
+                          ),
+                        // คูปอง
+                        if (sumCoupon() != 0)
+                          Row(
+                            children: [
+                              Text(global.language('total_pay_amount_coupon'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    global.moneyFormatAndDot.format(sumCoupon()),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                            ],
+                          ),
+                        // ยอดชำระด้วยบัตรเครดิต
+                        if (sumCreditCard() != 0)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(global.language('total_pay_amount_card'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    global.moneyFormatAndDot.format(sumCreditCard()),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                            ],
+                          ),
+
+                        // ยอดชำระด้วยการโอน
+                        if (sumTransfer() != 0)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(global.language('total_pay_amount_transfer'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    global.moneyFormatAndDot.format(sumTransfer()),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                            ],
+                          ),
+
+                        // ยอดชำระด้วยเช็ค
+                        if (sumCheque() != 0)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(global.language('total_pay_amount_cheque'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    global.moneyFormatAndDot.format(sumCheque()),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                            ],
+                          ),
+
+                        // ยอดชำระด้วย Wallet
+                        if (sumQr() != 0)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(global.language('total_pay_amount_wallet'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    global.moneyFormatAndDot.format(sumQr()),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                            ],
+                          ),
+                        // ยอดชำระด้วยเงินสด
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(global.language('total_pay_amount'), style: textStyle),
+                            Text(global.language('total_pay_amount_cash'), style: textStyle.copyWith(color: Colors.green)),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  global.moneyFormat.format(sumTotalPayAmount),
-                                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                                  global.moneyFormatAndDot.format(global.payScreenData.cash_amount),
+                                  style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
                                 ),
                               ),
                             ),
                             const SizedBox(
                               width: 5,
                             ),
-                            Text(moneySymbol, style: textStyle),
+                            Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
                           ],
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(global.language('total_pay_amount_diff'), style: textStyle),
+                            Text(global.language('total_pay_amount'), style: textStyle.copyWith(color: Colors.blue)),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  global.moneyFormat.format(diffAmount),
-                                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                                  global.moneyFormatAndDot.format(sumTotalPayAmount),
+                                  style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.blue),
                                 ),
                               ),
                             ),
                             const SizedBox(
                               width: 5,
                             ),
-                            Text(moneySymbol, style: textStyle),
+                            Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.blue)),
                           ],
                         ),
+                        if (diffAmount != 0)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(global.language('total_pay_amount_diff'), style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red)),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    global.moneyFormatAndDot.format(diffAmount),
+                                    style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(moneySymbol, style: textStyle.copyWith(fontWeight: FontWeight.bold, color: Colors.red)),
+                            ],
+                          ),
                       ],
                     ))),
-            Container(
-              padding: const EdgeInsets.all(4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.red,
-                      ),
-                      onPressed: () async {
-                        global.sendProcessToCustomerDisplay();
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        global.language("back"),
-                        style: TextStyle(
-                          fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 32.0 : 12,
-                          fontWeight: FontWeight.bold,
-                          shadows: const <Shadow>[
-                            Shadow(
-                              offset: Offset(1.0, 1.0),
-                              blurRadius: 3.0,
-                              color: Colors.black,
-                            ),
-                          ],
+            Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () async {
+                          global.sendProcessToCustomerDisplay();
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          global.language("back"),
+                          style: TextStyle(
+                            fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 32.0 : 12,
+                            fontWeight: FontWeight.bold,
+                            shadows: const <Shadow>[
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 3.0,
+                                color: Colors.black,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: (global.isTabletScreen() || global.isDesktopScreen()) ? 10 : 5,
-                    height: (global.isTabletScreen() || global.isDesktopScreen()) ? 10 : 5,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.green,
-                      ),
-                      onPressed: () async {
-                        payProcessSave();
-                      },
-                      child: Text(
-                        global.language("pay"),
-                        style: TextStyle(
-                          fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 32.0 : 12,
-                          fontWeight: FontWeight.bold,
-                          shadows: const <Shadow>[
-                            Shadow(
-                              offset: Offset(1.0, 1.0),
-                              blurRadius: 3.0,
-                              color: Colors.black,
-                            ),
-                          ],
+                    SizedBox(
+                      width: (global.isTabletScreen() || global.isDesktopScreen()) ? 10 : 5,
+                      height: (global.isTabletScreen() || global.isDesktopScreen()) ? 10 : 5,
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          backgroundColor: (diffAmount <= 0) ? Colors.green : Colors.grey,
+                        ),
+                        onPressed: (diffAmount > 0)
+                            ? null
+                            : () async {
+                                payProcessSave();
+                              },
+                        child: Text(
+                          global.language("pay"),
+                          style: TextStyle(
+                            fontSize: (global.isTabletScreen() || global.isDesktopScreen()) ? 32.0 : 12,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              (diffAmount <= 0)
+                                  ? const Shadow(
+                                      offset: Offset(1.0, 1.0),
+                                      blurRadius: 3.0,
+                                      color: Colors.black,
+                                    )
+                                  : const Shadow(),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                  ],
+                )),
+          ]),
         ),
-      )),
+      ),
+      (global.isTabletScreen() || global.isDesktopScreen())
+          ? const SizedBox(
+              width: 10,
+              height: 10,
+            )
+          : const SizedBox(
+              width: 2,
+              height: 2,
+            ),
     ];
     if (global.isTabletScreen() || global.isDesktopScreen()) {
       return Column(
@@ -1123,7 +1125,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
     late String result;
     switch (global.payScreenNumberPadWidget) {
       case PayScreenNumberPadWidgetEnum.number:
-        result = global.moneyFormat.format(global.payScreenNumberPadAmount);
+        result = global.moneyFormatAndDot.format(global.payScreenNumberPadAmount);
         break;
       case PayScreenNumberPadWidgetEnum.text:
         result = global.payScreenNumberPadText;

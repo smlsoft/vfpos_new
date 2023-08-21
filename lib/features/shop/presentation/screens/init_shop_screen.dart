@@ -40,13 +40,10 @@ class _InitShopScreenState extends State<InitShopScreen> {
           // );
 
           Future.delayed(Duration(seconds: loadtime), () {
-            if (F.appFlavor == Flavor.DEDEPOS ||
-                F.appFlavor == Flavor.SMLSUPERPOS) {
-              context.router.pushAndPopUntil(const MenuRoute(),
-                  predicate: (route) => false);
+            if (F.appFlavor == Flavor.DEDEPOS || F.appFlavor == Flavor.SMLSUPERPOS) {
+              context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
             } else {
-              context.router.pushAndPopUntil(const DashboardRoute(),
-                  predicate: (route) => false);
+              context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
             }
           });
         }
@@ -60,26 +57,23 @@ class _InitShopScreenState extends State<InitShopScreen> {
   @override
   Widget build(BuildContext context) {
     global.getDeviceModel(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.blue,
-                  size: 200,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text("Data Synchronization"),
-              ],
-            ),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 200,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text("Data Synchronization"),
+            ],
           ),
         ),
       ),

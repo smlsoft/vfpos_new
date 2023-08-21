@@ -1,6 +1,8 @@
 PODS:
   - audio_session (0.0.1):
     - Flutter
+  - camera_avfoundation (0.0.1):
+    - Flutter
   - charset_converter (0.0.1):
     - Flutter
   - connectivity_plus (0.0.1):
@@ -10,6 +12,8 @@ PODS:
     - Flutter
   - Flutter (1.0.0)
   - flutter_icmp_ping (0.0.1):
+    - Flutter
+  - flutter_pos_printer_platform (0.0.1):
     - Flutter
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
@@ -30,14 +34,18 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - permission_handler_apple (9.0.4):
+  - permission_handler_apple (9.1.1):
     - Flutter
   - presentation_displays (0.0.1):
+    - Flutter
+  - print_bluetooth_thermal (0.0.1):
     - Flutter
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
   - ReachabilitySwift (5.0.0)
+  - rive_common (0.0.1):
+    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -48,16 +56,20 @@ PODS:
     - Flutter
   - text_to_speech (0.0.1):
     - Flutter
+  - url_launcher_ios (0.0.1):
+    - Flutter
   - video_player_avfoundation (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
+  - camera_avfoundation (from `.symlinks/plugins/camera_avfoundation/ios`)
   - charset_converter (from `.symlinks/plugins/charset_converter/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_icmp_ping (from `.symlinks/plugins/flutter_icmp_ping/ios`)
+  - flutter_pos_printer_platform (from `.symlinks/plugins/flutter_pos_printer_platform/ios`)
   - fullscreen (from `.symlinks/plugins/fullscreen/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
@@ -66,11 +78,14 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - presentation_displays (from `.symlinks/plugins/presentation_displays/ios`)
+  - print_bluetooth_thermal (from `.symlinks/plugins/print_bluetooth_thermal/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
+  - rive_common (from `.symlinks/plugins/rive_common/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - sunmi_printer_plus (from `.symlinks/plugins/sunmi_printer_plus/ios`)
   - text_to_speech (from `.symlinks/plugins/text_to_speech/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/ios`)
 
 SPEC REPOS:
@@ -83,6 +98,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
+  camera_avfoundation:
+    :path: ".symlinks/plugins/camera_avfoundation/ios"
   charset_converter:
     :path: ".symlinks/plugins/charset_converter/ios"
   connectivity_plus:
@@ -93,6 +110,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_icmp_ping:
     :path: ".symlinks/plugins/flutter_icmp_ping/ios"
+  flutter_pos_printer_platform:
+    :path: ".symlinks/plugins/flutter_pos_printer_platform/ios"
   fullscreen:
     :path: ".symlinks/plugins/fullscreen/ios"
   geolocator_apple:
@@ -109,8 +128,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   presentation_displays:
     :path: ".symlinks/plugins/presentation_displays/ios"
+  print_bluetooth_thermal:
+    :path: ".symlinks/plugins/print_bluetooth_thermal/ios"
   qr_code_scanner:
     :path: ".symlinks/plugins/qr_code_scanner/ios"
+  rive_common:
+    :path: ".symlinks/plugins/rive_common/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
@@ -119,16 +142,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sunmi_printer_plus/ios"
   text_to_speech:
     :path: ".symlinks/plugins/text_to_speech/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
     :path: ".symlinks/plugins/video_player_avfoundation/ios"
 
 SPEC CHECKSUMS:
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
+  camera_avfoundation: 3125e8cd1a4387f6f31c6c63abb8a55892a9eeeb
   charset_converter: 215c7b04932ec2b9ba43be96a9bc34afed3e5322
-  connectivity_plus: 413a8857dd5d9f1c399a39130850d02fe0feaf7e
-  device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
+  connectivity_plus: 07c49e96d7fc92bc9920617b83238c4d178b446a
+  device_info_plus: 7545d84d8d1b896cb16a4ff98c19f07ec4b298ea
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_icmp_ping: 2b159955eee0c487c766ad83fec224ae35e7c935
+  flutter_pos_printer_platform: a4e9005c61448f702ab29af264126a57cfeee67d
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   fullscreen: d93e707e6b36120f20e64e2f814ee0726164e70b
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
@@ -137,15 +164,18 @@ SPEC CHECKSUMS:
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   ObjectBox: a7900d5335218cd437cbc080b7ccc38a5211f7b4
   objectbox_flutter_libs: 61d74196d924fbc773da5f5757d1e9fab7b3cc78
-  path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
-  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   presentation_displays: 02a9b05f708afe31d23564988f285b4d8019ddcd
+  print_bluetooth_thermal: 54a9ba9436479dd633d18f393669ee793ee498fa
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  shared_preferences_foundation: e2dae3258e06f44cc55f49d42024fd8dd03c590c
+  rive_common: 8a159d68033a8b073e5853acc50f03aa486a2888
+  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
   sunmi_printer_plus: 4ab3f09a655a47913c53ff5219323cbb04ebfbd7
   text_to_speech: 8669facdbd5b72d2939b810493defd991634f6f9
+  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
   video_player_avfoundation: 81e49bb3d9fb63dccf9fa0f6d877dc3ddbeac126
 
 PODFILE CHECKSUM: 0cb2f7cf9f38ababa0357f0dc98ec2478f33ed3a

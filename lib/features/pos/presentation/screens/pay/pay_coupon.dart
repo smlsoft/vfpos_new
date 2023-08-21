@@ -235,11 +235,11 @@ class _PayCouponState extends State<PayCoupon> {
                 children: [
                   _buildDetailsBlock(
                       label: global.language("coupon_number"),
-                      value: global.payScreenData.coupon![index].number),
+                      value: global.payScreenData.coupon[index].number),
                   const SizedBox(width: 10),
                   _buildDetailsBlock(
                       label: global.language("coupon_description"),
-                      value: global.payScreenData.coupon![index].description),
+                      value: global.payScreenData.coupon[index].description),
                 ],
               ),
               subtitle: Container(
@@ -250,7 +250,7 @@ class _PayCouponState extends State<PayCoupon> {
                     _buildDetailsBlock(
                         label: global.language('coupon_amount'),
                         value: global.moneyFormat.format(
-                            global.payScreenData.coupon![index].amount)),
+                            global.payScreenData.coupon[index].amount)),
                   ],
                 ),
               ),
@@ -279,7 +279,7 @@ class _PayCouponState extends State<PayCoupon> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.coupon!
+                                    global.payScreenData.coupon
                                         .removeAt(index);
                                     refreshEvent();
                                   });
@@ -328,12 +328,12 @@ class _PayCouponState extends State<PayCoupon> {
       child: Column(
         children: <Widget>[
           cardDetail(),
-          (global.payScreenData.coupon == null)
+          (global.payScreenData.coupon.isEmpty)
               ? Container()
               : Column(
                   children: <Widget>[
-                    ...global.payScreenData.coupon!.map((detail) {
-                      var index = global.payScreenData.coupon!.indexOf(detail);
+                    ...global.payScreenData.coupon.map((detail) {
+                      var index = global.payScreenData.coupon.indexOf(detail);
                       return _buildCreditCard(index: index);
                     }).toList()
                   ],

@@ -202,7 +202,7 @@ String posTerminalPinTokenId = "";
 bool useEdc = false; // เชื่อมต่อเครื่อง EDC
 bool posScreenAutoRefresh = false;
 bool rebuildProductBarcodeStatus = true;
-// วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษ
+// วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษตามกฏหมาย,2=ปัดเศษขึ้นเป็นจำนวนเต็ม,3=ปัดเศษลงเป็นจำนวนเต็ม
 int payTotalMoneyRoundType = 1;
 // Step การปัดเศษ ค่าว่าง=จำนวนเต็มอัตโนมัติ,0.25,0.5,0.75
 List<MoneyRoundPayModel> payTotalMoneyRoundStep = [
@@ -856,6 +856,7 @@ String language(String code) {
       return languageSystemData[i].text;
     }
   }
+  print(code);
   /*if (!found) {
     dev.log("language not found: $code");
     if (developerMode && code.trim().isNotEmpty && kIsWeb == false) {
@@ -945,14 +946,13 @@ Future<void> registerRemoteToTerminal() async {
 Future<void> startLoading() async {
   {
     // Payment
-    /*qrPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
       paymentcode: "promptpay",
       bookbankcode: "001",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
@@ -966,8 +966,7 @@ Future<void> startLoading() async {
       bookbankcode: "002",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 20,
@@ -980,8 +979,7 @@ Future<void> startLoading() async {
       bookbankcode: "002",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "True Money", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "True Money", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
@@ -994,8 +992,7 @@ Future<void> startLoading() async {
       paymentcode: "linepay",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Line Pay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Line Pay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
@@ -1008,14 +1005,13 @@ Future<void> startLoading() async {
       paymentcode: "alipay",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Alipay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Alipay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
       wallettype: 204,
-    ));*/
+    ));
   }
   //WidgetsFlutterBinding.ensureInitialized();
   //await GetStorage.init();
