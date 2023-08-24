@@ -10,8 +10,9 @@ part 'wallet_struct.g.dart';
 class WalletObjectBoxStruct {
   int id = 0;
   @Unique()
+  String code;
   String guid_fixed;
-  String bankcode;
+  String bookbankcode;
   String bookbankname;
   String countrycode;
   double feerate;
@@ -22,8 +23,9 @@ class WalletObjectBoxStruct {
   int wallettype;
 
   WalletObjectBoxStruct({
+    required this.code,
     required this.guid_fixed,
-    required this.bankcode,
+    required this.bookbankcode,
     required this.bookbankname,
     required this.countrycode,
     required this.feerate,
@@ -34,7 +36,6 @@ class WalletObjectBoxStruct {
     required this.wallettype,
   });
 
-  factory WalletObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$WalletObjectBoxStructFromJson(json);
+  factory WalletObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$WalletObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$WalletObjectBoxStructToJson(this);
 }

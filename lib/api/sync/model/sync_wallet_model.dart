@@ -5,6 +5,7 @@ part 'sync_wallet_model.g.dart';
 @JsonSerializable()
 class SyncWalletModel {
   String guidfixed;
+  String code;
   String bankcode;
   String bookbankname;
   String countrycode;
@@ -17,6 +18,7 @@ class SyncWalletModel {
 
   SyncWalletModel({
     required this.guidfixed,
+    required this.code,
     required this.bankcode,
     required this.bookbankname,
     required this.countrycode,
@@ -28,7 +30,6 @@ class SyncWalletModel {
     required this.wallettype,
   });
 
-  factory SyncWalletModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncWalletModelFromJson(json);
+  factory SyncWalletModel.fromJson(Map<String, dynamic> json) => _$SyncWalletModelFromJson(json);
   Map<String, dynamic> toJson() => _$SyncWalletModelToJson(this);
 }

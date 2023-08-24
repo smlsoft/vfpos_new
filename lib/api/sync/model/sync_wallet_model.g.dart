@@ -9,6 +9,7 @@ part of 'sync_wallet_model.dart';
 SyncWalletModel _$SyncWalletModelFromJson(Map<String, dynamic> json) =>
     SyncWalletModel(
       guidfixed: json['guidfixed'] as String,
+      code: json['code'] as String,
       bankcode: json['bankcode'] as String,
       bookbankname: json['bookbankname'] as String,
       countrycode: json['countrycode'] as String,
@@ -25,6 +26,7 @@ SyncWalletModel _$SyncWalletModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SyncWalletModelToJson(SyncWalletModel instance) =>
     <String, dynamic>{
       'guidfixed': instance.guidfixed,
+      'code': instance.code,
       'bankcode': instance.bankcode,
       'bookbankname': instance.bookbankname,
       'countrycode': instance.countrycode,

@@ -13,11 +13,10 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+
   intl: ^0.17.0
-  
   desktop_window: ^0.4.0
   auto_size_text: ^3.0.0
-  # awesome_dialog: ^3.0.2
   cached_network_image: ^3.2.3  
   cupertino_icons: ^1.0.5
   dart_ping_ios: ^3.0.0
@@ -50,12 +49,6 @@ dependencies:
   visibility_detector: ^0.4.0+2
   countdown_progress_indicator: ^0.1.2
   decimal: ^2.3.2
-  promptpay:
-    path: packages/promptpay
-  lugentpayment:
-    path: packages/lugentpay
-  flutter_rounded_date_picker:
-    path: packages/flutter_rounded_date_picker
   buddhist_datetime_dateformat_sns: ^1.0.7
   get_localization: ^3.0.0
   fullscreen: ^1.0.3
@@ -104,6 +97,13 @@ dependencies:
   top_snackbar_flutter: ^3.1.0
   network_to_file_image: ^4.0.1
   camera: ^0.10.5+2
+  drop_shadow: ^0.1.0
+  promptpay:
+    path: packages/promptpay
+  lugentpayment:
+    path: packages/lugentpay
+  flutter_rounded_date_picker:
+    path: packages/flutter_rounded_date_picker
 
 dev_dependencies:
   flutter_driver:

@@ -3,6 +3,7 @@ import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
+import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,7 +82,6 @@ class _PayTransferState extends State<PayTransfer> {
                                                 Text(bankDataList[index].names[0])
                                               ]),
                                               onPressed: () {
-                                                global.payScreenNumberPadIsActive = false;
                                                 bankCode = bankDataList[index].code;
                                                 bankName = bankDataList[index].names[0];
                                                 Navigator.of(context).pop();
@@ -109,29 +109,24 @@ class _PayTransferState extends State<PayTransfer> {
                       key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  amount = global.calcTextToNumber(global.payScreenNumberPadText);
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive = true && buttonIndex == 3) {
-                                global.payScreenNumberPadIsActive = false;
-                                buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
-                                global.payScreenNumberPadAmount = amount;
-                                final RenderBox renderBox = amountNumberKey.currentContext?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset = renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop = offset.dy - size.height;
-                                global.payScreenNumberPadAmount = amount;
-                                global.payScreenNumberPadText = (amount == 0) ? "" : amount.toString().replaceAll(".0", "");
-                                buttonIndex = 3;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('amount')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPad(onChange: (value) {
+                                          setState(() {
+                                            amount = double.tryParse(value) ?? 0;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -146,7 +141,7 @@ class _PayTransferState extends State<PayTransfer> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('total_amount'),
+                                global.language('amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -164,8 +159,6 @@ class _PayTransferState extends State<PayTransfer> {
                     if (saveData()) {
                       bankCode = "";
                       amount = 0;
-                      global.payScreenNumberPadText = "";
-                      global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
                   },

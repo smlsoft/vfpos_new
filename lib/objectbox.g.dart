@@ -1674,7 +1674,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(32, 2794950564994791106),
       name: 'WalletObjectBoxStruct',
-      lastPropertyId: const IdUid(11, 420388068252893737),
+      lastPropertyId: const IdUid(13, 5972349702901301472),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1685,12 +1685,6 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(2, 2504139452902985776),
             name: 'guid_fixed',
-            type: 9,
-            flags: 2080,
-            indexId: const IdUid(38, 1908698160459029540)),
-        ModelProperty(
-            id: const IdUid(3, 5596247766453503361),
-            name: 'bankcode',
             type: 9,
             flags: 0),
         ModelProperty(
@@ -1732,7 +1726,18 @@ final _entities = <ModelEntity>[
             id: const IdUid(11, 420388068252893737),
             name: 'wallettype',
             type: 6,
-            flags: 0)
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(12, 1597431899224415068),
+            name: 'bookbankcode',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(13, 5972349702901301472),
+            name: 'code',
+            type: 9,
+            flags: 2080,
+            indexId: const IdUid(39, 8890832892887243658))
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
@@ -1766,7 +1771,7 @@ ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
       lastEntityId: const IdUid(32, 2794950564994791106),
-      lastIndexId: const IdUid(38, 1908698160459029540),
+      lastIndexId: const IdUid(39, 8890832892887243658),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [
@@ -1795,7 +1800,8 @@ ModelDefinition getObjectBoxModel() {
         9220642195862943628,
         1242838351284240312,
         2783570486487198139,
-        8091174755438905349
+        8091174755438905349,
+        1908698160459029540
       ],
       retiredPropertyUids: const [
         5697435774194423126,
@@ -2089,7 +2095,8 @@ ModelDefinition getObjectBoxModel() {
         677388877116863205,
         1528751755365772755,
         5704992869450108965,
-        7795975958565552946
+        7795975958565552946,
+        5596247766453503361
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -3842,16 +3849,16 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (WalletObjectBoxStruct object, fb.Builder fbb) {
           final guid_fixedOffset = fbb.writeString(object.guid_fixed);
-          final bankcodeOffset = fbb.writeString(object.bankcode);
           final bookbanknameOffset = fbb.writeString(object.bookbankname);
           final countrycodeOffset = fbb.writeString(object.countrycode);
           final namesOffset = fbb.writeString(object.names);
           final paymentcodeOffset = fbb.writeString(object.paymentcode);
           final paymentlogoOffset = fbb.writeString(object.paymentlogo);
-          fbb.startTable(12);
+          final bookbankcodeOffset = fbb.writeString(object.bookbankcode);
+          final codeOffset = fbb.writeString(object.code);
+          fbb.startTable(14);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guid_fixedOffset);
-          fbb.addOffset(2, bankcodeOffset);
           fbb.addOffset(3, bookbanknameOffset);
           fbb.addOffset(4, countrycodeOffset);
           fbb.addFloat64(5, object.feerate);
@@ -3860,16 +3867,21 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(8, paymentlogoOffset);
           fbb.addInt64(9, object.paymenttype);
           fbb.addInt64(10, object.wallettype);
+          fbb.addOffset(11, bookbankcodeOffset);
+          fbb.addOffset(12, codeOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
+          final codeParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 28, '');
           final guid_fixedParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
-          final bankcodeParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 8, '');
+          final bookbankcodeParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 26, '');
           final bookbanknameParam =
               const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 10, '');
@@ -3891,8 +3903,9 @@ ModelDefinition getObjectBoxModel() {
           final wallettypeParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 24, 0);
           final object = WalletObjectBoxStruct(
+              code: codeParam,
               guid_fixed: guid_fixedParam,
-              bankcode: bankcodeParam,
+              bookbankcode: bookbankcodeParam,
               bookbankname: bookbanknameParam,
               countrycode: countrycodeParam,
               feerate: feerateParam,
@@ -5182,39 +5195,43 @@ class WalletObjectBoxStruct_ {
   static final guid_fixed =
       QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[1]);
 
-  /// see [WalletObjectBoxStruct.bankcode]
-  static final bankcode =
-      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[2]);
-
   /// see [WalletObjectBoxStruct.bookbankname]
   static final bookbankname =
-      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[3]);
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[2]);
 
   /// see [WalletObjectBoxStruct.countrycode]
   static final countrycode =
-      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[4]);
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[3]);
 
   /// see [WalletObjectBoxStruct.feerate]
   static final feerate =
-      QueryDoubleProperty<WalletObjectBoxStruct>(_entities[18].properties[5]);
+      QueryDoubleProperty<WalletObjectBoxStruct>(_entities[18].properties[4]);
 
   /// see [WalletObjectBoxStruct.names]
   static final names =
-      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[6]);
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[5]);
 
   /// see [WalletObjectBoxStruct.paymentcode]
   static final paymentcode =
-      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[7]);
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[6]);
 
   /// see [WalletObjectBoxStruct.paymentlogo]
   static final paymentlogo =
-      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[8]);
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[7]);
 
   /// see [WalletObjectBoxStruct.paymenttype]
   static final paymenttype =
-      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[18].properties[9]);
+      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[18].properties[8]);
 
   /// see [WalletObjectBoxStruct.wallettype]
   static final wallettype =
-      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[18].properties[10]);
+      QueryIntegerProperty<WalletObjectBoxStruct>(_entities[18].properties[9]);
+
+  /// see [WalletObjectBoxStruct.bookbankcode]
+  static final bookbankcode =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[10]);
+
+  /// see [WalletObjectBoxStruct.code]
+  static final code =
+      QueryStringProperty<WalletObjectBoxStruct>(_entities[18].properties[11]);
 }

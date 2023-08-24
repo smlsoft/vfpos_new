@@ -15,18 +15,12 @@ class WalletHelper {
   }
 
   WalletObjectBoxStruct? getByCode(String code) {
-    return box
-        .query(WalletObjectBoxStruct_.bankcode.equals(code))
-        .build()
-        .findFirst();
+    return box.query(WalletObjectBoxStruct_.code.equals(code)).build().findFirst();
   }
 
   bool deleteByCode(String code) {
     bool result = false;
-    final find = box
-        .query(WalletObjectBoxStruct_.bankcode.equals(code))
-        .build()
-        .findFirst();
+    final find = box.query(WalletObjectBoxStruct_.code.equals(code)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

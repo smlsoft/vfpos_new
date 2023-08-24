@@ -4,6 +4,7 @@ import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
 import 'package:dedepos/api/network/server_post.dart';
 import 'package:dedepos/api/sync/model/employee_model.dart';
+import 'package:dedepos/api/sync/model/wallet_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
@@ -18,8 +19,10 @@ import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
 import 'package:dedepos/model/objectbox/staff_client_struct.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
+import 'package:dedepos/model/objectbox/wallet_struct.dart';
 import 'package:dedepos/util/load_form_design.dart';
 import 'package:dedepos/util/print_kitchen.dart';
+import 'package:drop_shadow/drop_shadow.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
@@ -129,14 +132,7 @@ bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
 PosPayModel payScreenData = PosPayModel();
-bool lugenPaymentProvider = true;
-List<PaymentProviderModel> lugenPaymentProviderList = [];
 List<PaymentProviderModel> qrPaymentProviderList = [];
-bool payScreenNumberPadIsActive = false;
-double payScreenNumberPadLeft = 100;
-double payScreenNumberPadTop = 100;
-String payScreenNumberPadText = "";
-double payScreenNumberPadAmount = 0;
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
 late EmployeeObjectBoxStruct? userLogin;
@@ -624,7 +620,7 @@ Future<String> billRunning() async {
     }
   }
   result = "$docFormat${(NumberFormat(countDigit)).format(number + 1)}";
-  result = Uuid().v4();
+  result = const Uuid().v4();
   print("Doc Running : $result");
   return result;
 }
@@ -946,7 +942,7 @@ Future<void> registerRemoteToTerminal() async {
 Future<void> startLoading() async {
   {
     // Payment
-    qrPaymentProviderList.add(PaymentProviderModel(
+    /*qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
       paymentcode: "promptpay",
       bookbankcode: "001",
@@ -960,7 +956,7 @@ Future<void> startLoading() async {
       wallettype: 101,
     ));
     // Lugen
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       paymentcode: "promptpay",
       bookbankcode: "002",
@@ -973,7 +969,7 @@ Future<void> startLoading() async {
       feeRate: 0.0,
       wallettype: 201,
     ));
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       paymentcode: "truemoney",
       bookbankcode: "002",
@@ -986,7 +982,7 @@ Future<void> startLoading() async {
       feeRate: 0.0,
       wallettype: 202,
     ));
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       bookbankcode: "002",
       paymentcode: "linepay",
@@ -999,7 +995,7 @@ Future<void> startLoading() async {
       feeRate: 0.0,
       wallettype: 203,
     ));
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       bookbankcode: "002",
       paymentcode: "alipay",
@@ -1011,7 +1007,7 @@ Future<void> startLoading() async {
       paymenttype: 1,
       feeRate: 0.0,
       wallettype: 204,
-    ));
+    ));*/
   }
   //WidgetsFlutterBinding.ensureInitialized();
   //await GetStorage.init();
@@ -1613,7 +1609,6 @@ Future<void> getProfile() async {
 }
 
 Future<void> loadEmployee() async {
-  print("loadEmployee()");
   try {
     ApiRepository apiRepository = ApiRepository();
     var value = await apiRepository.getEmployeeList();
@@ -1633,6 +1628,34 @@ Future<void> loadEmployee() async {
       ));
     }
     employeeHelper.insertMany(employeeObjectBoxList);
+  } catch (e) {
+    print(e);
+  }
+}
+
+Future<void> loadWalletProvider() async {
+  try {
+    ApiRepository apiRepository = ApiRepository();
+    var value = await apiRepository.getEmployeeList();
+    List<WalletModel> walletList = (value.data as List).map((e) => WalletModel.fromJson(e as Map<String, dynamic>)).toList();
+    employeeHelper.deleteAll();
+    List<WalletObjectBoxStruct> walletObjectBoxList = [];
+    for (var data in walletList) {
+      walletObjectBoxList.add(WalletObjectBoxStruct(
+        code: data.code,
+        guid_fixed: Uuid().v4(),
+        bookbankcode: data.bookbankcode,
+        bookbankname: jsonEncode( data.names),
+        countrycode: "th",
+        feerate: 0,
+        names : jsonEncode( data.names),
+        paymentcode: "",
+        paymentlogo: data.paymentlogo,
+        paymenttype: data.paymenttype,
+        wallettype: data.wallettype,
+      ));
+    }
+    objectBoxStore.box<WalletObjectBoxStruct>().putMany(walletObjectBoxList);
   } catch (e) {
     print(e);
   }
@@ -1754,10 +1777,20 @@ Widget iconStatus(String pngFileName, bool status) {
         "assets/images/$pngFileName.png",
       ),
       Positioned(
-        bottom: 0,
-        right: 5,
-        child: Container(height: 10, width: 10, decoration: BoxDecoration(color: (status) ? Colors.greenAccent : Colors.redAccent, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white, width: 1))),
-      ),
+          bottom: 0,
+          right: 5,
+          child: Container(
+            height: 10,
+            width: 10,
+            decoration: BoxDecoration(color: (status) ? Colors.greenAccent : Colors.redAccent, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white, width: 1), boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 2,
+                offset: const Offset(0, 1), // changes position of shadow
+              ),
+            ]),
+          )),
     ]),
   );
 }

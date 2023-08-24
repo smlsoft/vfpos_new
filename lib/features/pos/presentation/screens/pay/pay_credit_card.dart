@@ -3,6 +3,8 @@ import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
+import 'package:dedepos/widgets/numpad.dart';
+import 'package:dedepos/widgets/numpadtext.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,8 +16,7 @@ class PayCreditCard extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
 
-  const PayCreditCard(
-      {super.key, required this.posProcess, required this.blocContext});
+  const PayCreditCard({super.key, required this.posProcess, required this.blocContext});
 
   @override
   State<PayCreditCard> createState() => _PayCreditCardState();
@@ -43,12 +44,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
 
   bool saveData() {
     if (cardNumber.trim().isNotEmpty && cardAmount > 0) {
-      PayCreditCardModel data = PayCreditCardModel(
-          bank_code: bankCode,
-          bank_name: bankName,
-          card_number: cardNumber,
-          approved_code: approveNumber,
-          amount: cardAmount);
+      PayCreditCardModel data = PayCreditCardModel(bank_code: bankCode, bank_name: bankName, card_number: cardNumber, approved_code: approveNumber, amount: cardAmount);
       global.payScreenData.credit_card.add(data);
       return true;
     } else {
@@ -78,40 +74,23 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                                title:
-                                    Text(global.language("select_card_type")),
+                                title: Text(global.language("select_card_type")),
                                 content: SizedBox(
                                     width: 350,
                                     height: 300,
                                     child: ListView.builder(
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
+                                      itemBuilder: (BuildContext context, int index) {
                                         return Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 4, bottom: 4),
+                                            padding: const EdgeInsets.only(top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
-                                                Container(
-                                                    alignment: Alignment.center,
-                                                    width: 100,
-                                                    height: 50,
-                                                    child: Image(
-                                                        image: NetworkToFileImage(
-                                                            url: global.findBankLogo(
-                                                                bankDataList[
-                                                                        index]
-                                                                    .code)))),
+                                                Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
                                                 const SizedBox(width: 10),
-                                                Text(bankDataList[index]
-                                                    .names[0])
+                                                Text(bankDataList[index].names[0])
                                               ]),
                                               onPressed: () {
-                                                global.payScreenNumberPadIsActive =
-                                                    false;
-                                                bankCode =
-                                                    bankDataList[index].code;
-                                                bankName = bankDataList[index]
-                                                    .names[0];
+                                                bankCode = bankDataList[index].code;
+                                                bankName = bankDataList[index].names[0];
                                                 Navigator.of(context).pop();
                                                 refreshEvent();
                                               },
@@ -123,21 +102,9 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       },
                       child: Column(
                         children: [
-                          Expanded(
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  width: 100,
-                                  height: 50,
-                                  child: (bankCode.isNotEmpty)
-                                      ? Image(
-                                          image: NetworkToFileImage(
-                                              url: global
-                                                  .findBankLogo(bankCode)))
-                                      : Container())),
+                          Expanded(child: Container(alignment: Alignment.center, width: 100, height: 50, child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
                           Text(
-                            (bankName.isNotEmpty)
-                                ? bankName
-                                : global.language('bank'),
+                            (bankName.isNotEmpty) ? bankName : global.language('bank'),
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.right,
                           ),
@@ -149,33 +116,24 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       key: cardNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  cardNumber = global.payScreenNumberPadText;
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive =
-                                  true && _buttonIndex == 1) {
-                                global.payScreenNumberPadIsActive = false;
-                                _buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget =
-                                    PayScreenNumberPadWidgetEnum.text;
-                                global.payScreenNumberPadText = cardNumber;
-                                final RenderBox renderBox = cardNumberKey
-                                    .currentContext
-                                    ?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset =
-                                    renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft =
-                                    offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop = offset.dy;
-                                _buttonIndex = 1;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('card_number')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPadText(onChange: (value) {
+                                          setState(() {
+                                            cardNumber = value;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -207,34 +165,24 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       key: approveNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  approveNumber = global.payScreenNumberPadText;
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive =
-                                  true && _buttonIndex == 2) {
-                                global.payScreenNumberPadIsActive = false;
-                                _buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget =
-                                    PayScreenNumberPadWidgetEnum.text;
-                                global.payScreenNumberPadText = approveNumber;
-                                final RenderBox renderBox = approveNumberKey
-                                    .currentContext
-                                    ?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset =
-                                    renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft =
-                                    offset.dx + (size.width * 1.5);
-                                global.payScreenNumberPadTop =
-                                    offset.dy - size.height;
-                                _buttonIndex = 2;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('authorization_code')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPadText(onChange: (value) {
+                                          setState(() {
+                                            approveNumber = value;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -261,42 +209,24 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  cardAmount = global.calcTextToNumber(
-                                      global.payScreenNumberPadText);
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive =
-                                  true && _buttonIndex == 3) {
-                                global.payScreenNumberPadIsActive = false;
-                                _buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget =
-                                    PayScreenNumberPadWidgetEnum.number;
-                                global.payScreenNumberPadAmount = cardAmount;
-                                final RenderBox renderBox = amountNumberKey
-                                    .currentContext
-                                    ?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset =
-                                    renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft =
-                                    offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop =
-                                    offset.dy - size.height;
-                                global.payScreenNumberPadAmount = cardAmount;
-                                global.payScreenNumberPadText =
-                                    (cardAmount == 0)
-                                        ? ""
-                                        : cardAmount
-                                            .toString()
-                                            .replaceAll(".0", "");
-                                _buttonIndex = 3;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('amount')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPad(onChange: (value) {
+                                          setState(() {
+                                            cardAmount = double.tryParse(value) ?? 0;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -331,8 +261,6 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       cardAmount = 0;
                       cardNumber = "";
                       approveNumber = "";
-                      global.payScreenNumberPadText = "";
-                      global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
                   },
@@ -372,29 +300,15 @@ class _PayCreditCardState extends State<PayCreditCard> {
             child: ListTile(
               title: Row(
                 children: [
-                  SizedBox(
-                      width: 100,
-                      height: 50,
-                      child: Image(
-                          image: NetworkToFileImage(
-                              url: global.findBankLogo(global.payScreenData
-                                  .credit_card[index].bank_code)))),
+                  SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.credit_card[index].bank_code)))),
                   const SizedBox(width: 10),
                   Text(
                     '${global.language('card_number')}  : ',
-                    style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: 'CourrierPrime'),
+                    style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'CourrierPrime'),
                   ),
                   Text(
                     global.payScreenData.credit_card[index].card_number,
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'CourrierPrime'),
+                    style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'CourrierPrime'),
                   ),
                 ],
               ),
@@ -405,13 +319,9 @@ class _PayCreditCardState extends State<PayCreditCard> {
                   children: <Widget>[
                     buildDetailsBlock(
                       label: global.language('authorization_code'),
-                      value: global
-                          .payScreenData.credit_card[index].approved_code,
+                      value: global.payScreenData.credit_card[index].approved_code,
                     ),
-                    buildDetailsBlock(
-                        label: global.language('amount'),
-                        value: global.moneyFormat.format(
-                            global.payScreenData.credit_card[index].amount)),
+                    buildDetailsBlock(label: global.language('amount'), value: global.moneyFormat.format(global.payScreenData.credit_card[index].amount)),
                   ],
                 ),
               ),
@@ -426,8 +336,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content:
-                                Text(global.language("delete_confirm_warning")),
+                            content: Text(global.language("delete_confirm_warning")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -440,8 +349,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.credit_card
-                                        .removeAt(index);
+                                    global.payScreenData.credit_card.removeAt(index);
                                     refreshEvent();
                                   });
                                 },
@@ -463,17 +371,11 @@ class _PayCreditCardState extends State<PayCreditCard> {
       children: <Widget>[
         Text(
           label,
-          style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 12,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Text(
           value,
-          style: TextStyle(
-              color: Colors.green.shade500,
-              fontSize: 18,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.green.shade500, fontSize: 18, fontWeight: FontWeight.bold),
         )
       ],
     );
@@ -493,8 +395,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                 : Column(
                     children: <Widget>[
                       ...global.payScreenData.credit_card.map((detail) {
-                        var index =
-                            global.payScreenData.credit_card.indexOf(detail);
+                        var index = global.payScreenData.credit_card.indexOf(detail);
                         return buildCreditCard(index: index);
                       }).toList()
                     ],

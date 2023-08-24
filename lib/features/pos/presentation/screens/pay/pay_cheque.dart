@@ -3,6 +3,8 @@ import 'package:dedepos/db/bank_helper.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
+import 'package:dedepos/widgets/numpad.dart';
+import 'package:dedepos/widgets/numpadtext.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,7 +92,6 @@ class _PayChequeState extends State<PayCheque> {
                                                 Text(bankDataList[index].names[0])
                                               ]),
                                               onPressed: () {
-                                                global.payScreenNumberPadIsActive = false;
                                                 bankCode = bankDataList[index].code;
                                                 bankName = bankDataList[index].names[0];
                                                 Navigator.of(context).pop();
@@ -118,27 +119,24 @@ class _PayChequeState extends State<PayCheque> {
                       key: chequeNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  chequeNumber = global.payScreenNumberPadText;
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive = true && buttonIndex == 1) {
-                                global.payScreenNumberPadIsActive = false;
-                                buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.text;
-                                global.payScreenNumberPadText = chequeNumber;
-                                final RenderBox renderBox = chequeNumberKey.currentContext?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset = renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop = offset.dy - size.height;
-                                buttonIndex = 1;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('cheque_number')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPadText(onChange: (value) {
+                                          setState(() {
+                                            chequeNumber = value;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -165,27 +163,24 @@ class _PayChequeState extends State<PayCheque> {
                       key: branchNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  branchNumber = global.payScreenNumberPadText;
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive = true && buttonIndex == 2) {
-                                global.payScreenNumberPadIsActive = false;
-                                buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.text;
-                                global.payScreenNumberPadText = branchNumber;
-                                final RenderBox renderBox = branchNumberKey.currentContext?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset = renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop = offset.dy - size.height;
-                                buttonIndex = 2;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('chq_branch_number')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPadText(onChange: (value) {
+                                          setState(() {
+                                            branchNumber = value;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -219,12 +214,12 @@ class _PayChequeState extends State<PayCheque> {
                       child: ElevatedButton(
                           onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.payScreenNumberPadIsActive = false;
                               DateTime? newDateTime = await showRoundedDatePicker(
+                                height: 300,
                                 context: context,
                                 locale: const Locale("th", "TH"),
                                 era: EraMode.BUDDHIST_YEAR,
-                                initialDate: DateTime.now(), // dueDate,
+                                initialDate: DateTime.now(),
                                 firstDate: DateTime(DateTime.now().year - 10),
                                 lastDate: DateTime(DateTime.now().year + 10),
                                 borderRadius: 16,
@@ -258,29 +253,24 @@ class _PayChequeState extends State<PayCheque> {
                       key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (bankCode.isNotEmpty) {
-                              global.numberPadCallBack = () {
-                                setState(() {
-                                  chequeAmount = global.calcTextToNumber(global.payScreenNumberPadText);
-                                });
-                              };
-                              if (global.payScreenNumberPadIsActive = true && buttonIndex == 3) {
-                                global.payScreenNumberPadIsActive = false;
-                                buttonIndex = 0;
-                              } else {
-                                global.payScreenNumberPadIsActive = true;
-                                global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
-                                global.payScreenNumberPadAmount = chequeAmount;
-                                final RenderBox renderBox = amountNumberKey.currentContext?.findRenderObject() as RenderBox;
-                                final Size size = renderBox.size;
-                                final Offset offset = renderBox.localToGlobal(Offset.zero);
-                                global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
-                                global.payScreenNumberPadTop = offset.dy - size.height;
-                                global.payScreenNumberPadAmount = chequeAmount;
-                                global.payScreenNumberPadText = (chequeAmount == 0) ? "" : chequeAmount.toString().replaceAll(".0", "");
-                                buttonIndex = 3;
-                              }
+                              await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: Text(global.language('amount')),
+                                      content: SizedBox(
+                                        width: 300,
+                                        height: 300,
+                                        child: NumberPad(onChange: (value) {
+                                          setState(() {
+                                            chequeAmount = double.tryParse(value) ?? 0;
+                                          });
+                                        }),
+                                      ));
+                                },
+                              );
                               refreshEvent();
                             }
                           },
@@ -295,7 +285,7 @@ class _PayChequeState extends State<PayCheque> {
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('money_amount'),
+                                global.language('amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -315,8 +305,6 @@ class _PayChequeState extends State<PayCheque> {
                       chequeAmount = 0;
                       chequeNumber = "";
                       branchNumber = "";
-                      global.payScreenNumberPadText = "";
-                      global.payScreenNumberPadAmount = 0;
                       refreshEvent();
                     }
                   },

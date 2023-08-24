@@ -3,12 +3,12 @@ import 'package:dedepos/api/client.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart' as global_model;
+import 'package:dedepos/model/json/member_model.dart';
 import 'package:dio/dio.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/db/product_barcode_helper.dart';
 import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/model/find/find_employee_model.dart';
-import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/model/find/find_item_model.dart';
 import 'dart:async';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
@@ -534,25 +534,22 @@ class ApiRepository {
     }
   }
 
-  Future<List<FindMemberModel>> findMemberByTelName(String word, int offset, int limit) async {
+  Future<List<MemberModel>> findMemberByTelName(String word, int offset, int limit) async {
     Dio client = Client().init();
-    List<FindMemberModel> result = [];
     if (word.trim().isNotEmpty) {
       try {
         final response = await client.get('/debtaccount/debtor/list?q=$word&offset=$offset&limit=$limit&lang=th');
         try {
           final rawData = json.decode(response.toString());
 
-          //print(rawData);
+          print(rawData);
 
           if (rawData['error'] != null) {
             String errorMessage = '${rawData['code']}: ${rawData['message']}';
             serviceLocator<Log>().error(errorMessage);
             throw Exception('${rawData['code']}: ${rawData['message']}');
           }
-          result = [];
-          var data = ApiResponse.fromMap(rawData);
-          return result;
+            return (rawData['data'] as List).map((e) => MemberModel.fromJson(e)).toList();
         } catch (ex) {
           serviceLocator<Log>().error(ex);
           throw Exception(ex);
@@ -563,7 +560,7 @@ class ApiRepository {
         throw Exception(errorMessage);
       }
     }
-    return result;
+    return [];
   }
 
   Future<ApiResponse> getProfileShop() async {

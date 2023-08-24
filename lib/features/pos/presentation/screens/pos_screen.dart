@@ -1,4 +1,5 @@
 import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
+import 'package:dedepos/model/json/member_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/util/print_hold_bill.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -16,7 +17,6 @@ import 'package:dedepos/features/pos/presentation/screens/pos_cancel_bill.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_product_weight.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_reprint_bill.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_sale_channel.dart';
-import 'package:dedepos/model/find/find_member_model.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/routes/app_routers.dart';
@@ -95,7 +95,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   bool displayDetailByBarcode = false;
   final debounce = global.Debounce(500);
   final List<FindItemModel> findItemByCodeNameLastResult = [];
-  final List<FindMemberModel> findMemberByNameTelephoneLastResult = [];
+  final List<MemberModel> findMemberByNameTelephoneLastResult = [];
   final TextEditingController textFindByTextController = TextEditingController();
   FocusNode? textFindByTextFocus;
   int activeLineNumber = -1;
@@ -510,6 +510,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   Widget findMemberByText() {
     return BlocBuilder<FindMemberByTelNameBloc, FindMemberByTelNameState>(builder: (context, state) {
       if (state is FindMemberByTelNameLoadSuccess) {
+        findMemberByNameTelephoneLastResult.clear();
         findMemberByNameTelephoneLastResult.addAll(state.result);
         context.read<FindMemberByTelNameBloc>().add(FindMemberByTelNameLoadFinish());
       }
@@ -542,7 +543,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     hintText: "ข้อความบางส่วน (ชื่อ,รหัส,หมายเลขโทรศัพท์)",
                     suffixIcon: IconButton(
                       onPressed: () => setState(() {
-                        findItemByCodeNameLastResult.clear();
+                        findMemberByNameTelephoneLastResult.clear();
                         textFindByTextController.clear();
                       }),
                       icon: const Icon(Icons.clear),
@@ -551,94 +552,27 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               Expanded(
                   child: SingleChildScrollView(
                       child: Column(
-                children: findItemByCodeNameLastResult.map((value) {
-                  var index = findItemByCodeNameLastResult.indexOf(value);
-                  var detail = findItemByCodeNameLastResult[index];
+                children: findMemberByNameTelephoneLastResult.map((value) {
+                  var index = findMemberByNameTelephoneLastResult.indexOf(value);
+                  var detail = findMemberByNameTelephoneLastResult[index];
+                  String phoneNumber = detail.addressforbilling.phoneprimary;
+                  if (detail.addressforbilling.phonesecondary.isNotEmpty) {
+                    phoneNumber += ",${detail.addressforbilling.phonesecondary}";
+                  }
                   return Row(children: [
-                    Expanded(
-                        flex: 5,
-                        // ignore: prefer_interpolation_to_compose_strings
-                        child: Text(global.getNameFromJsonLanguage(detail.item_names, global.userScreenLanguage) + "/" + global.getNameFromJsonLanguage(detail.unit_names, global.userScreenLanguage) + '/' + detail.item_code + "/" + detail.barcode)),
-                    Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text(global.moneyFormat.format(global.getProductPrice(detail.prices, 1))))),
+                    Expanded(flex: 5, child: Text(global.getNameFromLanguage(detail.names, global.userScreenLanguage) + " (" + detail.code + ")")),
+                    Expanded(flex: 1, child: Text(phoneNumber)),
                     Expanded(
                         flex: 1,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.all(2),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    if (detail.qty > 0.0) detail.qty -= 1.0;
-                                  });
-                                },
-                                child: const Icon(Icons.remove)))),
-                    Expanded(
-                        flex: 1,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.all(2),
-                                ),
-                                onPressed: () async {
-                                  await showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return StatefulBuilder(builder: (context, setState) {
-                                          return AlertDialog(
-                                            shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12.0))),
-                                            contentPadding: const EdgeInsets.all(10),
-                                            content: SizedBox(
-                                                height: 500,
-                                                child: NumberPad(
-                                                    header: global.language("qty"),
-                                                    title: Text('${global.getNameFromJsonLanguage(detail.item_names, global.userScreenLanguage)} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_names, global.userScreenLanguage)}',
-                                                        style: const TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight: FontWeight.bold,
-                                                        )),
-                                                    onChange: (qtyStr) => {
-                                                          if (qtyStr.isNotEmpty && double.parse(qtyStr) > 0)
-                                                            {
-                                                              detail.qty = double.parse(qtyStr),
-                                                            }
-                                                        })),
-                                          );
-                                        });
-                                      });
-                                },
-                                child: Text(global.qtyShortFormat.format(detail.qty))))),
-                    Expanded(
-                        flex: 1,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.all(2),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    detail.qty += 1.0;
-                                  });
-                                },
-                                child: const Icon(Icons.add)))),
-                    Expanded(
-                        flex: 2,
-                        child: Align(
-                            alignment: Alignment.center,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.all(2),
-                                ),
-                                onPressed: () async {
-                                  logInsert(commandCode: 1, barcode: detail.barcode, qty: detail.qty.toString());
-                                  processEvent(barcode: detail.barcode, holdCode: global.posHoldActiveCode);
-                                  detail.qty = 1;
-                                  //Navigator.pop(context, SelectItemConditionModel(command: 1, qty: _detail.qty, price: _detail.price, data: BarcodeStruct(barcode: _detail.barcode, itemCode: _detail.itemCode, itemName: _detail.itemName, unitCode: _detail.unitCode, unitName: _detail.unitName)));
-                                },
-                                child: const Icon(Icons.save))))
+                        child: ElevatedButton(
+                            onPressed: () {
+                              int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+                              global.posHoldProcessResult[holdIndex].customerCode = detail.code;
+                              global.posHoldProcessResult[holdIndex].customerName = global.getNameFromLanguage(detail.names, global.userScreenLanguage);
+                              global.posHoldProcessResult[holdIndex].customerPhone = phoneNumber;
+                              setState(() {});
+                            },
+                            child: Text(global.language("select"))))
                   ]);
                 }).toList(),
               )))
@@ -1590,7 +1524,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             children: [
               Expanded(
                 flex: 10,
-                child: Text(beforeWord + "ส่วนลดสินค้ามีภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                child: Text("$beforeWordส่วนลดสินค้ามีภาษี", style: textStyle.copyWith(fontSize: fontSize)),
               ),
               Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
             ],
@@ -1604,7 +1538,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             children: [
               Expanded(
                 flex: 10,
-                child: Text(beforeWord + "ส่วนลดสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
+                child: Text("$beforeWordส่วนลดสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
               ),
               Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
             ],
@@ -1820,7 +1754,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     TextStyle extraTextStyle = TextStyle(fontSize: 10, fontWeight: textStyle.fontWeight, color: Colors.grey);
     String description = "${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}${(detail.remark.isNotEmpty) ? " (${detail.remark})" : ""}";
     if (detail.is_except_vat) {
-      description = description + " (ยกเว้นภาษี)";
+      description = "$description (ยกเว้นภาษี)";
     }
     for (final extra in detail.extra) {
       extraAmount += extra.total_amount;
@@ -3466,11 +3400,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             width: 4,
           ),
           myButton(
-              backgroundColor: (tabletTabController.index == 3) ? Colors.orange : Colors.blue,
+              backgroundColor: (tabletTabController.index == 2) ? Colors.orange : Colors.blue,
               child: const FaIcon(FontAwesomeIcons.addressBook),
               onPressed: () {
                 setState(() {
-                  tabletTabController.index = 3;
+                  tabletTabController.index = 2;
                 });
               }),
           const SizedBox(
@@ -3616,14 +3550,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       children: [
                         selectProductLevelWidget(),
                         findProductByText(),
+                        findMemberByText(),
                         Container(
                           width: double.infinity,
+                          child: Text("xxx"),
                         ),
                         Container(
                           width: double.infinity,
-                        ),
-                        Container(
-                          width: double.infinity,
+                          child: Text("xxx"),
                         ),
                       ],
                     );
@@ -3856,7 +3790,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                       transScreen(mode: 0),
                                       selectProductLevelWidget(),
                                       findProductByText(),
-                                      Container()
+                                      findMemberByText(),
                                       //commandScreen(),
                                     ])),
                                     (phoneTabController.index != 2) ? posLayoutBottom() : Container(),
@@ -4169,8 +4103,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 },
                 child: AnnotatedRegion<SystemUiOverlayStyle>(
                     value: const SystemUiOverlayStyle(
-                      systemNavigationBarColor: Colors.blue, // Set navigation bar color
-                      systemNavigationBarIconBrightness: Brightness.light, // Set navigation bar icons' color
+                      systemNavigationBarColor: Colors.blue,
+                      systemNavigationBarIconBrightness: Brightness.light,
                     ),
                     child: Scaffold(
                         appBar: AppBar(
@@ -4179,7 +4113,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                           automaticallyImplyLeading: false,
                           backgroundColor: (global.posScreenMode == global.PosScreenModeEnum.posSale) ? Colors.blue.shade200 : Colors.red.shade200,
                           title: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               const SizedBox(
                                 width: 10,

@@ -56,7 +56,6 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
     tabBarMenuController = TabController(length: 8, vsync: this);
     tabBarMenuController.addListener(() {
       setState(() {
-        global.payScreenNumberPadIsActive = false;
         dev.log("Selected Index: ${tabBarMenuController.index}");
       });
     });
@@ -73,7 +72,6 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
   @override
   void dispose() {
     super.dispose();
-    global.payScreenNumberPadIsActive = false;
     tabBarMenuController.dispose();
   }
 
@@ -1105,209 +1103,6 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
             ])));
   }
 
-  void numberPadTextAdd(String word) {
-    setState(() {
-      switch (global.payScreenNumberPadWidget) {
-        case PayScreenNumberPadWidgetEnum.number:
-          global.payScreenNumberPadText = global.payScreenNumberPadText + word;
-          global.payScreenNumberPadAmount = global.calcTextToNumber(global.payScreenNumberPadText);
-          break;
-        case PayScreenNumberPadWidgetEnum.text:
-          global.payScreenNumberPadText = global.payScreenNumberPadText + word;
-          break;
-      }
-    });
-    global.numberPadCallBack.call();
-  }
-
-  Widget numberPadWidget() {
-    double fontSize = 24;
-    late String result;
-    switch (global.payScreenNumberPadWidget) {
-      case PayScreenNumberPadWidgetEnum.number:
-        result = global.moneyFormatAndDot.format(global.payScreenNumberPadAmount);
-        break;
-      case PayScreenNumberPadWidgetEnum.text:
-        result = global.payScreenNumberPadText;
-        break;
-    }
-    return Container(
-        width: 250,
-        height: 350,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: Colors.green, width: 2),
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(offset: const Offset(0, 2), color: Colors.blueGrey.shade200, spreadRadius: 4, blurRadius: 4)
-          ],
-        ),
-        child: Column(
-          children: [
-            Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 8),
-                child: Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(8), boxShadow: [
-                    BoxShadow(offset: const Offset(0, 2), color: Colors.blueGrey.shade200, spreadRadius: 4, blurRadius: 4)
-                  ]),
-                  padding: const EdgeInsets.only(right: 15),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(result,
-                        style: TextStyle(color: Colors.blue, fontSize: fontSize, fontWeight: FontWeight.bold, shadows: const [
-                          Shadow(offset: Offset(-1, -1), color: Colors.white),
-                          Shadow(offset: Offset(1, -1), color: Colors.white),
-                          Shadow(offset: Offset(1, 1), color: Colors.white),
-                          Shadow(offset: Offset(-1, 1), color: Colors.white),
-                        ])),
-                  ),
-                )),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: NumPadButton(
-                    text: '7',
-                    callBack: () => {
-                      numberPadTextAdd("7")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '8',
-                    callBack: () => {
-                      numberPadTextAdd("8")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '9',
-                    callBack: () => {
-                      numberPadTextAdd("9")
-                    },
-                  )),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: NumPadButton(
-                    text: '4',
-                    callBack: () => {
-                      numberPadTextAdd("4")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '5',
-                    callBack: () => {
-                      numberPadTextAdd("5")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '6',
-                    callBack: () => {
-                      numberPadTextAdd("6")
-                    },
-                  )),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: NumPadButton(
-                    text: '1',
-                    callBack: () => {
-                      numberPadTextAdd("1")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '2',
-                    callBack: () => {
-                      numberPadTextAdd("2")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '3',
-                    callBack: () => {
-                      numberPadTextAdd("3")
-                    },
-                  )),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: NumPadButton(
-                    text: '0',
-                    callBack: () => {
-                      numberPadTextAdd("0")
-                    },
-                  )),
-                  Expanded(
-                      child: NumPadButton(
-                    text: '.',
-                    callBack: () => {
-                      if (!global.payScreenNumberPadText.contains('.')) numberPadTextAdd((global.payScreenNumberPadText.isNotEmpty) ? "." : "0.")
-                    },
-                  )),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Expanded(
-                      child: NumPadButton(
-                    textAndIconColor: Colors.black,
-                    icon: Icons.backspace,
-                    color: Colors.red.shade200,
-                    callBack: () {
-                      setState(() {
-                        if (global.payScreenNumberPadText.isNotEmpty) {
-                          global.payScreenNumberPadText = global.payScreenNumberPadText.substring(0, global.payScreenNumberPadText.length - 1);
-                          global.payScreenNumberPadAmount = global.calcTextToNumber(global.payScreenNumberPadText);
-                          global.numberPadCallBack.call();
-                        }
-                      });
-                    },
-                  )),
-                  Expanded(
-                    child: NumPadButton(
-                      text: 'C',
-                      color: Colors.grey.shade400,
-                      callBack: () {
-                        setState(() {
-                          global.payScreenNumberPadText = "";
-                          global.payScreenNumberPadAmount = 0;
-                          global.numberPadCallBack.call();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     reCalc();
@@ -1319,30 +1114,14 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: (global.isTabletScreen() || global.isDesktopScreen())
-              ? Stack(children: [
-                  Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Row(children: <Widget>[
-                        Expanded(child: payDetailScreen(blocContext)),
-                        const SizedBox(width: 5),
-                        Expanded(child: paySummeryScreen()),
-                      ])),
-                  (global.payScreenNumberPadIsActive)
-                      ? Positioned(
-                          left: global.payScreenNumberPadLeft,
-                          top: global.payScreenNumberPadTop,
-                          child: LongPressDraggable(
-                            feedback: numberPadWidget(),
-                            child: numberPadWidget(),
-                            onDragEnd: (details) {
-                              setState(() {
-                                global.payScreenNumberPadLeft = details.offset.dx;
-                                global.payScreenNumberPadTop = details.offset.dy;
-                              });
-                            },
-                          ))
-                      : Container()
-                ])
+              ? Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Row(children: <Widget>[
+                    Expanded(child: payDetailScreen(blocContext)),
+                    const SizedBox(width: 5),
+                    Expanded(child: paySummeryScreen()),
+                  ]),
+                )
               : Padding(
                   padding: const EdgeInsets.all(4),
                   child: Column(children: <Widget>[

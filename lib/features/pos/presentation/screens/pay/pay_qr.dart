@@ -5,10 +5,12 @@ import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_qr_screen.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'package:dedepos/widgets/button.dart';
+import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
+import 'package:get/get.dart';
 
 class PayQrWidget extends StatefulWidget {
   final PosProcessModel posProcess;
@@ -35,7 +37,6 @@ class PayQrWidgetState extends State<PayQrWidget> {
   }
 
   bool saveData({required String providerCode, required String providerName, required payAmount}) {
-    global.payScreenNumberPadIsActive = false;
     if (payAmount > 0) {
       global.payScreenData.qr.add(PayQrModel(provider_code: providerCode, provider_name: providerName, description: descriptionController.text, amount: payAmount));
       return true;
@@ -73,22 +74,23 @@ class PayQrWidgetState extends State<PayQrWidget> {
                       key: widgetKey,
                       width: double.infinity,
                       child: ElevatedButton(
-                          onPressed: () {
-                            global.numberPadCallBack = () {
-                              setState(() {
-                                payAmount = global.calcTextToNumber(global.payScreenNumberPadText);
-                              });
-                            };
-                            global.payScreenNumberPadIsActive = !global.payScreenNumberPadIsActive;
-                            FocusScope.of(context).unfocus();
-                            global.payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
-                            final RenderBox renderBox = widgetKey.currentContext?.findRenderObject() as RenderBox;
-                            final Size size = renderBox.size;
-                            final Offset offset = renderBox.localToGlobal(Offset.zero);
-                            global.payScreenNumberPadLeft = offset.dx + (size.width * 1.1);
-                            global.payScreenNumberPadTop = offset.dy - size.height;
-                            global.payScreenNumberPadAmount = payAmount;
-                            global.payScreenNumberPadText = (payAmount == 0) ? "" : payAmount.toString().replaceAll(".0", "");
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                    title: Text(global.language('amount')),
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: NumberPad(onChange: (value) {
+                                        setState(() {
+                                          payAmount = double.tryParse(value) ?? 0.0;
+                                        });
+                                      }),
+                                    ));
+                              },
+                            );
                             refreshEvent();
                           },
                           child: Column(
@@ -241,8 +243,6 @@ class PayQrWidgetState extends State<PayQrWidget> {
             if (saveData(providerCode: provider.paymentcode, providerName: provider.names[0].name, payAmount: amount)) {
               descriptionController.text = '';
               payAmount = 0.0;
-              global.payScreenNumberPadText = "";
-              global.payScreenNumberPadAmount = 0;
             }
           }
           refreshEvent();
@@ -285,7 +285,6 @@ class PayQrWidgetState extends State<PayQrWidget> {
 
     List<PaymentProviderModel> providerList = [];
     providerList.addAll(global.qrPaymentProviderList);
-    providerList.addAll(global.lugenPaymentProviderList);
     return Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -309,7 +308,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (global.qrPaymentProviderList.isNotEmpty || global.lugenPaymentProviderList.isNotEmpty)
+    return (global.qrPaymentProviderList.isNotEmpty)
         ? Container(
             width: double.infinity,
             padding: const EdgeInsets.only(left: 4, right: 4),

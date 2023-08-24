@@ -1,6 +1,8 @@
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
+import 'package:dedepos/widgets/numpad.dart';
+import 'package:dedepos/widgets/numpadtext.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,20 +12,18 @@ import 'package:dedepos/global_model.dart';
 class PayCoupon extends StatefulWidget {
   final PosProcessModel posProcess;
   final BuildContext blocContext;
-  const PayCoupon(
-      {super.key, required this.posProcess, required this.blocContext});
+  const PayCoupon({super.key, required this.posProcess, required this.blocContext});
 
   @override
   State<PayCoupon> createState() => _PayCouponState();
 }
 
 class _PayCouponState extends State<PayCoupon> {
-  final _descriptionController = TextEditingController();
-  final GlobalKey _couponNumberKey = GlobalKey();
-  final GlobalKey _amountNumberKey = GlobalKey();
-  String _couponNumber = "";
-  double _couponAmount = 0;
-  int _buttonIndex = 0;
+  final descriptionController = TextEditingController();
+  final GlobalKey couponNumberKey = GlobalKey();
+  final GlobalKey amountNumberKey = GlobalKey();
+  String couponNumber = "";
+  double couponAmount = 0;
 
   @override
   void initState() {
@@ -35,11 +35,8 @@ class _PayCouponState extends State<PayCoupon> {
   }
 
   bool saveData() {
-    if (_couponNumber.trim().isNotEmpty && _couponAmount > 0) {
-      global.payScreenData.coupon!.add(PayCouponModel(
-          number: _couponNumber,
-          description: _descriptionController.text,
-          amount: _couponAmount));
+    if (couponNumber.trim().isNotEmpty && couponAmount > 0) {
+      global.payScreenData.coupon!.add(PayCouponModel(number: couponNumber, description: descriptionController.text, amount: couponAmount));
       return true;
     } else {
       return false;
@@ -62,36 +59,26 @@ class _PayCouponState extends State<PayCoupon> {
             children: [
               Expanded(
                   child: SizedBox(
-                      key: _couponNumberKey,
+                      key: couponNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
-                            global.numberPadCallBack = () {
-                              setState(() {
-                                _couponNumber = global.payScreenNumberPadText;
-                              });
-                            };
-                            if (global.payScreenNumberPadIsActive =
-                                true && _buttonIndex == 1) {
-                              global.payScreenNumberPadIsActive = false;
-                              _buttonIndex = 0;
-                            } else {
-                              global.payScreenNumberPadIsActive = true;
-                              global.payScreenNumberPadWidget =
-                                  PayScreenNumberPadWidgetEnum.text;
-                              global.payScreenNumberPadText = _couponNumber;
-                              final RenderBox renderBox = _couponNumberKey
-                                  .currentContext
-                                  ?.findRenderObject() as RenderBox;
-                              final Size size = renderBox.size;
-                              final Offset offset =
-                                  renderBox.localToGlobal(Offset.zero);
-                              global.payScreenNumberPadLeft =
-                                  offset.dx + (size.width * 1.1);
-                              global.payScreenNumberPadTop =
-                                  offset.dy - size.height;
-                              _buttonIndex = 1;
-                            }
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                    title: Text(global.language('coupon_number')),
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: NumberPadText(onChange: (value) {
+                                        setState(() {
+                                          couponNumber = value;
+                                        });
+                                      }),
+                                    ));
+                              },
+                            );
                             refreshEvent();
                           },
                           child: Column(
@@ -100,7 +87,7 @@ class _PayCouponState extends State<PayCoupon> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        _couponNumber,
+                                        couponNumber,
                                         style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
@@ -114,44 +101,26 @@ class _PayCouponState extends State<PayCoupon> {
               const SizedBox(width: 10),
               Expanded(
                   child: SizedBox(
-                      key: _amountNumberKey,
+                      key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
-                          onPressed: () {
-                            global.numberPadCallBack = () {
-                              setState(() {
-                                _couponAmount = global.calcTextToNumber(
-                                    global.payScreenNumberPadText);
-                              });
-                            };
-                            if (global.payScreenNumberPadIsActive =
-                                true && _buttonIndex == 2) {
-                              global.payScreenNumberPadIsActive = false;
-                              _buttonIndex = 0;
-                            } else {
-                              global.payScreenNumberPadIsActive = true;
-                              global.payScreenNumberPadWidget =
-                                  PayScreenNumberPadWidgetEnum.number;
-                              global.payScreenNumberPadAmount = _couponAmount;
-                              final RenderBox renderBox = _amountNumberKey
-                                  .currentContext
-                                  ?.findRenderObject() as RenderBox;
-                              final Size size = renderBox.size;
-                              final Offset offset =
-                                  renderBox.localToGlobal(Offset.zero);
-                              global.payScreenNumberPadLeft =
-                                  offset.dx + (size.width * 1.1);
-                              global.payScreenNumberPadTop =
-                                  offset.dy - size.height;
-                              global.payScreenNumberPadAmount = _couponAmount;
-                              global.payScreenNumberPadText =
-                                  (_couponAmount == 0)
-                                      ? ""
-                                      : _couponAmount
-                                          .toString()
-                                          .replaceAll(".0", "");
-                              _buttonIndex = 2;
-                            }
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                    title: Text(global.language('amount')),
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: NumberPad(onChange: (value) {
+                                        setState(() {
+                                          couponAmount = double.tryParse(value) ?? 0;
+                                        });
+                                      }),
+                                    ));
+                              },
+                            );
                             refreshEvent();
                           },
                           child: Column(
@@ -160,13 +129,12 @@ class _PayCouponState extends State<PayCoupon> {
                                   child: Container(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        global.moneyFormat
-                                            .format(_couponAmount),
+                                        global.moneyFormat.format(couponAmount),
                                         style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.right,
                                       ))),
                               Text(
-                                global.language('money_amount'),
+                                global.language('amount'),
                                 style: const TextStyle(fontSize: 16),
                                 textAlign: TextAlign.right,
                               ),
@@ -176,7 +144,7 @@ class _PayCouponState extends State<PayCoupon> {
           ),
           const SizedBox(height: 10),
           TextField(
-            controller: _descriptionController,
+            controller: descriptionController,
             decoration: InputDecoration(
               border: const UnderlineInputBorder(),
               labelText: global.language('coupon_description'),
@@ -189,11 +157,9 @@ class _PayCouponState extends State<PayCoupon> {
                   icon: const Icon(Icons.push_pin),
                   onPressed: () {
                     if (saveData()) {
-                      _couponAmount = 0;
-                      _couponNumber = "";
-                      _descriptionController.text = "";
-                      global.payScreenNumberPadText = "";
-                      global.payScreenNumberPadAmount = 0;
+                      couponAmount = 0;
+                      couponNumber = "";
+                      descriptionController.text = "";
                       refreshEvent();
                     }
                   },
@@ -233,13 +199,9 @@ class _PayCouponState extends State<PayCoupon> {
             child: ListTile(
               title: Row(
                 children: [
-                  _buildDetailsBlock(
-                      label: global.language("coupon_number"),
-                      value: global.payScreenData.coupon[index].number),
+                  _buildDetailsBlock(label: global.language("coupon_number"), value: global.payScreenData.coupon[index].number),
                   const SizedBox(width: 10),
-                  _buildDetailsBlock(
-                      label: global.language("coupon_description"),
-                      value: global.payScreenData.coupon[index].description),
+                  _buildDetailsBlock(label: global.language("coupon_description"), value: global.payScreenData.coupon[index].description),
                 ],
               ),
               subtitle: Container(
@@ -247,10 +209,7 @@ class _PayCouponState extends State<PayCoupon> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    _buildDetailsBlock(
-                        label: global.language('coupon_amount'),
-                        value: global.moneyFormat.format(
-                            global.payScreenData.coupon[index].amount)),
+                    _buildDetailsBlock(label: global.language('coupon_amount'), value: global.moneyFormat.format(global.payScreenData.coupon[index].amount)),
                   ],
                 ),
               ),
@@ -265,8 +224,7 @@ class _PayCouponState extends State<PayCoupon> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            content: Text(global
-                                .language("do_you_want_to_cancel_this_item")),
+                            content: Text(global.language("do_you_want_to_cancel_this_item")),
                             actions: [
                               TextButton(
                                 child: Text(global.language("cancel")),
@@ -279,8 +237,7 @@ class _PayCouponState extends State<PayCoupon> {
                                 onPressed: () {
                                   setState(() {
                                     Navigator.of(context).pop();
-                                    global.payScreenData.coupon
-                                        .removeAt(index);
+                                    global.payScreenData.coupon.removeAt(index);
                                     refreshEvent();
                                   });
                                 },
@@ -302,17 +259,11 @@ class _PayCouponState extends State<PayCoupon> {
       children: <Widget>[
         Text(
           label,
-          style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 12,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.bold),
         ),
         Text(
           value,
-          style: TextStyle(
-              color: Colors.green.shade500,
-              fontSize: 18,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.green.shade500, fontSize: 18, fontWeight: FontWeight.bold),
         )
       ],
     );
@@ -320,7 +271,7 @@ class _PayCouponState extends State<PayCoupon> {
 
   @override
   Widget build(BuildContext context) {
-    if (_couponAmount == 0) _couponAmount = diffAmount();
+    if (couponAmount == 0) couponAmount = diffAmount();
     return Scaffold(
         body: SingleChildScrollView(
             child: Padding(

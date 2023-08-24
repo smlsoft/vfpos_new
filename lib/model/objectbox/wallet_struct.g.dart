@@ -9,8 +9,9 @@ part of 'wallet_struct.dart';
 WalletObjectBoxStruct _$WalletObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     WalletObjectBoxStruct(
+      code: json['code'] as String,
       guid_fixed: json['guid_fixed'] as String,
-      bankcode: json['bankcode'] as String,
+      bookbankcode: json['bookbankcode'] as String,
       bookbankname: json['bookbankname'] as String,
       countrycode: json['countrycode'] as String,
       feerate: (json['feerate'] as num).toDouble(),
@@ -25,8 +26,9 @@ Map<String, dynamic> _$WalletObjectBoxStructToJson(
         WalletObjectBoxStruct instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'code': instance.code,
       'guid_fixed': instance.guid_fixed,
-      'bankcode': instance.bankcode,
+      'bookbankcode': instance.bookbankcode,
       'bookbankname': instance.bookbankname,
       'countrycode': instance.countrycode,
       'feerate': instance.feerate,

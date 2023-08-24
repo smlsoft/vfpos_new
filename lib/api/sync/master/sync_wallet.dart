@@ -14,8 +14,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/wallet_struct.dart';
 import 'package:intl/intl.dart';
 
-Future syncWallet(List<ItemRemoveModel> removeList,
-    List<SyncWalletModel> newDataList) async {
+Future syncWallet(List<ItemRemoveModel> removeList, List<SyncWalletModel> newDataList) async {
   List<String> removeMany = [];
   List<WalletObjectBoxStruct> manyForInsert = [];
 
@@ -34,8 +33,9 @@ Future syncWallet(List<ItemRemoveModel> removeList,
     removeMany.add(newData.guidfixed);
 
     WalletObjectBoxStruct newWallet = WalletObjectBoxStruct(
+      code: newData.code,
       guid_fixed: newData.guidfixed,
-      bankcode: newData.bankcode,
+      bookbankcode: newData.bankcode,
       bookbankname: newData.bookbankname,
       countrycode: newData.countrycode,
       feerate: newData.feerate,
@@ -55,44 +55,33 @@ Future syncWallet(List<ItemRemoveModel> removeList,
   }
 }
 
-Future<void> syncWalletCompare(
-    List<SyncMasterStatusModel> masterStatus) async {
+Future<void> syncWalletCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
 
   // Sync ประเภทการขาย (Buffet Mode)
-  String lastUpdateTime =
-      global.appStorage.read(global.syncWalletTimeName) ?? global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncWalletTimeName) ?? global.syncDateBegin;
   if (WalletHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "ordertype");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await apiRepository
-          .serverOrderTypeGetData(
-              offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await apiRepository.serverOrderTypeGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["ordertype"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncWalletModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncWalletModel.fromJson(newCate))
-              .toList();
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncWalletModel> newDataList = (dataList["new"] as List).map((newCate) => SyncWalletModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncWallet(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .error("************************************************* Error");
+          serviceLocator<Log>().error("************************************************* Error");
           loop = false;
         }
       });

@@ -69,10 +69,10 @@ packages:
     dependency: "direct main"
     description:
       name: auto_route
-      sha256: afa2e3a038efdd9b70478c597161e4c6549a73cd2f5957077d4b311f71104671
+      sha256: "35e5c7f8de56ec07c40fca4c953cb7d1d113e26d50bd876a4130a9b874923f27"
       url: "https://pub.dev"
     source: hosted
-    version: "7.8.0"
+    version: "7.8.1"
   auto_route_generator:
     dependency: "direct dev"
     description:
@@ -221,10 +221,10 @@ packages:
     dependency: transitive
     description:
       name: camera_android
-      sha256: "61d62676708f187fb89fb14b371f87470343ba3cb26d08fc358e4f8a18e13150"
+      sha256: ffbcf60f107776e0bfda7ed787e7ae6ec7f4cb962598973756daa2ad70d8f191
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.8+6"
+    version: "0.10.8+7"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -497,6 +497,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.3.2"
+  drop_shadow:
+    dependency: "direct main"
+    description:
+      name: drop_shadow
+      sha256: "1fa552baeb7c6a3c36a7ff77186a2302a7bf53c93914f46328a9c4eb68ec6b08"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   either_option:
     dependency: transitive
     description:
@@ -1034,10 +1042,10 @@ packages:
     dependency: "direct main"
     description:
       name: loader_overlay
-      sha256: "5d712eb5dc0b8618797d39306227a6c3805e2b198f5361e18ec9e325f215e9a4"
+      sha256: "78ad270c3092d9144d8cfb97912bacb4dc4ab4c3cc9def8e1bdfffdcf318c3b0"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   loading_animation_widget:
     dependency: "direct main"
     description:
@@ -1201,26 +1209,26 @@ packages:
     dependency: "direct main"
     description:
       name: objectbox
-      sha256: "73b1533d84f538a6912775ba5880b4b4a708ede58df0adc58391506b284d9feb"
+      sha256: "3c9d13df69e0d0084f5c395b11dc9c8fbe6d9dbca5051f9ac981b5d93c773461"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   objectbox_flutter_libs:
     dependency: "direct main"
     description:
       name: objectbox_flutter_libs
-      sha256: f29c0d31da142e9e96424edf382f901c0360688b5a063129cafb5b7c9530c6dd
+      sha256: b2589ed58a04fd7c44a00baa38431ce0e980d052808f87e35a3ee338e586dba9
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   objectbox_generator:
     dependency: "direct main"
     description:
       name: objectbox_generator
-      sha256: bfad1cf58c71461f9b5190064fe637004b8faed38656a4c23288ed34d7d48197
+      sha256: adb562ce5fe39439255b05890e748021250d9102726d8603f54d51e4620c7b33
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   octo_image:
     dependency: transitive
     description:

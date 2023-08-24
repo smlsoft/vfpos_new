@@ -1,5 +1,5 @@
 import 'package:dedepos/api/api_repository.dart';
-import 'package:dedepos/model/find/find_member_model.dart';
+import 'package:dedepos/model/json/member_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FindMemberByTelNameLoadStart extends FindMemberByTelNameEvent {
@@ -12,7 +12,7 @@ class FindMemberByTelNameLoadStart extends FindMemberByTelNameEvent {
 }
 
 class FindMemberByTelNameLoadSuccess extends FindMemberByTelNameState {
-  List<FindMemberModel> result;
+  List<MemberModel> result;
 
   FindMemberByTelNameLoadSuccess({required this.result});
 }
@@ -34,7 +34,7 @@ class FindMemberByTelNameBloc
   void _findMemberByTelName(FindMemberByTelNameLoadStart event,
       Emitter<FindMemberByTelNameState> emit) async {
     emit(FindMemberByTelNameLoading());
-    List<FindMemberModel> result = await apiFindMemberByTelName
+    List<MemberModel> result = await apiFindMemberByTelName
         .findMemberByTelName(event.words, event.offset, event.limit);
     emit(FindMemberByTelNameLoadSuccess(result: result));
   }
