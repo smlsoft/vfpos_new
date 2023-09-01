@@ -178,7 +178,8 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
                                   child: Container(
                                       margin: const EdgeInsets.all(5),
                                       padding: const EdgeInsets.all(5),
-                                      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10), boxShadow: const [
+                                      decoration:
+                                          BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10), boxShadow: const [
                                         BoxShadow(
                                           color: Colors.grey,
                                           blurRadius: 5,

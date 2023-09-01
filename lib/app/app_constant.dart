@@ -1,6 +1,8 @@
 class AppConstant {
-  static const String serviceApi = 'https://api.dedepos.com';
+  static const String serviceApi = 'https://api.vfonline.net';
   static const String serviceDevApi = 'https://api.dev.dedepos.com';
+  static const String serviceLoginDevApi = 'https://api.dev.dedepos.com';
+  static const String serviceLoginApi = 'https://www.villagefund.work';
 
   /// ทดสอบแม็คกร
   //static const String userDev = 'maxkorn';

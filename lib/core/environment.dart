@@ -37,19 +37,23 @@ class Environment {
 
 abstract class BaseConfig {
   String get serviceApi;
+  String get serviceLoginApi;
 }
 
 class DevConfig extends BaseConfig {
   @override
   String get serviceApi => AppConstant.serviceDevApi;
+  String get serviceLoginApi => AppConstant.serviceLoginDevApi;
 }
 
 class ProdConfig extends BaseConfig {
   @override
   String get serviceApi => AppConstant.serviceApi;
+  String get serviceLoginApi => AppConstant.serviceLoginApi;
 }
 
 class StagingConfig extends BaseConfig {
   @override
   String get serviceApi => AppConstant.serviceApi;
+  String get serviceLoginApi => AppConstant.serviceLoginApi;
 }

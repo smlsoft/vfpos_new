@@ -6,7 +6,7 @@ import 'flavors.dart';
 import 'package:dedepos/global.dart' as global;
 
 void main() async {
-  F.appFlavor = Flavor.DEDEPOS;
+  F.appFlavor = Flavor.VFPOS;
   WidgetsFlutterBinding.ensureInitialized();
   initializeEnvironmentConfig();
   Intl.defaultLocale = "th";

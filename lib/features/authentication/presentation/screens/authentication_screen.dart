@@ -102,8 +102,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       const SizedBox(height: 12.0),
                       buttonLoginWithGoogle(),
                       const SizedBox(height: 12.0),
-                      buttonLoginWithApple(),
-                      const SizedBox(height: 12.0),
+                      // buttonLoginWithApple(),
+                      // const SizedBox(height: 12.0),
                       Visibility(visible: Environment().isDev, child: buttonLoginDev()),
                     ],
                   );

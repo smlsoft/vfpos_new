@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (isUserLoggedIn) {
         final user = await serviceLocator<UserCacheService>().getUser();
 
-        if (F.appFlavor == Flavor.DEDEPOS) {
+        if (F.appFlavor == Flavor.DEDEPOS || F.appFlavor == Flavor.VFPOS) {
           if (user != null) {
             if (user.isDev == 1) {
               Environment().initConfig("DEV");
