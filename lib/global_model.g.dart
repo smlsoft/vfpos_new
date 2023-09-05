@@ -286,6 +286,9 @@ ProfileSettingModel _$ProfileSettingModelFromJson(Map<String, dynamic> json) =>
           .map((e) =>
               ProfileSettingBranchModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      qrpaymentlist: (json['qrpaymentlist'] as List<dynamic>)
+          .map((e) => ProfileQrPaymentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ProfileSettingModelToJson(
@@ -294,6 +297,7 @@ Map<String, dynamic> _$ProfileSettingModelToJson(
       'company': instance.company.toJson(),
       'languagelist': instance.languagelist,
       'configsystem': instance.configsystem.toJson(),
+      'qrpaymentlist': instance.qrpaymentlist.map((e) => e.toJson()).toList(),
       'branch': instance.branch.map((e) => e.toJson()).toList(),
     };
 
@@ -311,6 +315,50 @@ Map<String, dynamic> _$ProfileSettingBranchModelToJson(
     <String, dynamic>{
       'code': instance.code,
       'names': instance.names.map((e) => e.toJson()).toList(),
+    };
+
+ProfileQrPaymentModel _$ProfileQrPaymentModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileQrPaymentModel(
+      guidfixed: json['guidfixed'] as String,
+      code: json['code'] as String,
+      bankcode: json['bankcode'] as String,
+      banknames: (json['banknames'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bookbankcode: json['bookbankcode'] as String,
+      bookbanknames: (json['bookbanknames'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bookbankimages: (json['bookbankimages'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      isactive: json['isactive'] as int,
+      qrtype: json['qrtype'] as int,
+      qrnames: (json['qrnames'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      qrcode: json['qrcode'] as String,
+      logo: json['logo'] as String,
+      apikey: json['apikey'] as String,
+    );
+
+Map<String, dynamic> _$ProfileQrPaymentModelToJson(
+        ProfileQrPaymentModel instance) =>
+    <String, dynamic>{
+      'guidfixed': instance.guidfixed,
+      'code': instance.code,
+      'bankcode': instance.bankcode,
+      'banknames': instance.banknames.map((e) => e.toJson()).toList(),
+      'bookbankcode': instance.bookbankcode,
+      'bookbanknames': instance.bookbanknames.map((e) => e.toJson()).toList(),
+      'bookbankimages': instance.bookbankimages,
+      'isactive': instance.isactive,
+      'qrtype': instance.qrtype,
+      'qrnames': instance.qrnames.map((e) => e.toJson()).toList(),
+      'qrcode': instance.qrcode,
+      'logo': instance.logo,
+      'apikey': instance.apikey,
     };
 
 ProfileSettingConfigSystemModel _$ProfileSettingConfigSystemModelFromJson(

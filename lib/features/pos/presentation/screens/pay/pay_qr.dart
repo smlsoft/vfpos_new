@@ -1,6 +1,5 @@
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_qr_screen.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
@@ -13,7 +12,7 @@ import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:get/get.dart';
 
 class PayQrWidget extends StatefulWidget {
-  final PosProcessModel posProcess;
+  final PosHoldProcessModel posProcess;
   final BuildContext blocContext;
 
   const PayQrWidget({super.key, required this.posProcess, required this.blocContext});
@@ -36,9 +35,9 @@ class PayQrWidgetState extends State<PayQrWidget> {
     widget.blocContext.read<PayScreenBloc>().add(PayScreenRefresh());
   }
 
-  bool saveData({required String providerCode, required String providerName, required payAmount}) {
+  bool saveData({required String providerCode, required String providerName, required payAmount, required String logo}) {
     if (payAmount > 0) {
-      global.payScreenData.qr.add(PayQrModel(provider_code: providerCode, provider_name: providerName, description: descriptionController.text, amount: payAmount));
+      global.payScreenData.qr.add(PayQrModel(provider_code: providerCode, provider_name: providerName, description: descriptionController.text, amount: payAmount, logo: logo));
       return true;
     }
     return false;
@@ -122,7 +121,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
                         color: Colors.green,
                       ),
                       child: Center(
-                        child: Text('${global.language('wallet_amount')} : ${global.moneyFormatAndDot.format(payAmount)} ${global.language('money_symbol')}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        child: Text('${global.language('wallet_amount')} : ${global.moneyFormatAndDot.format(payAmount)} ${global.language('money_symbol')}',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       )),
                   qrList(payAmount),
                 ],
@@ -151,10 +151,12 @@ class PayQrWidgetState extends State<PayQrWidget> {
               children: <Widget>[
                 Column(
                   children: [
-                    Image.asset(
-                      ("assets/images/qrpay/${global.payScreenData.qr[index].provider_code}.png").toLowerCase(),
-                      height: 40,
-                    ),
+                    (global.payScreenData.qr[index].logo.isNotEmpty)
+                        ? Image.network(
+                            global.payScreenData.qr[index].logo,
+                            height: 40,
+                          )
+                        : Container(),
                     Text(global.payScreenData.qr[index].provider_name)
                   ],
                 ),
@@ -225,7 +227,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
     setState(() {});
   }
 
-  void promptPay({required double amount, required PaymentProviderModel provider}) {
+  void promptPay({required double amount, required ProfileQrPaymentModel provider}) {
     refreshEvent();
     if (amount != 0.0) {
       showDialog(
@@ -240,7 +242,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
           }).then((value) {
         if (value) {
           if (value == true) {
-            if (saveData(providerCode: provider.paymentcode, providerName: provider.names[0].name, payAmount: amount)) {
+            if (saveData(providerCode: provider.qrcode, providerName: provider.qrnames[0].name, payAmount: amount, logo: provider.logo)) {
               descriptionController.text = '';
               payAmount = 0.0;
             }
@@ -283,8 +285,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
     double iconHeight = 100;
     double iconWidth = 100;
 
-    List<PaymentProviderModel> providerList = [];
-    providerList.addAll(global.qrPaymentProviderList);
+    List<ProfileQrPaymentModel> providerList = [];
+    providerList.addAll(global.profileSetting.qrpaymentlist);
     return Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -298,8 +300,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
                 height: iconHeight,
                 width: iconWidth,
                 primaryColor: Colors.white,
-                label: (provider.providercode.isEmpty) ? "${provider.names[0].name} : ${provider.bookbankcode}" : "${provider.providercode} : ${provider.names[0].name}",
-                imgAssetPath: ("assets/images/qrpay/${provider.paymentcode}.png").toLowerCase(),
+                label: global.getNameFromLanguage(provider.qrnames, global.userScreenLanguage),
+                imgNetworkPath: provider.logo,
                 onPressed: () {
                   promptPay(amount: amount, provider: provider);
                 })
@@ -308,7 +310,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (global.qrPaymentProviderList.isNotEmpty)
+    return (global.profileSetting.qrpaymentlist.isNotEmpty)
         ? Container(
             width: double.infinity,
             padding: const EdgeInsets.only(left: 4, right: 4),

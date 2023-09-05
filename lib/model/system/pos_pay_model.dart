@@ -13,6 +13,7 @@ class PosPayModel {
   double total_after_discount; // ยอดรวมหลังหักส่วนลด
   double round_amount; // ยอดปัดเศษ
   double total_after_round; // ยอดรวมหลังหักส่วนลดและปัดเศษ
+  double credit_amount; // ยอดเงินเชื่อม
   List<PayCreditCardModel> credit_card; // บัตรเครดิต
   List<PayTransferModel> transfer; // เงินโอน
   List<PayChequeModel> cheque; // เช็ค
@@ -26,6 +27,7 @@ class PosPayModel {
     this.total_after_round = 0,
     this.discount_formula = "",
     this.discount_amount = 0,
+    this.credit_amount = 0,
     this.round_amount = 0,
   })  : credit_card = [],
         transfer = [],
@@ -120,9 +122,10 @@ class PayQrModel {
   String provider_code; // รหัสกระเป๋า เจ้าของเงิน (Provider)
   String provider_name; // เจ้าของเงิน (Provider)
   String description; // รายละเอียด (อื่นๆ)
+  String logo;
   double amount; // จำนวนเงิน
 
-  PayQrModel({this.provider_code = "", this.provider_name = "", this.description = "", required this.amount});
+  PayQrModel({this.provider_code = "", this.provider_name = "", this.description = "", required this.amount, this.logo = ""});
 
   factory PayQrModel.fromJson(Map<String, dynamic> json) => _$PayQrModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayQrModelToJson(this);

@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
+import 'package:dedepos/api/sync/model/posterminal_model.dart';
+import 'package:dedepos/bloc/posterminal_bloc.dart';
 import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/request.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/auth.dart';
+import 'package:dedepos/features/posterminal/domain/entity/posterminal.dart';
 import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/routes/app_routers.dart';
@@ -59,6 +62,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
     } else {
       checkPinCode();
     }
+    context.read<PosTerminalBloc>().add(const PosTerminalLoad());
     countDownTimerStart();
     findTerminalTimerStart();
   }
@@ -84,10 +88,10 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
           global.loginProcess = true;
           bool isDev = result.data[0]['isdev'] != null && result.data[0]['isdev'] == 1;
           if (isDev) {
-            Environment().initConfig("DEV");
+            // Environment().initConfig("DEV");
             serviceLocator<Request>().updateEndpoint();
           } else {
-            Environment().initConfig("PROD");
+            //   Environment().initConfig("PROD");
             serviceLocator<Request>().updateEndpoint();
           }
 
@@ -133,6 +137,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
     if (result.data.isEmpty) {
       await clickHouseExecute("INSERT INTO poscenter.pinlist (pincode,status) VALUES ('${global.posTerminalPinCode}',0)");
     }
+    recheck();
   }
 
   Future<void> initPinCode() async {
@@ -156,87 +161,119 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Center(
-                child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 400),
+    late double sizing;
+    late double PD;
+    late int Cros;
+    if (Util.isLandscape(context)) {
+      sizing = 0.8;
+      PD = 20;
+      Cros = 4;
+    } else {
+      sizing = 0.8;
+      PD = 10;
+      Cros = 2;
+    }
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<PosTerminalBloc, PosTerminalState>(
+            listener: (context, state) {
+              if (state is PosSubmitSuccess) {
+                recheck();
+              } else if (state is PosLoadFailed) {
+                initPinCode();
+                context.read<PosTerminalBloc>().add(const PosTerminalLoad());
+              }
+            },
+          ),
+          BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
+            if (state is AuthenticationInitialState) {
+              context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
+            }
+          }),
+        ],
+        child: BlocBuilder<PosTerminalBloc, PosTerminalState>(builder: (context, state) {
+          return Scaffold(
+              appBar: AppBar(
+                title: (global.posTerminalPinCode.isNotEmpty) ? Text('ดึงข้อมูลเครื่องPOS') : Text('เลือกเครื่อง POS'),
+                centerTitle: true,
+                backgroundColor: const Color(0xFFE27D01),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        context.read<AuthenticationBloc>().add(const UserLogoutEvent());
+                      },
+                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFE27D01)),
+                      child: const Icon(Icons.logout))
+                ],
+              ),
+              body: SafeArea(
+                  child: (state is PosLoadSuccess && (global.posTerminalPinCode.isEmpty || global.posTerminalPinTokenId.isEmpty))
+                      ? Padding(
+                          padding: EdgeInsets.only(left: PD, right: PD, top: 20),
+                          child: GridView.builder(
+                              itemCount: state.posList.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: Cros,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                mainAxisExtent: 150,
+                              ),
+                              itemBuilder: (context, index) {
+                                return cardItem(state.posList[index]);
+                              }),
+                        )
+                      : const Center(child: CircularProgressIndicator())));
+        }));
+  }
+
+  Widget cardItem(PosTerminalModel data) {
+    return Card(
+        elevation: 5,
+        child: ListTile(
+            onTap: (() {
+              context.read<PosTerminalBloc>().add(PosTerminalSubmit(
+                  pinCode: global.posTerminalPinCode.toString(),
+                  shopId: global.appStorage.read("cache_shopid").toString(),
+                  token: global.appStorage.read("token").toString(),
+                  deviceId: data.devicenumber.toString(),
+                  actoken: global.appStorage.read("refresh").toString(),
+                  isdev: global.appStorage.read("isdev").toString()));
+            }),
+            title: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text("ลงทะเบียนเครื่อง POS Terminal", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 20),
-                        const Text("กรุณาแจ้ง รหัสด้านล่างไปยัง Admin แล้วรอการตอบกลับ"),
-                        const Text("เมื่อได้รับอนุมติ โปรแกรมจะเข้าสู่ระบบ Login อัตโนมัติ"),
-                        const SizedBox(height: 50),
-                        Row(
-                          children: [
-                            for (var pinChar in global.posTerminalPinCode.split(''))
-                              Expanded(
-                                  child: Container(
-                                      margin: const EdgeInsets.all(5),
-                                      padding: const EdgeInsets.all(5),
-                                      decoration:
-                                          BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(10), boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 5,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ]),
-                                      child: Text(pinChar, textAlign: TextAlign.center, style: const TextStyle(fontSize: 30))))
-                          ],
+                        const Icon(
+                          Icons.store_outlined,
+                          size: 90,
+                          color: Color(0xFFE27D01),
                         ),
-                        const SizedBox(height: 50),
-                        const Text("กรณีต้องการเปลี่ยนเครื่องไปใช้ข้อมูลอื่น"),
-                        const Text("ให้กดปุ่ม ลงทะเบียนใหม่ แล้วแจ้ง Admin เพื่ออนุมัติการลงทะเบียนใหม่"),
-                        const SizedBox(height: 10),
-                        if (countDownTimer.isActive)
-                          ElevatedButton(
-                              onPressed: () async {
-                                countDownTimer.cancel();
-                                findTerminalTimer.cancel();
-                                await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("ยืนยันการลงทะเบียนใหม่"),
-                                        content: const Text("ข้อมูลในเครื่องจะถูกลบทิ้งทั้งหมด"),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              findTerminalTimerStart();
-                                              countDownTimerStart();
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text("ยกเลิก"),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              global.loginSuccess = false;
-                                              objectBoxDeleteAll();
-                                              await initPinCode();
-                                              findTerminalTimerStart();
-                                              if (mounted) {
-                                                Navigator.of(context).pop();
-                                              }
-                                            },
-                                            child: const Text("ยืนยัน"),
-                                          ),
-                                        ],
-                                      );
-                                    });
-                              },
-                              child: Text("ลงทะเบียนใหม่ภายใน : $countdownSecond วินาที")),
-                        if (countDownTimer.isActive == false)
-                          LoadingAnimationWidget.staggeredDotsWave(
-                            color: Colors.blue,
-                            size: 100,
-                          ),
-                        if (countDownTimer.isActive == false) const Text("รอการอนุมัติด้วยระบบ Merchant")
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          data.devicenumber,
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ],
-                    )))));
+                    ),
+                  )),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(top: 120),
+                  //   child: Center(
+                  //     child: Text(
+                  //       data.name,
+                  //       style: const TextStyle(
+                  //           fontSize: 18, fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
+            )));
   }
 }

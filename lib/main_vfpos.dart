@@ -3,7 +3,7 @@ import 'package:dedepos/features/pos/presentation/screens/pos_secondary_screen.d
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-
+import 'package:dedepos/global.dart' as global;
 import 'app/app_view.dart';
 import 'flavors.dart';
 
@@ -12,6 +12,8 @@ void main() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
+
+  global.applicationName = "DeDe Pos";
   await initializeApp();
   runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
 }

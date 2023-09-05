@@ -15,6 +15,7 @@ import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {
@@ -28,10 +29,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    getConfig();
     Timer(const Duration(seconds: 5), () {
       reload();
     });
     //reload();
+  }
+
+  void getConfig() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    global.posTerminalPinCode = sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+    global.posTerminalPinTokenId = sharedPreferences.getString('pos_terminal_token') ?? "";
+    global.deviceId = sharedPreferences.getString('pos_device_id') ?? "";
   }
 
   void reload() {
@@ -42,10 +51,10 @@ class _SplashScreenState extends State<SplashScreen> {
         if (F.appFlavor == Flavor.DEDEPOS || F.appFlavor == Flavor.VFPOS) {
           if (user != null) {
             if (user.isDev == 1) {
-              Environment().initConfig("DEV");
+              // Environment().initConfig("DEV");
               serviceLocator<Request>().updateEndpoint();
             } else {
-              Environment().initConfig("PROD");
+              // Environment().initConfig("PROD");
               serviceLocator<Request>().updateEndpoint();
             }
           }
@@ -83,7 +92,8 @@ class _SplashScreenState extends State<SplashScreen> {
               context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
               return;
             } else {
-              context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
+              context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
+              // context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
             }
           } else {
             context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);

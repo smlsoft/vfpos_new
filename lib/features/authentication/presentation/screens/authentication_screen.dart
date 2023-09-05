@@ -10,6 +10,7 @@ import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class AuthenticationPage extends StatefulWidget {
@@ -24,6 +25,24 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final TextEditingController _passwordController = TextEditingController(text: '');
 
   Color vfPrimaryColor = const Color(0xFF007BFF);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    resetPrefer();
+    super.initState();
+  }
+
+  void resetPrefer() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('pos_terminal_token', '');
+    sharedPreferences.setString('pos_device_id', '');
+    sharedPreferences.setString('pos_terminal_pin_code', '');
+    global.posTerminalPinCode = "";
+    global.posTerminalPinTokenId = "";
+    global.deviceId = "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,9 +75,14 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     global.appStorage.write("apiUserName", _emailController.text);
                     global.appStorage.write("apiUserPassword", _passwordController.text);
                     global.appStorage.write("token", state.user.token);
+                    global.appStorage.write("refresh", state.user.token);
+                    global.appStorage.write("isdev", state.user.isDev);
+                    context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: state.user));
                     context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
                   } else if (state is AuthenticationAuthenticatedState) {
                     global.appStorage.write("token", state.user.token);
+                    global.appStorage.write("refresh", state.user.token);
+                    global.appStorage.write("isdev", state.user.isDev);
                     context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(

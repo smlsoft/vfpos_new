@@ -163,9 +163,6 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
           (json['amount_after_calc_vat'] as num?)?.toDouble() ?? 0,
       amount_before_calc_vat:
           (json['amount_before_calc_vat'] as num?)?.toDouble() ?? 0,
-      customer_code: json['customer_code'] as String? ?? "",
-      customer_name: json['customer_name'] as String? ?? "",
-      customer_phone: json['customer_phone'] as String? ?? "",
       promotion_list: (json['promotion_list'] as List<dynamic>?)
               ?.map((e) =>
                   PosProcessPromotionModel.fromJson(e as Map<String, dynamic>))
@@ -175,9 +172,6 @@ PosProcessModel _$PosProcessModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$PosProcessModelToJson(PosProcessModel instance) =>
     <String, dynamic>{
-      'customer_code': instance.customer_code,
-      'customer_name': instance.customer_name,
-      'customer_phone': instance.customer_phone,
       'total_piece': instance.total_piece,
       'total_piece_vat': instance.total_piece_vat,
       'total_piece_except_vat': instance.total_piece_except_vat,

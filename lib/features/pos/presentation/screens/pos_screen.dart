@@ -102,12 +102,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   final bool isListen = false;
   final double confidence = 1.0;
   late TabController tabletTabController;
-  SplitViewController splitViewController = SplitViewController(weights: [
-    0.6,
-    0.4
-  ], limits: [
-    WeightLimit(min: 0.1, max: 0.9)
-  ]);
+  SplitViewController splitViewController = SplitViewController(weights: [0.6, 0.4], limits: [WeightLimit(min: 0.1, max: 0.9)]);
   bool showNumericPad = false;
   double showNumericPadTop = 100;
   double showNumericPadLeft = 100;
@@ -133,7 +128,29 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     processEventRefresh(holdCode);
   }
 
-  ProductBarcodeObjectBoxStruct product = ProductBarcodeObjectBoxStruct(barcode: "", color_select: "", image_or_color: true, color_select_hex: "", names: "", name_all: "", prices: "", images_url: "", unit_code: "", unit_names: "", new_line: 0, guid_fixed: "", item_code: "", item_guid: "", descriptions: "", item_unit_code: "", options_json: "", isalacarte: true, ordertypes: "", vat_type: 1, product_count: 0, is_except_vat: false);
+  ProductBarcodeObjectBoxStruct product = ProductBarcodeObjectBoxStruct(
+      barcode: "",
+      color_select: "",
+      image_or_color: true,
+      color_select_hex: "",
+      names: "",
+      name_all: "",
+      prices: "",
+      images_url: "",
+      unit_code: "",
+      unit_names: "",
+      new_line: 0,
+      guid_fixed: "",
+      item_code: "",
+      item_guid: "",
+      descriptions: "",
+      item_unit_code: "",
+      options_json: "",
+      isalacarte: true,
+      ordertypes: "",
+      vat_type: 1,
+      product_count: 0,
+      is_except_vat: false);
   List<ProductOptionModel> productOptions = [];
 
   Future<void> checkSync() async {
@@ -396,7 +413,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           // เพิ่มรายการใหม่ (Extra Check Box)
           List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
           if (posLogSelect.isNotEmpty) {
-            await logHelper.insert(PosLogObjectBoxStruct(guid_code_ref: guidCodeRef, doc_mode: global.posScreenToInt(), guid_ref: guidRef, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, extra_code: extraCode, code: code, price: price, name: name, qty_fixed: qtyForCalc, qty: qtyForCalc, selected: selected, is_except_vat: false));
+            await logHelper.insert(PosLogObjectBoxStruct(
+                guid_code_ref: guidCodeRef,
+                doc_mode: global.posScreenToInt(),
+                guid_ref: guidRef,
+                log_date_time: DateTime.now(),
+                hold_code: global.posHoldActiveCode,
+                command_code: commandCode,
+                extra_code: extraCode,
+                code: code,
+                price: price,
+                name: name,
+                qty_fixed: qtyForCalc,
+                qty: qtyForCalc,
+                selected: selected,
+                is_except_vat: false));
           }
         }
         break;
@@ -418,15 +449,36 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               unitCodeStr = productSelect.unit_code;
               unitNameStr = productSelect.unit_names;
               double price = global.getProductPrice(productSelect.prices, 1);
-              PosLogObjectBoxStruct data = PosLogObjectBoxStruct(log_date_time: DateTime.now(), doc_mode: global.posScreenToInt(), hold_code: global.posHoldActiveCode, command_code: commandCode, barcode: barcode, name: productNameStr, unit_code: unitCodeStr, unit_name: unitNameStr, qty: qtyForCalc, price: price, is_except_vat: productSelect.is_except_vat);
+              PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
+                  log_date_time: DateTime.now(),
+                  doc_mode: global.posScreenToInt(),
+                  hold_code: global.posHoldActiveCode,
+                  command_code: commandCode,
+                  barcode: barcode,
+                  name: productNameStr,
+                  unit_code: unitCodeStr,
+                  unit_name: unitNameStr,
+                  qty: qtyForCalc,
+                  price: price,
+                  is_except_vat: productSelect.is_except_vat);
               findActiveLineByGuid = data.guid_auto_fixed;
               await logHelper.insert(data);
               global.playSound(sound: global.SoundEnum.beep, word: productNameStr);
               widgetMessage = [
-                Text(global.getNameFromJsonLanguage(productNameStr, global.userScreenLanguage), overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                Text(overflow: TextOverflow.ellipsis, "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} ${global.getNameFromJsonLanguage(unitNameStr, global.userScreenLanguage)}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
-                Text(overflow: TextOverflow.ellipsis, "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.cyan)),
-                Text(overflow: TextOverflow.ellipsis, "${global.language("total")} ${global.moneyFormat.format(qtyForCalc * price)} ${global.language("money_symbol")}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+                Text(global.getNameFromJsonLanguage(productNameStr, global.userScreenLanguage),
+                    overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                Text(
+                    overflow: TextOverflow.ellipsis,
+                    "${global.language("qty")} ${global.moneyFormat.format(qtyForCalc)} ${global.getNameFromJsonLanguage(unitNameStr, global.userScreenLanguage)}",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+                Text(
+                    overflow: TextOverflow.ellipsis,
+                    "${global.language("price")} ${global.moneyFormat.format(price)} ${global.language("money_symbol")}",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.cyan)),
+                Text(
+                    overflow: TextOverflow.ellipsis,
+                    "${global.language("total")} ${global.moneyFormat.format(qtyForCalc * price)} ${global.language("money_symbol")}",
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
                 Text("Barcode : $barcode", overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey)),
               ];
               widgetMessageImageUrl = productSelect.images_url;
@@ -460,7 +512,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         // 3=ลดจำนวน - 1
         List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
-          await logHelper.insert(PosLogObjectBoxStruct(doc_mode: global.posScreenToInt(), guid_ref: findActiveLineByGuid, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, qty: qtyForCalc));
+          await logHelper.insert(PosLogObjectBoxStruct(
+              doc_mode: global.posScreenToInt(),
+              guid_ref: findActiveLineByGuid,
+              log_date_time: DateTime.now(),
+              hold_code: global.posHoldActiveCode,
+              command_code: commandCode,
+              qty: qtyForCalc));
           global.playSound(sound: global.SoundEnum.beep, word: global.language("minus") + global.language("one") + unitName);
         } else {
           global.playSound(sound: global.SoundEnum.fail, word: global.language("item_not_found"));
@@ -468,23 +526,48 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         break;
       case 4:
         // 4=แก้จำนวน
-        await logHelper.insert(PosLogObjectBoxStruct(doc_mode: global.posScreenToInt(), guid_ref: findActiveLineByGuid, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, qty: qtyForCalc));
+        await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
+            guid_ref: findActiveLineByGuid,
+            log_date_time: DateTime.now(),
+            hold_code: global.posHoldActiveCode,
+            command_code: commandCode,
+            qty: qtyForCalc));
         break;
       case 5:
         // 5=แก้ราคา
-        await logHelper.insert(PosLogObjectBoxStruct(doc_mode: global.posScreenToInt(), guid_ref: findActiveLineByGuid, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, price: priceForCalc));
+        await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
+            guid_ref: findActiveLineByGuid,
+            log_date_time: DateTime.now(),
+            hold_code: global.posHoldActiveCode,
+            command_code: commandCode,
+            price: priceForCalc));
         break;
       case 6:
         // 6=แก้ส่วนลด
-        await logHelper.insert(PosLogObjectBoxStruct(doc_mode: global.posScreenToInt(), guid_ref: findActiveLineByGuid, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, discount_text: discount));
+        await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
+            guid_ref: findActiveLineByGuid,
+            log_date_time: DateTime.now(),
+            hold_code: global.posHoldActiveCode,
+            command_code: commandCode,
+            discount_text: discount));
         break;
       case 8:
         // 8=แก้หมายเหตุ
-        await logHelper.insert(PosLogObjectBoxStruct(doc_mode: global.posScreenToInt(), guid_ref: findActiveLineByGuid, log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, remark: remark));
+        await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(),
+            guid_ref: findActiveLineByGuid,
+            log_date_time: DateTime.now(),
+            hold_code: global.posHoldActiveCode,
+            command_code: commandCode,
+            remark: remark));
         break;
       case 9:
         // 9=ลบรายการ
-        await logHelper.insert(PosLogObjectBoxStruct(doc_mode: global.posScreenToInt(), log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, guid_ref: findActiveLineByGuid));
+        await logHelper.insert(PosLogObjectBoxStruct(
+            doc_mode: global.posScreenToInt(), log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, guid_ref: findActiveLineByGuid));
         global.playSound(sound: global.SoundEnum.beep, word: global.language("delete") + global.language("line"));
         productOptions.clear();
         break;
@@ -642,7 +725,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     Expanded(
                         flex: 5,
                         // ignore: prefer_interpolation_to_compose_strings
-                        child: Text(global.getNameFromJsonLanguage(detail.item_names, global.userScreenLanguage) + "/" + global.getNameFromJsonLanguage(detail.unit_names, global.userScreenLanguage) + '/' + detail.item_code + "/" + detail.barcode)),
+                        child: Text(global.getNameFromJsonLanguage(detail.item_names, global.userScreenLanguage) +
+                            "/" +
+                            global.getNameFromJsonLanguage(detail.unit_names, global.userScreenLanguage) +
+                            '/' +
+                            detail.item_code +
+                            "/" +
+                            detail.barcode)),
                     Expanded(flex: 2, child: Align(alignment: Alignment.centerRight, child: Text(global.moneyFormat.format(global.getProductPrice(detail.prices, 1))))),
                     Expanded(
                         flex: 1,
@@ -678,7 +767,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                                 height: 500,
                                                 child: NumberPad(
                                                     header: global.language("qty"),
-                                                    title: Text('${global.getNameFromJsonLanguage(detail.item_names, global.userScreenLanguage)} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_names, global.userScreenLanguage)}',
+                                                    title: Text(
+                                                        '${global.getNameFromJsonLanguage(detail.item_names, global.userScreenLanguage)} ${global.language("qty")} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_names, global.userScreenLanguage)}',
                                                         style: const TextStyle(
                                                           fontSize: 20,
                                                           fontWeight: FontWeight.bold,
@@ -747,8 +837,35 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   Future<void> processEvent({required String barcode, required String holdCode}) async {
     if (barcode.isNotEmpty) {
-      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ?? ProductBarcodeObjectBoxStruct(barcode: "", names: "", name_all: "", prices: "", unit_code: "", unit_names: "", vat_type: 1, new_line: 0, images_url: "", guid_fixed: "", item_code: "", item_guid: "", descriptions: "", item_unit_code: "", color_select: "", image_or_color: true, color_select_hex: "", options_json: "", isalacarte: true, ordertypes: "", product_count: 0, is_except_vat: false);
-      productOptions = (product.options_json == "null") ? [] : (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
+      product = await ProductBarcodeHelper().selectByBarcodeFirst(barcode) ??
+          ProductBarcodeObjectBoxStruct(
+              barcode: "",
+              names: "",
+              name_all: "",
+              prices: "",
+              unit_code: "",
+              unit_names: "",
+              vat_type: 1,
+              new_line: 0,
+              images_url: "",
+              guid_fixed: "",
+              item_code: "",
+              item_guid: "",
+              descriptions: "",
+              item_unit_code: "",
+              color_select: "",
+              image_or_color: true,
+              color_select_hex: "",
+              options_json: "",
+              isalacarte: true,
+              ordertypes: "",
+              product_count: 0,
+              is_except_vat: false);
+      try {
+        productOptions = (product.options_json.isEmpty) ? [] : (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
+      } catch (e) {
+        productOptions = [];
+      }
     }
     posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((value) {
       if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
@@ -827,7 +944,18 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         productOptions[groupIndex].choices[detailIndex].selected = value;
         ProductChoiceModel detail = productOptions[groupIndex].choices[detailIndex];
         // เพิ่ม Log รายการที่เลือก
-        logInsert(guidCodeRef: detail.guid, commandCode: 101, guidRef: findActiveLineByGuid, barcode: detail.barcode ?? "", price: double.tryParse(detail.price) ?? 0.0, qty: detail.qty.toString(), extraCode: "", closeExtra: false, name: jsonEncode(detail.names), codeDefault: "", selected: detail.selected ?? false);
+        logInsert(
+            guidCodeRef: detail.guid,
+            commandCode: 101,
+            guidRef: findActiveLineByGuid,
+            barcode: detail.barcode ?? "",
+            price: double.tryParse(detail.price) ?? 0.0,
+            qty: detail.qty.toString(),
+            extraCode: "",
+            closeExtra: false,
+            name: jsonEncode(detail.names),
+            codeDefault: "",
+            selected: detail.selected ?? false);
         global.playSound(sound: global.SoundEnum.beep, word: global.getNameFromLanguage(detail.names, global.userScreenLanguage));
         processEvent(barcode: "", holdCode: global.posHoldActiveCode);
       } else {
@@ -1008,7 +1136,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             height: double.infinity,
             width: double.infinity,
             decoration: boxDecoration,
-            child: productLevelLabelWidget(imageUrl: product.images_url, name: global.getNameFromJsonLanguage(product.names, global.userScreenLanguage), unitName: global.getNameFromJsonLanguage(product.unit_names, global.userScreenLanguage), price: global.getProductPrice(product.prices, 1)),
+            child: productLevelLabelWidget(
+                imageUrl: product.images_url,
+                name: global.getNameFromJsonLanguage(product.names, global.userScreenLanguage),
+                unitName: global.getNameFromJsonLanguage(product.unit_names, global.userScreenLanguage),
+                price: global.getProductPrice(product.prices, 1)),
           ),
           if (product.product_count != 0)
             Positioned(
@@ -1131,10 +1263,15 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                       value: productOptions[groupIndex].choices[detailIndex].selected,
                                     ))),
                             const SizedBox(width: 5),
-                            Flexible(child: Text(global.getNameFromLanguage(productOptions[groupIndex].choices[detailIndex].names, global.userScreenLanguage), style: const TextStyle(fontSize: 12, color: Colors.black)))
+                            Flexible(
+                                child: Text(global.getNameFromLanguage(productOptions[groupIndex].choices[detailIndex].names, global.userScreenLanguage),
+                                    style: const TextStyle(fontSize: 12, color: Colors.black)))
                           ],
                         )),
-                        ((double.tryParse(productOptions[groupIndex].choices[detailIndex].price!) ?? 0) == 0) ? Container() : Text("+${productOptions[groupIndex].choices[detailIndex].price}", style: const TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold)),
+                        ((double.tryParse(productOptions[groupIndex].choices[detailIndex].price!) ?? 0) == 0)
+                            ? Container()
+                            : Text("+${productOptions[groupIndex].choices[detailIndex].price}",
+                                style: const TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold)),
                       ],
                     ))))
     ]);
@@ -1175,15 +1312,27 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 const SizedBox(width: 5),
                               ],
                             ),
-                          Flexible(child: Text("${global.getNameFromJsonLanguage(product.names, global.userScreenLanguage)}/${global.getNameFromJsonLanguage(product.unit_names, global.userScreenLanguage)}", maxLines: 2, softWrap: false, overflow: TextOverflow.fade, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)))
+                          Flexible(
+                              child: Text(
+                                  "${global.getNameFromJsonLanguage(product.names, global.userScreenLanguage)}/${global.getNameFromJsonLanguage(product.unit_names, global.userScreenLanguage)}",
+                                  maxLines: 2,
+                                  softWrap: false,
+                                  overflow: TextOverflow.fade,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)))
                         ],
                       ),
                     for (var groupIndex = 0; groupIndex < productOptions.length; groupIndex++)
                       Column(children: [
                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                          Flexible(child: Text(global.getNameFromLanguage(productOptions[groupIndex].names, global.userScreenLanguage), style: const TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.bold))),
+                          Flexible(
+                              child: Text(global.getNameFromLanguage(productOptions[groupIndex].names, global.userScreenLanguage),
+                                  style: const TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.bold))),
                           const SizedBox(width: 10, height: 10),
-                          (productOptions[groupIndex].maxselect > 1) ? Flexible(child: Text("${global.language("max")} ${productOptions[groupIndex].maxselect} ${global.language("list")}", style: const TextStyle(fontSize: 10, color: Colors.red))) : const Flexible(child: Text("เลือกได้หนึ่งอย่าง", style: TextStyle(fontSize: 10, color: Colors.red)))
+                          (productOptions[groupIndex].maxselect > 1)
+                              ? Flexible(
+                                  child: Text("${global.language("max")} ${productOptions[groupIndex].maxselect} ${global.language("list")}",
+                                      style: const TextStyle(fontSize: 10, color: Colors.red)))
+                              : const Flexible(child: Text("เลือกได้หนึ่งอย่าง", style: TextStyle(fontSize: 10, color: Colors.red)))
                         ]),
                         selectProductLevelExtraListCheckWidget(groupIndex)
                       ])
@@ -1373,9 +1522,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     PointerDeviceKind.mouse,
                   },
                 ),
-                child: ListView(scrollDirection: Axis.horizontal, physics: const AlwaysScrollableScrollPhysics(), children: [
-                  for (final value in categoryList) selectProductLevelCardWidget(value, gridItemSize, true, widthHeight)
-                ])))
+                child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [for (final value in categoryList) selectProductLevelCardWidget(value, gridItemSize, true, widthHeight)])))
       ],
     );
   }
@@ -1390,7 +1540,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           SizedBox(
             height: 250,
             width: double.infinity,
-            child: transScreen(mode: 1, barcode: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess.details[activeLineNumber].barcode),
+            child: transScreen(
+                mode: 1, barcode: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess.details[activeLineNumber].barcode),
           ),
         selectProductLevelSelectWidget()
       ],
@@ -1458,7 +1609,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 flex: 7,
                 child: Text(global.language("item_grid_description"), style: textStyle.copyWith(fontSize: fontSize), overflow: TextOverflow.ellipsis),
               ),
-              Expanded(flex: 2, child: Text(global.language("item_grid_total"), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize), overflow: TextOverflow.ellipsis)),
+              Expanded(
+                  flex: 2,
+                  child: Text(global.language("item_grid_total"), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize), overflow: TextOverflow.ellipsis)),
             ],
           ));
     });
@@ -1472,9 +1625,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         children: [
           Expanded(
             flex: 10,
-            child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
+            child: Text(
+                "${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}",
+                style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
           ),
-          Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+          Expanded(
+              flex: 2,
+              child: Text(global.moneyFormatAndDot.format(process.detail_total_amount),
+                  textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
         ],
       ),
     );
@@ -1487,7 +1645,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               flex: 10,
               child: Text("สินค้ามีภาษี : ${global.moneyFormat.format(process.total_piece_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
             ),
-            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
           ],
         ),
       );
@@ -1496,9 +1655,12 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           children: [
             Expanded(
               flex: 10,
-              child: Text("สินค้ายกเว้นภาษี : ${global.moneyFormat.format(process.total_piece_except_vat)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+              child: Text("สินค้ายกเว้นภาษี : ${global.moneyFormat.format(process.total_piece_except_vat)} ${global.language("piece")}",
+                  style: textStyle.copyWith(fontSize: fontSize)),
             ),
-            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_item_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 2,
+                child: Text(global.moneyFormatAndDot.format(process.total_item_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
           ],
         ),
       );
@@ -1513,7 +1675,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               flex: 10,
               child: Text("ส่วนลดสินค้า : ${process.detail_discount_formula}", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
             ),
-            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+            Expanded(
+                flex: 2,
+                child: Text(global.moneyFormatAndDot.format(process.detail_total_discount),
+                    textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
           ],
         ),
       );
@@ -1526,7 +1691,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 flex: 10,
                 child: Text("$beforeWordส่วนลดสินค้ามีภาษี", style: textStyle.copyWith(fontSize: fontSize)),
               ),
-              Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+              Expanded(
+                  flex: 2,
+                  child: Text(global.moneyFormatAndDot.format(process.total_discount_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
             ],
           ),
         );
@@ -1540,7 +1707,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 flex: 10,
                 child: Text("$beforeWordส่วนลดสินค้ายกเว้นภาษี", style: textStyle.copyWith(fontSize: fontSize)),
               ),
-              Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_discount_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+              Expanded(
+                  flex: 2,
+                  child:
+                      Text(global.moneyFormatAndDot.format(process.total_discount_except_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
             ],
           ),
         );
@@ -1554,7 +1724,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               flex: 10,
               child: Text("มูลค่าก่อนภาษี", style: textStyle.copyWith(fontSize: fontSize)),
             ),
-            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_before_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_before_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
           ],
         ),
       );
@@ -1567,7 +1738,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               flex: 10,
               child: Text("ภาษีมูลค่าเพิ่ม", style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
             ),
-            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_vat_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+            Expanded(
+                flex: 2,
+                child: Text(global.moneyFormatAndDot.format(process.total_vat_amount),
+                    textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
           ],
         ),
       );
@@ -1581,7 +1755,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               flex: 10,
               child: Text("มูลค่าสินค้าหลังคิดภาษี", style: textStyle.copyWith(fontSize: fontSize)),
             ),
-            Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_after_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+            Expanded(
+                flex: 2, child: Text(global.moneyFormatAndDot.format(process.amount_after_calc_vat), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
           ],
         ),
       );
@@ -1606,7 +1781,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           flex: 10,
           child: Text(global.language("total"), style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold)),
         ),
-        Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+        Expanded(
+            flex: 2,
+            child: Text(global.moneyFormatAndDot.format(process.total_amount),
+                textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
       ],
     ));
     return footer;
@@ -1619,7 +1797,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     footer.add(Row(children: [
       Expanded(
         flex: 10,
-        child: Text("${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}", style: textStyle.copyWith(fontSize: fontSize)),
+        child: Text(
+            "${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}",
+            style: textStyle.copyWith(fontSize: fontSize)),
       ),
       Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
     ]));
@@ -1691,7 +1871,19 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     });
   }
 
-  Widget detailWidget({required String productName, bool fullDetail = false, required bool isExtra, double qty = 0, double price = 0.0, double priceOriginal = 0.0, bool isActive = false, required double totalAmount, required TextStyle textStyle, required String barcode, required String unitName, required String imageUrl}) {
+  Widget detailWidget(
+      {required String productName,
+      bool fullDetail = false,
+      required bool isExtra,
+      double qty = 0,
+      double price = 0.0,
+      double priceOriginal = 0.0,
+      bool isActive = false,
+      required double totalAmount,
+      required TextStyle textStyle,
+      required String barcode,
+      required String unitName,
+      required String imageUrl}) {
     return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       double fontSize = (constraints.maxWidth / 50) * listTextHeight;
       List<TextSpan> productTextSpan = [];
@@ -1702,7 +1894,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           productTextSpan.add(TextSpan(text: " ", style: textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
         }
         if (price != priceOriginal) {
-          productTextSpan.add(TextSpan(text: " @${global.moneyFormat.format(priceOriginal)}", style: textStyle.copyWith(fontSize: fontSize, color: Colors.red, decoration: TextDecoration.lineThrough)));
+          productTextSpan.add(TextSpan(
+              text: " @${global.moneyFormat.format(priceOriginal)}", style: textStyle.copyWith(fontSize: fontSize, color: Colors.red, decoration: TextDecoration.lineThrough)));
         }
         if (price * qty != totalAmount || qty != 1 || price != priceOriginal) {
           productTextSpan.add(TextSpan(text: " ", style: textStyle.copyWith(fontSize: fontSize, color: Colors.grey)));
@@ -1743,7 +1936,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                         errorWidget: (context, url, error) => const Icon(Icons.error),
                       )))
               ])),
-          Expanded(flex: 2, child: (totalAmount == 0) ? Container() : Text(global.moneyFormat.format(totalAmount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
+          Expanded(
+              flex: 2,
+              child: (totalAmount == 0)
+                  ? Container()
+                  : Text(global.moneyFormat.format(totalAmount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
         ],
       );
     });
@@ -1760,16 +1957,69 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       extraAmount += extra.total_amount;
     }
     List<Widget> columnList = [];
-    columnList.add(detailWidget(isActive: isActive, fullDetail: true, isExtra: false, productName: description, qty: detail.qty, price: detail.price, priceOriginal: detail.price_original, totalAmount: detail.total_amount, textStyle: textStyle, barcode: detail.barcode, unitName: global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage), imageUrl: detail.image_url));
+    columnList.add(detailWidget(
+        isActive: isActive,
+        fullDetail: true,
+        isExtra: false,
+        productName: description,
+        qty: detail.qty,
+        price: detail.price,
+        priceOriginal: detail.price_original,
+        totalAmount: detail.total_amount,
+        textStyle: textStyle,
+        barcode: detail.barcode,
+        unitName: global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage),
+        imageUrl: detail.image_url));
     for (final extra in detail.extra) {
-      columnList.add(detailWidget(isExtra: true, productName: global.getNameFromJsonLanguage(extra.item_name, global.userScreenLanguage), qty: (extra.qty == 0) ? 0 : extra.qty, price: extra.price, priceOriginal: detail.price_original, totalAmount: (extra.price == 0) ? 0 : extra.total_amount, unitName: "", barcode: "", textStyle: extraTextStyle, imageUrl: ""));
+      columnList.add(detailWidget(
+          isExtra: true,
+          productName: global.getNameFromJsonLanguage(extra.item_name, global.userScreenLanguage),
+          qty: (extra.qty == 0) ? 0 : extra.qty,
+          price: extra.price,
+          priceOriginal: detail.price_original,
+          totalAmount: (extra.price == 0) ? 0 : extra.total_amount,
+          unitName: "",
+          barcode: "",
+          textStyle: extraTextStyle,
+          imageUrl: ""));
     }
     if (extraAmount != 0) {
-      columnList.add(detailWidget(isExtra: false, productName: "${global.language("total")} : ${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}/${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)}", qty: 0, price: 0, priceOriginal: detail.price_original, unitName: "", totalAmount: detail.total_amount + extraAmount, textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.black), barcode: detail.barcode, imageUrl: ""));
+      columnList.add(detailWidget(
+          isExtra: false,
+          productName:
+              "${global.language("total")} : ${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}/${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)}",
+          qty: 0,
+          price: 0,
+          priceOriginal: detail.price_original,
+          unitName: "",
+          totalAmount: detail.total_amount + extraAmount,
+          textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.black),
+          barcode: detail.barcode,
+          imageUrl: ""));
     }
     if (detail.discount != 0) {
-      columnList.add(detailWidget(isExtra: false, productName: "${global.language("discount")} : ${detail.discount_text}", qty: 0, price: 0, priceOriginal: detail.price_original, unitName: "", totalAmount: detail.discount * -1, textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.red), barcode: detail.barcode, imageUrl: ""));
-      columnList.add(detailWidget(isExtra: false, productName: "${global.language("after_discount")} : ${detail.discount_text}", qty: 0, price: 0, priceOriginal: detail.price_original, unitName: "", totalAmount: (detail.total_amount + extraAmount) - detail.discount, textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.blue), barcode: detail.barcode, imageUrl: ""));
+      columnList.add(detailWidget(
+          isExtra: false,
+          productName: "${global.language("discount")} : ${detail.discount_text}",
+          qty: 0,
+          price: 0,
+          priceOriginal: detail.price_original,
+          unitName: "",
+          totalAmount: detail.discount * -1,
+          textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.red),
+          barcode: detail.barcode,
+          imageUrl: ""));
+      columnList.add(detailWidget(
+          isExtra: false,
+          productName: "${global.language("after_discount")} : ${detail.discount_text}",
+          qty: 0,
+          price: 0,
+          priceOriginal: detail.price_original,
+          unitName: "",
+          totalAmount: (detail.total_amount + extraAmount) - detail.discount,
+          textStyle: TextStyle(fontSize: 14, fontWeight: textStyle.fontWeight, color: Colors.blue),
+          barcode: detail.barcode,
+          imageUrl: ""));
     }
     return Column(children: columnList);
   }
@@ -1798,7 +2048,30 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                   findActiveLineByGuid = global.posHoldProcessResult[holdIndex].posProcess.details[index].guid;
                   global.posHoldProcessResult[holdIndex].posProcess.select_promotion_temp_list.clear();
 
-                  product = await ProductBarcodeHelper().selectByBarcodeFirst(global.posHoldProcessResult[holdIndex].posProcess.details[index].barcode) ?? ProductBarcodeObjectBoxStruct(barcode: "", color_select: "", image_or_color: true, color_select_hex: "", names: "", name_all: "", images_url: "", prices: "", unit_code: "", unit_names: "", new_line: 0, guid_fixed: "", item_code: "", item_guid: "", vat_type: 1, descriptions: "", item_unit_code: "", options_json: "", isalacarte: true, ordertypes: "", product_count: 0, is_except_vat: false);
+                  product = await ProductBarcodeHelper().selectByBarcodeFirst(global.posHoldProcessResult[holdIndex].posProcess.details[index].barcode) ??
+                      ProductBarcodeObjectBoxStruct(
+                          barcode: "",
+                          color_select: "",
+                          image_or_color: true,
+                          color_select_hex: "",
+                          names: "",
+                          name_all: "",
+                          images_url: "",
+                          prices: "",
+                          unit_code: "",
+                          unit_names: "",
+                          new_line: 0,
+                          guid_fixed: "",
+                          item_code: "",
+                          item_guid: "",
+                          vat_type: 1,
+                          descriptions: "",
+                          item_unit_code: "",
+                          options_json: "",
+                          isalacarte: true,
+                          ordertypes: "",
+                          product_count: 0,
+                          is_except_vat: false);
                   setState(() {
                     productOptions = (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
                   });
@@ -1841,7 +2114,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               height: 500,
                               child: NumberPad(
                                   header: global.language("qty"),
-                                  title: Text('${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)}',
+                                  title: Text(
+                                      '${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)}',
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -1911,7 +2185,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 height: 500,
                                 child: DiscountPad(
                                     header: global.language("discount"),
-                                    title: Text('${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')}',
+                                    title: Text(
+                                        '${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')}',
                                         style: const TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -1985,23 +2260,28 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     builder: (context) {
                       return StatefulBuilder(
                         builder: (context, setState) {
-                          return AlertDialog(title: Text(global.language('delete')), content: Text('${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')} ${global.language('delete_confirm')}'), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), actions: <Widget>[
-                            ElevatedButton(
-                              child: Text(global.language('delete')),
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                logInsert(commandCode: 9, guid: findActiveLineByGuid);
-                                global.playSound(sound: global.SoundEnum.buttonTing);
-                                //selectProductExtraList.clear();
-                              },
-                            ),
-                            ElevatedButton(
-                              child: Text(global.language('cancel')),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ]);
+                          return AlertDialog(
+                              title: Text(global.language('delete')),
+                              content: Text(
+                                  '${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)} ${global.language('qty')} ${global.moneyFormat.format(detail.qty)} ${global.getNameFromJsonLanguage(detail.unit_name, global.userScreenLanguage)} ${global.language('price')} ${global.moneyFormat.format(detail.price)} ${global.language('money_symbol')} ${global.language('delete_confirm')}'),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  child: Text(global.language('delete')),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    logInsert(commandCode: 9, guid: findActiveLineByGuid);
+                                    global.playSound(sound: global.SoundEnum.buttonTing);
+                                    //selectProductExtraList.clear();
+                                  },
+                                ),
+                                ElevatedButton(
+                                  child: Text(global.language('cancel')),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ]);
                         },
                       );
                     });
@@ -2082,9 +2362,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             child: NumPadButton(
                               margin: 2,
                               text: '7',
-                              callBack: () => {
-                                textInputAdd("7")
-                              },
+                              callBack: () => {textInputAdd("7")},
                             ),
                           ),
                           Expanded(
@@ -2092,18 +2370,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               child: NumPadButton(
                                 margin: 2,
                                 text: '8',
-                                callBack: () => {
-                                  textInputAdd("8")
-                                },
+                                callBack: () => {textInputAdd("8")},
                               )),
                           Expanded(
                               flex: 2,
                               child: NumPadButton(
                                 margin: 2,
                                 text: '9',
-                                callBack: () => {
-                                  textInputAdd("9")
-                                },
+                                callBack: () => {textInputAdd("9")},
                               )),
                           Expanded(
                               flex: 2,
@@ -2129,27 +2403,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             child: NumPadButton(
                               margin: 2,
                               text: '4',
-                              callBack: () => {
-                                textInputAdd("4")
-                              },
+                              callBack: () => {textInputAdd("4")},
                             )),
                         Expanded(
                             flex: 2,
                             child: NumPadButton(
                               margin: 2,
                               text: '5',
-                              callBack: () => {
-                                textInputAdd("5")
-                              },
+                              callBack: () => {textInputAdd("5")},
                             )),
                         Expanded(
                             flex: 2,
                             child: NumPadButton(
                               margin: 2,
                               text: '6',
-                              callBack: () => {
-                                textInputAdd("6")
-                              },
+                              callBack: () => {textInputAdd("6")},
                             )),
                         Expanded(
                             flex: 2,
@@ -2157,9 +2425,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               margin: 2,
                               icon: Icons.add,
                               textAndIconColor: Colors.black,
-                              callBack: () => {
-                                textInputAdd("+")
-                              },
+                              callBack: () => {textInputAdd("+")},
                             )),
                       ])),
                       Expanded(
@@ -2169,27 +2435,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                             child: NumPadButton(
                               margin: 2,
                               text: '1',
-                              callBack: () => {
-                                textInputAdd("1")
-                              },
+                              callBack: () => {textInputAdd("1")},
                             )),
                         Expanded(
                             flex: 2,
                             child: NumPadButton(
                               margin: 2,
                               text: '2',
-                              callBack: () => {
-                                textInputAdd("2")
-                              },
+                              callBack: () => {textInputAdd("2")},
                             )),
                         Expanded(
                             flex: 2,
                             child: NumPadButton(
                               margin: 2,
                               text: '3',
-                              callBack: () => {
-                                textInputAdd("3")
-                              },
+                              callBack: () => {textInputAdd("3")},
                             )),
                         Expanded(
                             flex: 2,
@@ -2206,18 +2466,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               child: NumPadButton(
                                 margin: 2,
                                 text: '.',
-                                callBack: () => {
-                                  textInputAdd(".")
-                                },
+                                callBack: () => {textInputAdd(".")},
                               )),
                           Expanded(
                               flex: 2,
                               child: NumPadButton(
                                 margin: 2,
                                 text: '0',
-                                callBack: () => {
-                                  textInputAdd("0")
-                                },
+                                callBack: () => {textInputAdd("0")},
                               )),
                           Expanded(
                               flex: 4,
@@ -2241,9 +2497,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 text: 'D',
                                 margin: 2,
                                 color: Colors.cyan[100],
-                                callBack: () => {
-                                  textInputAdd("D")
-                                },
+                                callBack: () => {textInputAdd("D")},
                               )),
                           Expanded(
                               flex: 2,
@@ -2251,9 +2505,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 margin: 2,
                                 text: '%',
                                 color: Colors.cyan[100],
-                                callBack: () => {
-                                  textInputAdd("%")
-                                },
+                                callBack: () => {textInputAdd("%")},
                               )),
                           Expanded(
                               flex: 2,
@@ -2261,9 +2513,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                 text: 'P',
                                 margin: 2,
                                 color: Colors.green[100],
-                                callBack: () => {
-                                  textInputAdd("P")
-                                },
+                                callBack: () => {textInputAdd("P")},
                               )),
                         ]),
                       ),
@@ -2296,7 +2546,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         type: PageTransitionType.rightToLeft,
         child: PayScreenPage(
           defaultTabIndex: tabIndex,
-          posProcess: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess,
+          posProcess: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)],
         ),
       ),
     );
@@ -2467,7 +2717,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(global.moneyFormat.format(global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess.total_amount), style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      Text(global.moneyFormat.format(global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess.total_amount),
+                          style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
                       const SizedBox(
                         width: 10,
                       ),
@@ -2650,11 +2901,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         onPressed: () {
           // Navigator.pop(context);
 
-          if (F.appFlavor == Flavor.VFPOS) {
-            context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
-          } else {
-            context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
-          }
+          // if (F.appFlavor == Flavor.VFPOS) {
+          //   context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
+          // } else {
+          context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
+          //}
         },
       )
     ];
@@ -2730,14 +2981,18 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     return SingleChildScrollView(
         child: Column(children: [
-      Text("${global.language("total_amount")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_amount)} ${global.language("money_symbol")}", style: textStyleTotal),
-      Text("${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}", style: textStyleTotal),
+      Text("${global.language("total_amount")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_amount)} ${global.language("money_symbol")}",
+          style: textStyleTotal),
+      Text("${global.language("total_qty")} ${global.moneyFormat.format(global.posHoldProcessResult[holdIndex].posProcess.total_piece)} ${global.language("piece")}",
+          style: textStyleTotal),
       if (global.posHoldProcessResult[holdIndex].posProcess.promotion_list.isNotEmpty)
         for (var detail in global.posHoldProcessResult[holdIndex].posProcess.promotion_list)
           Row(
             children: [
               Expanded(flex: 12, child: Align(alignment: Alignment.topLeft, child: Text(detail.promotion_name, style: const TextStyle(fontSize: 10, color: Colors.black)))),
-              Expanded(flex: 3, child: Align(alignment: Alignment.topRight, child: Text(global.moneyFormat.format(detail.discount), style: const TextStyle(fontSize: 10, color: Colors.red)))),
+              Expanded(
+                  flex: 3,
+                  child: Align(alignment: Alignment.topRight, child: Text(global.moneyFormat.format(detail.discount), style: const TextStyle(fontSize: 10, color: Colors.red)))),
             ],
           ),
     ]));
@@ -2790,7 +3045,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                               child: ListView(scrollDirection: Axis.vertical, children: <Widget>[
                                 for (int index = 0; index < global.posHoldProcessResult[holdIndex].posProcess.details.length; index++)
                                   Container(
-                                    child: (barcode != global.posHoldProcessResult[holdIndex].posProcess.details[index].barcode) ? Container() : detail(global.posHoldProcessResult[holdIndex].posProcess.details[index], index),
+                                    child: (barcode != global.posHoldProcessResult[holdIndex].posProcess.details[index].barcode)
+                                        ? Container()
+                                        : detail(global.posHoldProcessResult[holdIndex].posProcess.details[index], index),
                                   )
                               ]))),
                   detailFooterWidget(),
@@ -2847,9 +3104,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                       readOnly: true,
                                       controller: receiveAmount,
                                       keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly
-                                      ],
+                                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                       decoration: InputDecoration(
                                         icon: const Icon(Icons.money),
                                         hintText: global.language('money_amount'),
@@ -2888,7 +3143,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
                                             global.playSound(word: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
 
-                                            showMessageDialog(header: "บันทึกสำเร็จ", msg: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}", type: "success");
+                                            showMessageDialog(
+                                                header: "บันทึกสำเร็จ", msg: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}", type: "success");
                                           },
                                           child: Text(global.language("save")),
                                         ),
@@ -2914,27 +3170,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                                 child: NumPadButton(
                                                   text: '7',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("7")
-                                                  },
+                                                  callBack: () => {textInputChanged("7")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '8',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("8")
-                                                  },
+                                                  callBack: () => {textInputChanged("8")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '9',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("9")
-                                                  },
+                                                  callBack: () => {textInputChanged("9")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
@@ -2952,27 +3202,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                                 child: NumPadButton(
                                                   text: '4',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("4")
-                                                  },
+                                                  callBack: () => {textInputChanged("4")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '5',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("5")
-                                                  },
+                                                  callBack: () => {textInputChanged("5")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '6',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("6")
-                                                  },
+                                                  callBack: () => {textInputChanged("6")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
@@ -2990,36 +3234,28 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                                 child: NumPadButton(
                                                   text: '1',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("1")
-                                                  },
+                                                  callBack: () => {textInputChanged("1")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '2',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("2")
-                                                  },
+                                                  callBack: () => {textInputChanged("2")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '3',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("3")
-                                                  },
+                                                  callBack: () => {textInputChanged("3")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: 'C',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    clearText()
-                                                  },
+                                                  callBack: () => {clearText()},
                                                 )),
                                           ])),
                                       SizedBox(
@@ -3030,27 +3266,21 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                                 child: NumPadButton(
                                                   text: '0',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged("0")
-                                                  },
+                                                  callBack: () => {textInputChanged("0")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   text: '.',
                                                   margin: 2,
-                                                  callBack: () => {
-                                                    textInputChanged(".")
-                                                  },
+                                                  callBack: () => {textInputChanged(".")},
                                                 )),
                                             Expanded(
                                                 flex: 2,
                                                 child: NumPadButton(
                                                   margin: 2,
                                                   icon: Icons.backspace,
-                                                  callBack: () => {
-                                                    backSpace()
-                                                  },
+                                                  callBack: () => {backSpace()},
                                                 )),
                                             Expanded(
                                                 flex: 2,
@@ -3190,7 +3420,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             Row(
               children: [
                 Expanded(flex: 12, child: Align(alignment: Alignment.topLeft, child: Text(detail.promotion_name, style: const TextStyle(fontSize: 12, color: Colors.black)))),
-                Expanded(flex: 3, child: Align(alignment: Alignment.topRight, child: Text(global.moneyFormat.format(detail.discount), style: const TextStyle(fontSize: 12, color: Colors.red)))),
+                Expanded(
+                    flex: 3,
+                    child: Align(alignment: Alignment.topRight, child: Text(global.moneyFormat.format(detail.discount), style: const TextStyle(fontSize: 12, color: Colors.red)))),
               ],
             )
         ]));
@@ -3213,20 +3445,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           setState(() {
             if (splitViewMode == 1) {
               splitViewMode = 2;
-              splitViewController = SplitViewController(weights: [
-                0.4,
-                0.6
-              ], limits: [
-                WeightLimit(min: 0.2, max: 0.8)
-              ]);
+              splitViewController = SplitViewController(weights: [0.4, 0.6], limits: [WeightLimit(min: 0.2, max: 0.8)]);
             } else {
               splitViewMode = 1;
-              splitViewController = SplitViewController(weights: [
-                0.6,
-                0.4
-              ], limits: [
-                WeightLimit(min: 0.2, max: 0.8)
-              ]);
+              splitViewController = SplitViewController(weights: [0.6, 0.4], limits: [WeightLimit(min: 0.2, max: 0.8)]);
             }
           });
         });
@@ -3566,16 +3788,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ])),
       ]),
     );
-    String customerCode = "";
-    String customerName = "";
-    String customerPhone = "";
     String saleCode = "";
     String saleName = "";
     int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     if (holdIndex != -1) {
-      customerCode = global.posHoldProcessResult[holdIndex].customerCode.trim();
-      customerName = global.posHoldProcessResult[holdIndex].customerName.trim();
-      customerPhone = global.posHoldProcessResult[holdIndex].customerPhone.trim();
       saleCode = global.posHoldProcessResult[holdIndex].saleCode.trim();
       saleName = global.posHoldProcessResult[holdIndex].saleName.trim();
     }
@@ -3599,7 +3815,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               padding: const EdgeInsets.only(left: 8, right: 4),
               decoration: BoxDecoration(color: Colors.blue.shade100, borderRadius: BorderRadius.circular(2), border: Border.all(width: 0, color: Colors.blue)),
               child: Column(children: [
-                if (customerCode.isNotEmpty)
+                if (global.posHoldProcessResult[holdIndex].customerCode.isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
@@ -3609,7 +3825,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        "$customerName ($customerCode)",
+                        "${global.posHoldProcessResult[holdIndex].customerName} (${global.posHoldProcessResult[holdIndex].customerCode})",
                         style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                       )
                     ])),
@@ -3624,7 +3840,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       },
                     )
                   ]),
-                if (customerCode.isEmpty && customerPhone.isNotEmpty)
+                if (global.posHoldProcessResult[holdIndex].customerCode.isEmpty && global.posHoldProcessResult[holdIndex].customerPhone.isNotEmpty)
                   Row(children: [
                     Expanded(
                         child: Row(children: [
@@ -3634,7 +3850,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        "$customerName ($customerPhone)",
+                        "${global.posHoldProcessResult[holdIndex].customerName} (${global.posHoldProcessResult[holdIndex].customerPhone})",
                         style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                       )
                     ])),
@@ -3814,11 +4030,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         ),
       ),
       child: Column(children: [
-        Expanded(
-            child: Row(children: [
-          Expanded(child: transScreen(mode: 0)),
-          if (productOptions.isNotEmpty) selectProductExtraListWidget()
-        ])),
+        Expanded(child: Row(children: [Expanded(child: transScreen(mode: 0)), if (productOptions.isNotEmpty) selectProductExtraListWidget()])),
       ]),
     );
     int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);

@@ -4,6 +4,9 @@ class AppConstant {
   static const String serviceLoginDevApi = 'https://api.dev.dedepos.com';
   static const String serviceLoginApi = 'https://www.villagefund.work';
 
+  static const String reportPrdApi = 'https://api.dedepos.com/apireport';
+  static const String reportDevApi = 'https://api.dev.dedepos.com/apireport';
+
   /// ทดสอบแม็คกร
   //static const String userDev = 'maxkorn';
   //static const String passwordDev = 'maxkorn';

@@ -67,24 +67,22 @@ import 'model/objectbox/form_design_struct.dart';
 String applicationName = "";
 late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
-late PosConfigModel posConfig;
+PosConfigModel posConfig = PosConfigModel(
+    code: '',
+    doccode: '',
+    vattype: 0,
+    vatrate: 0,
+    docformattaxinv: '',
+    billheader: [],
+    billfooter: [],
+    isvatregister: false,
+    isejournal: false,
+    devicenumber: '',
+    slips: [],
+    logourl: '');
 List<FormDesignObjectBoxStruct> formDesignList = [];
-List<String> countryNames = [
-  "English",
-  "Thai",
-  "Laos",
-  "Chinese",
-  "Japan",
-  "Korea"
-];
-List<String> countryCodes = [
-  "en",
-  "th",
-  "lo",
-  "ch",
-  "jp",
-  "kr"
-];
+List<String> countryNames = ["English", "Thai", "Laos", "Chinese", "Japan", "Korea"];
+List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 List<LanguageSystemModel> languageSystemData = [];
 List<LanguageSystemCodeModel> languageSystemCode = [];
 String userScreenLanguage = "";
@@ -209,42 +207,17 @@ List<MoneyRoundPayModel> payTotalMoneyRoundStep = [
   MoneyRoundPayModel(begin: 0.88, end: 0.99, value: 1.0),
 ];
 
-enum PrinterTypeEnum {
-  thermal,
-  dot,
-  laser,
-  inkjet
-}
+enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterConnectEnum {
-  ip,
-  bluetooth,
-  usb,
-  windows,
-  sunmi1
-}
+enum PrinterConnectEnum { ip, bluetooth, usb, windows, sunmi1 }
 
-enum PosVersionEnum {
-  pos,
-  restaurant,
-  vfpos
-}
+enum PosVersionEnum { pos, restaurant, vfpos }
 
-enum SoundEnum {
-  beep,
-  fail,
-  buttonTing
-}
+enum SoundEnum { beep, fail, buttonTing }
 
-enum DisplayMachineEnum {
-  customerDisplay,
-  posTerminal
-}
+enum DisplayMachineEnum { customerDisplay, posTerminal }
 
-enum PosScreenModeEnum {
-  posSale,
-  posReturn
-}
+enum PosScreenModeEnum { posSale, posReturn }
 
 /// ฟอร์มใบสรุปยอด
 String formS01 = "S-01";
@@ -257,14 +230,7 @@ String formS04 = "S-04";
 // ใบรับคืน
 String formReturn = "SLIP005";
 
-enum TableManagerEnum {
-  openTable,
-  closeTable,
-  moveTable,
-  mergeTable,
-  informationTable,
-  splitTable
-}
+enum TableManagerEnum { openTable, closeTable, moveTable, mergeTable, informationTable, splitTable }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -336,14 +302,8 @@ int findPosHoldProcessResultIndex(String code) {
 
 Future<void> loadPrinter() async {
   printerLocalStrongData.clear();
-  List<String> printerCodes = [
-    printerConfigCashierCode,
-    printerConfigTicketCode
-  ];
-  List<String> printerNames = [
-    "Cashier",
-    "Ticket"
-  ];
+  List<String> printerCodes = [printerConfigCashierCode, printerConfigTicketCode];
+  List<String> printerNames = ["Cashier", "Ticket"];
   // Kitchen
   List<KitchenObjectBoxStruct> kitchenList = KitchenHelper().getAll();
   for (var kitchen in kitchenList) {
@@ -413,7 +373,11 @@ bool isPhoneDevice() {
 }
 
 bool isTabletDevice() {
-  return deviceMode == DeviceModeEnum.ipad || deviceMode == DeviceModeEnum.androidTablet || deviceMode == DeviceModeEnum.windowsDesktop || deviceMode == DeviceModeEnum.linuxDesktop || deviceMode == DeviceModeEnum.macosDesktop;
+  return deviceMode == DeviceModeEnum.ipad ||
+      deviceMode == DeviceModeEnum.androidTablet ||
+      deviceMode == DeviceModeEnum.windowsDesktop ||
+      deviceMode == DeviceModeEnum.linuxDesktop ||
+      deviceMode == DeviceModeEnum.macosDesktop;
 }
 
 Future<void> getDeviceModel(BuildContext context) async {
@@ -613,7 +577,12 @@ Future<String> billRunning() async {
   docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
   docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
   int number = 0;
-  var getLast = global.objectBoxStore.box<BillObjectBoxStruct>().query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit)).order(BillObjectBoxStruct_.doc_number, flags: Order.descending).build().findFirst();
+  var getLast = global.objectBoxStore
+      .box<BillObjectBoxStruct>()
+      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
+      .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
+      .build()
+      .findFirst();
   if (getLast != null) {
     if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
       number = int.parse(getLast.doc_number.substring(getLast.doc_number.length - countDigit.length));
@@ -768,7 +737,8 @@ String timeFormat(DateTime dateTime) {
 Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
-    SyncDeviceModel info = SyncDeviceModel(deviceId: deviceId, deviceName: deviceName, ip: "", holdCodeActive: "", docModeActive: 0, connected: true, isClient: false, isCashierTerminal: false);
+    SyncDeviceModel info =
+        SyncDeviceModel(deviceId: deviceId, deviceName: deviceName, ip: "", holdCodeActive: "", docModeActive: 0, connected: true, isClient: false, isCashierTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
     postToServer(
         ip: url,
@@ -810,7 +780,8 @@ Future<void> sendProcessToRemote() async {
     if (posRemoteDeviceList[index].connected) {
       var url = "${posRemoteDeviceList[index].ip}:$targetDeviceIpPort";
       try {
-        var jsonData = HttpPost(command: "process_result", data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posRemoteDeviceList[index].holdCodeActive!)].toJson()));
+        var jsonData =
+            HttpPost(command: "process_result", data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posRemoteDeviceList[index].holdCodeActive!)].toJson()));
         postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
         serviceLocator<Log>().error("$e : $url");
@@ -915,7 +886,8 @@ Future<void> registerRemoteToTerminal() async {
     var url = "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
     var uri = Uri.parse(url);
     try {
-      SyncDeviceModel sendData = SyncDeviceModel(deviceId: "XXX", deviceName: "XXX", ip: ipAddress, holdCodeActive: posHoldActiveCode, docModeActive: 0, connected: true, isCashierTerminal: false, isClient: true);
+      SyncDeviceModel sendData = SyncDeviceModel(
+          deviceId: "XXX", deviceName: "XXX", ip: ipAddress, holdCodeActive: posHoldActiveCode, docModeActive: 0, connected: true, isCashierTerminal: false, isClient: true);
       var jsonEncodeStr = jsonEncode(sendData.toJson());
       await http
           .post(uri,
@@ -1063,15 +1035,8 @@ Future<String> getFromServer({required String json}) async {
   // String url = "$httpServerIp:$httpServerPort?data=$base64String";
 
   String url = "$targetDeviceIpAddress:$targetDeviceIpPort";
-  final response = await httpClient.get(
-      Uri.http(url, '/', {
-        'json': base64String
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-        "Accept": "text/event-stream"
-      });
+  final response =
+      await httpClient.get(Uri.http(url, '/', {'json': base64String}), headers: {"Content-Type": "application/json", "Cache-Control": "no-cache", "Accept": "text/event-stream"});
   if (response.statusCode == 200) {
     return response.body;
   } else {
@@ -1275,7 +1240,8 @@ Future<void> checkOrderOnline() async {
     List<OrderTempObjectBoxStruct> orderSave = [];
     try {
       // ดึง Order ลูกค้าสั่งเอง
-      String selectQuery = "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
+      String selectQuery =
+          "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
       var value = await clickHouseSelect(selectQuery);
       if (value.isNotEmpty) {
         ResponseDataModel responseData = ResponseDataModel.fromJson(value);
@@ -1365,7 +1331,12 @@ Future<void> checkOrderOnline() async {
     List<String> orderIdList = [];
     try {
       // update isOrderSuccess และคำนวนณยอดรวม
-      final getData = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false))).build().find();
+      final getData = objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
+          .query(
+              OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+          .build()
+          .find();
       for (var data in getData) {
         if (!orderIdList.contains(data.orderId)) {
           orderIdList.add(data.orderId);
@@ -1373,7 +1344,14 @@ Future<void> checkOrderOnline() async {
       }
 
       for (var orderId in orderIdList) {
-        var orderTempUpdate = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false))).build().find();
+        var orderTempUpdate = objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .query(OrderTempObjectBoxStruct_.orderId
+                .equals(orderId)
+                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+            .build()
+            .find();
         for (var data in orderTempUpdate) {
           // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
           data.isOrder = false;
@@ -1397,7 +1375,16 @@ Future<void> checkOrderOnline() async {
     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
-    final getDataOrderId = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true)).and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false)).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))).build().find();
+    final getDataOrderId = objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.isOrder
+            .equals(false)
+            .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+            .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
     for (var data in getDataOrderId) {
       if (!orderIdList.contains(data.orderId)) {
         orderIdList.add(data.orderId);
@@ -1406,7 +1393,16 @@ Future<void> checkOrderOnline() async {
     for (var orderId in orderIdList) {
       // เลือกรายการ Order ทีละโต๊ะ
       List<OrderTempDataModel> orderTemp = [];
-      final getData = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true)).and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false)).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))).build().find();
+      final getData = objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
+          .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isOrder
+              .equals(false)
+              .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+              .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+              .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+              .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
+          .build()
+          .find();
       for (var data in getData) {
         orderTemp.add(OrderTempDataModel(
           orderGuid: data.orderGuid,
@@ -1480,7 +1476,14 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   double amount = 0.0;
   {
     // รวมจาก OrderTemp ส่งรายการแล้ว
-    final result = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(tableNumber).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))).build().find();
+    final result = objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.orderId
+            .equals(tableNumber)
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
     for (var order in result) {
       orderCount += order.qty;
       amount += orderCalcSumAmount(order);
@@ -1565,7 +1568,7 @@ Future<void> getProfile() async {
         headerreceiptpos: "",
         footerreciptpos: "",
       );
-
+      List<ProfileQrPaymentModel> qrPayments = [];
       var value = await apiRepository.getProfileSetting();
       var jsonData = value.data;
       for (var data in jsonData) {
@@ -1578,6 +1581,8 @@ Future<void> getProfile() async {
           languageList = List<String>.from(jsonDecodeBody["languageList"]);
         } else if (code == "ConfigSystem") {
           configSystem = ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+        } else if (code == "qrpayments") {
+          qrPayments.add(ProfileQrPaymentModel.fromJson(jsonDecode(body)));
         }
       }
       var branchValue = await apiRepository.getProfileSBranch();
@@ -1588,6 +1593,7 @@ Future<void> getProfile() async {
         languagelist: languageList,
         configsystem: configSystem,
         branch: branchs,
+        qrpaymentlist: qrPayments,
       );
       appStorage.write('profile', profileSetting.toJson());
       if (profileSetting.company.logo != null) {
@@ -1645,10 +1651,10 @@ Future<void> loadWalletProvider() async {
         code: data.code,
         guid_fixed: Uuid().v4(),
         bookbankcode: data.bookbankcode,
-        bookbankname: jsonEncode( data.names),
+        bookbankname: jsonEncode(data.names),
         countrycode: "th",
         feerate: 0,
-        names : jsonEncode( data.names),
+        names: jsonEncode(data.names),
         paymentcode: "",
         paymentlogo: data.paymentlogo,
         paymenttype: data.paymenttype,
@@ -1782,14 +1788,18 @@ Widget iconStatus(String pngFileName, bool status) {
           child: Container(
             height: 10,
             width: 10,
-            decoration: BoxDecoration(color: (status) ? Colors.greenAccent : Colors.redAccent, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white, width: 1), boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: const Offset(0, 1), // changes position of shadow
-              ),
-            ]),
+            decoration: BoxDecoration(
+                color: (status) ? Colors.greenAccent : Colors.redAccent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: const Offset(0, 1), // changes position of shadow
+                  ),
+                ]),
           )),
     ]),
   );

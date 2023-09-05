@@ -14,6 +14,7 @@ PosPayModel _$PosPayModelFromJson(Map<String, dynamic> json) => PosPayModel(
       total_after_round: (json['total_after_round'] as num?)?.toDouble() ?? 0,
       discount_formula: json['discount_formula'] as String? ?? "",
       discount_amount: (json['discount_amount'] as num?)?.toDouble() ?? 0,
+      credit_amount: (json['credit_amount'] as num?)?.toDouble() ?? 0,
       round_amount: (json['round_amount'] as num?)?.toDouble() ?? 0,
     )
       ..credit_card = (json['credit_card'] as List<dynamic>)
@@ -41,6 +42,7 @@ Map<String, dynamic> _$PosPayModelToJson(PosPayModel instance) =>
       'total_after_discount': instance.total_after_discount,
       'round_amount': instance.round_amount,
       'total_after_round': instance.total_after_round,
+      'credit_amount': instance.credit_amount,
       'credit_card': instance.credit_card.map((e) => e.toJson()).toList(),
       'transfer': instance.transfer.map((e) => e.toJson()).toList(),
       'cheque': instance.cheque.map((e) => e.toJson()).toList(),
@@ -148,6 +150,7 @@ PayQrModel _$PayQrModelFromJson(Map<String, dynamic> json) => PayQrModel(
       provider_name: json['provider_name'] as String? ?? "",
       description: json['description'] as String? ?? "",
       amount: (json['amount'] as num).toDouble(),
+      logo: json['logo'] as String? ?? "",
     );
 
 Map<String, dynamic> _$PayQrModelToJson(PayQrModel instance) =>
@@ -155,5 +158,6 @@ Map<String, dynamic> _$PayQrModelToJson(PayQrModel instance) =>
       'provider_code': instance.provider_code,
       'provider_name': instance.provider_name,
       'description': instance.description,
+      'logo': instance.logo,
       'amount': instance.amount,
     };

@@ -40,11 +40,13 @@ Future<void> initializeApp() async {
   if (kDebugMode) {
     // Debug
     // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
-    await googleMultiLanguageSheetLoad().then((_) {
-      String json = jsonEncode(global.languageSystemCode);
-      File file = File(jsonLanguageFileName);
-      file.writeAsString(json);
-    });
+    // await googleMultiLanguageSheetLoad().then((_) {
+    //   String json = jsonEncode(global.languageSystemCode);
+    //   File file = File(jsonLanguageFileName);
+    //   file.writeAsString(json);
+    // });
+
+    global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
   } else {
     // release
     // load ภาษาจาก assets (mode release)
@@ -151,6 +153,7 @@ void initCustomerDisplayBanner() {
   global.informationList.add(InformationModel(
     mode: 0,
     delaySecond: 10,
-    sourceUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%8D%E0%B9%8C_0002.jpg/1280px-%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%8D%E0%B9%8C_0002.jpg",
+    sourceUrl:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%8D%E0%B9%8C_0002.jpg/1280px-%E0%B8%A7%E0%B8%B1%E0%B8%94%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A8%E0%B8%A3%E0%B8%B5%E0%B8%AA%E0%B8%A3%E0%B8%A3%E0%B9%80%E0%B8%9E%E0%B8%8A%E0%B8%8D%E0%B9%8C_0002.jpg",
   ));
 }

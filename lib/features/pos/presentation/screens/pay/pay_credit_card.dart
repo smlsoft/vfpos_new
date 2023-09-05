@@ -13,7 +13,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayCreditCard extends StatefulWidget {
-  final PosProcessModel posProcess;
+  final PosHoldProcessModel posProcess;
   final BuildContext blocContext;
 
   const PayCreditCard({super.key, required this.posProcess, required this.blocContext});
@@ -31,7 +31,6 @@ class _PayCreditCardState extends State<PayCreditCard> {
   String cardNumber = "";
   double cardAmount = 0;
   String approveNumber = "";
-  int _buttonIndex = 0;
 
   @override
   void initState() {
@@ -84,7 +83,11 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                             padding: const EdgeInsets.only(top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
-                                                Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
+                                                Container(
+                                                    alignment: Alignment.center,
+                                                    width: 100,
+                                                    height: 50,
+                                                    child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
                                                 const SizedBox(width: 10),
                                                 Text(bankDataList[index].names[0])
                                               ]),
@@ -102,7 +105,12 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       },
                       child: Column(
                         children: [
-                          Expanded(child: Container(alignment: Alignment.center, width: 100, height: 50, child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
+                          Expanded(
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  width: 100,
+                                  height: 50,
+                                  child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
                           Text(
                             (bankName.isNotEmpty) ? bankName : global.language('bank'),
                             style: const TextStyle(fontSize: 16),

@@ -19,8 +19,7 @@ class LanguageSystemModel {
 
   LanguageSystemModel({required this.code, required this.text});
 
-  factory LanguageSystemModel.fromJson(Map<String, dynamic> json) =>
-      _$LanguageSystemModelFromJson(json);
+  factory LanguageSystemModel.fromJson(Map<String, dynamic> json) => _$LanguageSystemModelFromJson(json);
   Map<String, dynamic> toJson() => _$LanguageSystemModelToJson(this);
 }
 
@@ -31,8 +30,7 @@ class LanguageSystemCodeModel {
 
   LanguageSystemCodeModel({required this.code, required this.langs});
 
-  factory LanguageSystemCodeModel.fromJson(Map<String, dynamic> json) =>
-      _$LanguageSystemCodeModelFromJson(json);
+  factory LanguageSystemCodeModel.fromJson(Map<String, dynamic> json) => _$LanguageSystemCodeModelFromJson(json);
   Map<String, dynamic> toJson() => _$LanguageSystemCodeModelToJson(this);
 }
 
@@ -84,8 +82,7 @@ class PrinterLocalStrongDataModel {
       this.printerConnectType = PrinterConnectEnum.ip,
       this.printBillAuto = false});
 
-  factory PrinterLocalStrongDataModel.fromJson(Map<String, dynamic> json) =>
-      _$PrinterLocalStrongDataModelFromJson(json);
+  factory PrinterLocalStrongDataModel.fromJson(Map<String, dynamic> json) => _$PrinterLocalStrongDataModelFromJson(json);
   Map<String, dynamic> toJson() => _$PrinterLocalStrongDataModelToJson(this);
 }
 
@@ -168,8 +165,7 @@ class PosHoldProcessModel {
       this.customerName = "",
       this.customerPhone = ""});
 
-  factory PosHoldProcessModel.fromJson(Map<String, dynamic> json) =>
-      _$PosHoldProcessModelFromJson(json);
+  factory PosHoldProcessModel.fromJson(Map<String, dynamic> json) => _$PosHoldProcessModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosHoldProcessModelToJson(this);
 }
 
@@ -196,8 +192,7 @@ class HttpGetDataModel {
 
   HttpGetDataModel({required this.code, required this.json});
 
-  factory HttpGetDataModel.fromJson(Map<String, dynamic> json) =>
-      _$HttpGetDataModelFromJson(json);
+  factory HttpGetDataModel.fromJson(Map<String, dynamic> json) => _$HttpGetDataModelFromJson(json);
   Map<String, dynamic> toJson() => _$HttpGetDataModelToJson(this);
 }
 
@@ -210,16 +205,9 @@ class HttpParameterModel {
   String holdCode;
   int docMode;
 
-  HttpParameterModel(
-      {this.parentGuid = "",
-      this.guid = "",
-      this.barcode = "",
-      this.jsonData = "",
-      this.holdCode = "",
-      this.docMode = 0});
+  HttpParameterModel({this.parentGuid = "", this.guid = "", this.barcode = "", this.jsonData = "", this.holdCode = "", this.docMode = 0});
 
-  factory HttpParameterModel.fromJson(Map<String, dynamic> json) =>
-      _$HttpParameterModelFromJson(json);
+  factory HttpParameterModel.fromJson(Map<String, dynamic> json) => _$HttpParameterModelFromJson(json);
   Map<String, dynamic> toJson() => _$HttpParameterModelToJson(this);
 }
 
@@ -255,8 +243,7 @@ class InformationModel {
   String sourceUrl = "";
   int delaySecond = 10;
 
-  InformationModel(
-      {required this.mode, required delaySecond, required this.sourceUrl});
+  InformationModel({required this.mode, required delaySecond, required this.sourceUrl});
 }
 
 class PosSaleChannelModel {
@@ -264,8 +251,7 @@ class PosSaleChannelModel {
   String name;
   String logoUrl;
 
-  PosSaleChannelModel(
-      {required this.code, required this.name, this.logoUrl = ""});
+  PosSaleChannelModel({required this.code, required this.name, this.logoUrl = ""});
 }
 
 class LanguageModel {
@@ -274,11 +260,7 @@ class LanguageModel {
   String name;
   bool use;
 
-  LanguageModel(
-      {required this.code,
-      required this.codeTranslator,
-      required this.name,
-      required this.use});
+  LanguageModel({required this.code, required this.codeTranslator, required this.name, required this.use});
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -288,24 +270,10 @@ class LanguageDataModel {
 
   LanguageDataModel({required this.code, required this.name});
 
-  factory LanguageDataModel.fromJson(Map<String, dynamic> json) =>
-      _$LanguageDataModelFromJson(json);
+  factory LanguageDataModel.fromJson(Map<String, dynamic> json) => _$LanguageDataModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$LanguageDataModelToJson(this);
 }
-
-/* @JsonSerializable(explicitToJson: true)
-class LanguageSystemModel {
-  String code;
-  String text;
-
-  LanguageSystemModel({required this.code, required this.text});
-
-  factory LanguageSystemModel.fromJson(Map<String, dynamic> json) =>
-      _$LanguageSystemModelFromJson(json);
-  Map<String, dynamic> toJson() => _$LanguageSystemModelToJson(this);
-}
-*/
 
 @JsonSerializable()
 class ResponseDataModel {
@@ -315,8 +283,7 @@ class ResponseDataModel {
     required this.data,
   });
 
-  factory ResponseDataModel.fromJson(Map<String, dynamic> json) =>
-      _$ResponseDataModelFromJson(json);
+  factory ResponseDataModel.fromJson(Map<String, dynamic> json) => _$ResponseDataModelFromJson(json);
   Map<String, dynamic> toJson() => _$ResponseDataModelToJson(this);
 }
 
@@ -364,8 +331,7 @@ class OrderProductOptionModel {
     required this.choices,
   });
 
-  factory OrderProductOptionModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderProductOptionModelFromJson(json);
+  factory OrderProductOptionModel.fromJson(Map<String, dynamic> json) => _$OrderProductOptionModelFromJson(json);
   Map<String, dynamic> toJson() => _$OrderProductOptionModelToJson(this);
 }
 
@@ -387,8 +353,7 @@ class OrderProductOptionChoiceModel {
     required this.priceValue,
   });
 
-  factory OrderProductOptionChoiceModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderProductOptionChoiceModelFromJson(json);
+  factory OrderProductOptionChoiceModel.fromJson(Map<String, dynamic> json) => _$OrderProductOptionChoiceModelFromJson(json);
   Map<String, dynamic> toJson() => _$OrderProductOptionChoiceModelToJson(this);
 }
 
@@ -402,8 +367,7 @@ class OrderProductLanguageNameModel {
     required this.name,
   });
 
-  factory OrderProductLanguageNameModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderProductLanguageNameModelFromJson(json);
+  factory OrderProductLanguageNameModel.fromJson(Map<String, dynamic> json) => _$OrderProductLanguageNameModelFromJson(json);
   Map<String, dynamic> toJson() => _$OrderProductLanguageNameModelToJson(this);
 }
 
@@ -414,8 +378,7 @@ class PriceDataModel {
 
   PriceDataModel({required this.keynumber, required this.price});
 
-  factory PriceDataModel.fromJson(Map<String, dynamic> json) =>
-      _$PriceDataModelFromJson(json);
+  factory PriceDataModel.fromJson(Map<String, dynamic> json) => _$PriceDataModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PriceDataModelToJson(this);
 }
@@ -425,16 +388,12 @@ class ProfileSettingModel {
   ProfileSettingCompanyModel company;
   List<String> languagelist;
   ProfileSettingConfigSystemModel configsystem;
+  List<ProfileQrPaymentModel> qrpaymentlist;
   List<ProfileSettingBranchModel> branch;
 
-  ProfileSettingModel(
-      {required this.company,
-      required this.languagelist,
-      required this.configsystem,
-      required this.branch});
+  ProfileSettingModel({required this.company, required this.languagelist, required this.configsystem, required this.branch, required this.qrpaymentlist});
 
-  factory ProfileSettingModel.fromJson(Map<String, dynamic> json) =>
-      _$ProfileSettingModelFromJson(json);
+  factory ProfileSettingModel.fromJson(Map<String, dynamic> json) => _$ProfileSettingModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileSettingModelToJson(this);
 }
 
@@ -448,9 +407,44 @@ class ProfileSettingBranchModel {
     required this.names,
   });
 
-  factory ProfileSettingBranchModel.fromJson(Map<String, dynamic> json) =>
-      _$ProfileSettingBranchModelFromJson(json);
+  factory ProfileSettingBranchModel.fromJson(Map<String, dynamic> json) => _$ProfileSettingBranchModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileSettingBranchModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileQrPaymentModel {
+  String guidfixed;
+  String code;
+  String bankcode;
+  List<LanguageDataModel> banknames;
+  String bookbankcode;
+  List<LanguageDataModel> bookbanknames;
+  List<String> bookbankimages;
+  int isactive;
+  int qrtype;
+  List<LanguageDataModel> qrnames;
+  String qrcode;
+  String logo;
+  String apikey;
+
+  ProfileQrPaymentModel({
+    required this.guidfixed,
+    required this.code,
+    required this.bankcode,
+    required this.banknames,
+    required this.bookbankcode,
+    required this.bookbanknames,
+    required this.bookbankimages,
+    required this.isactive,
+    required this.qrtype,
+    required this.qrnames,
+    required this.qrcode,
+    required this.logo,
+    required this.apikey,
+  });
+
+  factory ProfileQrPaymentModel.fromJson(Map<String, dynamic> json) => _$ProfileQrPaymentModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileQrPaymentModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -472,10 +466,8 @@ class ProfileSettingConfigSystemModel {
       required this.headerreceiptpos,
       required this.footerreciptpos});
 
-  factory ProfileSettingConfigSystemModel.fromJson(Map<String, dynamic> json) =>
-      _$ProfileSettingConfigSystemModelFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$ProfileSettingConfigSystemModelToJson(this);
+  factory ProfileSettingConfigSystemModel.fromJson(Map<String, dynamic> json) => _$ProfileSettingConfigSystemModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileSettingConfigSystemModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -485,10 +477,8 @@ class ProfileSettingCompanyImageModel {
 
   ProfileSettingCompanyImageModel({required this.xorder, required this.uri});
 
-  factory ProfileSettingCompanyImageModel.fromJson(Map<String, dynamic> json) =>
-      _$ProfileSettingCompanyImageModelFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$ProfileSettingCompanyImageModelToJson(this);
+  factory ProfileSettingCompanyImageModel.fromJson(Map<String, dynamic> json) => _$ProfileSettingCompanyImageModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileSettingCompanyImageModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -522,8 +512,7 @@ class ProfileSettingCompanyModel {
       required this.images,
       required this.logo});
 
-  factory ProfileSettingCompanyModel.fromJson(Map<String, dynamic> json) =>
-      _$ProfileSettingCompanyModelFromJson(json);
+  factory ProfileSettingCompanyModel.fromJson(Map<String, dynamic> json) => _$ProfileSettingCompanyModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProfileSettingCompanyModelToJson(this);
 }
@@ -540,8 +529,7 @@ class OrderTempUpdateForSplitModel {
     required this.sourceGuid,
   });
 
-  factory OrderTempUpdateForSplitModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderTempUpdateForSplitModelFromJson(json);
+  factory OrderTempUpdateForSplitModel.fromJson(Map<String, dynamic> json) => _$OrderTempUpdateForSplitModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderTempUpdateForSplitModelToJson(this);
 }
@@ -560,8 +548,7 @@ class PosConfigSlipModel {
     required this.formnames,
   });
 
-  factory PosConfigSlipModel.fromJson(Map<String, dynamic> json) =>
-      _$PosConfigSlipModelFromJson(json);
+  factory PosConfigSlipModel.fromJson(Map<String, dynamic> json) => _$PosConfigSlipModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosConfigSlipModelToJson(this);
 }
 
@@ -595,8 +582,7 @@ class PosConfigModel {
     required this.logourl,
   });
 
-  factory PosConfigModel.fromJson(Map<String, dynamic> json) =>
-      _$PosConfigModelFromJson(json);
+  factory PosConfigModel.fromJson(Map<String, dynamic> json) => _$PosConfigModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosConfigModelToJson(this);
 }
 
@@ -611,8 +597,7 @@ class PosInformationModel {
     required this.shop_name,
   });
 
-  factory PosInformationModel.fromJson(Map<String, dynamic> json) =>
-      _$PosInformationModelFromJson(json);
+  factory PosInformationModel.fromJson(Map<String, dynamic> json) => _$PosInformationModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PosInformationModelToJson(this);
 }

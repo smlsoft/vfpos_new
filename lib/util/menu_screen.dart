@@ -289,11 +289,7 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
           margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
           padding: const EdgeInsets.all(8.0),
-          child: Row(children: [
-            Text(global.deviceId),
-            const Spacer(),
-            Text(global.deviceName)
-          ])),
+          child: Row(children: [Text(global.deviceId), const Spacer(), Text(global.deviceName)])),
     ]);
 
     String companyName = "";
@@ -317,7 +313,8 @@ class _MenuScreenState extends State<MenuScreen> {
                     )
                   : Container(),
             ),
-            title: Text((global.appMode == global.AppModeEnum.posTerminal) ? "${global.language("pos_terminal")} : $companyName" : "${global.language("pos_remote")} : $companyName"),
+            title:
+                Text((global.appMode == global.AppModeEnum.posTerminal) ? "${global.language("pos_terminal")} : $companyName" : "${global.language("pos_remote")} : $companyName"),
             actions: [
               IconButton(
                 icon: Container(
@@ -351,9 +348,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           MaterialPageRoute(
                             builder: (context) => const PrinterConfigScreen(),
                           ),
-                        ).then((value) async => {
-                              await global.loadPrinter()
-                            });
+                        ).then((value) async => {await global.loadPrinter()});
                       }
                       break;
                     case 2:
@@ -363,9 +358,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           MaterialPageRoute(
                             builder: (context) => const RegisterPosTerminalPage(),
                           ),
-                        ).then((value) async => {
-                              await global.loadPrinter()
-                            });
+                        ).then((value) async => {await global.loadPrinter()});
                       }
                       break;
                     case 3:
@@ -375,9 +368,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           MaterialPageRoute(
                             builder: (context) => const EmployeeChangePasswordPage(),
                           ),
-                        ).then((value) async => {
-                              await global.loadPrinter()
-                            });
+                        ).then((value) async => {await global.loadPrinter()});
                       }
                       break;
                     case 9:

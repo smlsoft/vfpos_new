@@ -10,6 +10,7 @@ class User with _$User {
     @Default('') String name,
     @Default('') String username,
     @Default('') String token,
+    @Default('') String refresh,
     @Default(0) int isDev,
   }) = _User;
 
