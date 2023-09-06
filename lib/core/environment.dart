@@ -47,7 +47,7 @@ class DevConfig extends BaseConfig {
   String get serviceApi => AppConstant.serviceDevApi;
   String get serviceLoginApi => AppConstant.serviceLoginDevApi;
   String get reportApi => AppConstant.reportDevApi;
-  String get xapikey => AppConstant.xapikey;
+  String get xapikey => AppConstant.xapikeyDev;
 }
 
 class ProdConfig extends BaseConfig {

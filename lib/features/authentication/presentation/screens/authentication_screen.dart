@@ -23,7 +23,7 @@ class AuthenticationPage extends StatefulWidget {
 class _AuthenticationPageState extends State<AuthenticationPage> {
   final TextEditingController _emailController = TextEditingController(text: '');
   final TextEditingController _passwordController = TextEditingController(text: '');
-
+  int logoTouch = 0;
   Color vfPrimaryColor = const Color(0xFF007BFF);
 
   @override
@@ -114,7 +114,35 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      logo(),
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              logoTouch = logoTouch + 1;
+                              if (logoTouch >= 5) {
+                                if (global.environmentVersion == "PROD") {
+                                  Environment().initConfig(Environment.DEV);
+                                  global.environmentVersion = "DEV";
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Develop Mode Active$logoTouch"),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                } else {
+                                  Environment().initConfig(Environment.PROD);
+                                  global.environmentVersion = "PROD";
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Production Mode Active"),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                }
+                                logoTouch = 0;
+                              }
+                            });
+                          },
+                          child: logo()),
                       const SizedBox(height: 12.0),
                       if (global.getAppversion() != '')
                         Container(
