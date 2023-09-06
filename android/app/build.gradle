@@ -43,8 +43,8 @@ android {
     productFlavors {
         dev {
             dimension "flavor-type"
-            applicationId "com.smlsoft.dedepos"
-            resValue "string", "app_name", "DEDE POS DEV"
+            applicationId "org.villagefundth.vfpos"
+            resValue "string", "app_name", "Village Fund POS DEV"
         }
         dedepos {
             dimension "flavor-type"

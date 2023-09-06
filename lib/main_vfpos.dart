@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
 
-  global.applicationName = "DeDe Pos";
+  global.applicationName = "Village Fund POS";
   await initializeApp();
   runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
 }

@@ -18,4 +18,5 @@ flutter build appbundle --flavor dedepos -t lib/main_dedepos.dart --release --da
 กด Save แล้วกด Review
 
 -- apk
-flutter build apk --flavor dedepos -t lib/main_dedepos.dart --release --dart-define=ENVIRONMENT=PROD
+flutter build apk --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=PROD
+flutter build apk --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=DEV
