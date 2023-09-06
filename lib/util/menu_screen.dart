@@ -293,12 +293,15 @@ class _MenuScreenState extends State<MenuScreen> {
     ]);
 
     String companyName = "";
-    if (loadConfigSuccess == true) {
-      companyName = "${global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage)}";
-      if (global.profileSetting.company.branchNames.isNotEmpty) {
+
+    companyName = global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage);
+    if (global.profileSetting.company.branchNames.isNotEmpty) {
+      if (global.getNameFromLanguage(global.profileSetting.company.branchNames, global.userScreenLanguage) != '') {
         companyName += " : ${global.getNameFromLanguage(global.profileSetting.company.branchNames, global.userScreenLanguage)}";
       }
     }
+    companyName += global.getAppversion();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.blue[100],

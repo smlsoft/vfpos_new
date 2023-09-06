@@ -20,6 +20,44 @@ class Request {
     _dio.options.baseUrl = Environment().config.serviceApi;
   }
 
+  void updateAuthDioInterceptors() {
+    _dio.options = BaseOptions(
+      baseUrl: Environment().config.serviceLoginApi,
+      receiveDataWhenStatusError: true,
+      validateStatus: (value) {
+        return value! <= 500;
+      },
+      headers: {
+        'Accept': 'application/json',
+        'X-API-KEY': Environment().config.xapikey,
+      },
+    );
+
+    _dio
+      ..interceptors.add(
+        LogInterceptor(
+          requestBody: kDebugMode ? true : false,
+          responseBody: kDebugMode ? true : false,
+          requestHeader: kDebugMode ? true : false,
+        ),
+      )
+      ..interceptors.add(
+        InterceptorsWrapper(
+          onError: (DioError e, handler) {
+            if (e.response?.statusCode == 402) {
+              //logout user and go to login page
+            }
+            return handler.next(e);
+          },
+        ),
+      );
+    (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+        // ignore: body_might_complete_normally_nullable
+        (HttpClient client) {
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    };
+  }
+
   void updateDioInterceptors() {
     _dio.options = BaseOptions(
       baseUrl: Environment().config.serviceApi,
@@ -52,8 +90,7 @@ class Request {
     (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
         // ignore: body_might_complete_normally_nullable
         (HttpClient client) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
     };
   }
 

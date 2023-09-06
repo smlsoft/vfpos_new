@@ -10,24 +10,19 @@ final serviceLocator = GetIt.instance;
 
 Future<void> setUpServiceLocator() async {
   // authentication
-  serviceLocator
-      .registerFactory<LoginRemoteDataSource>(() => LoginRemoteDataSource());
-  serviceLocator
-      .registerFactory<LoginUserRepository>(() => LoginUserRepositoryImpl());
+  serviceLocator.registerFactory<LoginRemoteDataSource>(() => LoginRemoteDataSource());
+  serviceLocator.registerFactory<LoginUserRepository>(() => LoginUserRepositoryImpl());
   serviceLocator.registerFactory<LoginUserUseCase>(() => LoginUserUseCase());
 
   // serviceLocator
   //     .registerFactory<FirebaseAuthentication>(() => FirebaseAuthentication());
 
   // splash
-  serviceLocator
-      .registerFactory<CheckUserLoginStatus>(() => CheckUserLoginStatusImpl());
+  serviceLocator.registerFactory<CheckUserLoginStatus>(() => CheckUserLoginStatusImpl());
 
   // shop
-  serviceLocator
-      .registerFactory<ShopRemoteRepository>(() => ShopRemoteRepositoryImpl());
-  serviceLocator.registerFactory<ShopAuthenticationRepository>(
-      () => ShopRepositoryData());
+  serviceLocator.registerFactory<ShopRemoteRepository>(() => ShopRemoteRepositoryImpl());
+  serviceLocator.registerFactory<ShopAuthenticationRepository>(() => ShopRepositoryData());
 
   // pos
 

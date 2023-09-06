@@ -52,7 +52,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
           child: Scaffold(
               backgroundColor: Colors.white,
               appBar: AppBar(
-                title: Text("${global.language("sign_in")} ${global.applicationName}"),
+                title: Text("${global.language("sign_in")} ${global.applicationName} ${global.getAppversion()}"),
                 actions: [
                   IconButton(
                       onPressed: () async {
@@ -138,7 +138,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                       // ตรวจสอบ User,Password
                                       var employee = global.employeeHelper.selectByCode(code: userController.text);
                                       if (employee != null) {
-                                        if (employee.pin_code == passwordController.text && employee.is_use_pos == true) {
+                                        if (employee.pin_code == passwordController.text && employee.is_use_pos == false) {
                                           if (employee.pin_code == "123456") {
                                             // บังคับให้เปลี่ยนรหัสผ่าน
                                             global.userLogin = employee;

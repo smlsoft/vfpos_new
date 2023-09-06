@@ -24,8 +24,7 @@ void main() {
   });
 
   test('select-shop', () async {
-    final response = await shopRemoteRepository.selectShop(
-        id: "28xnrybbglb9R6D6bkMadDTSmTz");
+    final response = await shopRemoteRepository.selectShop(id: "28xnrybbglb9R6D6bkMadDTSmTz");
     expect(response.isRight(), true);
   });
 }

@@ -39,6 +39,7 @@ abstract class BaseConfig {
   String get serviceApi;
   String get serviceLoginApi;
   String get reportApi;
+  String get xapikey;
 }
 
 class DevConfig extends BaseConfig {
@@ -46,6 +47,7 @@ class DevConfig extends BaseConfig {
   String get serviceApi => AppConstant.serviceDevApi;
   String get serviceLoginApi => AppConstant.serviceLoginDevApi;
   String get reportApi => AppConstant.reportDevApi;
+  String get xapikey => AppConstant.xapikey;
 }
 
 class ProdConfig extends BaseConfig {
@@ -53,6 +55,7 @@ class ProdConfig extends BaseConfig {
   String get serviceApi => AppConstant.serviceApi;
   String get serviceLoginApi => AppConstant.serviceLoginApi;
   String get reportApi => AppConstant.reportPrdApi;
+  String get xapikey => AppConstant.xapikey;
 }
 
 class StagingConfig extends BaseConfig {
@@ -60,4 +63,5 @@ class StagingConfig extends BaseConfig {
   String get serviceApi => AppConstant.serviceApi;
   String get serviceLoginApi => AppConstant.serviceLoginApi;
   String get reportApi => AppConstant.reportPrdApi;
+  String get xapikey => AppConstant.xapikey;
 }

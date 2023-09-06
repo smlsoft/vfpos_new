@@ -20,10 +20,9 @@ class EmployeeModel {
     required this.email,
     required this.isenabled,
     required this.pincode,
-    required this.isusepos,
-  });
+    bool? isusepos = false,
+  }) : isusepos = isusepos ?? false;
 
-  factory EmployeeModel.fromJson(Map<String, dynamic> json) =>
-      _$EmployeeModelFromJson(json);
+  factory EmployeeModel.fromJson(Map<String, dynamic> json) => _$EmployeeModelFromJson(json);
   Map<String, dynamic> toJson() => _$EmployeeModelToJson(this);
 }

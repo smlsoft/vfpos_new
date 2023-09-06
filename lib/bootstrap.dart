@@ -40,13 +40,13 @@ Future<void> initializeApp() async {
   if (kDebugMode) {
     // Debug
     // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
-    // await googleMultiLanguageSheetLoad().then((_) {
-    //   String json = jsonEncode(global.languageSystemCode);
-    //   File file = File(jsonLanguageFileName);
-    //   file.writeAsString(json);
-    // });
+    await googleMultiLanguageSheetLoad().then((_) {
+      String json = jsonEncode(global.languageSystemCode);
+      File file = File(jsonLanguageFileName);
+      file.writeAsString(json);
+    });
 
-    global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
+    // global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
   } else {
     // release
     // load ภาษาจาก assets (mode release)
@@ -70,7 +70,7 @@ Future<void> initializeEnvironmentConfig() async {
     defaultValue: Environment.DEV,
   );
   Environment().initConfig(environment);
-
+  global.environmentVersion = environment;
   await GetStorage.init();
   global.appStorage = GetStorage();
   //

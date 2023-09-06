@@ -4,19 +4,19 @@ import 'package:dedepos/features/authentication/domain/entity/entity.dart';
 import 'package:flutter/material.dart';
 
 abstract class ILoginRemoteDataSource {
-  Future<Either<Failure, User>> loginWithUserPassword(
-      {required String username, required String password});
+  Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password});
   Future<Either<Failure, User>> loginWithToken({required String token});
   Future<Either<Failure, User>> profile();
 }
 
 class LoginRemoteDataSource implements ILoginRemoteDataSource {
   final Request request = serviceLocator<Request>();
+
   @override
   Future<Either<Failure, User>> loginWithToken({required String token}) async {
     try {
-      final response =
-          await request.post('/tokenlogin', data: {"token": token});
+      request.updateDioInterceptors();
+      final response = await request.post('/vftokenlogin', data: {"token": token});
       final result = Json.decode(response.toString());
 
       if (response.statusCode == 200) {
@@ -45,15 +45,21 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, User>> loginWithUserPassword(
-      {required String username, required String password}) async {
+  Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password}) async {
     try {
-      final response = await request
-          .post('/login', data: {"username": username, "password": password});
+      request.updateAuthDioInterceptors();
+      final response = await request.post('/external-login', data: {"username": username, "password": password, "channel": "pos"});
       final result = Json.decode(response.toString());
 
-      if (response.statusCode == 200) {
-        UserToken token = UserToken.fromJson(result);
+      if (result['status'] == 'success') {
+        request.updateDioInterceptors();
+        final resToken = await request.post('/vftokenlogin', data: {"usercode": username, "token": result['data']['access_token']});
+        final resultToken = Json.decode(resToken.toString());
+        if (!resultToken['success']) {
+          return Left(ConnectionFailure(resultToken['message']));
+        }
+
+        UserToken token = UserToken.fromJson(resultToken);
 
         request.updateAuthorization(token.token);
 
@@ -62,7 +68,8 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
         ApiResponse responseGetProfile = ApiResponse.fromMap(userResult);
 
         User user = User.fromJson(responseGetProfile.data);
-        user = user.copyWith(token: token.token);
+
+        user = user.copyWith(token: token.token, refresh: result['data']['access_token']);
 
         return Right(user);
       }
@@ -89,8 +96,7 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
         return right(user);
       }
 
-      return const Left(
-          Exception('Exception Occurred in LoginRemoteDataSource'));
+      return const Left(Exception('Exception Occurred in LoginRemoteDataSource'));
     } catch (e) {
       debugPrint('LoginRemoteDataSourceImplError $e');
       return const Left(

@@ -17,9 +17,7 @@ Future syncProductCategory(data) async {
   List<ProductCategoryObjectBoxStruct> manyForInsert = [];
 
   // Delete
-  List<ItemRemoveModel> removes = (data["remove"] as List)
-      .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-      .toList();
+  List<ItemRemoveModel> removes = (data["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
   for (var removeData in removes) {
     try {
       global.syncTimeIntervalSecond = 1;
@@ -30,9 +28,7 @@ Future syncProductCategory(data) async {
     }
   }
   // Insert
-  List<SyncCategoryModel> newDataList = (data["new"] as List)
-      .map((newCate) => SyncCategoryModel.fromJson(newCate))
-      .toList();
+  List<SyncCategoryModel> newDataList = (data["new"] as List).map((newCate) => SyncCategoryModel.fromJson(newCate)).toList();
   for (var newData in newDataList) {
     global.syncTimeIntervalSecond = 1;
     removeMany.add(newData.guidfixed);
@@ -64,11 +60,7 @@ Future syncProductCategory(data) async {
     final box = global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
     List<ProductCategoryObjectBoxStruct> selectCategory = box.getAll();
     for (var category in selectCategory) {
-      final count = box
-          .query(ProductCategoryObjectBoxStruct_.parent_guid_fixed
-              .equals(category.guid_fixed))
-          .build()
-          .count();
+      final count = box.query(ProductCategoryObjectBoxStruct_.parent_guid_fixed.equals(category.guid_fixed)).build().count();
       if (count > 0) {
         category.category_count = count;
         box.put(category);
@@ -77,32 +69,24 @@ Future syncProductCategory(data) async {
   }
 }
 
-Future<void> syncProductCategoryCompare(
-    List<SyncMasterStatusModel> masterStatus) async {
+Future<void> syncProductCategoryCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
-  String lastUpdateTime = global.appStorage.read(global.syncCategoryTimeName) ??
-      global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncCategoryTimeName) ?? global.syncDateBegin;
   print("lastUpdateTime : " + lastUpdateTime);
 
   // หมวดสินค้า
   final productCategoryCount = ProductCategoryHelper().count();
   if (productCategoryCount == 0) {
-    lastUpdateTime = global.syncDateBegin;
+    //lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
-  var getLastUpdateTime =
-      global.syncFindLastUpdate(masterStatus, "productcategory");
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "productcategory");
   if (lastUpdateTime != getLastUpdateTime) {
-    await apiRepository
-        .serverProductCategory(
-            offset: 0, limit: 1000, lastupdate: lastUpdateTime)
-        .then((value) {
+    await apiRepository.serverProductCategory(offset: 0, limit: 1000, lastupdate: lastUpdateTime).then((value) {
       if (value.success) {
         syncProductCategory(value.data["productcategory"]).then((_) {
           //print("Update syncCategoryTimeName Success");
-          global.appStorage
-              .write(global.syncCategoryTimeName, getLastUpdateTime);
+          global.appStorage.write(global.syncCategoryTimeName, getLastUpdateTime);
         });
       }
     });

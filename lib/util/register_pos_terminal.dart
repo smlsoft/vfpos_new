@@ -29,42 +29,42 @@ class RegisterPosTerminalPage extends StatefulWidget {
 }
 
 class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
-  late Timer findTerminalTimer;
-  late Timer countDownTimer;
+  // late Timer findTerminalTimer;
+  // late Timer countDownTimer;
   int countdownSecond = 15;
   int countSecond = 0;
 
-  void findTerminalTimerStart() {
-    findTerminalTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (++countSecond > 15) {
-        // เกิน 15 วิ เริ่มตรวจสอบว่าอนุมัติหรือไม่
-        await recheck();
-      }
-    });
-  }
+  // void findTerminalTimerStart() {
+  //   findTerminalTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+  //     if (++countSecond > 15) {
+  //       // เกิน 15 วิ เริ่มตรวจสอบว่าอนุมัติหรือไม่
+  //       await recheck();
+  //     }
+  //   });
+  // }
 
-  void countDownTimerStart() {
-    countDownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        countdownSecond--;
-        if (countdownSecond == 0) {
-          timer.cancel();
-        }
-      });
-    });
-  }
+  // void countDownTimerStart() {
+  //   countDownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     setState(() {
+  //       countdownSecond--;
+  //       if (countdownSecond == 0) {
+  //         timer.cancel();
+  //       }
+  //     });
+  //   });
+  // }
 
   @override
   void initState() {
     super.initState();
-    if (global.posTerminalPinCode.isEmpty) {
-      initPinCode();
-    } else {
+
+    if (global.posTerminalPinTokenId.isNotEmpty && global.deviceId.isNotEmpty) {
       checkPinCode();
     }
+
     context.read<PosTerminalBloc>().add(const PosTerminalLoad());
-    countDownTimerStart();
-    findTerminalTimerStart();
+    // countDownTimerStart();
+    // findTerminalTimerStart();
   }
 
   Future<void> recheck() async {
@@ -84,6 +84,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
           String accessToken = result.data[0]['access_token'];
           String shopId = result.data[0]['shipid'];
           global.appStorage.write("token", accessToken);
+
           global.apiConnected = true;
           global.loginProcess = true;
           bool isDev = result.data[0]['isdev'] != null && result.data[0]['isdev'] == 1;
@@ -94,7 +95,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
             //   Environment().initConfig("PROD");
             serviceLocator<Request>().updateEndpoint();
           }
-
+          serviceLocator<Request>().updateDioInterceptors();
           serviceLocator<Request>().updateAuthorization(accessToken);
 
           serviceLocator<LoginUserRepository>().profile().then((response) async {
@@ -123,6 +124,16 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
                   );
                 }
               });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Invalid Token"),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              Future.delayed(const Duration(seconds: 1), () {
+                context.read<AuthenticationBloc>().add(const UserLogoutEvent());
+              });
             }
           });
         }
@@ -131,31 +142,78 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
   }
 
   Future<void> checkPinCode() async {
-    // ตรวจสอบว่า ClickHouse ไม่มี PinCode เพิ่มให้ใหม่
-    var responseData = await clickHouseSelect("SELECT status,token,deviceid FROM poscenter.pinlist WHERE pincode='${global.posTerminalPinCode}'");
-    ResponseDataModel result = ResponseDataModel.fromJson(responseData);
-    if (result.data.isEmpty) {
-      await clickHouseExecute("INSERT INTO poscenter.pinlist (pincode,status) VALUES ('${global.posTerminalPinCode}',0)");
-    }
-    recheck();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    global.posTerminalPinTokenId = sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+    global.deviceId = sharedPreferences.getString('pos_device_id') ?? "";
+    global.posTerminalPinCode = sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+    // do authen with token
+    String accessToken = global.appStorage.read("token").toString();
+    String shopId = global.appStorage.read("cache_shopid").toString();
+
+    global.apiConnected = true;
+    global.loginProcess = true;
+
+    serviceLocator<Request>().updateEndpoint();
+
+    serviceLocator<Request>().updateDioInterceptors();
+    serviceLocator<Request>().updateAuthorization(accessToken);
+
+    serviceLocator<LoginUserRepository>().profile().then((response) async {
+      if (response.isRight()) {
+        // save user cache
+        User remoteUser = response.getOrElse(() => User());
+        remoteUser = remoteUser.copyWith(token: accessToken, isDev: 0);
+
+        await serviceLocator<UserCacheService>().saveUser(remoteUser);
+        // select shop
+        serviceLocator<ShopAuthenticationRepository>().selectShop(shopid: shopId).then((selectShopResponse) async {
+          if (selectShopResponse.isRight()) {
+            global.loginSuccess = true;
+            // add user autenticate bloc
+            context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: remoteUser));
+            await global.getProfile();
+            if (mounted) {
+              context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Failed Not Selected Shop"),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Invalid Token"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        Future.delayed(const Duration(seconds: 1), () {
+          context.read<AuthenticationBloc>().add(const UserLogoutEvent());
+        });
+      }
+    });
   }
 
   Future<void> initPinCode() async {
     global.posTerminalPinCode = global.generateRandomPin(8);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString('pos_terminal_pin_code', global.posTerminalPinCode);
-    await clickHouseExecute("INSERT INTO poscenter.pinlist (pincode,status) VALUES ('${global.posTerminalPinCode}',0)");
+
     setState(() {});
   }
 
   @override
   void dispose() {
-    if (findTerminalTimer.isActive) {
-      findTerminalTimer.cancel();
-    }
-    if (countDownTimer.isActive) {
-      countDownTimer.cancel();
-    }
+    // if (findTerminalTimer.isActive) {
+    //   findTerminalTimer.cancel();
+    // }
+    // if (countDownTimer.isActive) {
+    //   countDownTimer.cancel();
+    // }
     super.dispose();
   }
 
@@ -194,7 +252,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
         child: BlocBuilder<PosTerminalBloc, PosTerminalState>(builder: (context, state) {
           return Scaffold(
               appBar: AppBar(
-                title: (global.posTerminalPinCode.isNotEmpty) ? Text('ดึงข้อมูลเครื่องPOS') : Text('เลือกเครื่อง POS'),
+                title: (global.posTerminalPinCode.isNotEmpty) ? Text('ดึงข้อมูลเครื่องPOS ${global.getAppversion()}') : Text('เลือกเครื่อง POS ${global.getAppversion()}'),
                 centerTitle: true,
                 backgroundColor: const Color(0xFFE27D01),
                 actions: [
@@ -230,14 +288,12 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
     return Card(
         elevation: 5,
         child: ListTile(
-            onTap: (() {
-              context.read<PosTerminalBloc>().add(PosTerminalSubmit(
-                  pinCode: global.posTerminalPinCode.toString(),
-                  shopId: global.appStorage.read("cache_shopid").toString(),
-                  token: global.appStorage.read("token").toString(),
-                  deviceId: data.devicenumber.toString(),
-                  actoken: global.appStorage.read("refresh").toString(),
-                  isdev: global.appStorage.read("isdev").toString()));
+            onTap: (() async {
+              SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+              sharedPreferences.setString('pos_terminal_token', global.appStorage.read("token"));
+              sharedPreferences.setString('pos_device_id', data.devicenumber.toString());
+              sharedPreferences.setString('pos_terminal_pin_code', global.generateRandomPin(8));
+              checkPinCode();
             }),
             title: SingleChildScrollView(
               child: Column(

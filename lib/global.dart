@@ -133,7 +133,7 @@ PosPayModel payScreenData = PosPayModel();
 List<PaymentProviderModel> qrPaymentProviderList = [];
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-late EmployeeObjectBoxStruct? userLogin;
+EmployeeObjectBoxStruct? userLogin = EmployeeObjectBoxStruct(guidfixed: '', code: '', profile_picture: '', name: '', email: '', is_enabled: false, is_use_pos: false, pin_code: '');
 int machineNumber = 1;
 String selectTableCode = "";
 String selectTableGroup = "";
@@ -196,6 +196,7 @@ String posTerminalPinTokenId = "";
 bool useEdc = false; // เชื่อมต่อเครื่อง EDC
 bool posScreenAutoRefresh = false;
 bool rebuildProductBarcodeStatus = true;
+String environmentVersion = "DEV";
 // วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษตามกฏหมาย,2=ปัดเศษขึ้นเป็นจำนวนเต็ม,3=ปัดเศษลงเป็นจำนวนเต็ม
 int payTotalMoneyRoundType = 1;
 // Step การปัดเศษ ค่าว่าง=จำนวนเต็มอัตโนมัติ,0.25,0.5,0.75
@@ -437,6 +438,14 @@ void themeSelect(int mode) {
 
 String formatDoubleTrailingZero(double value) {
   return value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 1);
+}
+
+String getAppversion() {
+  return (environmentVersion != "PROD"
+      ? (environmentVersion == "DEV")
+          ? "(DEV)"
+          : "(UAT)"
+      : "");
 }
 
 Future<Uint8List> thaiEncode(String word) async {
@@ -1634,6 +1643,7 @@ Future<void> loadEmployee() async {
       ));
     }
     employeeHelper.insertMany(employeeObjectBoxList);
+    print(employeeHelper.select());
   } catch (e) {
     print(e);
   }
