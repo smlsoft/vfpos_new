@@ -116,6 +116,10 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     children: [
                       logo(),
                       const SizedBox(height: 12.0),
+                      if (global.getAppversion() != '')
+                        Container(
+                            margin: const EdgeInsets.only(bottom: 3),
+                            child: Text("* ${global.getAppversion().replaceAll("(", "").replaceAll(")", "")} Mode", style: const TextStyle(color: Colors.red, fontSize: 12))),
                       userTextfield(),
                       const SizedBox(height: 12.0),
                       passwordTextfield(),

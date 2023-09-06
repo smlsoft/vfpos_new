@@ -9,7 +9,7 @@ import 'package:dedepos/services/user_cache_service.dart';
 class LoginUserUseCase {
   Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password}) async {
     final response = await serviceLocator<LoginUserRepository>().loginWithUserPassword(username: username, password: password);
-    print(response);
+
     if (response.isRight()) {
       final remoteUser = response.getOrElse(() => User());
       await serviceLocator<UserCacheService>().saveUser(remoteUser);

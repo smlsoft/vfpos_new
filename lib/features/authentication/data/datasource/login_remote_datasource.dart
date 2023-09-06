@@ -49,17 +49,38 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
     try {
       request.updateAuthDioInterceptors();
       final response = await request.post('/external-login', data: {"username": username, "password": password, "channel": "pos"});
-      final result = Json.decode(response.toString());
+      var resultLogin = {"status": "error", "message": "", "code": 0, "token": ""};
+      var result = Json.decode(response.toString());
+      request.updateDioInterceptors();
+      if (result['code'] == 401) {
+        final responseDev = await request.post('/login', data: {"username": username, "password": password});
+        final resultDev = Json.decode(responseDev.toString());
+        if (resultDev['success']) {
+          resultLogin['status'] = 'success';
+          resultLogin['message'] = '';
+          resultLogin['code'] = 200;
+          resultLogin['token'] = resultDev['token'];
+        } else {
+          return Left(ConnectionFailure(resultDev['message']));
+        }
+      } else if (result['code'] == 200) {
+        resultLogin['status'] = 'success';
+        resultLogin['message'] = '';
+        resultLogin['code'] = 200;
 
-      if (result['status'] == 'success') {
-        request.updateDioInterceptors();
         final resToken = await request.post('/vftokenlogin', data: {"usercode": username, "token": result['data']['access_token']});
         final resultToken = Json.decode(resToken.toString());
         if (!resultToken['success']) {
           return Left(ConnectionFailure(resultToken['message']));
         }
-
-        UserToken token = UserToken.fromJson(resultToken);
+        resultLogin['token'] = resultToken['token'];
+      } else {
+        resultLogin['status'] = result['status'];
+        resultLogin['message'] = result['message'];
+        resultLogin['code'] = result['code'];
+      }
+      if (resultLogin['status'] == 'success') {
+        UserToken token = UserToken.fromJson(resultLogin);
 
         request.updateAuthorization(token.token);
 
@@ -69,7 +90,7 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
 
         User user = User.fromJson(responseGetProfile.data);
 
-        user = user.copyWith(token: token.token, refresh: result['data']['access_token']);
+        user = user.copyWith(token: token.token, refresh: token.token);
 
         return Right(user);
       }
