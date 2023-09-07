@@ -1,7 +1,7 @@
 # วิธี Deploy ขึ้น Google
 
 ```
-flutter build appbundle --flavor dedepos -t lib/main_dedepos.dart --release --dart-define=ENVIRONMENT=PROD
+flutter build appbundle --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=PROD
 ```
 
 

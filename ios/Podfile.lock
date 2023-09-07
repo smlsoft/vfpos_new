@@ -44,8 +44,6 @@ PODS:
     - Flutter
     - MTBBarcodeScanner
   - ReachabilitySwift (5.0.0)
-  - rive_common (0.0.1):
-    - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -80,7 +78,6 @@ DEPENDENCIES:
   - presentation_displays (from `.symlinks/plugins/presentation_displays/ios`)
   - print_bluetooth_thermal (from `.symlinks/plugins/print_bluetooth_thermal/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
-  - rive_common (from `.symlinks/plugins/rive_common/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - sunmi_printer_plus (from `.symlinks/plugins/sunmi_printer_plus/ios`)
@@ -132,8 +129,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/print_bluetooth_thermal/ios"
   qr_code_scanner:
     :path: ".symlinks/plugins/qr_code_scanner/ios"
-  rive_common:
-    :path: ".symlinks/plugins/rive_common/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
@@ -170,7 +165,6 @@ SPEC CHECKSUMS:
   print_bluetooth_thermal: 54a9ba9436479dd633d18f393669ee793ee498fa
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
-  rive_common: 8a159d68033a8b073e5853acc50f03aa486a2888
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
   sunmi_printer_plus: 4ab3f09a655a47913c53ff5219323cbb04ebfbd7
@@ -180,4 +174,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 0cb2f7cf9f38ababa0357f0dc98ec2478f33ed3a
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.11.3
