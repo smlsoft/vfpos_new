@@ -77,7 +77,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     global.appStorage.write("token", state.user.token);
                     global.appStorage.write("refresh", state.user.refresh);
                     global.appStorage.write("isdev", state.user.isDev);
-                    context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: state.user));
+                    // context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: state.user));
                     context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
                   } else if (state is AuthenticationAuthenticatedState) {
                     global.appStorage.write("token", state.user.token);

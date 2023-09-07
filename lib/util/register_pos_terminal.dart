@@ -254,13 +254,11 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
               appBar: AppBar(
                 title: (global.posTerminalPinCode.isNotEmpty) ? Text('ดึงข้อมูลเครื่องPOS ${global.getAppversion()}') : Text('เลือกเครื่อง POS ${global.getAppversion()}'),
                 centerTitle: true,
-                backgroundColor: const Color(0xFFE27D01),
                 actions: [
                   ElevatedButton(
                       onPressed: () {
                         context.read<AuthenticationBloc>().add(const UserLogoutEvent());
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFE27D01)),
                       child: const Icon(Icons.logout))
                 ],
               ),

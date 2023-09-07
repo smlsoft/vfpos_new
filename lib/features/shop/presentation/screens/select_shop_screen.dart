@@ -33,7 +33,7 @@ class Util {
 }
 
 class _SelectShopScreenState extends State<SelectShopScreen> {
-  late User user;
+  User user = User();
   bool isSelectionMode = false;
   final int listLength = 30;
   late List<bool> _selected;
@@ -72,47 +72,50 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
       user = userAuthenticationState.user;
     }
     return MultiBlocListener(
-        listeners: [
-          BlocListener<SelectShopBloc, SelectShopState>(listener: (context, state) {
-            if (state is SelectShopSubmitSuccessState) {
-              // read state and push next state
-              // context.router.pushAndPopUntil(const DashboardRoute(),
-              //     predicate: (route) => false);
+      listeners: [
+        BlocListener<SelectShopBloc, SelectShopState>(listener: (context, state) {
+          if (state is SelectShopSubmitSuccessState) {
+            // read state and push next state
+            // context.router.pushAndPopUntil(const DashboardRoute(),
+            //     predicate: (route) => false);
 
-              if (global.appStorage.read("cache_shopid") != state.shop.guidfixed) {
-                ProductCategoryHelper().deleteAll();
-                ProductBarcodeHelper().deleteAll();
-                EmployeeHelper().deleteAll();
-                BankHelper().deleteAll();
-              }
+            if (global.appStorage.read("cache_shopid") != state.shop.guidfixed) {
+              ProductCategoryHelper().deleteAll();
+              ProductBarcodeHelper().deleteAll();
+              EmployeeHelper().deleteAll();
+              BankHelper().deleteAll();
+            }
 
-              global.apiShopID = state.shop.guidfixed;
-              global.appStorage.write("cache_shopid", state.shop.guidfixed);
-              global.loginSuccess = true;
-              Future.delayed(const Duration(seconds: 1), () {
-                context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
-              });
-            } else if (state is SelectShopLoadedState) {
-              if (state.shops.isNotEmpty) {
+            global.apiShopID = state.shop.guidfixed;
+            global.appStorage.write("cache_shopid", state.shop.guidfixed);
+            global.loginSuccess = true;
+            context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user));
+            // Future.delayed(const Duration(seconds: 1), () {
+            //   context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
+            // });
+          } else if (state is SelectShopLoadedState) {
+            if (state.shops.isNotEmpty) {
+              if (state.shops.length == 1) {
                 context.read<SelectShopBloc>().add(ShopSelectSubmit(shop: state.shops[0].toShop));
               }
-            } else if (state is SelectShopBlocErrorState) {
-              context.read<AuthenticationBloc>().add(const UserLogoutEvent());
             }
-          }),
-          BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
-            if (state is AuthenticationInitialState) {
-              Future.delayed(const Duration(seconds: 1), () {
-                context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
-              });
-            } else if (state is AuthenticationAuthenticatedState) {
-              Future.delayed(const Duration(seconds: 1), () {
-                context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
-              });
-            }
-          }),
-        ],
-        child: Scaffold(
+          } else if (state is SelectShopBlocErrorState) {
+            context.read<AuthenticationBloc>().add(const UserLogoutEvent());
+          }
+        }),
+        BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
+          if (state is AuthenticationInitialState) {
+            Future.delayed(const Duration(seconds: 1), () {
+              context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
+            });
+          } else if (state is AuthenticationAuthenticatedState) {
+            Future.delayed(const Duration(seconds: 1), () {
+              context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
+            });
+          }
+        }),
+      ],
+      child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
             title: Center(
@@ -201,69 +204,67 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
               //       }),
             ],
           ),
-          body: Container(),
-        )
-        // body: Stack(
-        //   children: [
-        //     const BackgroundGradientWidget(),
-        //     const BackgroundClipperWidget(),
-        //     const Center(
-        //         child: SizedBox(
-        //             child: Card(
-        //       child: Text("data"),
-        //     ))),
-        //     Center(
-        //       child: SizedBox(
-        //         height: 600,
-        //         width: 1000,
-        //         child: Card(
-        //           child: Column(
-        //             children: [
-        //               Padding(
-        //                 padding: const EdgeInsets.only(top: 10),
-        //                 child: Text(
-        //                   'เลือกกิจการที่ต้องการทำรายการ ',
-        //                   style: TextStyle(fontSize: textSize, color: Colors.black, fontWeight: FontWeight.w700),
-        //                 ),
-        //               ),
-        //               // IconButton(
-        //               //   color: Colors.black,
-        //               //   icon: const Icon(Icons.logout),
-        //               //   onPressed: () {
-        //               //     context
-        //               //         .read<AuthenticationBloc>()
-        //               //         .add(const UserLogoutEvent());
-        //               //   },
-        //               // ),
-        //               Expanded(
-        //                 child: _isGridMode
-        //                     ? GridBuilder(
-        //                         isSelectionMode: isSelectionMode,
-        //                         selectedList: _selected,
-        //                         onSelectionChange: (bool x) {
-        //                           setState(() {
-        //                             isSelectionMode = x;
-        //                           });
-        //                         },
-        //                       )
-        //                     : ListBuilder(
-        //                         isSelectionMode: isSelectionMode,
-        //                         selectedList: _selected,
-        //                         onSelectionChange: (bool x) {
-        //                           setState(() {
-        //                             isSelectionMode = x;
-        //                           });
-        //                         },
-        //                       ),
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // )),
-        );
+          body: Stack(
+            children: [
+              const BackgroundGradientWidget(),
+              const BackgroundClipperWidget(),
+              const Center(
+                  child: SizedBox(
+                      child: Card(
+                child: Text("data"),
+              ))),
+              Center(
+                child: SizedBox(
+                  height: 600,
+                  width: 1000,
+                  child: Card(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            'เลือกกิจการที่ต้องการทำรายการ ',
+                            style: TextStyle(fontSize: textSize, color: Colors.black, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        // IconButton(
+                        //   color: Colors.black,
+                        //   icon: const Icon(Icons.logout),
+                        //   onPressed: () {
+                        //     context
+                        //         .read<AuthenticationBloc>()
+                        //         .add(const UserLogoutEvent());
+                        //   },
+                        // ),
+                        Expanded(
+                          child: _isGridMode
+                              ? GridBuilder(
+                                  isSelectionMode: isSelectionMode,
+                                  selectedList: _selected,
+                                  onSelectionChange: (bool x) {
+                                    setState(() {
+                                      isSelectionMode = x;
+                                    });
+                                  },
+                                )
+                              : ListBuilder(
+                                  isSelectionMode: isSelectionMode,
+                                  selectedList: _selected,
+                                  onSelectionChange: (bool x) {
+                                    setState(() {
+                                      isSelectionMode = x;
+                                    });
+                                  },
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )),
+    );
   }
 }
 
