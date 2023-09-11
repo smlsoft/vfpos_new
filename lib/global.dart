@@ -8,6 +8,7 @@ import 'package:dedepos/api/sync/model/wallet_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
+import 'package:dedepos/db/shift_helper.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
@@ -106,6 +107,8 @@ ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
 EmployeeHelper employeeHelper = EmployeeHelper();
 PosLogHelper posLogHelper = PosLogHelper();
 BillHelper billHelper = BillHelper();
+ShiftHelper shiftHelper = ShiftHelper();
+
 PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
 int syncTimeIntervalMaxBySecond = 10;

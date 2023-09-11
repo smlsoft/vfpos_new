@@ -78,12 +78,18 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     global.appStorage.write("refresh", state.user.refresh);
                     global.appStorage.write("isdev", state.user.isDev);
                     // context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: state.user));
-                    context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
+
+                    Future.delayed(const Duration(seconds: 1), () {
+                      context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
+                    });
                   } else if (state is AuthenticationAuthenticatedState) {
                     global.appStorage.write("token", state.user.token);
                     global.appStorage.write("refresh", state.user.refresh);
                     global.appStorage.write("isdev", state.user.isDev);
-                    context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
+
+                    Future.delayed(const Duration(seconds: 1), () {
+                      context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
+                    });
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -122,15 +128,17 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                 if (global.environmentVersion == "PROD") {
                                   Environment().initConfig(Environment.DEV);
                                   global.environmentVersion = "DEV";
+                                  global.appStorage.write("environmentVersion", "DEV");
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Develop Mode Active$logoTouch"),
+                                    const SnackBar(
+                                      content: Text("Develop Mode Active"),
                                       backgroundColor: Colors.black,
                                     ),
                                   );
                                 } else {
                                   Environment().initConfig(Environment.PROD);
                                   global.environmentVersion = "PROD";
+                                  global.appStorage.write("environmentVersion", "PROD");
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text("Production Mode Active"),

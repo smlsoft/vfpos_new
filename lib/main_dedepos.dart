@@ -11,7 +11,7 @@ import 'flavors.dart';
 
 void main() async {
   F.appFlavor = Flavor.DEDEPOS;
-  initializeEnvironmentConfig();
+  await initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
   global.applicationName = "DeDe Pos";

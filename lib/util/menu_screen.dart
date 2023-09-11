@@ -192,7 +192,7 @@ class _MenuScreenState extends State<MenuScreen> {
   void initState() {
     super.initState();
     rebuildScreen();
-    syncBillProcess();
+    syncProcess();
     global.buffetModeLists = BuffetModeHelper().getAll();
     global.getProfile().then((value) {
       loadConfigSuccess = true;
@@ -375,13 +375,18 @@ class _MenuScreenState extends State<MenuScreen> {
                       }
                       break;
                     case 9:
-                      if (Platform.isAndroid) {
-                        SystemNavigator.pop();
-                      } else if (Platform.isIOS) {
-                        exit(0);
-                      } else {
-                        exit(0);
+                      global.loginSuccess = false;
+                      global.userLogin = null;
+                      if (mounted) {
+                        context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
                       }
+                      // if (Platform.isAndroid) {
+                      //   SystemNavigator.pop();
+                      // } else if (Platform.isIOS) {
+                      //   exit(0);
+                      // } else {
+                      //   exit(0);
+                      // }
                       break;
                   }
                 },

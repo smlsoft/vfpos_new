@@ -1129,7 +1129,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(23, 132682824475798031),
       name: 'ShiftObjectBoxStruct',
-      lastPropertyId: const IdUid(14, 8105615966884369140),
+      lastPropertyId: const IdUid(16, 1035560830381741133),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1197,6 +1197,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(14, 8105615966884369140),
             name: 'coupon',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(16, 1035560830381741133),
+            name: 'isSync',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2096,7 +2101,8 @@ ModelDefinition getObjectBoxModel() {
         1528751755365772755,
         5704992869450108965,
         7795975958565552946,
-        5596247766453503361
+        5596247766453503361,
+        2306407852392067367
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -3264,7 +3270,7 @@ ModelDefinition getObjectBoxModel() {
           final usercodeOffset = fbb.writeString(object.usercode);
           final usernameOffset = fbb.writeString(object.username);
           final remarkOffset = fbb.writeString(object.remark);
-          fbb.startTable(15);
+          fbb.startTable(17);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(3, usercodeOffset);
@@ -3278,6 +3284,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(11, object.transfer);
           fbb.addFloat64(12, object.cheque);
           fbb.addFloat64(13, object.coupon);
+          fbb.addBool(15, object.isSync);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3308,6 +3315,8 @@ ModelDefinition getObjectBoxModel() {
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
           final couponParam =
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
+          final isSyncParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 34, false);
           final object = ShiftObjectBoxStruct(
               guidfixed: guidfixedParam,
               doctype: doctypeParam,
@@ -3320,7 +3329,8 @@ ModelDefinition getObjectBoxModel() {
               promptpay: promptpayParam,
               transfer: transferParam,
               cheque: chequeParam,
-              coupon: couponParam)
+              coupon: couponParam,
+              isSync: isSyncParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -4811,6 +4821,10 @@ class ShiftObjectBoxStruct_ {
   /// see [ShiftObjectBoxStruct.coupon]
   static final coupon =
       QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[11].properties[12]);
+
+  /// see [ShiftObjectBoxStruct.isSync]
+  static final isSync =
+      QueryBooleanProperty<ShiftObjectBoxStruct>(_entities[11].properties[13]);
 }
 
 /// [KitchenObjectBoxStruct] entity fields to define ObjectBox queries.

@@ -9,7 +9,7 @@ import 'package:dedepos/global.dart' as global;
 void main() async {
   F.appFlavor = Flavor.VFPOS;
   WidgetsFlutterBinding.ensureInitialized();
-  initializeEnvironmentConfig();
+  await initializeEnvironmentConfig();
   Intl.defaultLocale = "th";
   global.applicationName = "Village Fund POS";
   await initializeApp();

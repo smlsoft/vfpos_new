@@ -72,11 +72,16 @@ void syncProductBarcode(List<ItemRemoveModel> removeList, List<SyncProductBarcod
     }
     global.syncRefreshProductBarcode = true;
   }
-  if (manyForDelete.isNotEmpty) {
-    ProductBarcodeHelper().deleteByGuidFixedMany(manyForDelete);
-  }
-  if (manyForInsert.isNotEmpty) {
-    ProductBarcodeHelper().insertMany(manyForInsert);
+  try {
+    if (manyForDelete.isNotEmpty) {
+      ProductBarcodeHelper().deleteByGuidFixedMany(manyForDelete);
+    }
+    if (manyForInsert.isNotEmpty) {
+      ProductBarcodeHelper().insertMany(manyForInsert);
+    }
+  } catch (e) {
+    print(e);
+    serviceLocator<Log>().error(e);
   }
   // Update Count Group
   /*final box = global.objectBoxStore.box<ProductBarcodeObjectBoxStruct>();

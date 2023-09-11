@@ -32,6 +32,8 @@ class ShiftObjectBoxStruct {
   /// coupon
   double coupon;
 
+  bool isSync;
+
   ShiftObjectBoxStruct({
     required this.guidfixed,
     required this.doctype,
@@ -45,5 +47,6 @@ class ShiftObjectBoxStruct {
     required this.transfer,
     required this.cheque,
     required this.coupon,
+    required this.isSync,
   });
 }

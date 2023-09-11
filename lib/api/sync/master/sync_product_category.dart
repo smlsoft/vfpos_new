@@ -80,6 +80,7 @@ Future<void> syncProductCategoryCompare(List<SyncMasterStatusModel> masterStatus
     //lastUpdateTime = global.syncDateBegin;
   }
   lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  print("lastUpdateTime" + lastUpdateTime);
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "productcategory");
   if (lastUpdateTime != getLastUpdateTime) {
     await apiRepository.serverProductCategory(offset: 0, limit: 1000, lastupdate: lastUpdateTime).then((value) {

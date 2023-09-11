@@ -507,7 +507,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
 
         global.tableNumberSelected = "";
         global.posHoldActiveCode = "0";
-        syncBillProcess();
+        syncProcess();
         paySuccessDialog();
       }
     });

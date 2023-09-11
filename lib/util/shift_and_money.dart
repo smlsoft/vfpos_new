@@ -1,3 +1,4 @@
+import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/shift_helper.dart';
@@ -17,12 +18,10 @@ Widget shiftAndMoneyScreen({required int mode}) {
   String header = "";
   switch (mode) {
     case 0:
-      header = global
-          .language("open_the_cash_register_and_change"); // "เปิดกะ+เงินทอน";
+      header = global.language("open_the_cash_register_and_change"); // "เปิดกะ+เงินทอน";
       break;
     case 1:
-      header = global
-          .language("close_the_shift"); // "ปิดกะ+ส่งเงิน";
+      header = global.language("close_the_shift"); // "ปิดกะ+ส่งเงิน";
       break;
     case 2:
       header = global.language("replenish_change"); // "เติมเงินทอน";
@@ -56,8 +55,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: Colors.blue.shade100,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
@@ -68,17 +66,13 @@ Widget shiftAndMoneyScreen({required int mode}) {
             ),
             child: Center(
                 child: Text(header,
-                    style: textStyle.copyWith(
-                        shadows: <Shadow>[
-                          const Shadow(
-                            offset: Offset(1.0, 1.0),
-                            blurRadius: 3.0,
-                            color: Colors.grey,
-                          )
-                        ],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                        color: Colors.black)))),
+                    style: textStyle.copyWith(shadows: <Shadow>[
+                      const Shadow(
+                        offset: Offset(1.0, 1.0),
+                        blurRadius: 3.0,
+                        color: Colors.grey,
+                      )
+                    ], fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black)))),
         Expanded(
             child: Container(
                 padding: const EdgeInsets.all(10),
@@ -92,20 +86,14 @@ Widget shiftAndMoneyScreen({required int mode}) {
                       children: [
                         TableRow(
                           children: [
-                            Text(global.language("employee_code"),
-                                style: textStyle),
-                            Text(global.userLogin!.code,
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold)),
+                            Text(global.language("employee_code"), style: textStyle),
+                            Text(global.userLogin!.code, style: textStyle.copyWith(fontWeight: FontWeight.bold)),
                           ],
                         ),
                         TableRow(
                           children: [
-                            Text(global.language("employee_name"),
-                                style: textStyle),
-                            Text(global.userLogin!.name,
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold)),
+                            Text(global.language("employee_name"), style: textStyle),
+                            Text(global.userLogin!.name, style: textStyle.copyWith(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ],
@@ -128,24 +116,24 @@ Widget shiftAndMoneyScreen({required int mode}) {
                               double amount = double.tryParse(value) ?? 0;
                               // กด ตกลง
                               if (amount != 0) {
-                                String guid = Uuid().v4();
-                                ShiftObjectBoxStruct data =
-                                    ShiftObjectBoxStruct(
-                                  guidfixed: guid,
-                                  doctype: mode,
-                                  docdate: DateTime.now(),
-                                  remark: remarkTextEditingController.text,
-                                  usercode: global.userLogin!.code,
-                                  username: global.userLogin!.name,
-                                  amount: amount,
-                                  creditcard: 1,
-                                  promptpay: 2,
-                                  transfer: 3,
-                                  cheque: 4,
-                                  coupon: 5,
-                                );
+                                String guid = const Uuid().v4();
+                                ShiftObjectBoxStruct data = ShiftObjectBoxStruct(
+                                    guidfixed: guid,
+                                    doctype: mode,
+                                    docdate: DateTime.now(),
+                                    remark: remarkTextEditingController.text,
+                                    usercode: global.userLogin!.code,
+                                    username: global.userLogin!.name,
+                                    amount: amount,
+                                    creditcard: 1,
+                                    promptpay: 2,
+                                    transfer: 3,
+                                    cheque: 4,
+                                    coupon: 5,
+                                    isSync: false);
                                 ShiftHelper().insert(data);
                                 shiftAndMoneyPrint(guid);
+                                syncProcess();
                               }
                             })),
                   ],

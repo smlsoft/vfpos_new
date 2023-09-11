@@ -15,10 +15,7 @@ class ShiftHelper {
 
   bool deleteByGuidFixed(String guid) {
     bool result = false;
-    final find = box
-        .query(ShiftObjectBoxStruct_.guidfixed.equals(guid))
-        .build()
-        .findFirst();
+    final find = box.query(ShiftObjectBoxStruct_.guidfixed.equals(guid)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
@@ -42,6 +39,18 @@ class ShiftHelper {
 
   List<ShiftObjectBoxStruct> getAll() {
     return (box.query()).build().find();
+  }
+
+  List<ShiftObjectBoxStruct> selectSyncIsFalse() {
+    return box.query(ShiftObjectBoxStruct_.isSync.equals(false)).build().find();
+  }
+
+  void updatesSyncSuccess({required String guidfixed}) {
+    final find = box.query(ShiftObjectBoxStruct_.guidfixed.equals(guidfixed)).build().findFirst();
+    if (find != null) {
+      find.isSync = true;
+      box.put(find);
+    }
   }
 
   ShiftObjectBoxStruct getByGuid(String guid) {

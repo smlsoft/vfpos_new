@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
+import 'package:dedepos/api/sync/model/shift_model.dart';
 import 'package:dedepos/api/sync/model/trans_model.dart';
 import 'package:dedepos/api/user_repository.dart';
 import 'package:dedepos/core/logger/logger.dart';
@@ -8,6 +9,7 @@ import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/model/objectbox/shift_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
@@ -93,10 +95,7 @@ Future syncBillData() async {
         whnames: [],
       ));
     }
-    List<BillPayObjectBoxStruct> payDetails =
-        (jsonDecode(bill.pay_json) as List)
-            .map((e) => BillPayObjectBoxStruct.fromJson(e))
-            .toList();
+    List<BillPayObjectBoxStruct> payDetails = (jsonDecode(bill.pay_json) as List).map((e) => BillPayObjectBoxStruct.fromJson(e)).toList();
     List<TransPaymentCreditCardModel> paymentCreditCards = [];
     List<TransPaymentTransferModel> paymentTransfers = [];
     for (var payDetail in payDetails) {
@@ -322,12 +321,35 @@ Future syncBillData() async {
   }
 }
 
+Future syncShift() async {
+  List<ShiftObjectBoxStruct> shifts = (global.shiftHelper.selectSyncIsFalse());
+
+  for (int index = 0; index < shifts.length; index++) {
+    ShiftObjectBoxStruct shift = shifts[index];
+    ShiftModel postShift = ShiftModel(
+      guidfixed: shift.guidfixed,
+      doctype: shift.doctype,
+      amount: shift.amount,
+      creditcard: shift.creditcard,
+      promptpay: shift.promptpay,
+      transfer: shift.transfer,
+      cheque: shift.cheque,
+      coupon: shift.coupon,
+      docdate: shift.docdate,
+      remark: shift.remark,
+      usercode: shift.usercode,
+      username: shift.username,
+    );
+
+    global.shiftHelper.updatesSyncSuccess(guidfixed: shift.guidfixed);
+  }
+}
+
 Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   Dio client = Client().init();
   //String jsonPayload = jsonEncode(trx.toJson());
   try {
-    final response =
-        await client.post('/transaction/sale-invoice', data: trx.toJson());
+    final response = await client.post('/transaction/sale-invoice', data: trx.toJson());
     try {
       final rawData = json.decode(response.toString());
 
@@ -353,7 +375,7 @@ Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   }
 }
 
-Future syncBillProcess() async {
+Future syncProcess() async {
   if (global.syncDataProcess == false) {
     global.syncDataProcess = true;
     global.isOnline = await global.hasNetwork();
@@ -362,15 +384,12 @@ Future syncBillProcess() async {
         if (!global.loginProcess) {
           global.loginProcess = true;
           UserRepository userRepository = UserRepository();
-          await userRepository
-              .authenUser(global.apiUserName, global.apiUserPassword)
-              .then((result) async {
+          await userRepository.authenUser(global.apiUserName, global.apiUserPassword).then((result) async {
             if (result.success) {
               global.apiConnected = true;
               global.appStorage.write("token", result.data["token"]);
               serviceLocator<Log>().debug("Login Success");
-              ApiResponse selectShop =
-                  await userRepository.selectShop(global.apiShopID);
+              ApiResponse selectShop = await userRepository.selectShop(global.apiShopID);
               if (selectShop.success) {
                 serviceLocator<Log>().debug("Select Shop Success");
               }
@@ -380,10 +399,12 @@ Future syncBillProcess() async {
           }).whenComplete(() async {
             global.loginProcess = false;
             await syncBillData();
+            await syncShift();
           });
         }
       } else {
         await syncBillData();
+        await syncShift();
       }
     }
     global.syncDataProcess = false;

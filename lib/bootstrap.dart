@@ -37,23 +37,23 @@ Future<void> initializeApp() async {
   HttpOverrides.global = MyHttpOverrides();
   await setupDisplay();
 
-  if (kDebugMode) {
-    // Debug
-    // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
-    await googleMultiLanguageSheetLoad().then((_) {
-      String json = jsonEncode(global.languageSystemCode);
-      File file = File(jsonLanguageFileName);
-      file.writeAsString(json);
-    });
+  // if (kDebugMode) {
+  //   // Debug
+  //   // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
+  //   await googleMultiLanguageSheetLoad().then((_) {
+  //     String json = jsonEncode(global.languageSystemCode);
+  //     File file = File(jsonLanguageFileName);
+  //     file.writeAsString(json);
+  //   });
 
-    // global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
-  } else {
-    // release
-    // load ภาษาจาก assets (mode release)
-    try {
-      global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
-    } catch (_) {}
-  }
+  //   // global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
+  // } else {
+  // release
+  // load ภาษาจาก assets (mode release)
+  try {
+    global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
+  } catch (_) {}
+  //}
   global.languageSelect(global.userScreenLanguage);
   //
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
@@ -65,22 +65,54 @@ Future<void> initializeApp() async {
 
 Future<void> initializeEnvironmentConfig() async {
   // Storage
+  String jsonLanguageFileName = "assets/language.json";
+
+  await GetStorage.init();
+  global.appStorage = GetStorage();
+
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
     defaultValue: Environment.DEV,
   );
   Environment().initConfig(environment);
   global.environmentVersion = environment;
-  await GetStorage.init();
-  global.appStorage = GetStorage();
+  if (global.appStorage.read("environmentVersion") != null) {
+    if (global.appStorage.read("environmentVersion") == "DEV") {
+      Environment().initConfig(Environment.DEV);
+      global.environmentVersion = "DEV";
+    } else {
+      Environment().initConfig(Environment.PROD);
+      global.environmentVersion = "PROD";
+    }
+  }
+
   //
+  print(GetStorage().read("language"));
+  if (GetStorage().read("language") == "" || GetStorage().read("language") == null) {
+    GetStorage().write("language", "th");
+  }
   try {
     global.userScreenLanguage = GetStorage().read("language");
   } catch (ex) {
     global.userScreenLanguage = "th";
   }
+  try {
+    global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
+  } catch (_) {}
+  //}
+  global.languageSelect(global.userScreenLanguage);
+
   global.applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
   objectBoxInit();
+  global.appStorage.remove(global.syncCategoryTimeName);
+  global.appStorage.remove(global.syncProductBarcodeTimeName);
+  global.appStorage.remove(global.syncInventoryTimeName);
+  global.appStorage.remove(global.syncMemberTimeName);
+  global.appStorage.remove(global.syncBankTimeName);
+  global.appStorage.remove(global.syncTableTimeName);
+  global.appStorage.remove(global.syncBuffetModeTimeName);
+  global.appStorage.remove(global.syncKitchenTimeName);
+  global.appStorage.remove(global.syncWalletTimeName);
   // Server
   await global.startLoading();
   server.startServer();
