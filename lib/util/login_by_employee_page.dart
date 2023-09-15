@@ -127,59 +127,59 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                       width: 50,
                                       height: 50,
                                     ),
-                                  const SizedBox(
-                                    width: 10,
+                                  Expanded(
+                                    child: Text(global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage),
+                                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                                   ),
-                                  Text(global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage),
-                                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                                  const Spacer(),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      // ตรวจสอบ User,Password
-                                      var employee = global.employeeHelper.selectByCode(code: userController.text);
-                                      if (employee != null) {
-                                        if (employee.pin_code == passwordController.text && employee.is_use_pos == false) {
-                                          if (employee.pin_code == "123456") {
-                                            // บังคับให้เปลี่ยนรหัสผ่าน
-                                            global.userLogin = employee;
-                                            await showDialog(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: const Text('ต้องเปลี่ยนรหัสผ่าน'),
-                                                    content: const Text('เนื่องจากรหัสผ่านเป็นรหัสเริ่มต้น กรุณาเปลี่ยนรหัสผ่านใหม่'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                          context.router.pushAndPopUntil(const EmployeeChangePasswordRoute(), predicate: (route) => false);
-                                                        },
-                                                        child: const Text('OK'),
-                                                      ),
-                                                    ],
-                                                  );
-                                                });
+                                  if (MediaQuery.of(context).size.width > 600) const Spacer(),
+                                  if (MediaQuery.of(context).size.width > 600)
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        // ตรวจสอบ User,Password
+                                        var employee = global.employeeHelper.selectByCode(code: userController.text);
+                                        if (employee != null) {
+                                          if (employee.pin_code == passwordController.text && employee.is_use_pos == false) {
+                                            if (employee.pin_code == "123456") {
+                                              // บังคับให้เปลี่ยนรหัสผ่าน
+                                              global.userLogin = employee;
+                                              await showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text('ต้องเปลี่ยนรหัสผ่าน'),
+                                                      content: const Text('เนื่องจากรหัสผ่านเป็นรหัสเริ่มต้น กรุณาเปลี่ยนรหัสผ่านใหม่'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(context);
+                                                            context.router.pushAndPopUntil(const EmployeeChangePasswordRoute(), predicate: (route) => false);
+                                                          },
+                                                          child: const Text('OK'),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  });
+                                            } else {
+                                              global.userLogin = employee;
+                                              global.loginSuccess = true;
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => const LoadingScreen()),
+                                              );
+                                            }
                                           } else {
-                                            global.userLogin = employee;
-                                            global.loginSuccess = true;
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => const LoadingScreen()),
-                                            );
+                                            setState(() {
+                                              lastStatus = global.language("user_name_or_password_incorrect");
+                                            });
                                           }
                                         } else {
                                           setState(() {
                                             lastStatus = global.language("user_name_or_password_incorrect");
                                           });
                                         }
-                                      } else {
-                                        setState(() {
-                                          lastStatus = global.language("user_name_or_password_incorrect");
-                                        });
-                                      }
-                                    },
-                                    child: Text(global.language("sign_in")),
-                                  ),
+                                      },
+                                      child: Text(global.language("sign_in")),
+                                    ),
                                 ],
                               ),
                               const SizedBox(height: 20),
@@ -209,7 +209,55 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                       icon: const Icon(Icons.visibility)),
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 20),
+                              if (MediaQuery.of(context).size.width <= 600)
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    // ตรวจสอบ User,Password
+                                    var employee = global.employeeHelper.selectByCode(code: userController.text);
+                                    if (employee != null) {
+                                      if (employee.pin_code == passwordController.text && employee.is_use_pos == false) {
+                                        if (employee.pin_code == "123456") {
+                                          // บังคับให้เปลี่ยนรหัสผ่าน
+                                          global.userLogin = employee;
+                                          await showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text('ต้องเปลี่ยนรหัสผ่าน'),
+                                                  content: const Text('เนื่องจากรหัสผ่านเป็นรหัสเริ่มต้น กรุณาเปลี่ยนรหัสผ่านใหม่'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        context.router.pushAndPopUntil(const EmployeeChangePasswordRoute(), predicate: (route) => false);
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                );
+                                              });
+                                        } else {
+                                          global.userLogin = employee;
+                                          global.loginSuccess = true;
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const LoadingScreen()),
+                                          );
+                                        }
+                                      } else {
+                                        setState(() {
+                                          lastStatus = global.language("user_name_or_password_incorrect");
+                                        });
+                                      }
+                                    } else {
+                                      setState(() {
+                                        lastStatus = global.language("user_name_or_password_incorrect");
+                                      });
+                                    }
+                                  },
+                                  child: Text(global.language("sign_in")),
+                                ),
                               Text(
                                 lastStatus,
                                 style: const TextStyle(color: Colors.red),
