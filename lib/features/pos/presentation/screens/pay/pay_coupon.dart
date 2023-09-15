@@ -1,5 +1,4 @@
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:dedepos/widgets/numpadtext.dart';

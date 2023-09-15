@@ -77,6 +77,7 @@ Map<String, dynamic> _$PayCashModelToJson(PayCashModel instance) =>
 
 PayCreditCardModel _$PayCreditCardModelFromJson(Map<String, dynamic> json) =>
     PayCreditCardModel(
+      book_bank_code: json['book_bank_code'] as String,
       bank_code: json['bank_code'] as String,
       bank_name: json['bank_name'] as String,
       card_number: json['card_number'] as String,
@@ -86,6 +87,7 @@ PayCreditCardModel _$PayCreditCardModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$PayCreditCardModelToJson(PayCreditCardModel instance) =>
     <String, dynamic>{
+      'book_bank_code': instance.book_bank_code,
       'bank_code': instance.bank_code,
       'bank_name': instance.bank_name,
       'card_number': instance.card_number,
@@ -95,17 +97,17 @@ Map<String, dynamic> _$PayCreditCardModelToJson(PayCreditCardModel instance) =>
 
 PayTransferModel _$PayTransferModelFromJson(Map<String, dynamic> json) =>
     PayTransferModel(
+      book_bank_code: json['book_bank_code'] as String,
       bank_code: json['bank_code'] as String,
       bank_name: json['bank_name'] as String,
       amount: (json['amount'] as num).toDouble(),
-      account_number: json['account_number'] as String,
     );
 
 Map<String, dynamic> _$PayTransferModelToJson(PayTransferModel instance) =>
     <String, dynamic>{
+      'book_bank_code': instance.book_bank_code,
       'bank_code': instance.bank_code,
       'bank_name': instance.bank_name,
-      'account_number': instance.account_number,
       'amount': instance.amount,
     };
 

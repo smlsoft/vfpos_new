@@ -286,7 +286,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
     double iconWidth = 100;
 
     List<ProfileQrPaymentModel> providerList = [];
-    providerList.addAll(global.profileSetting.qrpaymentlist);
+    providerList.addAll(global.posConfig.qrcodes ?? []);
     return Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -310,7 +310,7 @@ class PayQrWidgetState extends State<PayQrWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return (global.profileSetting.qrpaymentlist.isNotEmpty)
+    return (global.posConfig.qrcodes!.isNotEmpty)
         ? Container(
             width: double.infinity,
             padding: const EdgeInsets.only(left: 4, right: 4),

@@ -1108,7 +1108,7 @@
     },
     {
       "id": "23:132682824475798031",
-      "lastPropertyId": "14:8105615966884369140",
+      "lastPropertyId": "15:1818468887954864060",
       "name": "ShiftObjectBoxStruct",
       "properties": [
         {
@@ -1178,6 +1178,11 @@
           "id": "14:8105615966884369140",
           "name": "coupon",
           "type": 8
+        },
+        {
+          "id": "15:1818468887954864060",
+          "name": "isSync",
+          "type": 1
         }
       ],
       "relations": []
@@ -1571,7 +1576,7 @@
     },
     {
       "id": "30:8931092861744922825",
-      "lastPropertyId": "16:1370355419232149970",
+      "lastPropertyId": "17:9094434472717353325",
       "name": "BillDetailObjectBoxStruct",
       "properties": [
         {
@@ -1654,6 +1659,11 @@
           "id": "16:1370355419232149970",
           "name": "is_except_vat",
           "type": 1
+        },
+        {
+          "id": "17:9094434472717353325",
+          "name": "doc_mode",
+          "type": 6
         }
       ],
       "relations": []

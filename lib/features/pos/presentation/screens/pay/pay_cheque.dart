@@ -1,6 +1,5 @@
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/db/bank_helper.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'package:dedepos/widgets/numpad.dart';
@@ -9,10 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayCheque extends StatefulWidget {
@@ -243,7 +240,7 @@ class _PayChequeState extends State<PayCheque> {
                                       alignment: Alignment.center,
                                       child: FittedBox(
                                           child: Text(
-                                        DateFormat.yMMMMEEEEd().formatInBuddhistCalendarThai(dueDate),
+                                        global.dateTimeFormatFull(dueDate),
                                         style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.center,
                                       )))),
@@ -363,10 +360,7 @@ class _PayChequeState extends State<PayCheque> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    buildDetailsBlock(
-                      label: global.language('due_date'),
-                      value: DateFormat.yMMMMEEEEd().formatInBuddhistCalendarThai(global.payScreenData.cheque[index].due_date),
-                    ),
+                    buildDetailsBlock(label: global.language('due_date'), value: global.dateTimeFormatFull(global.payScreenData.cheque[index].due_date)),
                     buildDetailsBlock(label: global.language('amount'), value: global.moneyFormat.format(global.payScreenData.cheque[index].amount)),
                   ],
                 ),

@@ -53,8 +53,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
     });
   }
 
-  Widget detail(
-      int index, PosProcessDetailModel detail, Color backgroundColor) {
+  Widget detail(int index, PosProcessDetailModel detail, Color backgroundColor) {
     TextStyle textStyle = const TextStyle(
       fontSize: 18,
       color: Colors.black,
@@ -74,11 +73,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
           padding: const EdgeInsets.only(left: 5, right: 5),
           child: Row(
             children: <Widget>[
-              Expanded(
-                  flex: 5,
-                  child: Text(
-                      "$index.${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}",
-                      style: textStyle)),
+              Expanded(flex: 5, child: Text("$index.${global.getNameFromJsonLanguage(detail.item_name, global.userScreenLanguage)}", style: textStyle)),
               Expanded(
                   flex: 1,
                   child: Align(
@@ -87,13 +82,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
                         global.moneyFormat.format(detail.qty),
                         style: textStyle,
                       ))),
-              Expanded(
-                  flex: 1,
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                          global.moneyFormat.format(detail.total_amount),
-                          style: textStyle))),
+              Expanded(flex: 1, child: Align(alignment: Alignment.centerRight, child: Text(global.moneyFormat.format(detail.total_amount), style: textStyle))),
             ],
           ),
         ));
@@ -104,10 +93,8 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
       controller: detailScrollController,
       itemCount: processResult.posProcess.details.length,
       itemBuilder: (context, index) {
-        Color? backgroundColor =
-            (index.isOdd) ? Colors.white : Colors.grey[200];
-        return detail(index + 1, processResult.posProcess.details[index],
-            backgroundColor!);
+        Color? backgroundColor = (index.isOdd) ? Colors.white : Colors.grey[200];
+        return detail(index + 1, processResult.posProcess.details[index], backgroundColor!);
       },
     );
   }
@@ -128,9 +115,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
           ),
           Expanded(
             flex: 3,
-            child: screenBoxShadowLabelAndNumber(
-                label: global.language("money_symbol"),
-                value: processResult.posProcess.total_amount),
+            child: screenBoxShadowLabelAndNumber(label: global.language("money_symbol"), value: processResult.posProcess.total_amount),
           ),
         ],
       ),
@@ -185,8 +170,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
   }
 
   void checkEndVideo() {
-    if (videoController.value.isInitialized &&
-        (videoController.value.duration == videoController.value.position)) {
+    if (videoController.value.isInitialized && (videoController.value.duration == videoController.value.position)) {
       changeInformationMedia();
     }
   }
@@ -204,18 +188,15 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
           informationMedia = CachedNetworkImage(
             fit: BoxFit.fill,
             imageUrl: global.informationList[informationIndex].sourceUrl,
-            placeholder: (context, url) =>
-                const Center(child: CircularProgressIndicator()),
+            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           );
-          informationCountDownSecond =
-              global.informationList[informationIndex].delaySecond;
+          informationCountDownSecond = global.informationList[informationIndex].delaySecond;
           setState(() {});
         }
         if (global.informationList[informationIndex].mode == 1) {
           // Show Video
-          videoController = VideoPlayerController.network(
-              global.informationList[informationIndex].sourceUrl);
+          videoController = VideoPlayerController.network(global.informationList[informationIndex].sourceUrl);
           informationMedia = VideoPlayer(videoController);
           videoController.setLooping(false);
           videoController.initialize().then((_) {
@@ -256,8 +237,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
   @override
   Widget build(BuildContext context) {
     if (value != "") {
-      PosHoldProcessModel processDecode = PosHoldProcessModel.fromJson(
-          jsonDecode(value) as Map<String, dynamic>);
+      PosHoldProcessModel processDecode = PosHoldProcessModel.fromJson(jsonDecode(value) as Map<String, dynamic>);
       processResult = processDecode;
     }
     // PosHoldProcessModel.fromJson(
@@ -293,8 +273,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
                         SizedBox(height: 60, child: Container()),
                         Expanded(
                             child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.cyan, width: 4)),
+                          decoration: BoxDecoration(border: Border.all(color: Colors.cyan, width: 4)),
                           padding: const EdgeInsets.all(4),
                           child: informationScreen(),
                         ))
@@ -306,9 +285,7 @@ class PosSecondaryScreenState extends State<PosSecondaryScreen> {
                           summery(),
                           Expanded(
                               child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.cyan, width: 4)),
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.cyan, width: 4)),
                                   padding: const EdgeInsets.all(4),
                                   child: Column(
                                     children: [

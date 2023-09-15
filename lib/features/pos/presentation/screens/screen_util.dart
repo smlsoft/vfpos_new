@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 
-Widget screenBoxShadowLabelAndNumber(
-    {String label = "", double value = 0.0, double fontSize = 32.0}) {
+Widget screenBoxShadowLabelAndNumber({String label = "", double value = 0.0, double fontSize = 32.0}) {
   final formattedNumber = global.moneyFormat.format(value);
   return Container(
     margin: const EdgeInsets.all(5),

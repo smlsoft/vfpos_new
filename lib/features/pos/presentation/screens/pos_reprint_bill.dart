@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PosReprintBillScreen extends StatefulWidget {
+  final global.PosScreenModeEnum posScreenMode;
+
   @override
-  const PosReprintBillScreen({Key? key}) : super(key: key);
+  const PosReprintBillScreen({Key? key, required this.posScreenMode}) : super(key: key);
 
   @override
   State<PosReprintBillScreen> createState() => _PosReprintBillScreenState();
@@ -20,7 +22,9 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<BillBloc>().add(BillLoad());
+    context.read<BillBloc>().add(BillLoad(
+          posScreenMode: widget.posScreenMode,
+        ));
   }
 
   @override
@@ -51,7 +55,7 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosReprintBillDetailScreen(docNumber: dataList[index].doc_number),
+                          builder: (context) => PosReprintBillDetailScreen(posScreenMode: widget.posScreenMode, docNumber: dataList[index].doc_number),
                         ),
                       );
                     },

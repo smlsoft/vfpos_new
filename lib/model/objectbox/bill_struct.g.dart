@@ -37,12 +37,13 @@ Map<String, dynamic> _$BillDetailExtraObjectBoxStructToJson(
 BillPayObjectBoxStruct _$BillPayObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     BillPayObjectBoxStruct(
+      doc_mode: json['doc_mode'] as int? ?? 0,
       trans_flag: json['trans_flag'] as int? ?? 0,
       bank_code: json['bank_code'] as String? ?? "",
       card_number: json['card_number'] as String? ?? "",
       approved_code: json['approved_code'] as String? ?? "",
       bank_name: json['bank_name'] as String? ?? "",
-      bank_account_no: json['bank_account_no'] as String? ?? "",
+      book_bank_code: json['book_bank_code'] as String? ?? "",
       branch_number: json['branch_number'] as String? ?? "",
       bank_reference: json['bank_reference'] as String? ?? "",
       cheque_number: json['cheque_number'] as String? ?? "",
@@ -61,10 +62,11 @@ BillPayObjectBoxStruct _$BillPayObjectBoxStructFromJson(
 Map<String, dynamic> _$BillPayObjectBoxStructToJson(
         BillPayObjectBoxStruct instance) =>
     <String, dynamic>{
+      'doc_mode': instance.doc_mode,
       'trans_flag': instance.trans_flag,
       'bank_code': instance.bank_code,
       'bank_name': instance.bank_name,
-      'bank_account_no': instance.bank_account_no,
+      'book_bank_code': instance.book_bank_code,
       'card_number': instance.card_number,
       'approved_code': instance.approved_code,
       'doc_date_time': instance.doc_date_time.toIso8601String(),

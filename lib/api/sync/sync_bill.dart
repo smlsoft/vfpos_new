@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dedepos/api/client.dart';
+import 'package:dedepos/api/sync/model/shift_model.dart';
 import 'package:dedepos/api/sync/model/trans_model.dart';
 import 'package:dedepos/api/user_repository.dart';
 import 'package:dedepos/core/logger/logger.dart';
@@ -8,6 +9,7 @@ import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/bill_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/model/objectbox/shift_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dio/dio.dart';
 import 'package:uuid/uuid.dart';
@@ -49,18 +51,11 @@ Future syncBillData() async {
         ispos: 1,
         itemcode: detail.item_code,
         itemguid: "",
-        itemnames: [
-          TransNameInfoModel(
-            code: "th",
-            isauto: false,
-            isdelete: false,
-            name: detail.item_name,
-          )
-        ],
+        itemnames: (jsonDecode(detail.item_name) as List).map((e) => TransNameInfoModel.fromJson(e)).toList(),
         itemtype: 0,
         laststatus: 0,
         linenumber: detail.line_number,
-        locationcode: "",
+        locationcode: global.posConfig.devicenumber,
         locationnames: [],
         multiunit: false,
         price: detail.price,
@@ -68,35 +63,25 @@ Future syncBillData() async {
         qty: detail.qty,
         remark: "",
         shelfcode: "",
-        sumamount: 0,
+        sumamount: (detail.price * detail.qty) - detail.discount,
         sumamountexcludevat: 0,
         sumofcost: 0,
-        taxtype: 0,
-        tolocationcode: "",
-        tolocationnames: [],
+        taxtype: bill.bill_tax_type,
+        tolocationcode: global.posConfig.location.code,
+        tolocationnames: global.posConfig.location.names,
         totalqty: detail.qty,
         totalvaluevat: 0,
         towhcode: "",
         towhnames: [],
         unitcode: detail.unit_code,
-        unitnames: [
-          TransNameInfoModel(
-            code: "th",
-            isauto: false,
-            isdelete: false,
-            name: detail.unit_name,
-          )
-        ],
+        unitnames: (jsonDecode(detail.unit_name) as List).map((e) => TransNameInfoModel.fromJson(e)).toList(),
         vatcal: 0,
         vattype: 0,
-        whcode: "",
-        whnames: [],
+        whcode: global.posConfig.warehouse.code,
+        whnames: global.posConfig.warehouse.names,
       ));
     }
-    List<BillPayObjectBoxStruct> payDetails =
-        (jsonDecode(bill.pay_json) as List)
-            .map((e) => BillPayObjectBoxStruct.fromJson(e))
-            .toList();
+    List<BillPayObjectBoxStruct> payDetails = (jsonDecode(bill.pay_json) as List).map((e) => BillPayObjectBoxStruct.fromJson(e)).toList();
     List<TransPaymentCreditCardModel> paymentCreditCards = [];
     List<TransPaymentTransferModel> paymentTransfers = [];
     for (var payDetail in payDetails) {
@@ -113,7 +98,7 @@ Future syncBillData() async {
           break;
         case 2: // 2=เงินโอน
           paymentTransfers.add(TransPaymentTransferModel(
-            accountnumber: payDetail.bank_account_no,
+            accountnumber: payDetail.book_bank_code,
             amount: payDetail.amount,
             bankcode: payDetail.bank_code,
             banknames: [
@@ -137,10 +122,10 @@ Future syncBillData() async {
     }
 
     TransPaymentDetailModel paymentDetail = TransPaymentDetailModel(
-      cashamount: bill.pay_cash_amount,
+      cashamount: 0,
       cashamounttext: "",
-      paymentcreditcards: paymentCreditCards,
-      paymenttransfers: paymentTransfers,
+      paymentcreditcards: [],
+      paymenttransfers: [],
     );
     TransactionModel trans = TransactionModel(
         cashiercode: bill.cashier_code,
@@ -149,8 +134,8 @@ Future syncBillData() async {
         description: "POS",
         discountword: bill.discount_formula,
         docdatetime: bill.date_time.toUtc().toIso8601String(),
-        docno: new Uuid().v4(),
-        docrefdate: null,
+        docno: bill.doc_number,
+        docrefdate: bill.date_time.toUtc().toIso8601String(),
         docrefno: "",
         docreftype: 0,
         doctype: 0,
@@ -165,22 +150,26 @@ Future syncBillData() async {
         status: 0,
         taxdocdate: bill.date_time.toUtc().toIso8601String(),
         taxdocno: bill.doc_number,
-        totalaftervat: 0,
+        totalaftervat: bill.amount_after_calc_vat,
         totalamount: bill.total_amount,
-        totalbeforevat: 0,
+        totalbeforevat: bill.amount_before_calc_vat,
         totalcost: 0,
         totaldiscount: bill.total_discount,
-        totalexceptvat: 0,
+        totalexceptvat: bill.amount_except_vat,
         totalvalue: bill.total_amount,
         totalvatvalue: bill.total_vat_amount,
         transflag: 0,
         vatrate: bill.vat_rate,
-        vattype: 0,
+        vattype: global.posConfig.vattype,
         details: details,
         paymentdetail: paymentDetail,
-        paymentdetailraw: jsonEncode(paymentDetail.toJson()));
+        paymentdetailraw: bill.pay_json);
 
-    await saveTransaction(trans);
+    if (bill.doc_mode == 1) {
+      await saveTransaction(trans);
+    } else {
+      await saveReturn(trans);
+    }
 
     BillHelper().updatesSyncSuccess(docNumber: bill.doc_number);
 
@@ -322,12 +311,96 @@ Future syncBillData() async {
   }
 }
 
+Future syncShift() async {
+  List<ShiftObjectBoxStruct> shifts = (global.shiftHelper.selectSyncIsFalse());
+
+  for (int index = 0; index < shifts.length; index++) {
+    ShiftObjectBoxStruct shift = shifts[index];
+
+    ShiftModel postShift = ShiftModel(
+      guidfixed: shift.guidfixed,
+      doctype: shift.doctype,
+      amount: shift.amount,
+      creditcard: shift.creditcard,
+      promptpay: shift.promptpay,
+      transfer: shift.transfer,
+      cheque: shift.cheque,
+      coupon: shift.coupon,
+      docdate: shift.docdate.toUtc().toIso8601String(),
+      remark: shift.remark,
+      usercode: shift.usercode,
+      username: shift.username,
+    );
+    await saveShift(postShift);
+    global.shiftHelper.updatesSyncSuccess(docNumber: shift.guidfixed);
+  }
+}
+
 Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   Dio client = Client().init();
   //String jsonPayload = jsonEncode(trx.toJson());
   try {
-    final response =
-        await client.post('/transaction/sale-invoice', data: trx.toJson());
+    final response = await client.post('/transaction/sale-invoice', data: trx.toJson());
+    try {
+      final rawData = json.decode(response.toString());
+
+      //   print(rawData);
+
+      if (rawData['error'] != null) {
+        String errorMessage = '${rawData['code']}: ${rawData['message']}';
+        serviceLocator<Log>().error(errorMessage);
+        throw Exception('${rawData['code']}: ${rawData['message']}');
+      }
+
+      return ApiResponse.fromMap(rawData);
+    } catch (ex) {
+      global.syncDataProcess = false;
+      serviceLocator<Log>().error(ex);
+      throw Exception(ex);
+    }
+  } on DioError catch (ex) {
+    global.syncDataProcess = false;
+    String errorMessage = ex.response.toString();
+    serviceLocator<Log>().error(errorMessage);
+    throw Exception(errorMessage);
+  }
+}
+
+Future<ApiResponse> saveShift(ShiftModel tran) async {
+  Dio client = Client().init();
+  //String jsonPayload = jsonEncode(trx.toJson());
+  try {
+    final response = await client.post('/pos/shift', data: tran.toJson());
+    try {
+      final rawData = json.decode(response.toString());
+
+      //   print(rawData);
+
+      if (rawData['error'] != null) {
+        String errorMessage = '${rawData['code']}: ${rawData['message']}';
+        serviceLocator<Log>().error(errorMessage);
+        throw Exception('${rawData['code']}: ${rawData['message']}');
+      }
+
+      return ApiResponse.fromMap(rawData);
+    } catch (ex) {
+      global.syncDataProcess = false;
+      serviceLocator<Log>().error(ex);
+      throw Exception(ex);
+    }
+  } on DioError catch (ex) {
+    global.syncDataProcess = false;
+    String errorMessage = ex.response.toString();
+    serviceLocator<Log>().error(errorMessage);
+    throw Exception(errorMessage);
+  }
+}
+
+Future<ApiResponse> saveReturn(TransactionModel trx) async {
+  Dio client = Client().init();
+  //String jsonPayload = jsonEncode(trx.toJson());
+  try {
+    final response = await client.post('/transaction/sale-invoice-return', data: trx.toJson());
     try {
       final rawData = json.decode(response.toString());
 
@@ -362,15 +435,12 @@ Future syncBillProcess() async {
         if (!global.loginProcess) {
           global.loginProcess = true;
           UserRepository userRepository = UserRepository();
-          await userRepository
-              .authenUser(global.apiUserName, global.apiUserPassword)
-              .then((result) async {
+          await userRepository.authenUser(global.apiUserName, global.apiUserPassword).then((result) async {
             if (result.success) {
               global.apiConnected = true;
               global.appStorage.write("token", result.data["token"]);
               serviceLocator<Log>().debug("Login Success");
-              ApiResponse selectShop =
-                  await userRepository.selectShop(global.apiShopID);
+              ApiResponse selectShop = await userRepository.selectShop(global.apiShopID);
               if (selectShop.success) {
                 serviceLocator<Log>().debug("Select Shop Success");
               }
@@ -380,10 +450,12 @@ Future syncBillProcess() async {
           }).whenComplete(() async {
             global.loginProcess = false;
             await syncBillData();
+            await syncShift();
           });
         }
       } else {
         await syncBillData();
+        await syncShift();
       }
     }
     global.syncDataProcess = false;

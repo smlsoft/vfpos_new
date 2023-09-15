@@ -15,14 +15,23 @@ class ShiftHelper {
 
   bool deleteByGuidFixed(String guid) {
     bool result = false;
-    final find = box
-        .query(ShiftObjectBoxStruct_.guidfixed.equals(guid))
-        .build()
-        .findFirst();
+    final find = box.query(ShiftObjectBoxStruct_.guidfixed.equals(guid)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
     return result;
+  }
+
+  List<ShiftObjectBoxStruct> selectSyncIsFalse() {
+    return box.query(ShiftObjectBoxStruct_.isSync.equals(false)).build().find();
+  }
+
+  void updatesSyncSuccess({required String docNumber}) {
+    final find = box.query(ShiftObjectBoxStruct_.guidfixed.equals(docNumber)).build().findFirst();
+    if (find != null) {
+      find.isSync = true;
+      box.put(find);
+    }
   }
 
   void deleteByGuidFixedMany(List<String> guidFixedList) {

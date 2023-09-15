@@ -241,6 +241,9 @@ class BillObjectBoxStruct {
 class BillDetailObjectBoxStruct {
   int id = 0;
 
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   String doc_number;
 
   /// ลำดับรายการ
@@ -285,6 +288,7 @@ class BillDetailObjectBoxStruct {
   String extra_json;
 
   BillDetailObjectBoxStruct({
+    required this.doc_mode,
     required this.doc_number,
     required this.line_number,
     required this.barcode,
@@ -343,13 +347,15 @@ class BillDetailExtraObjectBoxStruct {
       required this.is_except_vat,
       required this.total_amount});
 
-  factory BillDetailExtraObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$BillDetailExtraObjectBoxStructFromJson(json);
+  factory BillDetailExtraObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$BillDetailExtraObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$BillDetailExtraObjectBoxStructToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
 class BillPayObjectBoxStruct {
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
   int trans_flag;
 
@@ -360,7 +366,7 @@ class BillPayObjectBoxStruct {
   String bank_name;
 
   /// เลขที่บัญชี (เงินเข้า)
-  String bank_account_no;
+  String book_bank_code;
 
   /// เลขที่บัตรเครดิต
   String card_number;
@@ -408,12 +414,13 @@ class BillPayObjectBoxStruct {
   double amount;
 
   BillPayObjectBoxStruct({
+    this.doc_mode = 0,
     this.trans_flag = 0,
     this.bank_code = "",
     this.card_number = "",
     this.approved_code = "",
     this.bank_name = "",
-    this.bank_account_no = "",
+    this.book_bank_code = "",
     this.branch_number = "",
     this.bank_reference = "",
     this.cheque_number = "",
@@ -428,7 +435,6 @@ class BillPayObjectBoxStruct {
   })  : due_date = DateTime.now(),
         doc_date_time = DateTime.now();
 
-  factory BillPayObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$BillPayObjectBoxStructFromJson(json);
+  factory BillPayObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$BillPayObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$BillPayObjectBoxStructToJson(this);
 }

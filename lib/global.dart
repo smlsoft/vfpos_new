@@ -1,4 +1,3 @@
-import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
@@ -8,6 +7,7 @@ import 'package:dedepos/api/sync/model/wallet_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
+import 'package:dedepos/db/shift_helper.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
@@ -38,7 +38,6 @@ import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
@@ -56,7 +55,6 @@ import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
 import 'db/product_category_helper.dart';
 import 'db/product_barcode_helper.dart';
-import 'package:dedepos/global.dart' as global;
 import 'db/pos_log_helper.dart';
 import 'db/bill_helper.dart';
 import 'dart:convert';
@@ -68,18 +66,24 @@ String applicationName = "";
 late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
 PosConfigModel posConfig = PosConfigModel(
-    code: '',
-    doccode: '',
-    vattype: 0,
-    vatrate: 0,
-    docformattaxinv: '',
-    billheader: [],
-    billfooter: [],
-    isvatregister: false,
-    isejournal: false,
-    devicenumber: '',
-    slips: [],
-    logourl: '');
+  code: '',
+  doccode: '',
+  vattype: 0,
+  vatrate: 0,
+  docformattaxinv: '',
+  billheader: [],
+  billfooter: [],
+  isvatregister: false,
+  isejournal: false,
+  devicenumber: '',
+  slips: [],
+  logourl: '',
+  creditcards: [],
+  qrcodes: [],
+  transfers: [],
+  location: LocationModel(code: "", names: []),
+  warehouse: WarehouseModel(code: "", guidfixed: "", names: []),
+);
 List<FormDesignObjectBoxStruct> formDesignList = [];
 List<String> countryNames = ["English", "Thai", "Laos", "Chinese", "Japan", "Korea"];
 List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
@@ -91,6 +95,7 @@ bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
 var httpClient = http.Client();
 late BuildContext globalContext;
+String environmentVersion = "DEV";
 bool tableSelected = false;
 String tableNumberSelected = "";
 late PosHoldProcessModel tableProcessSelected;
@@ -108,6 +113,7 @@ PosLogHelper posLogHelper = PosLogHelper();
 BillHelper billHelper = BillHelper();
 PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
+ShiftHelper shiftHelper = ShiftHelper();
 int syncTimeIntervalMaxBySecond = 10;
 int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.##");
@@ -130,10 +136,9 @@ bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
 PosPayModel payScreenData = PosPayModel();
-List<PaymentProviderModel> qrPaymentProviderList = [];
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-EmployeeObjectBoxStruct? userLogin = EmployeeObjectBoxStruct(guidfixed: '', code: '', profile_picture: '', name: '', email: '', is_enabled: false, is_use_pos: false, pin_code: '');
+late EmployeeObjectBoxStruct? userLogin;
 int machineNumber = 1;
 String selectTableCode = "";
 String selectTableGroup = "";
@@ -176,7 +181,6 @@ DeviceModeEnum deviceMode = DeviceModeEnum.none;
 PosScreenNewDataStyleEnum posScreenNewDataStyle = PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
-PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
 bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
 String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
 String posSaleChannelLogoUrl = "";
@@ -196,7 +200,6 @@ String posTerminalPinTokenId = "";
 bool useEdc = false; // เชื่อมต่อเครื่อง EDC
 bool posScreenAutoRefresh = false;
 bool rebuildProductBarcodeStatus = true;
-String environmentVersion = "DEV";
 // วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษตามกฏหมาย,2=ปัดเศษขึ้นเป็นจำนวนเต็ม,3=ปัดเศษลงเป็นจำนวนเต็ม
 int payTotalMoneyRoundType = 1;
 // Step การปัดเศษ ค่าว่าง=จำนวนเต็มอัตโนมัติ,0.25,0.5,0.75
@@ -322,7 +325,7 @@ Future<void> loadPrinter() async {
   }
 }
 
-int posScreenToInt() {
+int posScreenToInt(PosScreenModeEnum posScreenMode) {
   switch (posScreenMode) {
     case PosScreenModeEnum.posSale:
       return 1;
@@ -396,7 +399,7 @@ Future<void> getDeviceModel(BuildContext context) async {
     }
   } else if (Platform.isIOS) {
     final iosInfo = await deviceInfo.iosInfo;
-    model = iosInfo.model!;
+    model = iosInfo.model;
     model = model.toLowerCase();
     if (model.contains("iphone")) {
       deviceMode = DeviceModeEnum.iphone;
@@ -438,14 +441,6 @@ void themeSelect(int mode) {
 
 String formatDoubleTrailingZero(double value) {
   return value.toStringAsFixed(value.truncateToDouble() == value ? 0 : 1);
-}
-
-String getAppversion() {
-  return (environmentVersion != "PROD"
-      ? (environmentVersion == "DEV")
-          ? "(DEV)"
-          : "(UAT)"
-      : "");
 }
 
 Future<Uint8List> thaiEncode(String word) async {
@@ -574,19 +569,19 @@ Future<String> billRunning() async {
   String result = "";
   String countDigit = "";
   String lastDigit = "";
-  for (var item in global.posConfig.docformattaxinv.split("")) {
+  for (var item in posConfig.docformattaxinv.split("")) {
     if (item == "#") {
       countDigit += "0";
       lastDigit += "9";
     }
   }
-  String docFormat = global.posConfig.doccode + global.posConfig.docformattaxinv.replaceAll("#", "");
+  String docFormat = posConfig.doccode + posConfig.docformattaxinv.replaceAll("#", "");
   docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
   docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
   docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
   docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
   int number = 0;
-  var getLast = global.objectBoxStore
+  var getLast = objectBoxStore
       .box<BillObjectBoxStruct>()
       .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
       .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
@@ -713,12 +708,15 @@ Future<void> printQueueStartServer() async {
   }
 }
 
-String dateTimeFormatFull(DateTime dateTime, {bool showTime = true}) {
-  var formatter = DateFormat.yMMMMEEEEd('th_TH');
+String dateTimeFormatFull(DateTime dateTime, {bool showTime = false}) {
+  NumberFormat formatter = NumberFormat("00");
+  String day = formatter.format(dateTime.day);
+  String month = formatter.format(dateTime.month);
+  String year = formatter.format(dateTime.year + 543);
   if (showTime) {
-    return "${formatter.formatInBuddhistCalendarThai(dateTime)} - ${DateFormat.Hm().format(dateTime)}";
+    return "$day/$month/$year ${DateFormat.Hm().format(dateTime)}";
   } else {
-    return formatter.formatInBuddhistCalendarThai(dateTime);
+    return "$day/$month/$year";
   }
 }
 
@@ -732,15 +730,6 @@ String dateTimeFormatShort(DateTime dateTime, {bool showTime = false}) {
   } else {
     return "$day/$month/$year";
   }
-}
-
-String dateFormat(DateTime dateTime) {
-  var formatter = DateFormat.yMMMMEEEEd('th_TH');
-  return formatter.formatInBuddhistCalendarThai(dateTime);
-}
-
-String timeFormat(DateTime dateTime) {
-  return DateFormat.Hm().format(dateTime);
 }
 
 Future<void> systemProcess() async {
@@ -866,12 +855,12 @@ Future<void> loadDeviceConfigFromServer() async {
     // POS Setting
     var value = await apiRepository.getPosSetting(deviceId);
     print(jsonEncode(value.data));
-    global.posConfig = PosConfigModel.fromJson(value.data);
+    posConfig = PosConfigModel.fromJson(value.data);
     // ดึง logo
-    if (global.posConfig.logourl.isNotEmpty) {
-      var url = global.posConfig.logourl;
+    if (posConfig.logourl.isNotEmpty) {
+      var url = posConfig.logourl;
       var response = await http.get(Uri.parse(url));
-      var file = File(global.getPosLogoPathName());
+      var file = File(getPosLogoPathName());
       await file.writeAsBytes(response.bodyBytes);
     }
   } catch (e) {
@@ -1170,6 +1159,7 @@ bool isDesktopScreen() {
 
 String syncFindLastUpdate(List<SyncMasterStatusModel> dataList, String tableName) {
   for (var item in dataList) {
+    print(item.tableName);
     if (item.tableName == tableName) {
       return DateFormat(dateFormatSync).format(DateTime.parse(item.lastUpdate));
     }
@@ -1180,7 +1170,7 @@ String syncFindLastUpdate(List<SyncMasterStatusModel> dataList, String tableName
 Future<void> testPrinterConnect() async {
   if (printerLocalStrongData.isNotEmpty) {
     for (var printer in printerLocalStrongData) {
-      if (printer.printerConnectType == global.PrinterConnectEnum.ip) {
+      if (printer.printerConnectType == PrinterConnectEnum.ip) {
         if (printer.ipAddress.trim().isNotEmpty) {
           bool oldReady = printer.isReady;
           try {
@@ -1195,7 +1185,7 @@ Future<void> testPrinterConnect() async {
             }
           }
           if (oldReady != printer.isReady) {
-            global.posScreenAutoRefresh = true;
+            posScreenAutoRefresh = true;
           }
         }
       }
@@ -1325,9 +1315,9 @@ Future<void> checkOrderOnline() async {
           await clickHouseExecute(updateQuery);
         }
         // save to objectbox
-        global.objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(orderSave, mode: PutMode.insert);
+        objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(orderSave, mode: PutMode.insert);
         // คำนวณยอดใหม่
-        global.orderSumAndUpdateTable(orderId);
+        orderSumAndUpdateTable(orderId);
       }
     } catch (e) {
       serviceLocator<Log>().error(e.toString());
@@ -1577,7 +1567,7 @@ Future<void> getProfile() async {
         headerreceiptpos: "",
         footerreciptpos: "",
       );
-      List<ProfileQrPaymentModel> qrPayments = [];
+
       var value = await apiRepository.getProfileSetting();
       var jsonData = value.data;
       for (var data in jsonData) {
@@ -1590,8 +1580,6 @@ Future<void> getProfile() async {
           languageList = List<String>.from(jsonDecodeBody["languageList"]);
         } else if (code == "ConfigSystem") {
           configSystem = ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
-        } else if (code == "qrpayments") {
-          qrPayments.add(ProfileQrPaymentModel.fromJson(jsonDecode(body)));
         }
       }
       var branchValue = await apiRepository.getProfileSBranch();
@@ -1602,7 +1590,6 @@ Future<void> getProfile() async {
         languagelist: languageList,
         configsystem: configSystem,
         branch: branchs,
-        qrpaymentlist: qrPayments,
       );
       appStorage.write('profile', profileSetting.toJson());
       if (profileSetting.company.logo != null) {
@@ -1610,7 +1597,7 @@ Future<void> getProfile() async {
         if (profileSetting.company.logo!.isNotEmpty) {
           var url = profileSetting.company.logo!;
           var response = await http.get(Uri.parse(url));
-          var file = File(global.getShopLogoPathName());
+          var file = File(getShopLogoPathName());
           await file.writeAsBytes(response.bodyBytes);
         }
       }
@@ -1643,7 +1630,6 @@ Future<void> loadEmployee() async {
       ));
     }
     employeeHelper.insertMany(employeeObjectBoxList);
-    print(employeeHelper.select());
   } catch (e) {
     print(e);
   }
@@ -1730,8 +1716,8 @@ Future<Directory> createPath(String mainPath, DateTime docDate) async {
 }
 
 int findFormByCode(String code) {
-  for (var i = 0; i < global.formDesignList.length; i++) {
-    if (global.formDesignList[i].code == code) {
+  for (var i = 0; i < formDesignList.length; i++) {
+    if (formDesignList[i].code == code) {
       return i;
     }
   }
@@ -1739,18 +1725,18 @@ int findFormByCode(String code) {
 }
 
 String getPosFormCodeByCode(String code) {
-  for (var i = 0; i < global.posConfig.slips.length; i++) {
-    if (global.posConfig.slips[i].code == code) {
-      return global.posConfig.slips[i].formcode;
+  for (var i = 0; i < posConfig.slips.length; i++) {
+    if (posConfig.slips[i].code == code) {
+      return posConfig.slips[i].formcode;
     }
   }
   return "";
 }
 
 String getPosFormNameByCode(String code) {
-  for (var i = 0; i < global.posConfig.slips.length; i++) {
-    if (global.posConfig.slips[i].code == code) {
-      return jsonEncode(global.posConfig.slips[i].formnames);
+  for (var i = 0; i < posConfig.slips.length; i++) {
+    if (posConfig.slips[i].code == code) {
+      return jsonEncode(posConfig.slips[i].formnames);
     }
   }
   return "[{}]";
@@ -1782,6 +1768,14 @@ double roundMoneyForPay(double value) {
     }
   }
   return result;
+}
+
+String getAppversion() {
+  return (environmentVersion != "PROD"
+      ? (environmentVersion == "DEV")
+          ? "(DEV)"
+          : "(UAT)"
+      : "");
 }
 
 Widget iconStatus(String pngFileName, bool status) {

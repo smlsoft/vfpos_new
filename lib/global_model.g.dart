@@ -286,9 +286,6 @@ ProfileSettingModel _$ProfileSettingModelFromJson(Map<String, dynamic> json) =>
           .map((e) =>
               ProfileSettingBranchModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      qrpaymentlist: (json['qrpaymentlist'] as List<dynamic>)
-          .map((e) => ProfileQrPaymentModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$ProfileSettingModelToJson(
@@ -297,7 +294,6 @@ Map<String, dynamic> _$ProfileSettingModelToJson(
       'company': instance.company.toJson(),
       'languagelist': instance.languagelist,
       'configsystem': instance.configsystem.toJson(),
-      'qrpaymentlist': instance.qrpaymentlist.map((e) => e.toJson()).toList(),
       'branch': instance.branch.map((e) => e.toJson()).toList(),
     };
 
@@ -317,10 +313,77 @@ Map<String, dynamic> _$ProfileSettingBranchModelToJson(
       'names': instance.names.map((e) => e.toJson()).toList(),
     };
 
+ProfileCreditCardModel _$ProfileCreditCardModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileCreditCardModel(
+      names: (json['names'] as List<dynamic>?)
+          ?.map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bookbank: ProfileCreditCardBookBankModel.fromJson(
+          json['bookbank'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ProfileCreditCardModelToJson(
+        ProfileCreditCardModel instance) =>
+    <String, dynamic>{
+      'names': instance.names?.map((e) => e.toJson()).toList(),
+      'bookbank': instance.bookbank.toJson(),
+    };
+
+ProfileTransferModel _$ProfileTransferModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileTransferModel(
+      names: (json['names'] as List<dynamic>?)
+          ?.map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bookbank: ProfileCreditCardBookBankModel.fromJson(
+          json['bookbank'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ProfileTransferModelToJson(
+        ProfileTransferModel instance) =>
+    <String, dynamic>{
+      'names': instance.names?.map((e) => e.toJson()).toList(),
+      'bookbank': instance.bookbank.toJson(),
+    };
+
+ProfileCreditCardBookBankModel _$ProfileCreditCardBookBankModelFromJson(
+        Map<String, dynamic> json) =>
+    ProfileCreditCardBookBankModel(
+      accountcode: json['accountcode'] as String?,
+      accountname: json['accountname'] as String?,
+      bankbranch: json['bankbranch'] as String?,
+      bankcode: json['bankcode'] as String?,
+      banknames: (json['banknames'] as List<dynamic>?)
+          ?.map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bookcode: json['bookcode'] as String?,
+      images:
+          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      names: (json['names'] as List<dynamic>?)
+          ?.map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      passbook: json['passbook'] as String?,
+    );
+
+Map<String, dynamic> _$ProfileCreditCardBookBankModelToJson(
+        ProfileCreditCardBookBankModel instance) =>
+    <String, dynamic>{
+      'accountcode': instance.accountcode,
+      'accountname': instance.accountname,
+      'bankbranch': instance.bankbranch,
+      'bankcode': instance.bankcode,
+      'banknames': instance.banknames?.map((e) => e.toJson()).toList(),
+      'bookcode': instance.bookcode,
+      'images': instance.images,
+      'names': instance.names?.map((e) => e.toJson()).toList(),
+      'passbook': instance.passbook,
+    };
+
 ProfileQrPaymentModel _$ProfileQrPaymentModelFromJson(
         Map<String, dynamic> json) =>
     ProfileQrPaymentModel(
-      guidfixed: json['guidfixed'] as String,
+      guidfixed: json['guidfixed'] as String?,
       code: json['code'] as String,
       bankcode: json['bankcode'] as String,
       banknames: (json['banknames'] as List<dynamic>)
@@ -333,20 +396,28 @@ ProfileQrPaymentModel _$ProfileQrPaymentModelFromJson(
       bookbankimages: (json['bookbankimages'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      isactive: json['isactive'] as int,
+      isactive: json['isactive'] as bool,
       qrtype: json['qrtype'] as int,
       qrnames: (json['qrnames'] as List<dynamic>)
           .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       qrcode: json['qrcode'] as String,
       logo: json['logo'] as String,
-      apikey: json['apikey'] as String,
+      apikey: json['apikey'] as String?,
+      accessCode: json['accessCode'] as String?,
+      bankcharge: json['bankcharge'] as String?,
+      billerCode: json['billerCode'] as String?,
+      billerID: json['billerID'] as String?,
+      closeQr: json['closeQr'] as int?,
+      customercharge: json['customercharge'] as String?,
+      merchantName: json['merchantName'] as String?,
+      storeID: json['storeID'] as String?,
+      terminalID: json['terminalID'] as String?,
     );
 
 Map<String, dynamic> _$ProfileQrPaymentModelToJson(
         ProfileQrPaymentModel instance) =>
     <String, dynamic>{
-      'guidfixed': instance.guidfixed,
       'code': instance.code,
       'bankcode': instance.bankcode,
       'banknames': instance.banknames.map((e) => e.toJson()).toList(),
@@ -359,6 +430,16 @@ Map<String, dynamic> _$ProfileQrPaymentModelToJson(
       'qrcode': instance.qrcode,
       'logo': instance.logo,
       'apikey': instance.apikey,
+      'accessCode': instance.accessCode,
+      'bankcharge': instance.bankcharge,
+      'billerCode': instance.billerCode,
+      'billerID': instance.billerID,
+      'closeQr': instance.closeQr,
+      'customercharge': instance.customercharge,
+      'guidfixed': instance.guidfixed,
+      'merchantName': instance.merchantName,
+      'storeID': instance.storeID,
+      'terminalID': instance.terminalID,
     };
 
 ProfileSettingConfigSystemModel _$ProfileSettingConfigSystemModelFromJson(
@@ -503,6 +584,23 @@ PosConfigModel _$PosConfigModelFromJson(Map<String, dynamic> json) =>
           .map((e) => PosConfigSlipModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       logourl: json['logourl'] as String,
+      qrcodes: (json['qrcodes'] as List<dynamic>?)
+          ?.map(
+              (e) => ProfileQrPaymentModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      creditcards: (json['creditcards'] as List<dynamic>?)
+          ?.map(
+              (e) => ProfileCreditCardModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      transfers: (json['transfers'] as List<dynamic>?)
+          ?.map((e) => ProfileTransferModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      location: json['location'] == null
+          ? null
+          : LocationModel.fromJson(json['location'] as Map<String, dynamic>),
+      warehouse: json['warehouse'] == null
+          ? null
+          : WarehouseModel.fromJson(json['warehouse'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
@@ -519,6 +617,11 @@ Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
       'isvatregister': instance.isvatregister,
       'slips': instance.slips.map((e) => e.toJson()).toList(),
       'logourl': instance.logourl,
+      'qrcodes': instance.qrcodes?.map((e) => e.toJson()).toList(),
+      'creditcards': instance.creditcards?.map((e) => e.toJson()).toList(),
+      'transfers': instance.transfers?.map((e) => e.toJson()).toList(),
+      'location': instance.location.toJson(),
+      'warehouse': instance.warehouse.toJson(),
     };
 
 PosInformationModel _$PosInformationModelFromJson(Map<String, dynamic> json) =>
@@ -532,4 +635,34 @@ Map<String, dynamic> _$PosInformationModelToJson(
     <String, dynamic>{
       'shop_id': instance.shop_id,
       'shop_name': instance.shop_name,
+    };
+
+LocationModel _$LocationModelFromJson(Map<String, dynamic> json) =>
+    LocationModel(
+      code: json['code'] as String,
+      names: (json['names'] as List<dynamic>)
+          .map((e) => TransNameInfoModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$LocationModelToJson(LocationModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'names': instance.names.map((e) => e.toJson()).toList(),
+    };
+
+WarehouseModel _$WarehouseModelFromJson(Map<String, dynamic> json) =>
+    WarehouseModel(
+      code: json['code'] as String,
+      names: (json['names'] as List<dynamic>)
+          .map((e) => TransNameInfoModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      guidfixed: json['guidfixed'] as String,
+    );
+
+Map<String, dynamic> _$WarehouseModelToJson(WarehouseModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'guidfixed': instance.guidfixed,
+      'names': instance.names.map((e) => e.toJson()).toList(),
     };

@@ -43,7 +43,7 @@ class _InitShopScreenState extends State<InitShopScreen> {
             if (F.appFlavor == Flavor.DEDEPOS || F.appFlavor == Flavor.SMLSUPERPOS || F.appFlavor == Flavor.VFPOS) {
               context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
             } else {
-              context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
+              context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
             }
           });
         }

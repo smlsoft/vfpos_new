@@ -1,5 +1,9 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:objectbox/objectbox.dart';
 
+part 'shift_struct.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 @Entity()
 class ShiftObjectBoxStruct {
   int id = 0;
@@ -32,6 +36,8 @@ class ShiftObjectBoxStruct {
   /// coupon
   double coupon;
 
+  bool isSync;
+
   ShiftObjectBoxStruct({
     required this.guidfixed,
     required this.doctype,
@@ -45,5 +51,10 @@ class ShiftObjectBoxStruct {
     required this.transfer,
     required this.cheque,
     required this.coupon,
+    required this.isSync,
   });
+
+  factory ShiftObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$ShiftObjectBoxStructFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ShiftObjectBoxStructToJson(this);
 }

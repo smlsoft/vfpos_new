@@ -93,10 +93,10 @@ Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
 
 TransNameInfoModel _$TransNameInfoModelFromJson(Map<String, dynamic> json) =>
     TransNameInfoModel(
-      code: json['code'] as String,
-      isauto: json['isauto'] as bool,
-      isdelete: json['isdelete'] as bool,
-      name: json['name'] as String,
+      code: json['code'] as String?,
+      isauto: json['isauto'] as bool?,
+      isdelete: json['isdelete'] as bool?,
+      name: json['name'] as String?,
     );
 
 Map<String, dynamic> _$TransNameInfoModelToJson(TransNameInfoModel instance) =>

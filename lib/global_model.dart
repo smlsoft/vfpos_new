@@ -1,3 +1,4 @@
+import 'package:dedepos/api/sync/model/trans_model.dart';
 import 'package:dedepos/global.dart';
 import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
@@ -388,10 +389,9 @@ class ProfileSettingModel {
   ProfileSettingCompanyModel company;
   List<String> languagelist;
   ProfileSettingConfigSystemModel configsystem;
-  List<ProfileQrPaymentModel> qrpaymentlist;
   List<ProfileSettingBranchModel> branch;
 
-  ProfileSettingModel({required this.company, required this.languagelist, required this.configsystem, required this.branch, required this.qrpaymentlist});
+  ProfileSettingModel({required this.company, required this.languagelist, required this.configsystem, required this.branch});
 
   factory ProfileSettingModel.fromJson(Map<String, dynamic> json) => _$ProfileSettingModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileSettingModelToJson(this);
@@ -412,20 +412,79 @@ class ProfileSettingBranchModel {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ProfileCreditCardModel {
+  List<LanguageDataModel>? names;
+  ProfileCreditCardBookBankModel bookbank;
+
+  ProfileCreditCardModel({required this.names, required this.bookbank});
+
+  factory ProfileCreditCardModel.fromJson(Map<String, dynamic> json) => _$ProfileCreditCardModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileCreditCardModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileTransferModel {
+  List<LanguageDataModel>? names;
+  ProfileCreditCardBookBankModel bookbank;
+
+  ProfileTransferModel({required this.names, required this.bookbank});
+
+  factory ProfileTransferModel.fromJson(Map<String, dynamic> json) => _$ProfileTransferModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileTransferModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileCreditCardBookBankModel {
+  String? accountcode;
+  String? accountname;
+  String? bankbranch;
+  String? bankcode;
+  List<LanguageDataModel>? banknames;
+  String? bookcode;
+  List<String>? images;
+  List<LanguageDataModel>? names;
+  String? passbook;
+
+  ProfileCreditCardBookBankModel({
+    required this.accountcode,
+    required this.accountname,
+    required this.bankbranch,
+    required this.bankcode,
+    required this.banknames,
+    required this.bookcode,
+    required this.images,
+    required this.names,
+    required this.passbook,
+  });
+
+  factory ProfileCreditCardBookBankModel.fromJson(Map<String, dynamic> json) => _$ProfileCreditCardBookBankModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileCreditCardBookBankModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class ProfileQrPaymentModel {
-  String guidfixed;
   String code;
   String bankcode;
   List<LanguageDataModel> banknames;
   String bookbankcode;
   List<LanguageDataModel> bookbanknames;
   List<String> bookbankimages;
-  int isactive;
+  bool isactive;
   int qrtype;
   List<LanguageDataModel> qrnames;
   String qrcode;
   String logo;
-  String apikey;
+  String? apikey;
+  String? accessCode;
+  String? bankcharge;
+  String? billerCode;
+  String? billerID;
+  int? closeQr;
+  String? customercharge;
+  String? guidfixed;
+  String? merchantName;
+  String? storeID;
+  String? terminalID;
 
   ProfileQrPaymentModel({
     required this.guidfixed,
@@ -441,6 +500,15 @@ class ProfileQrPaymentModel {
     required this.qrcode,
     required this.logo,
     required this.apikey,
+    required this.accessCode,
+    required this.bankcharge,
+    required this.billerCode,
+    required this.billerID,
+    required this.closeQr,
+    required this.customercharge,
+    required this.merchantName,
+    required this.storeID,
+    required this.terminalID,
   });
 
   factory ProfileQrPaymentModel.fromJson(Map<String, dynamic> json) => _$ProfileQrPaymentModelFromJson(json);
@@ -566,6 +634,11 @@ class PosConfigModel {
   final bool isvatregister;
   final List<PosConfigSlipModel> slips;
   final String logourl;
+  final List<ProfileQrPaymentModel>? qrcodes;
+  final List<ProfileCreditCardModel>? creditcards;
+  final List<ProfileTransferModel>? transfers;
+  final LocationModel location;
+  final WarehouseModel warehouse;
 
   PosConfigModel({
     required this.code,
@@ -580,7 +653,13 @@ class PosConfigModel {
     required this.devicenumber,
     required this.slips,
     required this.logourl,
-  });
+    required this.qrcodes,
+    required this.creditcards,
+    required this.transfers,
+    LocationModel? location,
+    WarehouseModel? warehouse,
+  })  : location = location ?? LocationModel(code: "", names: []),
+        warehouse = warehouse ?? WarehouseModel(code: "", names: [], guidfixed: "");
 
   factory PosConfigModel.fromJson(Map<String, dynamic> json) => _$PosConfigModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosConfigModelToJson(this);
@@ -614,4 +693,36 @@ class MoneyRoundPayModel {
     required this.end,
     required this.value,
   });
+}
+
+@JsonSerializable(explicitToJson: true)
+class LocationModel {
+  String code;
+  List<TransNameInfoModel> names;
+
+  LocationModel({
+    required this.code,
+    required this.names,
+  });
+
+  factory LocationModel.fromJson(Map<String, dynamic> json) => _$LocationModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LocationModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class WarehouseModel {
+  String code;
+  String guidfixed;
+  List<TransNameInfoModel> names;
+
+  WarehouseModel({
+    required this.code,
+    required this.names,
+    required this.guidfixed,
+  });
+
+  factory WarehouseModel.fromJson(Map<String, dynamic> json) => _$WarehouseModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WarehouseModelToJson(this);
 }

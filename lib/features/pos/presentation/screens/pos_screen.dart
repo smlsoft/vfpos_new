@@ -1,10 +1,7 @@
-import 'package:dedepos/features/pos/presentation/screens/pos_print.dart';
 import 'package:dedepos/model/json/member_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/util/print_hold_bill.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/safe_area_values.dart';
-import 'package:top_snackbar_flutter/tap_bounce_container.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'dart:ui';
 import 'package:auto_route/auto_route.dart';
@@ -20,7 +17,6 @@ import 'package:dedepos/features/pos/presentation/screens/pos_sale_channel.dart'
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/routes/app_routers.dart';
-import 'package:dedepos/util/menu_screen.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:dedepos/bloc/product_category_bloc.dart';
 import 'package:dedepos/global_model.dart';
@@ -35,7 +31,6 @@ import 'package:split_view/split_view.dart';
 import 'dart:developer' as dev;
 import 'dart:convert';
 import 'dart:io';
-import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:dedepos/services/find_employee.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_hold_bill.dart';
 import 'package:flutter/services.dart';
@@ -172,7 +167,6 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     super.initState();
 
     restartClearData();
-    global.posScreenMode = widget.posScreenMode;
     if (global.isDesktopScreen()) {
       deviceMode = 1;
     } else if (global.isTabletScreen()) {
@@ -415,7 +409,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           if (posLogSelect.isNotEmpty) {
             await logHelper.insert(PosLogObjectBoxStruct(
                 guid_code_ref: guidCodeRef,
-                doc_mode: global.posScreenToInt(),
+                doc_mode: global.posScreenToInt(widget.posScreenMode),
                 guid_ref: guidRef,
                 log_date_time: DateTime.now(),
                 hold_code: global.posHoldActiveCode,
@@ -451,7 +445,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               double price = global.getProductPrice(productSelect.prices, 1);
               PosLogObjectBoxStruct data = PosLogObjectBoxStruct(
                   log_date_time: DateTime.now(),
-                  doc_mode: global.posScreenToInt(),
+                  doc_mode: global.posScreenToInt(widget.posScreenMode),
                   hold_code: global.posHoldActiveCode,
                   command_code: commandCode,
                   barcode: barcode,
@@ -497,7 +491,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
           await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(),
+            doc_mode: global.posScreenToInt(widget.posScreenMode),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_code: global.posHoldActiveCode,
@@ -513,7 +507,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         List<PosLogObjectBoxStruct> posLogSelect = await logHelper.selectByGuidFixed(findActiveLineByGuid);
         if (posLogSelect.isNotEmpty) {
           await logHelper.insert(PosLogObjectBoxStruct(
-              doc_mode: global.posScreenToInt(),
+              doc_mode: global.posScreenToInt(widget.posScreenMode),
               guid_ref: findActiveLineByGuid,
               log_date_time: DateTime.now(),
               hold_code: global.posHoldActiveCode,
@@ -527,7 +521,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 4:
         // 4=แก้จำนวน
         await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(),
+            doc_mode: global.posScreenToInt(widget.posScreenMode),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_code: global.posHoldActiveCode,
@@ -537,7 +531,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 5:
         // 5=แก้ราคา
         await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(),
+            doc_mode: global.posScreenToInt(widget.posScreenMode),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_code: global.posHoldActiveCode,
@@ -547,7 +541,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 6:
         // 6=แก้ส่วนลด
         await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(),
+            doc_mode: global.posScreenToInt(widget.posScreenMode),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_code: global.posHoldActiveCode,
@@ -557,7 +551,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 8:
         // 8=แก้หมายเหตุ
         await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(),
+            doc_mode: global.posScreenToInt(widget.posScreenMode),
             guid_ref: findActiveLineByGuid,
             log_date_time: DateTime.now(),
             hold_code: global.posHoldActiveCode,
@@ -567,7 +561,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       case 9:
         // 9=ลบรายการ
         await logHelper.insert(PosLogObjectBoxStruct(
-            doc_mode: global.posScreenToInt(), log_date_time: DateTime.now(), hold_code: global.posHoldActiveCode, command_code: commandCode, guid_ref: findActiveLineByGuid));
+            doc_mode: global.posScreenToInt(widget.posScreenMode),
+            log_date_time: DateTime.now(),
+            hold_code: global.posHoldActiveCode,
+            command_code: commandCode,
+            guid_ref: findActiveLineByGuid));
         global.playSound(sound: global.SoundEnum.beep, word: global.language("delete") + global.language("line"));
         productOptions.clear();
         break;
@@ -577,6 +575,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         global.playSound(sound: global.SoundEnum.beep, word: global.language("restart"));
         productOptions.clear();
         findActiveLineByGuid = "";
+
         break;
       default:
         dev.log("commandCode=$commandCode");
@@ -867,7 +866,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         productOptions = [];
       }
     }
-    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((value) {
+    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(widget.posScreenMode), detailDiscountFormula: detailDiscountFormula).then((value) {
       if (value.lineGuid.isNotEmpty && value.lastCommandCode == 1) {
         findActiveLineByGuid = value.lineGuid;
       }
@@ -992,7 +991,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void billDiscountPadChange(String discount) async {
     detailDiscountFormula = discount;
-    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((value) {
+    posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(widget.posScreenMode), detailDiscountFormula: detailDiscountFormula).then((value) {
       setState(() {});
     });
   }
@@ -2545,6 +2544,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       PageTransition(
         type: PageTransitionType.rightToLeft,
         child: PayScreenPage(
+          posScreenMode: widget.posScreenMode,
+          docMode: global.posScreenToInt(widget.posScreenMode),
           defaultTabIndex: tabIndex,
           posProcess: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)],
         ),
@@ -2608,32 +2609,34 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     iconMenu.add(const SizedBox(
       width: 2,
     ));
-    iconMenu.add(ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          minimumSize: Size.zero, // Set this
-          padding: const EdgeInsets.all(8) // and this
-          ),
-      onPressed: () async {
-        payScreen(3);
-      },
-      child: const FaIcon(FontAwesomeIcons.creditCard),
-    ));
-    iconMenu.add(const SizedBox(
-      width: 2,
-    ));
-    iconMenu.add(ElevatedButton(
-      style: ElevatedButton.styleFrom(
-          minimumSize: Size.zero, // Set this
-          padding: const EdgeInsets.all(8) // and this
-          ),
-      onPressed: () async {
-        payScreen(2);
-      },
-      child: const Icon(Icons.qr_code),
-    ));
-    iconMenu.add(const SizedBox(
-      width: 2,
-    ));
+    if (widget.posScreenMode == global.PosScreenModeEnum.posSale) {
+      iconMenu.add(ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size.zero, // Set this
+            padding: const EdgeInsets.all(8) // and this
+            ),
+        onPressed: () async {
+          payScreen(3);
+        },
+        child: const FaIcon(FontAwesomeIcons.creditCard),
+      ));
+      iconMenu.add(const SizedBox(
+        width: 2,
+      ));
+      iconMenu.add(ElevatedButton(
+        style: ElevatedButton.styleFrom(
+            minimumSize: Size.zero, // Set this
+            padding: const EdgeInsets.all(8) // and this
+            ),
+        onPressed: () async {
+          payScreen(2);
+        },
+        child: const Icon(Icons.qr_code),
+      ));
+      iconMenu.add(const SizedBox(
+        width: 2,
+      ));
+    }
     iconMenu.add(ElevatedButton(
       style: ElevatedButton.styleFrom(
           minimumSize: Size.zero, // Set this
@@ -2644,7 +2647,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       },
       child: const Icon(Icons.print),
     ));
-    if (1 == 1) {
+    if (widget.posScreenMode == global.PosScreenModeEnum.posSale) {
       // ร้านอาหาร
       iconMenu.add(const SizedBox(
         width: 2,
@@ -2740,7 +2743,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
 
   void restartClearData() {
     int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
-
+    widgetMessageImageUrl = "";
+    widgetMessage = [];
     detailDiscountFormula = "";
     global.posSaleChannelCode = "XXX";
     findActiveLineByGuid = "";
@@ -2835,13 +2839,14 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               ).then((value) => setState(() {}));
             },
           ),
-      commandButton(
-        icon: FontAwesomeIcons.walkieTalkie,
-        label: global.language("hold_bill"),
-        onPressed: () async {
-          await holdBill(holdType: 1);
-        },
-      ),
+      if (widget.posScreenMode == global.PosScreenModeEnum.posSale)
+        commandButton(
+          icon: FontAwesomeIcons.walkieTalkie,
+          label: global.language("hold_bill"),
+          onPressed: () async {
+            await holdBill(holdType: 1);
+          },
+        ),
       commandButton(
         icon: FontAwesomeIcons.cashRegister,
         label: global.language('open_cash_drawer'),
@@ -2869,7 +2874,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosReprintBillScreen(),
+                builder: (context) => PosReprintBillScreen(posScreenMode: widget.posScreenMode),
               ),
             );
           }),
@@ -2880,7 +2885,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosBillVatScreen(),
+                builder: (context) => PosBillVatScreen(posScreenMode: widget.posScreenMode),
               ),
             );
           }),
@@ -2891,7 +2896,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const PosCancelBillScreen(),
+                builder: (context) => PosCancelBillScreen(
+                  posScreenMode: widget.posScreenMode,
+                ),
               ),
             );
           }),
@@ -2901,11 +2908,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         onPressed: () {
           // Navigator.pop(context);
 
-          // if (F.appFlavor == Flavor.VFPOS) {
-          //   context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
-          // } else {
-          context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
-          //}
+          if (F.appFlavor == Flavor.VFPOS) {
+            context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
+          } else {
+            context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
+          }
         },
       )
     ];
@@ -3398,7 +3405,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
     if (global.appMode == global.AppModeEnum.posTerminal) {
       if (holdIndex != -1) {
-        posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(), detailDiscountFormula: detailDiscountFormula).then((_) {
+        posCompileProcess(holdCode: global.posHoldActiveCode, docMode: global.posScreenToInt(widget.posScreenMode), detailDiscountFormula: detailDiscountFormula).then((_) {
           PosProcess().sumCategoryCount(value: global.posHoldProcessResult[holdIndex].posProcess);
         });
       }
@@ -4066,8 +4073,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         setState(() {
-                          global.posHoldProcessResult[holdIndex].saleCode = "";
-                          global.posHoldProcessResult[holdIndex].saleName = "";
+                          global.posHoldProcessResult[holdIndex].customerCode = "";
+                          global.posHoldProcessResult[holdIndex].customerName = "";
                         });
                       },
                     )
@@ -4323,7 +4330,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                           toolbarHeight: 32,
                           titleSpacing: 0,
                           automaticallyImplyLeading: false,
-                          backgroundColor: (global.posScreenMode == global.PosScreenModeEnum.posSale) ? Colors.blue.shade200 : Colors.red.shade200,
+                          backgroundColor: (widget.posScreenMode == global.PosScreenModeEnum.posSale) ? Colors.blue.shade200 : Colors.red.shade200,
                           title: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -4361,7 +4368,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                         },
                                         child: Image.network(global.posSaleChannelLogoUrl))),
                               Text(
-                                  (global.posScreenMode == global.PosScreenModeEnum.posSale)
+                                  (widget.posScreenMode == global.PosScreenModeEnum.posSale)
                                       ? global.language("pos_screen_sale") //  'ขายสินค้า'
                                       : global.language("pos_screen_return"), // 'รับคืนสินค้า',
                                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, shadows: [

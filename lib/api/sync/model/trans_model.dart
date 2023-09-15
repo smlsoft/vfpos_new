@@ -91,11 +91,14 @@ class TransNameInfoModel {
   String name;
 
   TransNameInfoModel({
-    required this.code,
-    required this.isauto,
-    required this.isdelete,
-    required this.name,
-  });
+    String? code,
+    bool? isauto,
+    bool? isdelete,
+    String? name,
+  })  : code = code ?? "",
+        isauto = isauto ?? false,
+        isdelete = isdelete ?? false,
+        name = name ?? "";
 
   factory TransNameInfoModel.fromJson(Map<String, dynamic> json) => _$TransNameInfoModelFromJson(json);
 

@@ -7,14 +7,7 @@ class PayButton extends StatelessWidget {
   final Color? primary;
   final Color border;
   final double? height;
-  const PayButton(
-      {Key? key,
-      required this.onPressed,
-      required this.label,
-      required this.child,
-      this.primary = Colors.blueGrey,
-      this.border = Colors.cyan,
-      this.height = 40})
+  const PayButton({Key? key, required this.onPressed, required this.label, required this.child, this.primary = Colors.blueGrey, this.border = Colors.cyan, this.height = 40})
       : super(key: key);
 
   @override
@@ -36,10 +29,7 @@ class PayButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                      child: Text(label,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18))),
+                  Expanded(child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
                   child,
                 ],
               )),

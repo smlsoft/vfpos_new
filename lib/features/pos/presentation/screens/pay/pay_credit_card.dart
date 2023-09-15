@@ -26,6 +26,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
   GlobalKey cardNumberKey = GlobalKey();
   GlobalKey approveNumberKey = GlobalKey();
   GlobalKey amountNumberKey = GlobalKey();
+  String bookBankCode = "";
   String bankCode = "";
   String bankName = "";
   String cardNumber = "";
@@ -35,6 +36,9 @@ class _PayCreditCardState extends State<PayCreditCard> {
   @override
   void initState() {
     super.initState();
+    if (global.posConfig.creditcards!.isNotEmpty) {
+      bookBankCode = global.posConfig.creditcards![0].bookbank.accountcode!;
+    }
   }
 
   void refreshEvent() {
@@ -43,7 +47,8 @@ class _PayCreditCardState extends State<PayCreditCard> {
 
   bool saveData() {
     if (cardNumber.trim().isNotEmpty && cardAmount > 0) {
-      PayCreditCardModel data = PayCreditCardModel(bank_code: bankCode, bank_name: bankName, card_number: cardNumber, approved_code: approveNumber, amount: cardAmount);
+      PayCreditCardModel data =
+          PayCreditCardModel(book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, card_number: cardNumber, approved_code: approveNumber, amount: cardAmount);
       global.payScreenData.credit_card.add(data);
       return true;
     } else {
@@ -63,6 +68,26 @@ class _PayCreditCardState extends State<PayCreditCard> {
         padding: const EdgeInsets.all(5),
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            children: [
+              for (var item in global.posConfig.creditcards!)
+                ElevatedButton(
+                    onPressed: () {
+                      bookBankCode = item.bookbank.bankcode!;
+                      refreshEvent();
+                    },
+                    child: Column(
+                      children: [
+                        Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(item.bookbank.bankcode!)))),
+                        Text(
+                          "${global.getNameFromLanguage(item.names!, global.userScreenLanguage)} ",
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    )),
+            ],
+          ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -306,17 +331,22 @@ class _PayCreditCardState extends State<PayCreditCard> {
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: ListTile(
-              title: Row(
+              title: Column(
                 children: [
-                  SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.credit_card[index].bank_code)))),
-                  const SizedBox(width: 10),
-                  Text(
-                    '${global.language('card_number')}  : ',
-                    style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'CourrierPrime'),
-                  ),
-                  Text(
-                    global.payScreenData.credit_card[index].card_number,
-                    style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'CourrierPrime'),
+                  Text(global.payScreenData.credit_card[index].book_bank_code),
+                  Row(
+                    children: [
+                      SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.credit_card[index].bank_code)))),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${global.language('card_number')} : ',
+                        style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'CourrierPrime'),
+                      ),
+                      Text(
+                        global.payScreenData.credit_card[index].card_number,
+                        style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'CourrierPrime'),
+                      ),
+                    ],
                   ),
                 ],
               ),
