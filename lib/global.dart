@@ -221,7 +221,7 @@ enum SoundEnum { beep, fail, buttonTing }
 
 enum DisplayMachineEnum { customerDisplay, posTerminal }
 
-enum PosScreenModeEnum { posSale, posReturn }
+enum PosScreenModeEnum { posSale, posReturn, mainMenu }
 
 /// ฟอร์มใบสรุปยอด
 String formS01 = "S-01";

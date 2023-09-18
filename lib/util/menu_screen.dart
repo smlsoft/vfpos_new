@@ -5,6 +5,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/db/buffet_mode_helper.dart';
+import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
+import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_bill_vat.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_cancel_bill.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_screen.dart';
 import 'package:dedepos/routes/app_routers.dart';
@@ -19,6 +23,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:simple_shadow/simple_shadow.dart';
 
 @RoutePage()
 class MenuScreen extends StatefulWidget {
@@ -51,35 +56,30 @@ class _MenuScreenState extends State<MenuScreen> {
 
   List<Widget> menuPos() {
     return [
-      menuItem(
-          icon: Icons.point_of_sale,
-          title: global.language("pos_screen"),
-          callBack: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => const PosScreen(
-            //         posScreenMode: global.PosScreenModeEnum.posSale),
-            //   ),
-            // );
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posSale),
-              ),
-            );
-          }),
-      menuItem(
-          icon: Icons.list_alt_outlined,
-          title: global.language("pos_return_screen"), // 'รับคืนสินค้า',
-          callBack: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posReturn),
-              ),
-            );
-          }),
+      ItemMenuDashboard(
+        icon: Icons.point_of_sale,
+        title: 'POS',
+        callBack: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posSale),
+            ),
+          );
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.repartition,
+        title: global.language("pos_return_screen"), //'คืนสินค้า',
+        callBack: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posReturn),
+            ),
+          );
+        },
+      ),
     ];
   }
 
@@ -101,25 +101,25 @@ class _MenuScreenState extends State<MenuScreen> {
   List<Widget> menuShift() {
     return [
       menuItem(
-          icon: Icons.request_quote,
+          iconImage: Image.asset('assets/icons/cashier.png'),
           title: global.language("open_shift"), // 'เปิดกะ/รับเงินทอน',
           callBack: () {
             showDialogShiftAndMoney(1);
           }),
+      // menuItem(
+      //     iconImage: Image.asset('assets/icons/deposit.png'),
+      //     title: global.language("add_change_money"), // 'รับเงินทอนเพิ่ม',
+      //     callBack: () {
+      //       showDialogShiftAndMoney(3);
+      //     }),
+      // menuItem(
+      //     iconImage: Image.asset('assets/icons/cash-withdrawal.png'),
+      //     title: global.language("withdraw_money"), // 'นำเงินออก',
+      //     callBack: () {
+      //       showDialogShiftAndMoney(4);
+      //     }),
       menuItem(
-          icon: Icons.request_quote,
-          title: global.language("add_change_money"), // 'รับเงินทอนเพิ่ม',
-          callBack: () {
-            showDialogShiftAndMoney(3);
-          }),
-      menuItem(
-          icon: Icons.request_quote,
-          title: global.language("withdraw_money"), // 'นำเงินออก',
-          callBack: () {
-            showDialogShiftAndMoney(4);
-          }),
-      menuItem(
-          icon: Icons.list_alt_outlined,
+          iconImage: Image.asset('assets/icons/safe.png'),
           title: global.language("close_shift"), // 'ปิดกะ/ส่งเงิน',
           callBack: () {
             showDialogShiftAndMoney(2);
@@ -130,7 +130,7 @@ class _MenuScreenState extends State<MenuScreen> {
   List<Widget> menuUtil() {
     return [
       menuItem(
-          icon: Icons.request_quote,
+          iconImage: Image.asset('assets/icons/smartphone.png'),
           title: global.language("connect_staff_client"), // 'เชื่อมต่อเครื่องพนักงาน',
           callBack: () async {
             await Navigator.push(
@@ -143,7 +143,7 @@ class _MenuScreenState extends State<MenuScreen> {
     ];
   }
 
-  Widget menuItem({required IconData icon, required String title, Color color = Colors.white, required Function callBack}) {
+  Widget menuItem({IconData? icon, Image? iconImage, required String title, Color color = Colors.white, required Function callBack}) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.black,
@@ -159,11 +159,22 @@ class _MenuScreenState extends State<MenuScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(
-            icon,
-            size: 30,
-            color: const Color(0xFFF56045),
-          ),
+          Expanded(
+              child: (icon != null)
+                  ? Icon(
+                      icon,
+                      size: 30,
+                      color: const Color(0xFFF56045),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: SimpleShadow(
+                        opacity: 0.5,
+                        color: Colors.black,
+                        offset: const Offset(2, 2),
+                        sigma: 2,
+                        child: iconImage!,
+                      ))),
           AutoSizeText(
             title,
             textAlign: TextAlign.center,
@@ -305,225 +316,373 @@ class _MenuScreenState extends State<MenuScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.blue[100],
-        appBar: AppBar(
-            centerTitle: true,
-            foregroundColor: Colors.white,
-            leading: Container(
-              margin: const EdgeInsets.all(5),
-              child: ((global.getShopLogoPathName().isNotEmpty) && (File(global.getShopLogoPathName()).existsSync()))
-                  ? Image.file(
-                      File(global.getShopLogoPathName()),
-                    )
-                  : Container(),
-            ),
-            title:
-                Text((global.appMode == global.AppModeEnum.posTerminal) ? "${global.language("pos_terminal")} : $companyName" : "${global.language("pos_remote")} : $companyName"),
-            actions: [
-              IconButton(
-                icon: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green, width: 2),
+        // appBar: AppBar(
+        //     centerTitle: true,
+        //     foregroundColor: Colors.white,
+        //     leading: Container(
+        //       margin: const EdgeInsets.all(5),
+        //       child: ((global.getShopLogoPathName().isNotEmpty) && (File(global.getShopLogoPathName()).existsSync()))
+        //           ? Image.file(
+        //               File(global.getShopLogoPathName()),
+        //             )
+        //           : Container(),
+        //     ),
+        //     title:
+        //         Text((global.appMode == global.AppModeEnum.posTerminal) ? "${global.language("pos_terminal")} : $companyName" : "${global.language("pos_remote")} : $companyName"),
+        //     actions: [
+        //       IconButton(
+        //         icon: Container(
+        //             decoration: BoxDecoration(
+        //               border: Border.all(color: Colors.grey.shade300, width: 2),
+        //             ),
+        //             child: Image.asset('assets/flags/${global.userScreenLanguage}.png')),
+        //         onPressed: () async {
+        //           await Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => const SelectLanguageScreen(),
+        //             ),
+        //           );
+        //           rebuildScreen();
+        //           setState(() {});
+        //         },
+        //       ),
+        //       PopupMenuButton(
+        //         elevation: 2,
+        //         icon: const Icon(Icons.more_vert),
+        //         offset: Offset(0.0, appBarHeight),
+        //         onSelected: (value) async {
+        //           switch (value) {
+        //             case 1:
+        //               // ตั้งค่าเครื่องพิมพ์
+        //               await global.loadPrinter();
+        //               if (mounted) {
+        //                 Navigator.push(
+        //                   context,
+        //                   MaterialPageRoute(
+        //                     builder: (context) => const PrinterConfigScreen(),
+        //                   ),
+        //                 ).then((value) async => {await global.loadPrinter()});
+        //               }
+        //               break;
+        //             case 3:
+        //               if (mounted) {
+        //                 Navigator.push(
+        //                   context,
+        //                   MaterialPageRoute(
+        //                     builder: (context) => const EmployeeChangePasswordPage(),
+        //                   ),
+        //                 ).then((value) async => {await global.loadPrinter()});
+        //               }
+        //               break;
+        //             case 9:
+        //               if (Platform.isAndroid) {
+        //                 SystemNavigator.pop();
+        //               } else if (Platform.isIOS) {
+        //                 exit(0);
+        //               } else {
+        //                 exit(0);
+        //               }
+        //               break;
+        //           }
+        //         },
+        //         shape: const RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.only(
+        //             bottomLeft: Radius.circular(8.0),
+        //             bottomRight: Radius.circular(8.0),
+        //             topLeft: Radius.circular(8.0),
+        //             topRight: Radius.circular(8.0),
+        //           ),
+        //         ),
+        //         itemBuilder: (ctx) => [
+        //           buildPopupMenuItem(
+        //             title: global.language('printer_config'),
+        //             valueCode: 1,
+        //             iconData: Icons.print_rounded,
+        //           ),
+        //           buildPopupMenuItem(
+        //             title: global.language('change_password'),
+        //             valueCode: 3,
+        //             iconData: Icons.lock,
+        //           ),
+        //           buildPopupMenuItem(
+        //             title: global.language('logout'),
+        //             valueCode: 9,
+        //             iconData: Icons.logout,
+        //           ),
+        //         ],
+        //       )
+        //     ]),
+        // resizeToAvoidBottomInset: false,
+        // floatingActionButton: FloatingActionButton.extended(
+        //     onPressed: () async {},
+        //     backgroundColor: Colors.green,
+        //     icon: const Icon(
+        //       Icons.web_asset,
+        //       color: Colors.white,
+        //       shadows: [
+        //         Shadow(
+        //           offset: Offset(1.0, 1.0),
+        //           blurRadius: 3.0,
+        //           color: Colors.black,
+        //         )
+        //       ],
+        //     ),
+        //     label: Text(global.applicationName,
+        //         style: const TextStyle(shadows: <Shadow>[
+        //           Shadow(
+        //             offset: Offset(1.0, 1.0),
+        //             blurRadius: 3.0,
+        //             color: Colors.black,
+        //           )
+        //         ], fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold))),
+        body: (global.isPhoneDevice())
+            ? Column(children: [
+                const TopBarShop(height: 280),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: menuPosList.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
+                                crossAxisSpacing: 5.0,
+                                mainAxisSpacing: 5.0,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return menuPosList[index];
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: menuShiftList.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
+                                crossAxisSpacing: 5.0,
+                                mainAxisSpacing: 5.0,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return menuShiftList[index];
+                              },
+                            ),
+                          ),
+                        ),
+                        if (menuVisitList.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: menuVisitList.length,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
+                                  crossAxisSpacing: 5.0,
+                                  mainAxisSpacing: 5.0,
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return menuVisitList[index];
+                                },
+                              ),
+                            ),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            child: GridView.builder(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: menuUtilList.length,
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
+                                crossAxisSpacing: 5.0,
+                                mainAxisSpacing: 5.0,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return menuUtilList[index];
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: Image.asset('assets/flags/${global.userScreenLanguage}.png')),
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SelectLanguageScreen(),
-                    ),
-                  );
-                  rebuildScreen();
-                  setState(() {});
-                },
-              ),
-              PopupMenuButton(
-                elevation: 2,
-                icon: const Icon(Icons.more_vert),
-                offset: Offset(0.0, appBarHeight),
-                onSelected: (value) async {
-                  switch (value) {
-                    case 1:
-                      // ตั้งค่าเครื่องพิมพ์
-                      await global.loadPrinter();
-                      if (mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PrinterConfigScreen(),
-                          ),
-                        ).then((value) async => {await global.loadPrinter()});
-                      }
-                      break;
-                    case 2:
-                      if (mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterPosTerminalPage(),
-                          ),
-                        ).then((value) async => {await global.loadPrinter()});
-                      }
-                      break;
-                    case 3:
-                      if (mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const EmployeeChangePasswordPage(),
-                          ),
-                        ).then((value) async => {await global.loadPrinter()});
-                      }
-                      break;
-                    case 9:
-                      if (Platform.isAndroid) {
-                        SystemNavigator.pop();
-                      } else if (Platform.isIOS) {
-                        exit(0);
-                      } else {
-                        exit(0);
-                      }
-                      break;
-                  }
-                },
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(8.0),
-                    bottomRight: Radius.circular(8.0),
-                    topLeft: Radius.circular(8.0),
-                    topRight: Radius.circular(8.0),
                   ),
                 ),
-                itemBuilder: (ctx) => [
-                  buildPopupMenuItem(
-                    title: global.language('printer_config'),
-                    valueCode: 1,
-                    iconData: Icons.print_rounded,
-                  ),
-                  buildPopupMenuItem(
-                    title: global.language('pos_register'),
-                    valueCode: 2,
-                    iconData: Icons.app_registration,
-                  ),
-                  buildPopupMenuItem(
-                    title: global.language('change_password'),
-                    valueCode: 3,
-                    iconData: Icons.lock,
-                  ),
-                  buildPopupMenuItem(
-                    title: global.language('logout'),
-                    valueCode: 9,
-                    iconData: Icons.logout,
-                  ),
-                ],
-              )
-            ]),
-        resizeToAvoidBottomInset: false,
-        floatingActionButton: FloatingActionButton.extended(
-            onPressed: () async {},
-            backgroundColor: Colors.green,
-            icon: const Icon(
-              Icons.web_asset,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  offset: Offset(1.0, 1.0),
-                  blurRadius: 3.0,
-                  color: Colors.black,
-                )
-              ],
-            ),
-            label: Text(global.applicationName,
-                style: const TextStyle(shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 3.0,
-                    color: Colors.black,
-                  )
-                ], fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold))),
-        body: Column(children: [
-          infoWidget,
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: menuPosList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                          crossAxisSpacing: 5.0,
-                          mainAxisSpacing: 5.0,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return menuPosList[index];
-                        },
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: menuShiftList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                          crossAxisSpacing: 5.0,
-                          mainAxisSpacing: 5.0,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return menuShiftList[index];
-                        },
-                      ),
-                    ),
-                  ),
-                  if (menuVisitList.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        child: GridView.builder(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: menuVisitList.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                            crossAxisSpacing: 5.0,
-                            mainAxisSpacing: 5.0,
+              ])
+            : SingleChildScrollView(
+                child: Column(children: [
+                const TopBarShop(height: 250),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.point_of_sale,
+                            title: 'POS',
+                            callBack: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posSale),
+                                ),
+                              );
+                            },
                           ),
-                          itemBuilder: (BuildContext context, int index) {
-                            return menuVisitList[index];
-                          },
                         ),
                       ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: menuUtilList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                          crossAxisSpacing: 5.0,
-                          mainAxisSpacing: 5.0,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return menuUtilList[index];
-                        },
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ItemMenuDashboard(
+                              icon: Icons.payments,
+                              title: global.language("open_shift"), // 'รับเงินทอน',
+                              callBack: () {
+                                showDialogShiftAndMoney(1);
+                              },
+                            )),
                       ),
-                    ),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.attach_money_sharp,
+                            title: global.language("close_shift"), //'คืนสินค้า',
+                            callBack: () {
+                              showDialogShiftAndMoney(2);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          )
-        ]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.print,
+                            title: global.language("full_bill_vat"), // 'พิมพ์สำเนาใบเสร็จ',
+                            callBack: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PosBillVatScreen(posScreenMode: global.PosScreenModeEnum.mainMenu),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.cancel,
+                            title: global.language("cancel_bill"), // 'พิมพ์สำเนาใบเสร็จ',
+                            callBack: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PosCancelBillScreen(
+                                    posScreenMode: global.PosScreenModeEnum.mainMenu,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.repeat_rounded,
+                            title: global.language("pos_return_screen"), // 'พิมพ์สำเนาใบเสร็จ',
+                            callBack: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posReturn),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.print_rounded,
+                            title: global.language("printer_config"), // 'พิมพ์สำเนาใบเสร็จ',
+                            callBack: () async {
+                              await global.loadPrinter();
+                              if (mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PrinterConfigScreen(),
+                                  ),
+                                ).then((value) async => {await global.loadPrinter()});
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ItemMenuDashboard(
+                            icon: Icons.logout,
+                            title: global.language("logout"), // 'ออกจากระบบ',
+                            callBack: () {
+                              global.loginSuccess = false;
+                              global.userLogin = null;
+                              if (mounted) {
+                                context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ])),
       ),
     );
   }

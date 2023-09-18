@@ -49,6 +49,7 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
       paymentdetail: TransPaymentDetailModel.fromJson(
           json['paymentdetail'] as Map<String, dynamic>),
       paymentdetailraw: json['paymentdetailraw'] as String,
+      payCashAmount: (json['payCashAmount'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
@@ -89,6 +90,7 @@ Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
       'vattype': instance.vattype,
       'paymentdetail': instance.paymentdetail.toJson(),
       'paymentdetailraw': instance.paymentdetailraw,
+      'payCashAmount': instance.payCashAmount,
     };
 
 TransNameInfoModel _$TransNameInfoModelFromJson(Map<String, dynamic> json) =>

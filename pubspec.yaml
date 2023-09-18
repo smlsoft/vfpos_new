@@ -98,6 +98,7 @@ dependencies:
   network_to_file_image: ^4.0.1
   camera: ^0.10.5+2
   drop_shadow: ^0.1.0
+  simple_shadow: ^0.3.1
   promptpay:
     path: packages/promptpay
   lugentpayment:
