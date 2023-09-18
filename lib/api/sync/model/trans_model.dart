@@ -39,7 +39,7 @@ class TransactionModel {
   int vattype;
   TransPaymentDetailModel paymentdetail;
   String paymentdetailraw;
-  double payCashAmount;
+  double paycashamount;
   TransactionModel({
     required this.cashiercode,
     required this.custcode,
@@ -77,8 +77,8 @@ class TransactionModel {
     required this.vattype,
     required this.paymentdetail,
     required this.paymentdetailraw,
-    double? payCashAmount,
-  }) : payCashAmount = payCashAmount ?? 0.0;
+    double? paycashamount,
+  }) : paycashamount = paycashamount ?? 0.0;
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) => _$TransactionModelFromJson(json);
 

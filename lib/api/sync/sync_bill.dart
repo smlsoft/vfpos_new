@@ -163,6 +163,7 @@ Future syncBillData() async {
         vattype: global.posConfig.vattype,
         details: details,
         paymentdetail: paymentDetail,
+        paycashamount: bill.pay_cash_amount,
         paymentdetailraw: bill.pay_json);
 
     if (bill.doc_mode == 1) {
