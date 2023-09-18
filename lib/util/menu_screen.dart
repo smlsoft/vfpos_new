@@ -69,8 +69,48 @@ class _MenuScreenState extends State<MenuScreen> {
         },
       ),
       ItemMenuDashboard(
-        icon: Icons.repartition,
-        title: global.language("pos_return_screen"), //'คืนสินค้า',
+        icon: Icons.payments,
+        title: global.language("open_shift"), // 'รับเงินทอน',
+        callBack: () {
+          showDialogShiftAndMoney(1);
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.attach_money_sharp,
+        title: global.language("close_shift"), //'คืนสินค้า',
+        callBack: () {
+          showDialogShiftAndMoney(2);
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.print,
+        title: global.language("full_bill_vat"), // 'พิมพ์สำเนาใบเสร็จ',
+        callBack: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PosBillVatScreen(posScreenMode: global.PosScreenModeEnum.mainMenu),
+            ),
+          );
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.cancel,
+        title: global.language("cancel_bill"), // 'พิมพ์สำเนาใบเสร็จ',
+        callBack: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PosCancelBillScreen(
+                posScreenMode: global.PosScreenModeEnum.mainMenu,
+              ),
+            ),
+          );
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.repeat_rounded,
+        title: global.language("pos_return_screen"), // 'พิมพ์สำเนาใบเสร็จ',
         callBack: () {
           Navigator.push(
             context,
@@ -78,6 +118,32 @@ class _MenuScreenState extends State<MenuScreen> {
               builder: (context) => const PosScreen(posScreenMode: global.PosScreenModeEnum.posReturn),
             ),
           );
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.print_rounded,
+        title: global.language("printer_config"), // 'พิมพ์สำเนาใบเสร็จ',
+        callBack: () async {
+          await global.loadPrinter();
+          if (mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PrinterConfigScreen(),
+              ),
+            ).then((value) async => {await global.loadPrinter()});
+          }
+        },
+      ),
+      ItemMenuDashboard(
+        icon: Icons.logout,
+        title: global.language("logout"), // 'ออกจากระบบ',
+        callBack: () {
+          global.loginSuccess = false;
+          global.userLogin = null;
+          if (mounted) {
+            context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
+          }
         },
       ),
     ];
@@ -461,24 +527,24 @@ class _MenuScreenState extends State<MenuScreen> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            child: GridView.builder(
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: menuShiftList.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                                crossAxisSpacing: 5.0,
-                                mainAxisSpacing: 5.0,
-                              ),
-                              itemBuilder: (BuildContext context, int index) {
-                                return menuShiftList[index];
-                              },
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: SizedBox(
+                        //     child: GridView.builder(
+                        //       shrinkWrap: true,
+                        //       physics: const BouncingScrollPhysics(),
+                        //       itemCount: menuShiftList.length,
+                        //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        //         crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
+                        //         crossAxisSpacing: 5.0,
+                        //         mainAxisSpacing: 5.0,
+                        //       ),
+                        //       itemBuilder: (BuildContext context, int index) {
+                        //         return menuShiftList[index];
+                        //       },
+                        //     ),
+                        //   ),
+                        // ),
                         if (menuVisitList.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -498,24 +564,24 @@ class _MenuScreenState extends State<MenuScreen> {
                               ),
                             ),
                           ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            child: GridView.builder(
-                              shrinkWrap: true,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: menuUtilList.length,
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
-                                crossAxisSpacing: 5.0,
-                                mainAxisSpacing: 5.0,
-                              ),
-                              itemBuilder: (BuildContext context, int index) {
-                                return menuUtilList[index];
-                              },
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(8.0),
+                        //   child: SizedBox(
+                        //     child: GridView.builder(
+                        //       shrinkWrap: true,
+                        //       physics: const BouncingScrollPhysics(),
+                        //       itemCount: menuUtilList.length,
+                        //       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        //         crossAxisCount: MediaQuery.of(context).size.width ~/ 150,
+                        //         crossAxisSpacing: 5.0,
+                        //         mainAxisSpacing: 5.0,
+                        //       ),
+                        //       itemBuilder: (BuildContext context, int index) {
+                        //         return menuUtilList[index];
+                        //       },
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
