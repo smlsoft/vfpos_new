@@ -79,6 +79,9 @@ class ProductBarcodeObjectBoxStruct {
   /// ประเภท (Buffet) JSON
   late String ordertypes;
 
+  /// พิมพ์ใบจัดอาหารแบบแยกใบ
+  late bool issplitunitprint;
+
   ProductBarcodeObjectBoxStruct(
       {required this.barcode,
       required this.names,
@@ -101,9 +104,9 @@ class ProductBarcodeObjectBoxStruct {
       required this.ordertypes,
       required this.vat_type,
       required this.is_except_vat,
-      required this.product_count});
+      required this.product_count,
+      required this.issplitunitprint});
 
-  factory ProductBarcodeObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$ProductBarcodeObjectBoxStructFromJson(json);
+  factory ProductBarcodeObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$ProductBarcodeObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$ProductBarcodeObjectBoxStructToJson(this);
 }

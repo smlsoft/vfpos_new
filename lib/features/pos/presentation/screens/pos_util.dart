@@ -14,14 +14,22 @@ class SaveBillResultClass {
   late DateTime docDate;
 }
 
-Future<SaveBillResultClass> saveBill({required docMode, required double cashAmount, required String discountFormula}) async {
+Future<SaveBillResultClass> saveBill(
+    {required int docMode,
+    required double totalAmountAfterDiscount,
+    required double roundAmount,
+    required double totalAmount,
+    required double cashAmount,
+    required String discountFormula,
+    required double discountAmount,
+    required String posHoldActiveCode}) async {
   SaveBillResultClass result = SaveBillResultClass();
   String docNumber = await global.billRunning();
   DateTime docDate = DateTime.now();
   result.docNumber = docNumber;
   result.docDate = docDate;
 
-  PosHoldProcessModel posHoldProcess = global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)];
+  PosHoldProcessModel posHoldProcess = global.posHoldProcessResult[global.findPosHoldProcessResultIndex(posHoldActiveCode)];
 
   // จ่าย
   List<BillPayObjectBoxStruct> pays = [];
@@ -165,11 +173,11 @@ Future<SaveBillResultClass> saveBill({required docMode, required double cashAmou
       customer_telephone: posHoldProcess.customerPhone,
       sale_code: posHoldProcess.saleCode,
       sale_name: posHoldProcess.saleName,
-      total_amount: posHoldProcess.posProcess.total_amount,
+      total_amount: totalAmount,
       cashier_code: global.userLogin!.code,
       cashier_name: global.userLogin!.name,
       pay_cash_amount: cashAmount,
-      pay_cash_change: 0,
+      pay_cash_change: (cashAmount + global.payScreenData.credit_amount + sumCoupon() + sumQr() + sumCreditCard() + sumTransfer() + sumCheque()) - totalAmount,
       is_sync: false,
       amount_except_vat: posHoldProcess.posProcess.amount_except_vat,
       amount_before_calc_vat: posHoldProcess.posProcess.amount_before_calc_vat,
@@ -180,10 +188,17 @@ Future<SaveBillResultClass> saveBill({required docMode, required double cashAmou
       total_item_except_vat_amount: posHoldProcess.posProcess.total_item_except_vat_amount,
       total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
       discount_formula: discountFormula,
-      total_discount: posHoldProcess.posProcess.total_discount,
+      total_discount: discountAmount,
       total_discount_vat_amount: posHoldProcess.posProcess.total_discount_vat_amount,
       total_discount_except_vat_amount: posHoldProcess.posProcess.total_discount_except_vat_amount,
+      detail_discount_formula: posHoldProcess.posProcess.detail_discount_formula,
+      detail_total_amount: posHoldProcess.posProcess.total_amount,
+      detail_total_discount: posHoldProcess.posProcess.detail_total_discount,
+      round_amount: roundAmount,
+      total_amount_after_discount: totalAmountAfterDiscount,
+      detail_total_amount_before_discount: posHoldProcess.posProcess.detail_total_amount_before_discount,
       pay_json: jsonEncode(pays),
+      sum_credit: global.payScreenData.credit_amount,
       sum_coupon: sumCoupon(),
       sum_qr_code: sumQr(),
       sum_credit_card: sumCreditCard(),

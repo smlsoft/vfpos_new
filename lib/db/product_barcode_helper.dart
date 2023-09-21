@@ -41,8 +41,7 @@ class ProductBarcodeHelper {
     return box.put(value);
   }
 
-  List<ProductBarcodeObjectBoxStruct> packData(
-      List<ProductBarcodeObjectBoxStruct> source) {
+  List<ProductBarcodeObjectBoxStruct> packData(List<ProductBarcodeObjectBoxStruct> source) {
     List<ProductBarcodeObjectBoxStruct> results = [];
     for (var data in source) {
       ProductBarcodeObjectBoxStruct newData = ProductBarcodeObjectBoxStruct(
@@ -67,6 +66,7 @@ class ProductBarcodeHelper {
           isalacarte: data.isalacarte,
           ordertypes: data.ordertypes,
           is_except_vat: data.is_except_vat,
+          issplitunitprint: data.issplitunitprint,
           product_count: 0);
       /*List<ProductOptionStruct> _jsonOption =  ProductOptionStruct.fromJson(jsonDecode(  _data.options));
       _data.options.forEach((_optionStr) {
@@ -111,16 +111,10 @@ class ProductBarcodeHelper {
     List<String> barcodeList,
   ) async {
     if (global.appMode == global.AppModeEnum.posRemote) {
-      HttpParameterModel jsonParameter =
-          HttpParameterModel(barcode: barcodeList.join(","));
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "selectByBarcodeList",
-          json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
-      return (jsonDecode(result) as List)
-          .map((e) => ProductBarcodeObjectBoxStruct.fromJson(e))
-          .toList();
+      HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcodeList.join(","));
+      HttpGetDataModel json = HttpGetDataModel(code: "selectByBarcodeList", json: jsonEncode(jsonParameter.toJson()));
+      String result = await global.getFromServer(json: jsonEncode(json.toJson()));
+      return (jsonDecode(result) as List).map((e) => ProductBarcodeObjectBoxStruct.fromJson(e)).toList();
     } else {
       Condition<ProductBarcodeObjectBoxStruct>? ids;
       for (var barcode in barcodeList) {
@@ -138,34 +132,22 @@ class ProductBarcodeHelper {
     }
   }
 
-  Future<ProductBarcodeObjectBoxStruct?> selectByBarcodeFirst(
-      String barcode) async {
+  Future<ProductBarcodeObjectBoxStruct?> selectByBarcodeFirst(String barcode) async {
     if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcode);
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "selectByBarcodeFirst",
-          json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
+      HttpGetDataModel json = HttpGetDataModel(code: "selectByBarcodeFirst", json: jsonEncode(jsonParameter.toJson()));
+      String result = await global.getFromServer(json: jsonEncode(json.toJson()));
       return ProductBarcodeObjectBoxStruct.fromJson(jsonDecode(result));
     } else {
-      return box
-          .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))
-          .build()
-          .findFirst();
+      return box.query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
     }
   }
 
-  List<ProductBarcodeObjectBoxStruct> xselect(
-      {String where = "", String order = "", int limit = 0, int offset = 0}) {
+  List<ProductBarcodeObjectBoxStruct> xselect({String where = "", String order = "", int limit = 0, int offset = 0}) {
     return box.query().build().find();
   }
 
-  List<ProductBarcodeObjectBoxStruct> selectByCodeNameBarCode(
-      {required String word,
-      required String order,
-      required int limit,
-      required int offset}) {
+  List<ProductBarcodeObjectBoxStruct> selectByCodeNameBarCode({required String word, required String order, required int limit, required int offset}) {
     Condition<ProductBarcodeObjectBoxStruct>? condition;
 
     List<String> wordBreak = global.wordSplit(word);
@@ -173,10 +155,8 @@ class ProductBarcodeHelper {
     for (int wordIndex = 0; wordIndex < wordBreak.length; wordIndex++) {
       var currentCondition = ProductBarcodeObjectBoxStruct_.item_code
           .contains(wordBreak[wordIndex])
-          .or(ProductBarcodeObjectBoxStruct_.barcode
-              .contains(wordBreak[wordIndex]))
-          .or(ProductBarcodeObjectBoxStruct_.name_all
-              .contains(wordBreak[wordIndex]));
+          .or(ProductBarcodeObjectBoxStruct_.barcode.contains(wordBreak[wordIndex]))
+          .or(ProductBarcodeObjectBoxStruct_.name_all.contains(wordBreak[wordIndex]));
 
       if (wordIndex == 0) {
         condition = currentCondition;
@@ -198,10 +178,7 @@ class ProductBarcodeHelper {
 
   bool deleteByBarcode(String barcode) {
     bool result = false;
-    final find = box
-        .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))
-        .build()
-        .findFirst();
+    final find = box.query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
@@ -229,10 +206,7 @@ class ProductBarcodeHelper {
 
   bool deleteByGuidFixed(String guidfixed) {
     bool result = false;
-    final find = box
-        .query(ProductBarcodeObjectBoxStruct_.barcode.equals(guidfixed))
-        .build()
-        .findFirst();
+    final find = box.query(ProductBarcodeObjectBoxStruct_.barcode.equals(guidfixed)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

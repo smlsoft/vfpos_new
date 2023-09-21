@@ -10,8 +10,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:intl/intl.dart';
 
-Future syncBuffetMode(List<ItemRemoveModel> removeList,
-    List<SyncBuffetModeModel> newDataList) async {
+Future syncBuffetMode(List<ItemRemoveModel> removeList, List<SyncBuffetModeModel> newDataList) async {
   List<String> removeMany = [];
   List<BuffetModeObjectBoxStruct> manyForInsert = [];
 
@@ -47,45 +46,33 @@ Future syncBuffetMode(List<ItemRemoveModel> removeList,
   }
 }
 
-Future<void> syncBuffetModeCompare(
-    List<SyncMasterStatusModel> masterStatus) async {
+Future<void> syncBuffetModeCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
 
   // Sync ประเภทการขาย (Buffet Mode)
-  String lastUpdateTime =
-      global.appStorage.read(global.syncBuffetModeTimeName) ??
-          global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncBuffetModeTimeName) ?? global.syncDateBegin;
   if (BuffetModeHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "ordertype");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await apiRepository
-          .serverOrderTypeGetData(
-              offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await apiRepository.serverOrderTypeGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["ordertype"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncBuffetModeModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncBuffetModeModel.fromJson(newCate))
-              .toList();
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncBuffetModeModel> newDataList = (dataList["new"] as List).map((newCate) => SyncBuffetModeModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncBuffetMode(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .error("************************************************* Error");
+          serviceLocator<Log>().error("************************************************* Error");
           loop = false;
         }
       });

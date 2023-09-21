@@ -456,7 +456,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
       case 0: // 0=ไม่ปัดเศษ
         break;
       case 1: // 1=ปัดเศษตามกฏหมาย
-        global.payScreenData.round_amount = global.roundMoneyForPay(global.payScreenData.total_after_discount) - global.payScreenData.total_after_discount;
+        global.payScreenData.round_amount = global.roundDouble(global.roundMoneyForPay(global.payScreenData.total_after_discount) - global.payScreenData.total_after_discount, 2);
         break;
       case 2: // 2=ปัดเศษขึ้นเป็นจำนวนเต็ม
         break;
@@ -474,7 +474,17 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
 
   void payProcessSave(global.PosScreenModeEnum posScreenMode) async {
     reCalc();
-    await posUtil.saveBill(docMode: widget.docMode, cashAmount: global.payScreenData.cash_amount, discountFormula: global.payScreenData.discount_formula).then((value) async {
+    await posUtil
+        .saveBill(
+            docMode: widget.docMode,
+            totalAmountAfterDiscount: global.payScreenData.total_after_discount,
+            roundAmount: global.payScreenData.round_amount,
+            totalAmount: global.payScreenData.total_after_round,
+            cashAmount: global.payScreenData.cash_amount,
+            discountFormula: global.payScreenData.discount_formula,
+            discountAmount: global.payScreenData.discount_amount,
+            posHoldActiveCode: global.posHoldActiveCode)
+        .then((value) async {
       if (value.docNumber.isNotEmpty) {
         printBill(posScreenMode: posScreenMode, docDate: value.docDate, docNo: value.docNumber, languageCode: global.userScreenLanguage);
         // ร้านอาหาร update โต๊ะ
@@ -1004,27 +1014,27 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
           tabBarMenuController.index = 4;
         },
       ),
-      commandButton(
-          index: 5,
-          icon: Icons.restart_alt,
-          label: global.language('cheque'),
-          onPressed: () {
-            tabBarMenuController.index = 5;
-          }),
-      commandButton(
-          index: 6,
-          icon: Icons.print,
-          label: global.language('coupon'),
-          onPressed: () {
-            tabBarMenuController.index = 6;
-          }),
-      commandButton(
-          index: 7,
-          icon: Icons.print,
-          label: global.language('credit'),
-          onPressed: () {
-            tabBarMenuController.index = 7;
-          }),
+      // commandButton(
+      //     index: 5,
+      //     icon: Icons.restart_alt,
+      //     label: global.language('cheque'),
+      //     onPressed: () {
+      //       tabBarMenuController.index = 5;
+      //     }),
+      // commandButton(
+      //     index: 6,
+      //     icon: Icons.print,
+      //     label: global.language('coupon'),
+      //     onPressed: () {
+      //       tabBarMenuController.index = 6;
+      //     }),
+      // commandButton(
+      //     index: 7,
+      //     icon: Icons.print,
+      //     label: global.language('credit'),
+      //     onPressed: () {
+      //       tabBarMenuController.index = 7;
+      //     }),
     ];
 
     return LayoutBuilder(builder: (context, constraints) {

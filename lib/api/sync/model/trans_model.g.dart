@@ -49,7 +49,53 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
       paymentdetail: TransPaymentDetailModel.fromJson(
           json['paymentdetail'] as Map<String, dynamic>),
       paymentdetailraw: json['paymentdetailraw'] as String,
-      payCashAmount: (json['payCashAmount'] as num?)?.toDouble(),
+      paycashamount: (json['paycashamount'] as num?)?.toDouble(),
+      billtaxtype: json['billtaxtype'] as int?,
+      canceldatetime: json['canceldatetime'] as String?,
+      cancelusercode: json['cancelusercode'] as String?,
+      cancelusername: json['cancelusername'] as String?,
+      canceldescription: json['canceldescription'] as String?,
+      cancelreason: json['cancelreason'] as String?,
+      fullvataddress: json['fullvataddress'] as String?,
+      fullvatbranchnumber: json['fullvatbranchnumber'] as String?,
+      fullvatname: json['fullvatname'] as String?,
+      fullvatdocnumber: json['fullvatdocnumber'] as String?,
+      fullvattaxid: json['fullvattaxid'] as String?,
+      fullvatprint: json['fullvatprint'] as bool?,
+      isvatregister: json['isvatregister'] as bool?,
+      printcopybilldatetime: (json['printcopybilldatetime'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      tablenumber: json['tablenumber'] as String?,
+      tableopendatetime: json['tableopendatetime'] as String?,
+      tableclosedatetime: json['tableclosedatetime'] as String?,
+      mancount: json['mancount'] as int?,
+      womancount: json['womancount'] as int?,
+      childcount: json['childcount'] as int?,
+      istableallacratemode: json['istableallacratemode'] as bool?,
+      buffetcode: json['buffetcode'] as String?,
+      customertelephone: json['customertelephone'] as String?,
+      totalqty: (json['totalqty'] as num?)?.toDouble(),
+      totaldiscountvatamount:
+          (json['totaldiscountvatamount'] as num?)?.toDouble(),
+      totaldiscountexceptvatamount:
+          (json['totaldiscountexceptvatamount'] as num?)?.toDouble(),
+      cashiername: json['cashiername'] as String?,
+      paycashchange: (json['paycashchange'] as num?)?.toDouble(),
+      sumqrcode: (json['sumqrcode'] as num?)?.toDouble(),
+      sumcreditcard: (json['sumcreditcard'] as num?)?.toDouble(),
+      summoneytransfer: (json['summoneytransfer'] as num?)?.toDouble(),
+      sumcheque: (json['sumcheque'] as num?)?.toDouble(),
+      sumcoupon: (json['sumcoupon'] as num?)?.toDouble(),
+      sumcredit: (json['sumcredit'] as num?)?.toDouble(),
+      detaildiscountformula: json['detaildiscountformula'] as String?,
+      detailtotalamount: (json['detailtotalamount'] as num?)?.toDouble(),
+      detailtotaldiscount: (json['detailtotaldiscount'] as num?)?.toDouble(),
+      roundamount: (json['roundamount'] as num?)?.toDouble(),
+      totalamountafterdiscount:
+          (json['totalamountafterdiscount'] as num?)?.toDouble(),
+      detailtotalamountbeforediscount:
+          (json['detailtotalamountbeforediscount'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
@@ -85,12 +131,53 @@ Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
       'totalexceptvat': instance.totalexceptvat,
       'totalvalue': instance.totalvalue,
       'totalvatvalue': instance.totalvatvalue,
+      'paycashamount': instance.paycashamount,
       'transflag': instance.transflag,
       'vatrate': instance.vatrate,
       'vattype': instance.vattype,
       'paymentdetail': instance.paymentdetail.toJson(),
       'paymentdetailraw': instance.paymentdetailraw,
-      'payCashAmount': instance.payCashAmount,
+      'billtaxtype': instance.billtaxtype,
+      'canceldatetime': instance.canceldatetime,
+      'cancelusercode': instance.cancelusercode,
+      'cancelusername': instance.cancelusername,
+      'canceldescription': instance.canceldescription,
+      'cancelreason': instance.cancelreason,
+      'fullvataddress': instance.fullvataddress,
+      'fullvatbranchnumber': instance.fullvatbranchnumber,
+      'fullvatname': instance.fullvatname,
+      'fullvatdocnumber': instance.fullvatdocnumber,
+      'fullvattaxid': instance.fullvattaxid,
+      'fullvatprint': instance.fullvatprint,
+      'isvatregister': instance.isvatregister,
+      'printcopybilldatetime': instance.printcopybilldatetime,
+      'tablenumber': instance.tablenumber,
+      'tableopendatetime': instance.tableopendatetime,
+      'tableclosedatetime': instance.tableclosedatetime,
+      'mancount': instance.mancount,
+      'womancount': instance.womancount,
+      'childcount': instance.childcount,
+      'istableallacratemode': instance.istableallacratemode,
+      'buffetcode': instance.buffetcode,
+      'customertelephone': instance.customertelephone,
+      'totalqty': instance.totalqty,
+      'totaldiscountvatamount': instance.totaldiscountvatamount,
+      'totaldiscountexceptvatamount': instance.totaldiscountexceptvatamount,
+      'cashiername': instance.cashiername,
+      'paycashchange': instance.paycashchange,
+      'sumqrcode': instance.sumqrcode,
+      'sumcreditcard': instance.sumcreditcard,
+      'summoneytransfer': instance.summoneytransfer,
+      'sumcheque': instance.sumcheque,
+      'sumcoupon': instance.sumcoupon,
+      'sumcredit': instance.sumcredit,
+      'detaildiscountformula': instance.detaildiscountformula,
+      'detailtotalamount': instance.detailtotalamount,
+      'detailtotaldiscount': instance.detailtotaldiscount,
+      'roundamount': instance.roundamount,
+      'totalamountafterdiscount': instance.totalamountafterdiscount,
+      'detailtotalamountbeforediscount':
+          instance.detailtotalamountbeforediscount,
     };
 
 TransNameInfoModel _$TransNameInfoModelFromJson(Map<String, dynamic> json) =>
@@ -165,6 +252,8 @@ TransDetailModel _$TransDetailModelFromJson(Map<String, dynamic> json) =>
       whnames: (json['whnames'] as List<dynamic>)
           .map((e) => TransNameInfoModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      sku: json['sku'] as String?,
+      extrajson: json['extrajson'] as String?,
     );
 
 Map<String, dynamic> _$TransDetailModelToJson(TransDetailModel instance) =>
@@ -212,6 +301,8 @@ Map<String, dynamic> _$TransDetailModelToJson(TransDetailModel instance) =>
       'vattype': instance.vattype,
       'whcode': instance.whcode,
       'whnames': instance.whnames.map((e) => e.toJson()).toList(),
+      'sku': instance.sku,
+      'extrajson': instance.extrajson,
     };
 
 PaymentTransferModel _$PaymentTransferModelFromJson(

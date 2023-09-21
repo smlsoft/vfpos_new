@@ -75,7 +75,7 @@ class PosProcess {
     }
   }
 
-  PosProcessModel processSummery(PosProcessModel process, {required String detailDiscountFormula, required String discountFormula}) {
+  PosProcessModel processSummery(PosProcessModel process, {required String detailDiscountFormula}) {
     // รวม
     double totalPiece = 0;
     double totalPieceVat = 0;
@@ -90,7 +90,7 @@ class PosProcess {
           totalPieceVat += processResult.details[index].qty;
         } else {
           // สินค้าไม่มี vat
-          totalItemExceptVatAmount += processResult.details[index].total_amount;
+          totalItemExceptVatAmount += processResult.details[index].total_amount - processResult.details[index].discount;
           totalPieceExceptVat += processResult.details[index].qty;
         }
         totalPiece += processResult.details[index].qty;
@@ -120,9 +120,10 @@ class PosProcess {
     processResult.total_piece_except_vat = totalPieceExceptVat;
     processResult.total_item_vat_amount = totalItemVatAmount;
     processResult.total_item_except_vat_amount = totalItemExceptVatAmount;
-    processResult.detail_total_amount = totalItemVatAmount + totalItemExceptVatAmount;
+    processResult.detail_total_amount_before_discount = totalItemVatAmount + totalItemExceptVatAmount;
     processResult.detail_discount_formula = detailDiscountFormula;
-    processResult.detail_total_discount = global.roundDouble(global.calcDiscountFormula(totalAmount: processResult.detail_total_amount, discountText: detailDiscountFormula), 2);
+    processResult.detail_total_discount =
+        global.roundDouble(global.calcDiscountFormula(totalAmount: processResult.detail_total_amount_before_discount, discountText: detailDiscountFormula), 2);
     if (processResult.is_vat_register) {
       if (processResult.vat_type == 0) {
         // ภาษีรวมใน
@@ -150,10 +151,6 @@ class PosProcess {
         // คำนวณยอดภาษี
         processResult.total_vat_amount = totalVatAmount;
         processResult.amount_after_calc_vat = amountAfterCalcVat;
-        // ส่วนลดเงินสด
-        processResult.discount_formula = discountFormula;
-        processResult.total_discount =
-            global.roundDouble(global.calcDiscountFormula(totalAmount: amountAfterCalcVat + processResult.amount_except_vat, discountText: discountFormula), 2);
         // รวมทั้งสิ้น
         processResult.total_amount = (amountAfterCalcVat + processResult.amount_except_vat);
       } else {
@@ -179,12 +176,8 @@ class PosProcess {
         // คำนวณยอดภาษี
         processResult.total_vat_amount = totalVatAmount;
         processResult.amount_after_calc_vat = amountAfterCalcVat + totalVatAmount;
-        // ส่วนลดเงินสด
-        processResult.discount_formula = discountFormula;
-        processResult.total_discount =
-            global.roundDouble(global.calcDiscountFormula(totalAmount: amountAfterCalcVat + processResult.amount_except_vat + totalVatAmount, discountText: discountFormula), 2);
         // รวมทั้งสิ้น
-        processResult.total_amount = (amountAfterCalcVat + processResult.amount_except_vat + totalVatAmount) - processResult.total_discount;
+        processResult.total_amount = (amountAfterCalcVat + processResult.amount_except_vat + totalVatAmount);
       }
     } else {
       // ไม่จบทะเบียนภาษีมูลค่าเพิ่ม
@@ -207,12 +200,8 @@ class PosProcess {
       // คำนวณยอดภาษี
       processResult.total_vat_amount = 0;
       processResult.amount_after_calc_vat = amountAfterCalcVat;
-      // ส่วนลดเงินสด
-      processResult.discount_formula = discountFormula;
-      processResult.total_discount =
-          global.roundDouble(global.calcDiscountFormula(totalAmount: amountAfterCalcVat + processResult.amount_except_vat, discountText: discountFormula), 2);
       // รวมทั้งสิ้น
-      processResult.total_amount = (amountAfterCalcVat + processResult.amount_except_vat) - processResult.total_discount;
+      processResult.total_amount = (amountAfterCalcVat + processResult.amount_except_vat);
     }
     return process;
   }
@@ -296,6 +285,7 @@ class PosProcess {
                 isalacarte: true,
                 ordertypes: "",
                 is_except_vat: false,
+                issplitunitprint: false,
                 product_count: 0,
               );
           // productBarcode.new_line = 1 (ทดสอบขึ้นบรรทัดใหม่ทุกครั้ง)
@@ -488,6 +478,6 @@ class PosProcess {
         }
       }
     }
-    return processSummery(processResult, detailDiscountFormula: detailDiscountFormula, discountFormula: discountFormula);
+    return processSummery(processResult, detailDiscountFormula: detailDiscountFormula);
   }
 }

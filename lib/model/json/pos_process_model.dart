@@ -131,9 +131,9 @@ class PosProcessModel {
   double total_vat_amount;
 
   /// ยอดรวมสินค้าก่อนหักส่วนลดสินค้า
-  double detail_total_amount;
+  double detail_total_amount_before_discount;
 
-  /// ยอดรวมทั้งสิ้นหลังหักส่วนลดทุกอย่าง
+  /// ยอดรวมทั้งสิ้นหลังหักส่วนลด
   double total_amount;
 
   /// ยอดรวม Promotion
@@ -172,12 +172,6 @@ class PosProcessModel {
   /// ส่วนลดทั้งหมด (ก่อนคิดเงิน)
   double detail_total_discount;
 
-  /// สูตรส่วนลดท้ายบิล
-  String discount_formula;
-
-  /// ส่วนลดทั้งหมด (ท้ายบิล)
-  double total_discount;
-
   /// ส่วนลดสินค้ามีภาษี
   double total_discount_vat_amount;
 
@@ -195,7 +189,7 @@ class PosProcessModel {
 
   PosProcessModel(
       {this.total_piece = 0.0,
-      this.detail_total_amount = 0.0,
+      this.detail_total_amount_before_discount = 0.0,
       this.total_piece_except_vat = 0,
       this.total_piece_vat = 0,
       this.total_amount = 0.0,
@@ -212,8 +206,6 @@ class PosProcessModel {
       this.select_promotion_temp_list = const [],
       this.detail_discount_formula = "",
       this.detail_total_discount = 0,
-      this.discount_formula = "",
-      this.total_discount = 0,
       this.total_discount_vat_amount = 0,
       this.total_discount_except_vat_amount = 0,
       this.amount_after_calc_vat = 0,

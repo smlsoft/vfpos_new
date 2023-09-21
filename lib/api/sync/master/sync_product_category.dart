@@ -77,7 +77,7 @@ Future<void> syncProductCategoryCompare(List<SyncMasterStatusModel> masterStatus
   // หมวดสินค้า
   final productCategoryCount = ProductCategoryHelper().count();
   if (productCategoryCount == 0) {
-    //lastUpdateTime = global.syncDateBegin;
+    lastUpdateTime = global.syncDateBegin;
   }
   lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "productcategory");

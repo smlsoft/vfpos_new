@@ -145,7 +145,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       ordertypes: "",
       vat_type: 1,
       product_count: 0,
-      is_except_vat: false);
+      is_except_vat: false,
+      issplitunitprint: false);
   List<ProductOptionModel> productOptions = [];
 
   Future<void> checkSync() async {
@@ -859,6 +860,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               isalacarte: true,
               ordertypes: "",
               product_count: 0,
+              issplitunitprint: false,
               is_except_vat: false);
       try {
         productOptions = (product.options_json.isEmpty) ? [] : (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
@@ -1630,7 +1632,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           ),
           Expanded(
               flex: 2,
-              child: Text(global.moneyFormatAndDot.format(process.detail_total_amount),
+              child: Text(global.moneyFormatAndDot.format(process.detail_total_amount_before_discount),
                   textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize, fontWeight: FontWeight.bold))),
         ],
       ),
@@ -1800,7 +1802,9 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             "${global.language("total")} ${process.details.length} ${global.language("line")} ${global.moneyFormat.format(process.total_piece)} ${global.language("piece")}",
             style: textStyle.copyWith(fontSize: fontSize)),
       ),
-      Expanded(flex: 2, child: Text(global.moneyFormatAndDot.format(process.detail_total_amount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
+      Expanded(
+          flex: 2,
+          child: Text(global.moneyFormatAndDot.format(process.detail_total_amount_before_discount), textAlign: TextAlign.right, style: textStyle.copyWith(fontSize: fontSize))),
     ]));
     if (process.detail_total_discount != 0) {
       footer.add(Row(
@@ -2070,7 +2074,8 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                           isalacarte: true,
                           ordertypes: "",
                           product_count: 0,
-                          is_except_vat: false);
+                          is_except_vat: false,
+                          issplitunitprint: false);
                   setState(() {
                     productOptions = (jsonDecode(product.options_json) as List).map((e) => ProductOptionModel.fromJson(e)).toList();
                   });
@@ -2909,7 +2914,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
           // Navigator.pop(context);
 
           if (F.appFlavor == Flavor.VFPOS) {
-            context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
+            context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
           } else {
             context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
           }

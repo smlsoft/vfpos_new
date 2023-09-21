@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "4:1784956285063092638",
-      "lastPropertyId": "77:5881428581487322600",
+      "lastPropertyId": "84:7715942429935755214",
       "name": "BillObjectBoxStruct",
       "properties": [
         {
@@ -295,6 +295,41 @@
           "id": "77:5881428581487322600",
           "name": "bill_tax_type",
           "type": 6
+        },
+        {
+          "id": "78:7359278615827063087",
+          "name": "sum_credit",
+          "type": 8
+        },
+        {
+          "id": "79:8935195200873424785",
+          "name": "detail_discount_formula",
+          "type": 9
+        },
+        {
+          "id": "80:4816972402748654714",
+          "name": "detail_total_amount",
+          "type": 8
+        },
+        {
+          "id": "81:7920140362294277353",
+          "name": "detail_total_discount",
+          "type": 8
+        },
+        {
+          "id": "82:2256145078670239324",
+          "name": "round_amount",
+          "type": 8
+        },
+        {
+          "id": "83:1412374639322224351",
+          "name": "total_amount_after_discount",
+          "type": 8
+        },
+        {
+          "id": "84:7715942429935755214",
+          "name": "detail_total_amount_before_discount",
+          "type": 8
         }
       ],
       "relations": []
@@ -541,7 +576,7 @@
     },
     {
       "id": "11:2320464900211169166",
-      "lastPropertyId": "33:1118438584615380014",
+      "lastPropertyId": "34:7924619374071660264",
       "name": "ProductBarcodeObjectBoxStruct",
       "properties": [
         {
@@ -660,6 +695,11 @@
         {
           "id": "33:1118438584615380014",
           "name": "is_except_vat",
+          "type": 1
+        },
+        {
+          "id": "34:7924619374071660264",
+          "name": "issplitunitprint",
           "type": 1
         }
       ],

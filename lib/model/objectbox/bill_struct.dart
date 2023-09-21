@@ -125,6 +125,9 @@ class BillObjectBoxStruct {
   /// ชำระเงินโดย Coupon
   double sum_coupon;
 
+  /// ชำระโดยเงินเชื่อ
+  double sum_credit;
+
   /// พิมพ์ใบกำกับภาษีแบบเต็มแล้ว
   bool full_vat_print;
 
@@ -177,6 +180,20 @@ class BillObjectBoxStruct {
   int vat_type;
 
   bool is_vat_register;
+
+  /// สูตรส่วนลดรายการสินค้า (ก่อนคิดเงิน)
+  String detail_discount_formula;
+  double detail_total_amount;
+  double detail_total_discount;
+
+  /// ยอดปัดเศษ
+  double round_amount;
+
+  /// ยอดรวมหลังหักส่วนลดท้ายบิล
+  double total_amount_after_discount;
+
+  // ยอดรวมสินค้าก่อนหักส่วนลดสินค้า
+  double detail_total_amount_before_discount;
 
   BillObjectBoxStruct(
       {required this.date_time,
@@ -234,6 +251,13 @@ class BillObjectBoxStruct {
       required this.total_item_vat_amount,
       required this.total_item_except_vat_amount,
       required this.is_vat_register,
+      required this.detail_discount_formula,
+      required this.detail_total_amount,
+      required this.detail_total_discount,
+      required this.round_amount,
+      required this.total_amount_after_discount,
+      required this.sum_credit,
+      required this.detail_total_amount_before_discount,
       required this.print_copy_bill_date_time});
 }
 
@@ -356,7 +380,7 @@ class BillPayObjectBoxStruct {
   /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
   int doc_mode;
 
-  /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
+  /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR,9=เงินเชื่อ
   int trans_flag;
 
   /// รหัสธนาคาร

@@ -637,47 +637,64 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         box.put(closeData.table, mode: PutMode.update);
         if (result.table_status == 3) {
           // สร้างบิล และพิมพ์ใบเสร็จ
-          await saveBill(docMode: global.posScreenToInt(global.PosScreenModeEnum.posSale), cashAmount: closeData.process.total_amount, discountFormula: closeData.discountFormula)
-              .then((value) async {
-            if (value.docNumber.isNotEmpty) {
-              docNumber = value.docNumber;
-              printBill(
-                posScreenMode: global.PosScreenModeEnum.posSale,
-                docDate: value.docDate,
-                docNo: value.docNumber,
-                languageCode: global.userScreenLanguage,
-              );
-              // ร้านอาหาร update โต๊ะ
-              final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
-              final result = box.query(TableProcessObjectBoxStruct_.number.equals(closeData.table.number)).build().findFirst();
-              if (result != null) {
-                // ถ้าเป็นโต๊ะเสริม ให้ลบออก
-                if (result.number.contains("#")) {
-                  box.remove(result.id);
-                } else {
-                  result.table_status = 0;
-                  box.put(result);
+          String holdNumber = "T-${closeData.table.number}";
+          await posCompileProcess(holdCode: holdNumber, docMode: 1, detailDiscountFormula: closeData.discountFormula).then((_) async {
+            // ส่วนลดท้ายบิลไม่ต้องมี
+            await saveBill(
+                    docMode: global.posScreenToInt(global.PosScreenModeEnum.posSale),
+                    roundAmount: 0,
+                    totalAmountAfterDiscount: 0,
+                    cashAmount: closeData.process.total_amount,
+                    totalAmount: closeData.process.total_amount,
+                    discountFormula: "",
+                    discountAmount: 0,
+                    posHoldActiveCode: holdNumber)
+                .then((value) async {
+              if (value.docNumber.isNotEmpty) {
+                docNumber = value.docNumber;
+                printBill(
+                  posScreenMode: global.PosScreenModeEnum.posSale,
+                  docDate: value.docDate,
+                  docNo: value.docNumber,
+                  languageCode: global.userScreenLanguage,
+                );
+                // ลบรายการ Order Temp ออก
+                var dataTemp = global.objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(closeData.table.number)).build().findIds();
+                global.objectBoxStore.box<OrderTempObjectBoxStruct>().removeMany(dataTemp);
+                // ลบรายการที่ Hold ออก
+                await PosLogHelper().deleteByHoldCode(holdCode: holdNumber);
+                // ร้านอาหาร update โต๊ะ
+                final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+                final result = box.query(TableProcessObjectBoxStruct_.number.equals(closeData.table.number)).build().findFirst();
+                if (result != null) {
+                  // ถ้าเป็นโต๊ะเสริม ให้ลบออก
+                  if (result.number.contains("#")) {
+                    box.remove(result.id);
+                  } else {
+                    result.table_status = 0;
+                    box.put(result);
+                  }
                 }
+                if (closeData.slipImage.isNotEmpty) {
+                  // เก็บ slip base64
+                  Uint8List imageBytes = base64Decode(closeData.slipImage);
+                  String mainPath = "payslip";
+                  final dateDirectory = await global.createPath(mainPath, DateTime.now());
+                  // Save the image to the new directory
+                  final path = "${dateDirectory.path}/${value.docNumber}.jpg";
+                  print(path);
+                  final file = File(path);
+                  await file.writeAsBytes(imageBytes);
+                }
+                syncBillProcess();
               }
-              if (closeData.slipImage.isNotEmpty) {
-                // เก็บ slip base64
-                Uint8List imageBytes = base64Decode(closeData.slipImage);
-                String mainPath = "payslip";
-                final dateDirectory = await global.createPath(mainPath, DateTime.now());
-                // Save the image to the new directory
-                final path = "${dateDirectory.path}/${value.docNumber}.jpg";
-                print(path);
-                final file = File(path);
-                await file.writeAsBytes(imageBytes);
-              }
-              syncBillProcess();
+            });
+            {
+              // update สถานะโต๊ะ = 2 รอคิดเงิน (order online)
+              String query = "alter table dedeorder.tableinfo update tablestatus=2 where tablenumber='${closeData.table.number}' and shopid='${global.shopId}'";
+              clickHouseUpdate(query);
             }
           });
-          {
-            // update สถานะโต๊ะ = 2 รอคิดเงิน (order online)
-            String query = "alter table dedeorder.tableinfo update tablestatus=2 where tablenumber='${closeData.table.number}' and shopid='${global.shopId}'";
-            clickHouseUpdate(query);
-          }
         }
         response.write(docNumber);
       }
