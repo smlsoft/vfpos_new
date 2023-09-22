@@ -1037,6 +1037,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                 ? SizedBox(
                     width: double.infinity,
                     child: CachedNetworkImage(
+                      httpHeaders: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                       imageUrl: imageUrl,
                       fit: BoxFit.fill,
                     ))
@@ -1304,6 +1305,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: CachedNetworkImage(
+                                      httpHeaders: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                                       width: 80,
                                       height: 60,
                                       imageUrl: product.images_url,
@@ -1393,6 +1395,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
               ? Column(children: [
                   Expanded(
                       child: CachedNetworkImage(
+                    httpHeaders: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                     imageUrl: value.image_url,
                     width: double.infinity,
                     height: double.infinity,
@@ -1933,6 +1936,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                       ),
                       child: Center(
                           child: CachedNetworkImage(
+                        httpHeaders: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                         fit: BoxFit.fill,
                         imageUrl: imageUrl,
                         placeholder: (context, url) => const CircularProgressIndicator(),
@@ -4129,6 +4133,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     Expanded(child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgetMessage))),
                     if (widgetMessageImageUrl.isNotEmpty)
                       CachedNetworkImage(
+                        httpHeaders: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                         imageUrl: widgetMessageImageUrl,
                       )
                   ]),

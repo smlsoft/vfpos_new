@@ -59,6 +59,7 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                 width: 150,
                 image: CachedNetworkImageProvider(
                   widget.imageUrl,
+                  headers: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                 )),
             Expanded(child: detailData())
           ])
@@ -67,6 +68,7 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                 height: 200,
                 image: CachedNetworkImageProvider(
                   widget.imageUrl,
+                  headers: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                 )),
             Expanded(child: detailData())
           ]);
@@ -76,6 +78,7 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                 ? Image(
                     image: CachedNetworkImageProvider(
                     widget.imageUrl,
+                    headers: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                   ))
                 : const Icon(Icons.wallet_giftcard, color: Colors.grey, size: 200))
         : Column(
