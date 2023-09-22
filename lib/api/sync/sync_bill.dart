@@ -55,8 +55,8 @@ Future syncBillData() async {
           itemtype: 0,
           laststatus: 0,
           linenumber: detail.line_number,
-          locationcode: global.posConfig.devicenumber,
-          locationnames: [],
+          locationcode: global.posConfig.location.code,
+          locationnames: global.posConfig.location.names,
           multiunit: false,
           price: detail.price,
           priceexcludevat: 0,
@@ -67,8 +67,8 @@ Future syncBillData() async {
           sumamountexcludevat: 0,
           sumofcost: 0,
           taxtype: bill.bill_tax_type,
-          tolocationcode: global.posConfig.location.code,
-          tolocationnames: global.posConfig.location.names,
+          tolocationcode: "",
+          tolocationnames: [],
           totalqty: detail.qty,
           totalvaluevat: 0,
           towhcode: "",
@@ -128,6 +128,14 @@ Future syncBillData() async {
       paymentcreditcards: [],
       paymenttransfers: [],
     );
+    int trans_vat_type = 0;
+    if (!global.posConfig.isvatregister) {
+      trans_vat_type = 3;
+    } else if (global.posConfig.isvatregister && global.posConfig.vattype == 0) {
+      trans_vat_type = 1;
+    } else if (global.posConfig.isvatregister && global.posConfig.vattype == 1) {
+      trans_vat_type = 0;
+    }
     TransactionModel trans = TransactionModel(
         cashiercode: bill.cashier_code,
         custcode: bill.customer_code,
@@ -145,6 +153,7 @@ Future syncBillData() async {
         iscancel: bill.is_cancel,
         ismanualamount: false,
         ispos: true,
+        posid: global.posConfig.code,
         membercode: bill.customer_code,
         salecode: bill.sale_code,
         salename: bill.sale_name,
@@ -152,16 +161,16 @@ Future syncBillData() async {
         taxdocdate: bill.date_time.toUtc().toIso8601String(),
         taxdocno: bill.doc_number,
         totalaftervat: bill.amount_after_calc_vat,
-        totalamount: bill.total_amount,
+        totalamount: bill.amount_after_calc_vat + bill.total_item_except_vat_amount + bill.total_discount,
         totalbeforevat: bill.amount_before_calc_vat,
         totalcost: 0,
         totaldiscount: bill.total_discount,
         totalexceptvat: bill.amount_except_vat,
-        totalvalue: bill.total_amount,
+        totalvalue: bill.detail_total_amount,
         totalvatvalue: bill.total_vat_amount,
         transflag: 0,
         vatrate: bill.vat_rate,
-        vattype: global.posConfig.vattype,
+        vattype: trans_vat_type,
         details: details,
         paycashamount: bill.pay_cash_amount,
         paymentdetail: paymentDetail,
@@ -214,142 +223,6 @@ Future syncBillData() async {
     }
 
     BillHelper().updatesSyncSuccess(docNumber: bill.doc_number);
-
-    /*BillObjectBoxStruct bill = bills[index];
-    List<ApiBillDetailStruct> apiBillDetails = [];
-    List<BillDetailObjectBoxStruct> billDetails =
-        (global.billDetailHelper.selectByDocNumber(docNumber: bill.doc_number));
-    for (var detail in billDetails) {
-      List<ApiBillDetailExtraStruct> extraDetails = [];
-      List<BillDetailExtraObjectBoxStruct> extras = global.billDetailExtraHelper
-          .selectByDocNumberAndLineNumber(
-              docNumber: detail.doc_number, lineNumber: detail.line_number);
-      for (var extra in extras) {
-        extraDetails.add(ApiBillDetailExtraStruct(
-          doc_number: extra.doc_number,
-          date_time: bill.date_time,
-          barcode: extra.barcode,
-          item_code: extra.item_code,
-          item_name: extra.item_name,
-          unit_code: extra.unit_code,
-          unit_name: extra.unit_name,
-          qty: extra.qty,
-          price: extra.price,
-          total_amount: extra.total_amount,
-          line_number: extra.line_number,
-          ref_line_number: extra.ref_line_number,
-        ));
-      }
-      apiBillDetails.add(
-        ApiBillDetailStruct(
-          doc_number: detail.doc_number,
-          date_time: bill.date_time,
-          line_number: detail.line_number,
-          barcode: detail.barcode,
-          item_code: detail.item_code,
-          item_name: detail.item_name,
-          unit_code: detail.unit_code,
-          unit_name: detail.unit_name,
-          discount_text: detail.discount_text,
-          qty: detail.qty,
-          price: detail.price,
-          discount: detail.discount,
-          total_amount: detail.total_amount,
-          extra_details: extraDetails,
-        ),
-      );
-    }
-
-    List<ApiBillPayQrStruct> payQrs = [];
-    List<ApiBillPayChequeStruct> payCheques = [];
-    List<ApiBillPayCreditCardStruct> payCreditCards = [];
-    List<ApiBillPayTransferStruct> payTransfers = [];
-    List<ApiBillPayCouponStruct> coupons = [];
-
-    List<BillPayObjectBoxStruct> payDetails =
-        global.billPayHelper.selectByDocNumber(docNumber: bill.doc_number);
-    for (var payDetail in payDetails) {
-      // 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
-      switch (payDetail.trans_flag) {
-        case 1:
-          payCreditCards.add(ApiBillPayCreditCardStruct(
-            doc_number: payDetail.doc_number,
-            date_time: payDetail.doc_date_time,
-            edc_code: payDetail.bank_code,
-            card_number: payDetail.card_number,
-            approved_code: payDetail.approved_code,
-            edc_name: payDetail.bank_name,
-            amount: payDetail.amount,
-          ));
-          break;
-        case 2:
-          payTransfers.add(ApiBillPayTransferStruct(
-            doc_number: payDetail.doc_number,
-            date_time: payDetail.doc_date_time,
-            bank_code: payDetail.bank_code,
-            bank_name: payDetail.bank_name,
-            amount: payDetail.amount,
-          ));
-          break;
-        case 3:
-          payCreditCards.add(ApiBillPayCreditCardStruct(
-            doc_number: payDetail.doc_number,
-            date_time: payDetail.doc_date_time,
-            edc_code: payDetail.bank_code,
-            card_number: payDetail.card_number,
-            approved_code: payDetail.approved_code,
-            edc_name: payDetail.bank_name,
-            amount: payDetail.amount,
-          ));
-          break;
-        case 4:
-          coupons.add(ApiBillPayCouponStruct(
-            doc_number: payDetail.doc_number,
-            date_time: payDetail.doc_date_time,
-            number: payDetail.number,
-            amount: payDetail.amount,
-          ));
-          break;
-        case 5:
-          payQrs.add(ApiBillPayQrStruct(
-            doc_number: payDetail.doc_number,
-            date_time: payDetail.doc_date_time,
-            description: payDetail.description,
-            provider_code: payDetail.provider_code,
-            provider_name: payDetail.provider_name,
-            amount: payDetail.amount,
-          ));
-          break;
-      }
-    }
-
-    ApiBillStruct apiBill = ApiBillStruct(
-      doc_number: bill.doc_number,
-      date_time: bill.date_time,
-      customer_code: bill.customer_code,
-      customer_name: bill.customer_name,
-      customer_telephone: bill.customer_telephone,
-      total_amount: bill.total_amount,
-      sale_code: bill.sale_code,
-      sale_name: bill.sale_name,
-      cashier_code: bill.cashier_code,
-      cashier_name: bill.cashier_name,
-      pay_cash_amount: bill.pay_cash_amount,
-      sum_discount: bill.sum_discount,
-      sum_qrcode: bill.sum_qr_code,
-      sum_credit_card: bill.sum_credit_card,
-      sum_money_transfer: bill.sum_money_transfer,
-      sum_cheque: bill.sum_cheque,
-      sum_coupon: bill.sum_coupon,
-      bill_details: apiBillDetails,
-      pay_qrcodes: payQrs,
-      pay_cheques: payCheques,
-      pay_credit_cards: payCreditCards,
-      coupons: coupons,
-      pay_money_transfers: payTransfers,
-    );
-    String json = jsonEncode(apiBill.toJson());
-    serviceLocator<Log>().debug(json);*/
   }
 }
 

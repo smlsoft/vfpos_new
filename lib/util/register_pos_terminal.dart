@@ -289,7 +289,7 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
             onTap: (() async {
               SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
               sharedPreferences.setString('pos_terminal_token', global.appStorage.read("token"));
-              sharedPreferences.setString('pos_device_id', data.devicenumber.toString());
+              sharedPreferences.setString('pos_device_id', data.code.toString());
               sharedPreferences.setString('pos_terminal_pin_code', global.generateRandomPin(8));
               checkPinCode();
             }),

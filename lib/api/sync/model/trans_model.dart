@@ -20,6 +20,7 @@ class TransactionModel {
   bool iscancel;
   bool ismanualamount;
   bool ispos;
+  String posid;
   String membercode;
   String salecode;
   String salename;
@@ -174,6 +175,7 @@ class TransactionModel {
     required this.vattype,
     required this.paymentdetail,
     required this.paymentdetailraw,
+    String? posid,
     double? paycashamount,
     int? billtaxtype,
     String? canceldatetime,
@@ -223,6 +225,7 @@ class TransactionModel {
         canceldescription = canceldescription ?? "",
         cancelreason = cancelreason ?? "",
         fullvataddress = fullvataddress ?? "",
+        posid = posid ?? "", 
         fullvatbranchnumber = fullvatbranchnumber ?? "",
         fullvatname = fullvatname ?? "",
         fullvatdocnumber = fullvatdocnumber ?? "",

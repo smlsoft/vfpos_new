@@ -3702,11 +3702,11 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
             const SizedBox(
               width: 2,
             ),
-          myButton(
-              child: const FaIcon(FontAwesomeIcons.addressBook),
-              onPressed: () {
-                desktopWidgetMode = 3;
-              }),
+          // myButton(
+          //     child: const FaIcon(FontAwesomeIcons.addressBook),
+          //     onPressed: () {
+          //       desktopWidgetMode = 3;
+          //     }),
           const SizedBox(
             width: 2,
           ),
