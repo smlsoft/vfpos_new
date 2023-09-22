@@ -33,7 +33,7 @@ class Util {
 }
 
 class _SelectShopScreenState extends State<SelectShopScreen> {
-  late User user;
+  User user = User();
   bool isSelectionMode = false;
   final int listLength = 30;
   late List<bool> _selected;
@@ -90,13 +90,28 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
             global.appStorage.write("cache_shopid", state.shop.guidfixed);
             global.loginSuccess = true;
             context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user));
+            // Future.delayed(const Duration(seconds: 1), () {
+            //   context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
+            // });
+          } else if (state is SelectShopLoadedState) {
+            if (state.shops.isNotEmpty) {
+              if (state.shops.length == 1) {
+                context.read<SelectShopBloc>().add(ShopSelectSubmit(shop: state.shops[0].toShop));
+              }
+            }
+          } else if (state is SelectShopBlocErrorState) {
+            context.read<AuthenticationBloc>().add(const UserLogoutEvent());
           }
         }),
         BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
           if (state is AuthenticationInitialState) {
-            context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
+            Future.delayed(const Duration(seconds: 1), () {
+              context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
+            });
           } else if (state is AuthenticationAuthenticatedState) {
-            context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
+            Future.delayed(const Duration(seconds: 1), () {
+              context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
+            });
           }
         }),
       ],

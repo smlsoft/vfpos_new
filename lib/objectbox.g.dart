@@ -38,7 +38,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 1784956285063092638),
       name: 'BillObjectBoxStruct',
-      lastPropertyId: const IdUid(77, 5881428581487322600),
+      lastPropertyId: const IdUid(84, 7715942429935755214),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -326,6 +326,41 @@ final _entities = <ModelEntity>[
             id: const IdUid(77, 5881428581487322600),
             name: 'bill_tax_type',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(78, 7359278615827063087),
+            name: 'sum_credit',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(79, 8935195200873424785),
+            name: 'detail_discount_formula',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(80, 4816972402748654714),
+            name: 'detail_total_amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(81, 7920140362294277353),
+            name: 'detail_total_discount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(82, 2256145078670239324),
+            name: 'round_amount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(83, 1412374639322224351),
+            name: 'total_amount_after_discount',
+            type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(84, 7715942429935755214),
+            name: 'detail_total_amount_before_discount',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -569,7 +604,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(11, 2320464900211169166),
       name: 'ProductBarcodeObjectBoxStruct',
-      lastPropertyId: const IdUid(33, 1118438584615380014),
+      lastPropertyId: const IdUid(34, 7924619374071660264),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -686,6 +721,11 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(33, 1118438584615380014),
             name: 'is_except_vat',
+            type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(34, 7924619374071660264),
+            name: 'issplitunitprint',
             type: 1,
             flags: 0)
       ],
@@ -1129,7 +1169,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(23, 132682824475798031),
       name: 'ShiftObjectBoxStruct',
-      lastPropertyId: const IdUid(14, 8105615966884369140),
+      lastPropertyId: const IdUid(15, 1818468887954864060),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1197,6 +1237,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(14, 8105615966884369140),
             name: 'coupon',
             type: 8,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(15, 1818468887954864060),
+            name: 'isSync',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1585,7 +1630,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(30, 8931092861744922825),
       name: 'BillDetailObjectBoxStruct',
-      lastPropertyId: const IdUid(16, 1370355419232149970),
+      lastPropertyId: const IdUid(17, 9094434472717353325),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1667,6 +1712,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(16, 1370355419232149970),
             name: 'is_except_vat',
             type: 1,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(17, 9094434472717353325),
+            name: 'doc_mode',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -2148,7 +2198,9 @@ ModelDefinition getObjectBoxModel() {
           final table_numberOffset = fbb.writeString(object.table_number);
           final buffet_codeOffset = fbb.writeString(object.buffet_code);
           final pay_jsonOffset = fbb.writeString(object.pay_json);
-          fbb.startTable(78);
+          final detail_discount_formulaOffset =
+              fbb.writeString(object.detail_discount_formula);
+          fbb.startTable(85);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.date_time.millisecondsSinceEpoch);
@@ -2206,6 +2258,13 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(74, object.is_vat_register);
           fbb.addInt64(75, object.vat_type);
           fbb.addInt64(76, object.bill_tax_type);
+          fbb.addFloat64(77, object.sum_credit);
+          fbb.addOffset(78, detail_discount_formulaOffset);
+          fbb.addFloat64(79, object.detail_total_amount);
+          fbb.addFloat64(80, object.detail_total_discount);
+          fbb.addFloat64(81, object.round_amount);
+          fbb.addFloat64(82, object.total_amount_after_discount);
+          fbb.addFloat64(83, object.detail_total_amount_before_discount);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2341,6 +2400,21 @@ ModelDefinition getObjectBoxModel() {
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 124, 0);
           final is_vat_registerParam =
               const fb.BoolReader().vTableGet(buffer, rootOffset, 152, false);
+          final detail_discount_formulaParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 160, '');
+          final detail_total_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 162, 0);
+          final detail_total_discountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 164, 0);
+          final round_amountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 166, 0);
+          final total_amount_after_discountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 168, 0);
+          final sum_creditParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 158, 0);
+          final detail_total_amount_before_discountParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 170, 0);
           final print_copy_bill_date_timeParam = const fb.ListReader<String>(
                   fb.StringReader(asciiOptimization: true),
                   lazy: false)
@@ -2402,6 +2476,14 @@ ModelDefinition getObjectBoxModel() {
               total_item_vat_amount: total_item_vat_amountParam,
               total_item_except_vat_amount: total_item_except_vat_amountParam,
               is_vat_register: is_vat_registerParam,
+              detail_discount_formula: detail_discount_formulaParam,
+              detail_total_amount: detail_total_amountParam,
+              detail_total_discount: detail_total_discountParam,
+              round_amount: round_amountParam,
+              total_amount_after_discount: total_amount_after_discountParam,
+              sum_credit: sum_creditParam,
+              detail_total_amount_before_discount:
+                  detail_total_amount_before_discountParam,
               print_copy_bill_date_time: print_copy_bill_date_timeParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
@@ -2682,7 +2764,7 @@ ModelDefinition getObjectBoxModel() {
               fbb.writeString(object.color_select_hex);
           final pricesOffset = fbb.writeString(object.prices);
           final ordertypesOffset = fbb.writeString(object.ordertypes);
-          fbb.startTable(34);
+          fbb.startTable(35);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, barcodeOffset);
           fbb.addOffset(2, namesOffset);
@@ -2706,6 +2788,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(30, object.isalacarte);
           fbb.addOffset(31, ordertypesOffset);
           fbb.addBool(32, object.is_except_vat);
+          fbb.addBool(33, object.issplitunitprint);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -2761,6 +2844,8 @@ ModelDefinition getObjectBoxModel() {
               const fb.BoolReader().vTableGet(buffer, rootOffset, 68, false);
           final product_countParam =
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 34, 0);
+          final issplitunitprintParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 70, false);
           final object = ProductBarcodeObjectBoxStruct(
               barcode: barcodeParam,
               names: namesParam,
@@ -2783,7 +2868,8 @@ ModelDefinition getObjectBoxModel() {
               ordertypes: ordertypesParam,
               vat_type: vat_typeParam,
               is_except_vat: is_except_vatParam,
-              product_count: product_countParam)
+              product_count: product_countParam,
+              issplitunitprint: issplitunitprintParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3264,7 +3350,7 @@ ModelDefinition getObjectBoxModel() {
           final usercodeOffset = fbb.writeString(object.usercode);
           final usernameOffset = fbb.writeString(object.username);
           final remarkOffset = fbb.writeString(object.remark);
-          fbb.startTable(15);
+          fbb.startTable(16);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, guidfixedOffset);
           fbb.addOffset(3, usercodeOffset);
@@ -3278,6 +3364,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(11, object.transfer);
           fbb.addFloat64(12, object.cheque);
           fbb.addFloat64(13, object.coupon);
+          fbb.addBool(14, object.isSync);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3308,6 +3395,8 @@ ModelDefinition getObjectBoxModel() {
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 28, 0);
           final couponParam =
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
+          final isSyncParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false);
           final object = ShiftObjectBoxStruct(
               guidfixed: guidfixedParam,
               doctype: doctypeParam,
@@ -3320,7 +3409,8 @@ ModelDefinition getObjectBoxModel() {
               promptpay: promptpayParam,
               transfer: transferParam,
               cheque: chequeParam,
-              coupon: couponParam)
+              coupon: couponParam,
+              isSync: isSyncParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -3765,7 +3855,7 @@ ModelDefinition getObjectBoxModel() {
           final skuOffset = fbb.writeString(object.sku);
           final discount_textOffset = fbb.writeString(object.discount_text);
           final extra_jsonOffset = fbb.writeString(object.extra_json);
-          fbb.startTable(17);
+          fbb.startTable(18);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.line_number);
@@ -3782,12 +3872,15 @@ ModelDefinition getObjectBoxModel() {
           fbb.addFloat64(13, object.total_amount);
           fbb.addOffset(14, extra_jsonOffset);
           fbb.addBool(15, object.is_except_vat);
+          fbb.addInt64(16, object.doc_mode);
           fbb.finish(fbb.endTable());
           return object.id;
         },
         objectFromFB: (Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
+          final doc_modeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 36, 0);
           final doc_numberParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
           final line_numberParam =
@@ -3820,6 +3913,7 @@ ModelDefinition getObjectBoxModel() {
           final total_amountParam =
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
           final object = BillDetailObjectBoxStruct(
+              doc_mode: doc_modeParam,
               doc_number: doc_numberParam,
               line_number: line_numberParam,
               barcode: barcodeParam,
@@ -4153,6 +4247,34 @@ class BillObjectBoxStruct_ {
   /// see [BillObjectBoxStruct.bill_tax_type]
   static final bill_tax_type =
       QueryIntegerProperty<BillObjectBoxStruct>(_entities[0].properties[56]);
+
+  /// see [BillObjectBoxStruct.sum_credit]
+  static final sum_credit =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[57]);
+
+  /// see [BillObjectBoxStruct.detail_discount_formula]
+  static final detail_discount_formula =
+      QueryStringProperty<BillObjectBoxStruct>(_entities[0].properties[58]);
+
+  /// see [BillObjectBoxStruct.detail_total_amount]
+  static final detail_total_amount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[59]);
+
+  /// see [BillObjectBoxStruct.detail_total_discount]
+  static final detail_total_discount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[60]);
+
+  /// see [BillObjectBoxStruct.round_amount]
+  static final round_amount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[61]);
+
+  /// see [BillObjectBoxStruct.total_amount_after_discount]
+  static final total_amount_after_discount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[62]);
+
+  /// see [BillObjectBoxStruct.detail_total_amount_before_discount]
+  static final detail_total_amount_before_discount =
+      QueryDoubleProperty<BillObjectBoxStruct>(_entities[0].properties[63]);
 }
 
 /// [EmployeeObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4429,6 +4551,11 @@ class ProductBarcodeObjectBoxStruct_ {
   static final is_except_vat =
       QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
           _entities[4].properties[22]);
+
+  /// see [ProductBarcodeObjectBoxStruct.issplitunitprint]
+  static final issplitunitprint =
+      QueryBooleanProperty<ProductBarcodeObjectBoxStruct>(
+          _entities[4].properties[23]);
 }
 
 /// [ProductCategoryObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -4811,6 +4938,10 @@ class ShiftObjectBoxStruct_ {
   /// see [ShiftObjectBoxStruct.coupon]
   static final coupon =
       QueryDoubleProperty<ShiftObjectBoxStruct>(_entities[11].properties[12]);
+
+  /// see [ShiftObjectBoxStruct.isSync]
+  static final isSync =
+      QueryBooleanProperty<ShiftObjectBoxStruct>(_entities[11].properties[13]);
 }
 
 /// [KitchenObjectBoxStruct] entity fields to define ObjectBox queries.
@@ -5183,6 +5314,10 @@ class BillDetailObjectBoxStruct_ {
   /// see [BillDetailObjectBoxStruct.is_except_vat]
   static final is_except_vat = QueryBooleanProperty<BillDetailObjectBoxStruct>(
       _entities[17].properties[15]);
+
+  /// see [BillDetailObjectBoxStruct.doc_mode]
+  static final doc_mode = QueryIntegerProperty<BillDetailObjectBoxStruct>(
+      _entities[17].properties[16]);
 }
 
 /// [WalletObjectBoxStruct] entity fields to define ObjectBox queries.

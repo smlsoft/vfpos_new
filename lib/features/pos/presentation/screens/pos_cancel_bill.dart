@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PosCancelBillScreen extends StatefulWidget {
+  final global.PosScreenModeEnum posScreenMode;
+
   @override
-  const PosCancelBillScreen({Key? key}) : super(key: key);
+  const PosCancelBillScreen({Key? key, required this.posScreenMode}) : super(key: key);
 
   @override
   State<PosCancelBillScreen> createState() => _PosCancelBillScreenState();
@@ -20,7 +22,9 @@ class _PosCancelBillScreenState extends State<PosCancelBillScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<BillBloc>().add(BillLoad());
+    context.read<BillBloc>().add(BillLoad(
+          posScreenMode: widget.posScreenMode,
+        ));
   }
 
   @override
@@ -51,7 +55,7 @@ class _PosCancelBillScreenState extends State<PosCancelBillScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosCancelBillDetailScreen(docNumber: dataList[index].doc_number),
+                          builder: (context) => PosCancelBillDetailScreen(docNumber: dataList[index].doc_number, posScreenMode: widget.posScreenMode),
                         ),
                       );
                     },

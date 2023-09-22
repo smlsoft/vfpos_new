@@ -162,6 +162,9 @@ class SyncProductBarcodeModel {
   /// ประเภทภาษี 0=สินค้ามีภาษี,1=สินค้ายกเว้น
   int vatcal;
 
+  // พิมพ์ใบจัดอาหารแบบแยก
+  bool issplitunitprint;
+
   SyncProductBarcodeModel({
     required this.guidfixed,
     required this.groupcode,
@@ -180,6 +183,7 @@ class SyncProductBarcodeModel {
     required this.isalacarte,
     required this.ordertypes,
     required this.vatcal,
+    required this.issplitunitprint,
   });
 
   factory SyncProductBarcodeModel.fromJson(Map<String, dynamic> json) => _$SyncProductBarcodeModelFromJson(json);

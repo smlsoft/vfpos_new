@@ -10,6 +10,7 @@ import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
 class AuthenticationPage extends StatefulWidget {
@@ -22,8 +23,26 @@ class AuthenticationPage extends StatefulWidget {
 class _AuthenticationPageState extends State<AuthenticationPage> {
   final TextEditingController _emailController = TextEditingController(text: '');
   final TextEditingController _passwordController = TextEditingController(text: '');
-
+  int logoTouch = 0;
   Color vfPrimaryColor = const Color(0xFF007BFF);
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    resetPrefer();
+    super.initState();
+  }
+
+  void resetPrefer() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('pos_terminal_token', '');
+    sharedPreferences.setString('pos_device_id', '');
+    sharedPreferences.setString('pos_terminal_pin_code', '');
+    global.posTerminalPinCode = "";
+    global.posTerminalPinTokenId = "";
+    global.deviceId = "";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,9 +75,14 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     global.appStorage.write("apiUserName", _emailController.text);
                     global.appStorage.write("apiUserPassword", _passwordController.text);
                     global.appStorage.write("token", state.user.token);
+                    global.appStorage.write("refresh", state.user.refresh);
+                    global.appStorage.write("isdev", state.user.isDev);
+                    // context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: state.user));
                     context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
                   } else if (state is AuthenticationAuthenticatedState) {
                     global.appStorage.write("token", state.user.token);
+                    global.appStorage.write("refresh", state.user.refresh);
+                    global.appStorage.write("isdev", state.user.isDev);
                     context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -90,8 +114,40 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      logo(),
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              logoTouch = logoTouch + 1;
+                              if (logoTouch >= 5) {
+                                if (global.environmentVersion == "PROD") {
+                                  Environment().initConfig(Environment.DEV);
+                                  global.environmentVersion = "DEV";
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Develop Mode Active$logoTouch"),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                } else {
+                                  Environment().initConfig(Environment.PROD);
+                                  global.environmentVersion = "PROD";
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Production Mode Active"),
+                                      backgroundColor: Colors.black,
+                                    ),
+                                  );
+                                }
+                                logoTouch = 0;
+                              }
+                            });
+                          },
+                          child: logo()),
                       const SizedBox(height: 12.0),
+                      if (global.getAppversion() != '')
+                        Container(
+                            margin: const EdgeInsets.only(bottom: 3),
+                            child: Text("* ${global.getAppversion().replaceAll("(", "").replaceAll(")", "")} Mode", style: const TextStyle(color: Colors.red, fontSize: 12))),
                       userTextfield(),
                       const SizedBox(height: 12.0),
                       passwordTextfield(),
@@ -102,8 +158,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       const SizedBox(height: 12.0),
                       buttonLoginWithGoogle(),
                       const SizedBox(height: 12.0),
-                      buttonLoginWithApple(),
-                      const SizedBox(height: 12.0),
+                      // buttonLoginWithApple(),
+                      // const SizedBox(height: 12.0),
                       Visibility(visible: Environment().isDev, child: buttonLoginDev()),
                     ],
                   );

@@ -1,5 +1,6 @@
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/bloc/bloc.dart';
+import 'package:dedepos/bloc/posterminal_bloc.dart';
 import 'package:dedepos/features/authentication/presentation/bloc/authentication_bloc.dart';
 import 'package:dedepos/features/shop/presentation/bloc/select_shop_bloc.dart';
 import 'package:dedepos/routes/app_routers.dart';
@@ -25,6 +26,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => PayScreenBloc()),
         BlocProvider(create: (context) => ServerBloc()),
         BlocProvider(create: (context) => ProductCategoryBloc(categoryGuid: '')),
+        BlocProvider(create: (context) => PosTerminalBloc(posterminalRepository: ApiRepository())),
       ],
       child: MaterialApp.router(
         title: 'Dedepos',

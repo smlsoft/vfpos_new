@@ -12,8 +12,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:intl/intl.dart';
 
-Future syncTable(
-    List<ItemRemoveModel> removeList, List<SyncTableModel> newDataList) async {
+Future syncTable(List<ItemRemoveModel> removeList, List<SyncTableModel> newDataList) async {
   List<String> removeMany = [];
   List<TableObjectBoxStruct> manyForInsert = [];
 
@@ -52,40 +51,29 @@ Future<void> syncTableCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
 
   // Sync Table
-  String lastUpdateTime =
-      global.appStorage.read(global.syncTableTimeName) ?? global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncTableTimeName) ?? global.syncDateBegin;
   if (TableHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
-  var getLastUpdateTime =
-      global.syncFindLastUpdate(masterStatus, "restaurant-table");
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "restaurant-table");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await apiRepository
-          .serverTableGetData(
-              offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await apiRepository.serverTableGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["restaurant-table"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncTableModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncTableModel.fromJson(newCate))
-              .toList();
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncTableModel> newDataList = (dataList["new"] as List).map((newCate) => SyncTableModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncTable(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .error("************************************************* Error");
+          serviceLocator<Log>().error("************************************************* Error");
           loop = false;
         }
       });

@@ -1,6 +1,5 @@
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
 import 'package:dedepos/db/bank_helper.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'package:dedepos/widgets/numpad.dart';
@@ -9,14 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayCheque extends StatefulWidget {
-  final PosProcessModel posProcess;
+  final PosHoldProcessModel posProcess;
   final BuildContext blocContext;
   const PayCheque({super.key, required this.posProcess, required this.blocContext});
 
@@ -48,7 +45,8 @@ class _PayChequeState extends State<PayCheque> {
 
   bool saveData() {
     if (chequeNumber.trim().isNotEmpty && chequeAmount > 0) {
-      global.payScreenData.cheque!.add(PayChequeModel(due_date: DateTime.now(), bank_code: bankCode, bank_name: bankName, cheque_number: chequeNumber, branch_number: branchNumber, amount: chequeAmount));
+      global.payScreenData.cheque
+          .add(PayChequeModel(due_date: DateTime.now(), bank_code: bankCode, bank_name: bankName, cheque_number: chequeNumber, branch_number: branchNumber, amount: chequeAmount));
       return true;
     } else {
       return false;
@@ -87,7 +85,8 @@ class _PayChequeState extends State<PayCheque> {
                                             padding: const EdgeInsets.only(top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
-                                                Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: bankDataList[index].logo))),
+                                                Container(
+                                                    alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: bankDataList[index].logo))),
                                                 const SizedBox(width: 10),
                                                 Text(bankDataList[index].names[0])
                                               ]),
@@ -105,7 +104,12 @@ class _PayChequeState extends State<PayCheque> {
                       },
                       child: Column(
                         children: [
-                          Expanded(child: Container(alignment: Alignment.center, width: 100, height: 50, child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
+                          Expanded(
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  width: 100,
+                                  height: 50,
+                                  child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
                           Text(
                             (bankName.isNotEmpty) ? bankName : global.language("bank_name"),
                             style: const TextStyle(fontSize: 16),
@@ -236,7 +240,7 @@ class _PayChequeState extends State<PayCheque> {
                                       alignment: Alignment.center,
                                       child: FittedBox(
                                           child: Text(
-                                        DateFormat.yMMMMEEEEd().formatInBuddhistCalendarThai(dueDate),
+                                        global.dateTimeFormatFull(dueDate),
                                         style: const TextStyle(fontSize: 32),
                                         textAlign: TextAlign.center,
                                       )))),
@@ -356,10 +360,7 @@ class _PayChequeState extends State<PayCheque> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    buildDetailsBlock(
-                      label: global.language('due_date'),
-                      value: DateFormat.yMMMMEEEEd().formatInBuddhistCalendarThai(global.payScreenData.cheque[index].due_date),
-                    ),
+                    buildDetailsBlock(label: global.language('due_date'), value: global.dateTimeFormatFull(global.payScreenData.cheque[index].due_date)),
                     buildDetailsBlock(label: global.language('amount'), value: global.moneyFormat.format(global.payScreenData.cheque[index].amount)),
                   ],
                 ),

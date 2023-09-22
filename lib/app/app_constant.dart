@@ -1,6 +1,14 @@
 class AppConstant {
-  static const String serviceApi = 'https://api.dedepos.com';
-  static const String serviceDevApi = 'https://api.dev.dedepos.com';
+  static const String serviceApi = 'https://api.vfonline.net';
+  static const String serviceDevApi = 'https://api.villagefund.work/';
+  static const String serviceLoginDevApi = 'https://www.villagefund.work/api/v1';
+  static const String serviceLoginApi = 'https://www.vfonline.net/api/v1';
+
+  static const String xapikeyDev = 'rEE57MIHWM2gVSx98LG0dfgwumr9ZfWVxwNypng1yEY4gNN5ztnctjQSA0EJp3iF';
+  static const String xapikey = 'rEE57MIHWM2gVSx98LG0dfgwumr9ZfWVxwNypng1yEY4gNN5ztnctjdx67BLdVSq';
+
+  static const String reportPrdApi = 'https://api.vfonline.net/apireport';
+  static const String reportDevApi = 'https://api.villagefund.work/apireport';
 
   /// ทดสอบแม็คกร
   //static const String userDev = 'maxkorn';

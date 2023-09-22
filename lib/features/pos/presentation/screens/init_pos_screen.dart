@@ -5,7 +5,6 @@ import 'package:dedepos/api/sync/master/sync_master.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 @RoutePage()

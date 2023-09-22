@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PosBillVatScreen extends StatefulWidget {
+  final global.PosScreenModeEnum posScreenMode;
+
   @override
-  const PosBillVatScreen({Key? key}) : super(key: key);
+  const PosBillVatScreen({Key? key, required this.posScreenMode}) : super(key: key);
 
   @override
   State<PosBillVatScreen> createState() => _PosBillVatScreenState();
@@ -20,7 +22,9 @@ class _PosBillVatScreenState extends State<PosBillVatScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<BillBloc>().add(BillLoad());
+    context.read<BillBloc>().add(BillLoad(
+          posScreenMode: widget.posScreenMode,
+        ));
   }
 
   @override
@@ -45,16 +49,13 @@ class _PosBillVatScreenState extends State<PosBillVatScreen> {
                   (index) => ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: (dataList[index].is_cancel)
-                          ? Colors.red.shade100
-                          : Colors.blue.shade100,
+                      backgroundColor: (dataList[index].is_cancel) ? Colors.red.shade100 : Colors.blue.shade100,
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosBillVatDetailScreen(
-                              docNumber: dataList[index].doc_number),
+                          builder: (context) => PosBillVatDetailScreen(posScreenMode: widget.posScreenMode, docNumber: dataList[index].doc_number),
                         ),
                       );
                     },

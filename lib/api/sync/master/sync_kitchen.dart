@@ -11,8 +11,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/kitchen_struct.dart';
 import 'package:intl/intl.dart';
 
-Future syncKitchen(List<ItemRemoveModel> removeList,
-    List<SyncKitchenModel> newDataList) async {
+Future syncKitchen(List<ItemRemoveModel> removeList, List<SyncKitchenModel> newDataList) async {
   List<String> removeMany = [];
   List<KitchenObjectBoxStruct> manyForInsert = [];
 
@@ -47,44 +46,32 @@ Future syncKitchen(List<ItemRemoveModel> removeList,
   }
 }
 
-Future<void> syncKitchenCompare(
-    List<SyncMasterStatusModel> masterStatus) async {
+Future<void> syncKitchenCompare(List<SyncMasterStatusModel> masterStatus) async {
   ApiRepository apiRepository = ApiRepository();
   // Sync Kitchen
-  String lastUpdateTime = global.appStorage.read(global.syncKitchenTimeName) ??
-      global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncKitchenTimeName) ?? global.syncDateBegin;
   if (KitchenHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
-  var getLastUpdateTime =
-      global.syncFindLastUpdate(masterStatus, "restaurant-kitchen");
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "restaurant-kitchen");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await apiRepository
-          .serverKitchenGetData(
-              offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await apiRepository.serverKitchenGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["restaurant-kitchen"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncKitchenModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncKitchenModel.fromJson(newCate))
-              .toList();
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncKitchenModel> newDataList = (dataList["new"] as List).map((newCate) => SyncKitchenModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncKitchen(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .error("************************************************* Error");
+          serviceLocator<Log>().error("************************************************* Error");
           loop = false;
         }
       });

@@ -1,5 +1,4 @@
 import 'package:dedepos/bloc/pay_screen_bloc.dart';
-import 'package:dedepos/model/json/pos_process_model.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:dedepos/widgets/numpadtext.dart';
@@ -10,7 +9,7 @@ import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/global_model.dart';
 
 class PayCoupon extends StatefulWidget {
-  final PosProcessModel posProcess;
+  final PosHoldProcessModel posProcess;
   final BuildContext blocContext;
   const PayCoupon({super.key, required this.posProcess, required this.blocContext});
 
@@ -36,14 +35,14 @@ class _PayCouponState extends State<PayCoupon> {
 
   bool saveData() {
     if (couponNumber.trim().isNotEmpty && couponAmount > 0) {
-      global.payScreenData.coupon!.add(PayCouponModel(number: couponNumber, description: descriptionController.text, amount: couponAmount));
+      global.payScreenData.coupon.add(PayCouponModel(number: couponNumber, description: descriptionController.text, amount: couponAmount));
       return true;
     } else {
       return false;
     }
   }
 
-  Widget cardDetail() {
+  Widget couponDetail() {
     return Card(
       elevation: 3.0,
       color: Colors.white,
@@ -185,7 +184,7 @@ class _PayCouponState extends State<PayCoupon> {
     );
   }
 
-  Widget _buildCreditCard({required int index}) {
+  Widget buildCouponCard({required int index}) {
     return Column(
       children: [
         Card(
@@ -199,9 +198,9 @@ class _PayCouponState extends State<PayCoupon> {
             child: ListTile(
               title: Row(
                 children: [
-                  _buildDetailsBlock(label: global.language("coupon_number"), value: global.payScreenData.coupon[index].number),
+                  buildDetailsBlock(label: global.language("coupon_number"), value: global.payScreenData.coupon[index].number),
                   const SizedBox(width: 10),
-                  _buildDetailsBlock(label: global.language("coupon_description"), value: global.payScreenData.coupon[index].description),
+                  buildDetailsBlock(label: global.language("coupon_description"), value: global.payScreenData.coupon[index].description),
                 ],
               ),
               subtitle: Container(
@@ -209,7 +208,7 @@ class _PayCouponState extends State<PayCoupon> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    _buildDetailsBlock(label: global.language('coupon_amount'), value: global.moneyFormat.format(global.payScreenData.coupon[index].amount)),
+                    buildDetailsBlock(label: global.language('coupon_amount'), value: global.moneyFormat.format(global.payScreenData.coupon[index].amount)),
                   ],
                 ),
               ),
@@ -253,7 +252,7 @@ class _PayCouponState extends State<PayCoupon> {
     );
   }
 
-  Column _buildDetailsBlock({required String label, required String value}) {
+  Column buildDetailsBlock({required String label, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -278,14 +277,14 @@ class _PayCouponState extends State<PayCoupon> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
-          cardDetail(),
+          couponDetail(),
           (global.payScreenData.coupon.isEmpty)
               ? Container()
               : Column(
                   children: <Widget>[
                     ...global.payScreenData.coupon.map((detail) {
                       var index = global.payScreenData.coupon.indexOf(detail);
-                      return _buildCreditCard(index: index);
+                      return buildCouponCard(index: index);
                     }).toList()
                   ],
                 ),

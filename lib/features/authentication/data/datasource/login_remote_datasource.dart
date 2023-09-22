@@ -4,19 +4,19 @@ import 'package:dedepos/features/authentication/domain/entity/entity.dart';
 import 'package:flutter/material.dart';
 
 abstract class ILoginRemoteDataSource {
-  Future<Either<Failure, User>> loginWithUserPassword(
-      {required String username, required String password});
+  Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password});
   Future<Either<Failure, User>> loginWithToken({required String token});
   Future<Either<Failure, User>> profile();
 }
 
 class LoginRemoteDataSource implements ILoginRemoteDataSource {
   final Request request = serviceLocator<Request>();
+
   @override
   Future<Either<Failure, User>> loginWithToken({required String token}) async {
     try {
-      final response =
-          await request.post('/tokenlogin', data: {"token": token});
+      request.updateDioInterceptors();
+      final response = await request.post('/vftokenlogin', data: {"token": token});
       final result = Json.decode(response.toString());
 
       if (response.statusCode == 200) {
@@ -45,15 +45,42 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
   }
 
   @override
-  Future<Either<Failure, User>> loginWithUserPassword(
-      {required String username, required String password}) async {
+  Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password}) async {
     try {
-      final response = await request
-          .post('/login', data: {"username": username, "password": password});
-      final result = Json.decode(response.toString());
+      request.updateAuthDioInterceptors();
+      final response = await request.post('/external-login', data: {"username": username, "password": password, "channel": "pos"});
+      var resultLogin = {"status": "error", "message": "", "code": 0, "token": ""};
+      var result = Json.decode(response.toString());
+      request.updateDioInterceptors();
+      if (result['code'] == 401) {
+        final responseDev = await request.post('/login', data: {"username": username, "password": password});
+        final resultDev = Json.decode(responseDev.toString());
+        if (resultDev['success']) {
+          resultLogin['status'] = 'success';
+          resultLogin['message'] = '';
+          resultLogin['code'] = 200;
+          resultLogin['token'] = resultDev['token'];
+        } else {
+          return Left(ConnectionFailure(resultDev['message']));
+        }
+      } else if (result['code'] == 200) {
+        resultLogin['status'] = 'success';
+        resultLogin['message'] = '';
+        resultLogin['code'] = 200;
 
-      if (response.statusCode == 200) {
-        UserToken token = UserToken.fromJson(result);
+        final resToken = await request.post('/vftokenlogin', data: {"usercode": username, "token": result['data']['access_token']});
+        final resultToken = Json.decode(resToken.toString());
+        if (!resultToken['success']) {
+          return Left(ConnectionFailure(resultToken['message']));
+        }
+        resultLogin['token'] = resultToken['token'];
+      } else {
+        resultLogin['status'] = result['status'];
+        resultLogin['message'] = result['message'];
+        resultLogin['code'] = result['code'];
+      }
+      if (resultLogin['status'] == 'success') {
+        UserToken token = UserToken.fromJson(resultLogin);
 
         request.updateAuthorization(token.token);
 
@@ -62,7 +89,8 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
         ApiResponse responseGetProfile = ApiResponse.fromMap(userResult);
 
         User user = User.fromJson(responseGetProfile.data);
-        user = user.copyWith(token: token.token);
+
+        user = user.copyWith(token: token.token, refresh: token.token);
 
         return Right(user);
       }
@@ -89,8 +117,7 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
         return right(user);
       }
 
-      return const Left(
-          Exception('Exception Occurred in LoginRemoteDataSource'));
+      return const Left(Exception('Exception Occurred in LoginRemoteDataSource'));
     } catch (e) {
       debugPrint('LoginRemoteDataSourceImplError $e');
       return const Left(

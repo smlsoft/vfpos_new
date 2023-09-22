@@ -79,11 +79,14 @@ class _PosHoldBillState extends State<PosHoldBill> with TickerProviderStateMixin
     if (widget.holdType == 1) {
       // POS
       int holdIndex = global.findPosHoldProcessResultIndex(hold.code);
-      tableStatus = Text((global.posHoldProcessResult[holdIndex].logCount == 0) ? global.language("blank") : "${global.language('qty')} ${global.posHoldProcessResult[holdIndex].logCount} รายการ", style: const TextStyle(color: Colors.white, fontSize: 16));
+      tableStatus = Text(
+          (global.posHoldProcessResult[holdIndex].logCount == 0) ? global.language("blank") : "${global.language('qty')} ${global.posHoldProcessResult[holdIndex].logCount} รายการ",
+          style: const TextStyle(color: Colors.white, fontSize: 16));
     }
     if (widget.holdType == 2) {
       // ร้านอาหาร
-      TableProcessObjectBoxStruct? tableInfo = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(hold.code.replaceAll("T-", ""))).build().findFirst();
+      TableProcessObjectBoxStruct? tableInfo =
+          global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(hold.code.replaceAll("T-", ""))).build().findFirst();
       String orderType = "";
       if (tableInfo != null) {
         if (tableInfo.table_al_la_crate_mode) {
@@ -101,9 +104,12 @@ class _PosHoldBillState extends State<PosHoldBill> with TickerProviderStateMixin
               child: Column(children: [
                 if (tableInfo.is_delivery) const Text("สั่งกลับบ้าน", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                 Text("ประเภท : $orderType", style: const TextStyle(color: Colors.white, fontSize: 12)),
-                if (tableInfo.man_count != 0) Text("ผู้ชาย : ${global.moneyFormat.format(tableInfo.man_count.toDouble())}", style: const TextStyle(color: Colors.white, fontSize: 12)),
-                if (tableInfo.woman_count != 0) Text("ผู้หญิง : ${global.moneyFormat.format(tableInfo.woman_count.toDouble())}", style: const TextStyle(color: Colors.white, fontSize: 12)),
-                if (tableInfo.child_count != 0) Text("เด็ก : ${global.moneyFormat.format(tableInfo.child_count.toDouble())}", style: const TextStyle(color: Colors.white, fontSize: 12)),
+                if (tableInfo.man_count != 0)
+                  Text("ผู้ชาย : ${global.moneyFormat.format(tableInfo.man_count.toDouble())}", style: const TextStyle(color: Colors.white, fontSize: 12)),
+                if (tableInfo.woman_count != 0)
+                  Text("ผู้หญิง : ${global.moneyFormat.format(tableInfo.woman_count.toDouble())}", style: const TextStyle(color: Colors.white, fontSize: 12)),
+                if (tableInfo.child_count != 0)
+                  Text("เด็ก : ${global.moneyFormat.format(tableInfo.child_count.toDouble())}", style: const TextStyle(color: Colors.white, fontSize: 12)),
                 Text("เวลาเปิดโต๊ะ : ${DateFormat('dd-HH:mm').format(tableInfo.table_open_datetime)}", style: const TextStyle(color: Colors.white, fontSize: 12)),
               ]))
           : Container();

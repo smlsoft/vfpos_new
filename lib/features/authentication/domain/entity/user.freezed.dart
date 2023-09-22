@@ -23,6 +23,7 @@ mixin _$User {
   String get name => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   String get token => throw _privateConstructorUsedError;
+  String get refresh => throw _privateConstructorUsedError;
   int get isDev => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -35,7 +36,8 @@ abstract class $UserCopyWith<$Res> {
   factory $UserCopyWith(User value, $Res Function(User) then) =
       _$UserCopyWithImpl<$Res, User>;
   @useResult
-  $Res call({String name, String username, String token, int isDev});
+  $Res call(
+      {String name, String username, String token, String refresh, int isDev});
 }
 
 /// @nodoc
@@ -54,6 +56,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? name = null,
     Object? username = null,
     Object? token = null,
+    Object? refresh = null,
     Object? isDev = null,
   }) {
     return _then(_value.copyWith(
@@ -69,6 +72,10 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
               as String,
+      refresh: null == refresh
+          ? _value.refresh
+          : refresh // ignore: cast_nullable_to_non_nullable
+              as String,
       isDev: null == isDev
           ? _value.isDev
           : isDev // ignore: cast_nullable_to_non_nullable
@@ -83,7 +90,8 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
       __$$_UserCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String username, String token, int isDev});
+  $Res call(
+      {String name, String username, String token, String refresh, int isDev});
 }
 
 /// @nodoc
@@ -98,6 +106,7 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
     Object? name = null,
     Object? username = null,
     Object? token = null,
+    Object? refresh = null,
     Object? isDev = null,
   }) {
     return _then(_$_User(
@@ -113,6 +122,10 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
               as String,
+      refresh: null == refresh
+          ? _value.refresh
+          : refresh // ignore: cast_nullable_to_non_nullable
+              as String,
       isDev: null == isDev
           ? _value.isDev
           : isDev // ignore: cast_nullable_to_non_nullable
@@ -125,7 +138,11 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
 @JsonSerializable()
 class _$_User implements _User {
   _$_User(
-      {this.name = '', this.username = '', this.token = '', this.isDev = 0});
+      {this.name = '',
+      this.username = '',
+      this.token = '',
+      this.refresh = '',
+      this.isDev = 0});
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
 
@@ -140,11 +157,14 @@ class _$_User implements _User {
   final String token;
   @override
   @JsonKey()
+  final String refresh;
+  @override
+  @JsonKey()
   final int isDev;
 
   @override
   String toString() {
-    return 'User(name: $name, username: $username, token: $token, isDev: $isDev)';
+    return 'User(name: $name, username: $username, token: $token, refresh: $refresh, isDev: $isDev)';
   }
 
   @override
@@ -156,12 +176,14 @@ class _$_User implements _User {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.token, token) || other.token == token) &&
+            (identical(other.refresh, refresh) || other.refresh == refresh) &&
             (identical(other.isDev, isDev) || other.isDev == isDev));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, name, username, token, isDev);
+  int get hashCode =>
+      Object.hash(runtimeType, name, username, token, refresh, isDev);
 
   @JsonKey(ignore: true)
   @override
@@ -182,6 +204,7 @@ abstract class _User implements User {
       {final String name,
       final String username,
       final String token,
+      final String refresh,
       final int isDev}) = _$_User;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
@@ -192,6 +215,8 @@ abstract class _User implements User {
   String get username;
   @override
   String get token;
+  @override
+  String get refresh;
   @override
   int get isDev;
   @override

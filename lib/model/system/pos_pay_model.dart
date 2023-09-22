@@ -13,6 +13,7 @@ class PosPayModel {
   double total_after_discount; // ยอดรวมหลังหักส่วนลด
   double round_amount; // ยอดปัดเศษ
   double total_after_round; // ยอดรวมหลังหักส่วนลดและปัดเศษ
+  double credit_amount; // ยอดเงินเชื่อม
   List<PayCreditCardModel> credit_card; // บัตรเครดิต
   List<PayTransferModel> transfer; // เงินโอน
   List<PayChequeModel> cheque; // เช็ค
@@ -26,6 +27,7 @@ class PosPayModel {
     this.total_after_round = 0,
     this.discount_formula = "",
     this.discount_amount = 0,
+    this.credit_amount = 0,
     this.round_amount = 0,
   })  : credit_card = [],
         transfer = [],
@@ -62,13 +64,15 @@ class PayCashModel {
 
 @JsonSerializable(explicitToJson: true)
 class PayCreditCardModel {
+  String book_bank_code; // รหัสบัญชีธนาคาร
   String bank_code; // รหัสธนาคาร
   String bank_name; // ธนาคาร
   String card_number; // เลขที่บัตรเครดิต
   String approved_code; // รหัสอนุมัติ
   double amount; // จำนวนเงิน
 
-  PayCreditCardModel({required this.bank_code, required this.bank_name, required this.card_number, required this.approved_code, required this.amount});
+  PayCreditCardModel(
+      {required this.book_bank_code, required this.bank_code, required this.bank_name, required this.card_number, required this.approved_code, required this.amount});
 
   factory PayCreditCardModel.fromJson(Map<String, dynamic> json) => _$PayCreditCardModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayCreditCardModelToJson(this);
@@ -76,12 +80,12 @@ class PayCreditCardModel {
 
 @JsonSerializable(explicitToJson: true)
 class PayTransferModel {
+  String book_bank_code; // รหัสบัญชีธนาคาร
   String bank_code; // รหัสธนาคาร
   String bank_name; // ธนาคาร
-  String account_number; // เลขที่บัญชี
   double amount; // จำนวนเงิน
 
-  PayTransferModel({required this.bank_code, required this.bank_name, required this.amount, required this.account_number});
+  PayTransferModel({required this.book_bank_code, required this.bank_code, required this.bank_name, required this.amount});
 
   factory PayTransferModel.fromJson(Map<String, dynamic> json) => _$PayTransferModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayTransferModelToJson(this);
@@ -120,9 +124,10 @@ class PayQrModel {
   String provider_code; // รหัสกระเป๋า เจ้าของเงิน (Provider)
   String provider_name; // เจ้าของเงิน (Provider)
   String description; // รายละเอียด (อื่นๆ)
+  String logo;
   double amount; // จำนวนเงิน
 
-  PayQrModel({this.provider_code = "", this.provider_name = "", this.description = "", required this.amount});
+  PayQrModel({this.provider_code = "", this.provider_name = "", this.description = "", required this.amount, this.logo = ""});
 
   factory PayQrModel.fromJson(Map<String, dynamic> json) => _$PayQrModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayQrModelToJson(this);

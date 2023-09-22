@@ -40,6 +40,7 @@ flutter pub run msix:create --build-windows false
 ## Build vfpos windows
 ```
 flutter build windows -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD  --dart-define=FLAVOR=vfpos
+flutter build windows -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=DEV  --dart-define=FLAVOR=vfpos
 flutter pub run msix:create --build-windows false
 ```
 

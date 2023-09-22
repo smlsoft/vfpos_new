@@ -52,6 +52,7 @@ void syncProductBarcode(List<ItemRemoveModel> removeList, List<SyncProductBarcod
       is_except_vat: (newData.vatcal == 1) ? true : false,
       ordertypes: (newData.ordertypes == null) ? "" : jsonEncode(newData.ordertypes!),
       color_select_hex: newData.colorselecthex,
+      issplitunitprint: newData.issplitunitprint,
     );
     newBarcode.image_or_color = true;
 

@@ -278,6 +278,56 @@ class ApiRepository {
     }
   }
 
+  Future<ApiResponse> getPosTerminal() async {
+    Dio client = Client().init();
+
+    try {
+      final response = await client.get('/pos/setting');
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<ApiResponse> activePosTerminal(shopid, pincode, token, devicenumber, actoken, isdev) async {
+    Dio client = Client().initExpress();
+
+    try {
+      final response = await client.get('/poscenter/active?shopid=$shopid&pin=$pincode&token=$token&deviceid=$devicenumber&actoken=$actoken&isdev=$isdev');
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          String errorMessage = '${rawData['code']}: ${rawData['message']}';
+          serviceLocator<Log>().error(errorMessage);
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        serviceLocator<Log>().error(ex);
+        throw Exception(ex);
+      }
+    } on DioError catch (ex) {
+      String errorMessage = ex.response.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
   Future<ApiResponse> getCategoryFetchUpdate({int page = 0, int limit = 1, String time = ""}) async {
     Dio client = Client().init();
 
@@ -549,7 +599,7 @@ class ApiRepository {
             serviceLocator<Log>().error(errorMessage);
             throw Exception('${rawData['code']}: ${rawData['message']}');
           }
-            return (rawData['data'] as List).map((e) => MemberModel.fromJson(e)).toList();
+          return (rawData['data'] as List).map((e) => MemberModel.fromJson(e)).toList();
         } catch (ex) {
           serviceLocator<Log>().error(ex);
           throw Exception(ex);
@@ -679,10 +729,7 @@ class ApiRepository {
     bool result = false;
     Dio client = Client().init();
     try {
-      final response = await client.post('/employee/password', data: {
-        "code": code,
-        "password": newPassword
-      });
+      final response = await client.post('/employee/password', data: {"code": code, "password": newPassword});
       try {
         final rawData = json.decode(response.toString());
         if (rawData['error'] != null) {
@@ -713,7 +760,16 @@ class RestApiFindItemByCodeNameBarcode {
       List<ProductBarcodeObjectBoxStruct> select = productBarcodeHelper.selectByCodeNameBarCode(word: word.toString(), limit: limit, offset: offset, order: "");
       for (int index = 0; index < select.length; index++) {
         ProductBarcodeObjectBoxStruct source = select[index];
-        result.add(FindItemModel(barcode: source.barcode, item_code: source.item_code, item_names: source.names, unit_code: source.unit_code, unit_names: source.unit_names, unit_type: 0, qty: 1.0, prices: source.prices, images_guid_list: []));
+        result.add(FindItemModel(
+            barcode: source.barcode,
+            item_code: source.item_code,
+            item_names: source.names,
+            unit_code: source.unit_code,
+            unit_names: source.unit_names,
+            unit_type: 0,
+            qty: 1.0,
+            prices: source.prices,
+            images_guid_list: []));
       }
     }
     return result;

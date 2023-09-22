@@ -12,7 +12,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayTransfer extends StatefulWidget {
-  final PosProcessModel posProcess;
+  final PosHoldProcessModel posProcess;
   final BuildContext blocContext;
   const PayTransfer({super.key, required this.posProcess, required this.blocContext});
 
@@ -22,6 +22,7 @@ class PayTransfer extends StatefulWidget {
 
 class _PayTransferState extends State<PayTransfer> {
   GlobalKey amountNumberKey = GlobalKey();
+  String bookBankCode = "";
   String bankCode = "";
   String bankName = "";
   double amount = 0;
@@ -30,6 +31,9 @@ class _PayTransferState extends State<PayTransfer> {
   @override
   void initState() {
     super.initState();
+    if (global.posConfig.transfers!.isNotEmpty) {
+      bookBankCode = global.posConfig.transfers![0].bookbank.accountcode!;
+    }
   }
 
   void refreshEvent() {
@@ -38,7 +42,7 @@ class _PayTransferState extends State<PayTransfer> {
 
   bool saveData() {
     if (bankCode.trim().isNotEmpty && amount > 0) {
-      global.payScreenData.transfer.add(PayTransferModel(bank_code: bankCode, bank_name: bankName, account_number: "123123131312312", amount: amount));
+      global.payScreenData.transfer.add(PayTransferModel(book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, amount: amount));
       return true;
     } else {
       return false;
@@ -58,77 +62,51 @@ class _PayTransferState extends State<PayTransfer> {
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
+            children: [
+              for (var item in global.posConfig.transfers!)
+                ElevatedButton(
+                    onPressed: () {
+                      bookBankCode = item.bookbank.bankcode!;
+                      refreshEvent();
+                    },
+                    child: Column(
+                      children: [
+                        Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(item.bookbank.bankcode!)))),
+                        Text(
+                          "${global.getNameFromLanguage(item.names!, global.userScreenLanguage)} ",
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    )),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                  height: 90,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                title: Text(global.language("please_select_bank")),
-                                content: SizedBox(
-                                    width: 350,
-                                    height: 300,
-                                    child: ListView.builder(
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return Padding(
-                                            padding: const EdgeInsets.only(top: 4, bottom: 4),
-                                            child: ElevatedButton(
-                                              child: Row(children: [
-                                                Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
-                                                const SizedBox(width: 10),
-                                                Text(bankDataList[index].names[0])
-                                              ]),
-                                              onPressed: () {
-                                                bankCode = bankDataList[index].code;
-                                                bankName = bankDataList[index].names[0];
-                                                Navigator.of(context).pop();
-                                                refreshEvent();
-                                              },
-                                            ));
-                                      },
-                                      itemCount: bankDataList.length,
-                                    ))));
-                        refreshEvent();
-                      },
-                      child: Column(
-                        children: [
-                          Expanded(child: Container(alignment: Alignment.center, width: 100, height: 50, child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
-                          Text(
-                            (bankName.isNotEmpty) ? bankName : global.language('bank_name'),
-                            style: const TextStyle(fontSize: 16),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ))),
-              const SizedBox(width: 10),
               Expanded(
                   child: SizedBox(
                       key: amountNumberKey,
                       height: 90,
                       child: ElevatedButton(
                           onPressed: () async {
-                            if (bankCode.isNotEmpty) {
-                              await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                      title: Text(global.language('amount')),
-                                      content: SizedBox(
-                                        width: 300,
-                                        height: 300,
-                                        child: NumberPad(onChange: (value) {
-                                          setState(() {
-                                            amount = double.tryParse(value) ?? 0;
-                                          });
-                                        }),
-                                      ));
-                                },
-                              );
-                              refreshEvent();
-                            }
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                    title: Text(global.language('amount')),
+                                    content: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: NumberPad(onChange: (value) {
+                                        setState(() {
+                                          amount = double.tryParse(value) ?? 0;
+                                        });
+                                      }),
+                                    ));
+                              },
+                            );
+                            refreshEvent();
                           },
                           child: Column(
                             children: [
@@ -147,6 +125,59 @@ class _PayTransferState extends State<PayTransfer> {
                               ),
                             ],
                           )))),
+              const SizedBox(width: 10),
+              SizedBox(
+                  height: 90,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                                title: Text(global.language("please_select_bank")),
+                                content: SizedBox(
+                                    width: 350,
+                                    height: 300,
+                                    child: ListView.builder(
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return Padding(
+                                            padding: const EdgeInsets.only(top: 4, bottom: 4),
+                                            child: ElevatedButton(
+                                              child: Row(children: [
+                                                Container(
+                                                    alignment: Alignment.center,
+                                                    width: 100,
+                                                    height: 50,
+                                                    child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
+                                                const SizedBox(width: 10),
+                                                Text(bankDataList[index].names[0])
+                                              ]),
+                                              onPressed: () {
+                                                bankCode = bankDataList[index].code;
+                                                bankName = bankDataList[index].names[0];
+                                                Navigator.of(context).pop();
+                                                refreshEvent();
+                                              },
+                                            ));
+                                      },
+                                      itemCount: bankDataList.length,
+                                    ))));
+                        refreshEvent();
+                      },
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  width: 100,
+                                  height: 50,
+                                  child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
+                          Text(
+                            (bankName.isNotEmpty) ? bankName : global.language('bank_name'),
+                            style: const TextStyle(fontSize: 16),
+                            textAlign: TextAlign.right,
+                          ),
+                        ],
+                      ))),
             ],
           ),
           const SizedBox(height: 10),

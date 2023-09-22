@@ -125,6 +125,9 @@ class BillObjectBoxStruct {
   /// ชำระเงินโดย Coupon
   double sum_coupon;
 
+  /// ชำระโดยเงินเชื่อ
+  double sum_credit;
+
   /// พิมพ์ใบกำกับภาษีแบบเต็มแล้ว
   bool full_vat_print;
 
@@ -177,6 +180,20 @@ class BillObjectBoxStruct {
   int vat_type;
 
   bool is_vat_register;
+
+  /// สูตรส่วนลดรายการสินค้า (ก่อนคิดเงิน)
+  String detail_discount_formula;
+  double detail_total_amount;
+  double detail_total_discount;
+
+  /// ยอดปัดเศษ
+  double round_amount;
+
+  /// ยอดรวมหลังหักส่วนลดท้ายบิล
+  double total_amount_after_discount;
+
+  // ยอดรวมสินค้าก่อนหักส่วนลดสินค้า
+  double detail_total_amount_before_discount;
 
   BillObjectBoxStruct(
       {required this.date_time,
@@ -234,12 +251,22 @@ class BillObjectBoxStruct {
       required this.total_item_vat_amount,
       required this.total_item_except_vat_amount,
       required this.is_vat_register,
+      required this.detail_discount_formula,
+      required this.detail_total_amount,
+      required this.detail_total_discount,
+      required this.round_amount,
+      required this.total_amount_after_discount,
+      required this.sum_credit,
+      required this.detail_total_amount_before_discount,
       required this.print_copy_bill_date_time});
 }
 
 @Entity()
 class BillDetailObjectBoxStruct {
   int id = 0;
+
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
 
   String doc_number;
 
@@ -285,6 +312,7 @@ class BillDetailObjectBoxStruct {
   String extra_json;
 
   BillDetailObjectBoxStruct({
+    required this.doc_mode,
     required this.doc_number,
     required this.line_number,
     required this.barcode,
@@ -343,14 +371,16 @@ class BillDetailExtraObjectBoxStruct {
       required this.is_except_vat,
       required this.total_amount});
 
-  factory BillDetailExtraObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$BillDetailExtraObjectBoxStructFromJson(json);
+  factory BillDetailExtraObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$BillDetailExtraObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$BillDetailExtraObjectBoxStructToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
 class BillPayObjectBoxStruct {
-  /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
+  /// 1=บัตรเครดิต,2=เงินโอน,3=เช็ค,4=คูปอง,5=QR,9=เงินเชื่อ
   int trans_flag;
 
   /// รหัสธนาคาร
@@ -360,7 +390,7 @@ class BillPayObjectBoxStruct {
   String bank_name;
 
   /// เลขที่บัญชี (เงินเข้า)
-  String bank_account_no;
+  String book_bank_code;
 
   /// เลขที่บัตรเครดิต
   String card_number;
@@ -408,12 +438,13 @@ class BillPayObjectBoxStruct {
   double amount;
 
   BillPayObjectBoxStruct({
+    this.doc_mode = 0,
     this.trans_flag = 0,
     this.bank_code = "",
     this.card_number = "",
     this.approved_code = "",
     this.bank_name = "",
-    this.bank_account_no = "",
+    this.book_bank_code = "",
     this.branch_number = "",
     this.bank_reference = "",
     this.cheque_number = "",
@@ -428,7 +459,6 @@ class BillPayObjectBoxStruct {
   })  : due_date = DateTime.now(),
         doc_date_time = DateTime.now();
 
-  factory BillPayObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$BillPayObjectBoxStructFromJson(json);
+  factory BillPayObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$BillPayObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$BillPayObjectBoxStructToJson(this);
 }

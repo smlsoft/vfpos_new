@@ -20,6 +20,7 @@ class TransactionModel {
   bool iscancel;
   bool ismanualamount;
   bool ispos;
+  String posid;
   String membercode;
   String salecode;
   String salename;
@@ -34,11 +35,109 @@ class TransactionModel {
   double totalexceptvat;
   double totalvalue;
   double totalvatvalue;
+  double paycashamount;
   int transflag;
   double vatrate;
+  //1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
   int vattype;
   TransPaymentDetailModel paymentdetail;
   String paymentdetailraw;
+
+  //0=บิลทั่วไปไม่มีภาษี,1=ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ,2=ใบเสร็จรับเงิน/ใบกำกับภาษีอย่างเต็ม
+  int billtaxtype;
+
+  String canceldatetime;
+  String cancelusercode;
+  String cancelusername;
+  String canceldescription;
+  String cancelreason;
+  String fullvataddress;
+  //เลขสาขาใบกำกับภาษีแบบเต็ม
+  String fullvatbranchnumber;
+  //ชื่อลูกค้าใบกำกับภาษีแบบเต็ม
+  String fullvatname;
+  //เลขที่ใบกำกับภาษีแบบเต็ม
+  String fullvatdocnumber;
+  //ชื่อลูกค้าใบกำกับภาษีแบบเต็ม
+  String fullvattaxid;
+  //พิมพ์ใบกำกับภาษีแบบเต็มแล้ว
+  bool fullvatprint;
+
+  bool isvatregister;
+
+  /// วันที่พิมพ์ใบเสร็จ (สำเนา)
+  List<String> printcopybilldatetime;
+
+  // หมายเลขโต๊ะ
+  String tablenumber;
+
+  String tableopendatetime;
+  String tableclosedatetime;
+
+  /// จำนวนคน ชาย
+  int mancount;
+
+  /// จำนวนคน หญิง
+  int womancount;
+
+  /// จำนวนเด็ก
+  int childcount;
+
+  //False=สั่งแบบอลาคาร์ทไม่ได้,True=สั่งแบบอลาคาร์ทได้
+  bool istableallacratemode;
+
+  String buffetcode;
+
+  /// เบอร์โทรลูกค้า (สะสมแต้ม)
+  String customertelephone;
+
+  /// จำนวนชิ้น
+  double totalqty;
+
+  /// ส่วนลดสินค้ามีภาษี
+  double totaldiscountvatamount;
+
+  /// ส่วนลดสินค้ายกเว้นภาษี
+  double totaldiscountexceptvatamount;
+
+  /// ชื่อพนักงาน Cashier
+  String cashiername;
+
+  /// เงินทอน
+  double paycashchange;
+
+  /// ชำระเงินโดย QR Code
+  double sumqrcode;
+
+  /// ชำระเงินโดย Credit Card
+  double sumcreditcard;
+
+  /// ชำระเงินโดยเงินโอน
+  double summoneytransfer;
+
+  /// ชำระเงินโดยเช็ค
+  double sumcheque;
+
+  /// ชำระเงินโดย Coupon
+  double sumcoupon;
+
+  /// ชำระเงินโดย เงินเชื่อ
+  double sumcredit;
+
+  /// สูตรส่วนลดรายการสินค้า (ก่อนคิดเงิน)
+  String detaildiscountformula;
+  double detailtotalamount;
+  double detailtotaldiscount;
+
+  /// ยอดปัดเศษ
+  double roundamount;
+
+  /// ยอดรวมหลังหักส่วนลดท้ายบิล
+  double totalamountafterdiscount;
+
+  // ยอดรวมสินค้าก่อนหักส่วนลดสินค้า
+  double detailtotalamountbeforediscount;
+
   TransactionModel({
     required this.cashiercode,
     required this.custcode,
@@ -76,7 +175,90 @@ class TransactionModel {
     required this.vattype,
     required this.paymentdetail,
     required this.paymentdetailraw,
-  });
+    String? posid,
+    double? paycashamount,
+    int? billtaxtype,
+    String? canceldatetime,
+    String? cancelusercode,
+    String? cancelusername,
+    String? canceldescription,
+    String? cancelreason,
+    String? fullvataddress,
+    String? fullvatbranchnumber,
+    String? fullvatname,
+    String? fullvatdocnumber,
+    String? fullvattaxid,
+    bool? fullvatprint,
+    bool? isvatregister,
+    List<String>? printcopybilldatetime,
+    String? tablenumber,
+    String? tableopendatetime,
+    String? tableclosedatetime,
+    int? mancount,
+    int? womancount,
+    int? childcount,
+    bool? istableallacratemode,
+    String? buffetcode,
+    String? customertelephone,
+    double? totalqty,
+    double? totaldiscountvatamount,
+    double? totaldiscountexceptvatamount,
+    String? cashiername,
+    double? paycashchange,
+    double? sumqrcode,
+    double? sumcreditcard,
+    double? summoneytransfer,
+    double? sumcheque,
+    double? sumcoupon,
+    double? sumcredit,
+    String? detaildiscountformula,
+    double? detailtotalamount,
+    double? detailtotaldiscount,
+    double? roundamount,
+    double? totalamountafterdiscount,
+    double? detailtotalamountbeforediscount,
+  })  : paycashamount = paycashamount ?? 0.0,
+        billtaxtype = billtaxtype ?? 0,
+        canceldatetime = canceldatetime ?? "",
+        cancelusercode = cancelusercode ?? "",
+        cancelusername = cancelusername ?? "",
+        canceldescription = canceldescription ?? "",
+        cancelreason = cancelreason ?? "",
+        fullvataddress = fullvataddress ?? "",
+        posid = posid ?? "", 
+        fullvatbranchnumber = fullvatbranchnumber ?? "",
+        fullvatname = fullvatname ?? "",
+        fullvatdocnumber = fullvatdocnumber ?? "",
+        fullvattaxid = fullvattaxid ?? "",
+        fullvatprint = fullvatprint ?? false,
+        isvatregister = isvatregister ?? false,
+        printcopybilldatetime = printcopybilldatetime ?? [],
+        tablenumber = tablenumber ?? "",
+        tableopendatetime = tableopendatetime ?? "",
+        tableclosedatetime = tableclosedatetime ?? "",
+        mancount = mancount ?? 0,
+        womancount = womancount ?? 0,
+        childcount = childcount ?? 0,
+        istableallacratemode = istableallacratemode ?? false,
+        buffetcode = buffetcode ?? "",
+        customertelephone = customertelephone ?? "",
+        totalqty = totalqty ?? 0.0,
+        totaldiscountvatamount = totaldiscountvatamount ?? 0.0,
+        totaldiscountexceptvatamount = totaldiscountexceptvatamount ?? 0.0,
+        cashiername = cashiername ?? "",
+        paycashchange = paycashchange ?? 0.0,
+        sumqrcode = sumqrcode ?? 0.0,
+        sumcreditcard = sumcreditcard ?? 0.0,
+        summoneytransfer = summoneytransfer ?? 0.0,
+        sumcheque = sumcheque ?? 0.0,
+        sumcoupon = sumcoupon ?? 0.0,
+        sumcredit = sumcredit ?? 0.0,
+        detaildiscountformula = detaildiscountformula ?? "",
+        detailtotalamount = detailtotalamount ?? 0.0,
+        detailtotaldiscount = detailtotaldiscount ?? 0.0,
+        roundamount = roundamount ?? 0.0,
+        totalamountafterdiscount = totalamountafterdiscount ?? 0.0,
+        detailtotalamountbeforediscount = detailtotalamountbeforediscount ?? 0.0;
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) => _$TransactionModelFromJson(json);
 
@@ -91,11 +273,14 @@ class TransNameInfoModel {
   String name;
 
   TransNameInfoModel({
-    required this.code,
-    required this.isauto,
-    required this.isdelete,
-    required this.name,
-  });
+    String? code,
+    bool? isauto,
+    bool? isdelete,
+    String? name,
+  })  : code = code ?? "",
+        isauto = isauto ?? false,
+        isdelete = isdelete ?? false,
+        name = name ?? "";
 
   factory TransNameInfoModel.fromJson(Map<String, dynamic> json) => _$TransNameInfoModelFromJson(json);
 
@@ -147,6 +332,10 @@ class TransDetailModel {
   String whcode;
   List<TransNameInfoModel> whnames;
 
+  /// SKU สินค้า
+  String sku;
+  String extrajson;
+
   TransDetailModel({
     required this.averagecost,
     required this.barcode,
@@ -190,7 +379,10 @@ class TransDetailModel {
     required this.vattype,
     required this.whcode,
     required this.whnames,
-  });
+    String? sku,
+    String? extrajson,
+  })  : sku = sku ?? "",
+        extrajson = extrajson ?? "";
 
   factory TransDetailModel.fromJson(Map<String, dynamic> json) => _$TransDetailModelFromJson(json);
 

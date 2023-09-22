@@ -127,6 +127,7 @@ SyncProductBarcodeModel _$SyncProductBarcodeModelFromJson(
               e as Map<String, dynamic>))
           .toList(),
       vatcal: json['vatcal'] as int,
+      issplitunitprint: json['issplitunitprint'] as bool,
     );
 
 Map<String, dynamic> _$SyncProductBarcodeModelToJson(
@@ -149,6 +150,7 @@ Map<String, dynamic> _$SyncProductBarcodeModelToJson(
       'isalacarte': instance.isalacarte,
       'ordertypes': instance.ordertypes,
       'vatcal': instance.vatcal,
+      'issplitunitprint': instance.issplitunitprint,
     };
 
 SyncCategoryModel _$SyncCategoryModelFromJson(Map<String, dynamic> json) =>

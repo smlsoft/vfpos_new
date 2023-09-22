@@ -1,4 +1,3 @@
-import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
 import 'package:dedepos/api/api_repository.dart';
 import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
 import 'package:dedepos/api/network/server.dart';
@@ -8,6 +7,7 @@ import 'package:dedepos/api/sync/model/wallet_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/db/kitchen_helper.dart';
+import 'package:dedepos/db/shift_helper.dart';
 import 'package:dedepos/google_sheet.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
@@ -38,7 +38,6 @@ import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:dedepos/db/employee_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
@@ -56,7 +55,6 @@ import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
 import 'db/product_category_helper.dart';
 import 'db/product_barcode_helper.dart';
-import 'package:dedepos/global.dart' as global;
 import 'db/pos_log_helper.dart';
 import 'db/bill_helper.dart';
 import 'dart:convert';
@@ -67,24 +65,28 @@ import 'model/objectbox/form_design_struct.dart';
 String applicationName = "";
 late Directory applicationDocumentsDirectory;
 late ProfileSettingModel profileSetting;
-late PosConfigModel posConfig;
+PosConfigModel posConfig = PosConfigModel(
+  code: '',
+  doccode: '',
+  vattype: 0,
+  vatrate: 0,
+  docformattaxinv: '',
+  billheader: [],
+  billfooter: [],
+  isvatregister: false,
+  isejournal: false,
+  devicenumber: '',
+  slips: [],
+  logourl: '',
+  creditcards: [],
+  qrcodes: [],
+  transfers: [],
+  location: LocationModel(code: "", names: []),
+  warehouse: WarehouseModel(code: "", guidfixed: "", names: []),
+);
 List<FormDesignObjectBoxStruct> formDesignList = [];
-List<String> countryNames = [
-  "English",
-  "Thai",
-  "Laos",
-  "Chinese",
-  "Japan",
-  "Korea"
-];
-List<String> countryCodes = [
-  "en",
-  "th",
-  "lo",
-  "ch",
-  "jp",
-  "kr"
-];
+List<String> countryNames = ["English", "Thai", "Laos", "Chinese", "Japan", "Korea"];
+List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 List<LanguageSystemModel> languageSystemData = [];
 List<LanguageSystemCodeModel> languageSystemCode = [];
 String userScreenLanguage = "";
@@ -93,6 +95,7 @@ bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
 var httpClient = http.Client();
 late BuildContext globalContext;
+String environmentVersion = "DEV";
 bool tableSelected = false;
 String tableNumberSelected = "";
 late PosHoldProcessModel tableProcessSelected;
@@ -110,6 +113,7 @@ PosLogHelper posLogHelper = PosLogHelper();
 BillHelper billHelper = BillHelper();
 PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
+ShiftHelper shiftHelper = ShiftHelper();
 int syncTimeIntervalMaxBySecond = 10;
 int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.##");
@@ -132,7 +136,6 @@ bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
 PosPayModel payScreenData = PosPayModel();
-List<PaymentProviderModel> qrPaymentProviderList = [];
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
 late EmployeeObjectBoxStruct? userLogin;
@@ -178,7 +181,6 @@ DeviceModeEnum deviceMode = DeviceModeEnum.none;
 PosScreenNewDataStyleEnum posScreenNewDataStyle = PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
-PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
 bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
 String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
 String posSaleChannelLogoUrl = "";
@@ -209,42 +211,17 @@ List<MoneyRoundPayModel> payTotalMoneyRoundStep = [
   MoneyRoundPayModel(begin: 0.88, end: 0.99, value: 1.0),
 ];
 
-enum PrinterTypeEnum {
-  thermal,
-  dot,
-  laser,
-  inkjet
-}
+enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterConnectEnum {
-  ip,
-  bluetooth,
-  usb,
-  windows,
-  sunmi1
-}
+enum PrinterConnectEnum { ip, bluetooth, usb, windows, sunmi1 }
 
-enum PosVersionEnum {
-  pos,
-  restaurant,
-  vfpos
-}
+enum PosVersionEnum { pos, restaurant, vfpos }
 
-enum SoundEnum {
-  beep,
-  fail,
-  buttonTing
-}
+enum SoundEnum { beep, fail, buttonTing }
 
-enum DisplayMachineEnum {
-  customerDisplay,
-  posTerminal
-}
+enum DisplayMachineEnum { customerDisplay, posTerminal }
 
-enum PosScreenModeEnum {
-  posSale,
-  posReturn
-}
+enum PosScreenModeEnum { posSale, posReturn, mainMenu }
 
 /// ฟอร์มใบสรุปยอด
 String formS01 = "S-01";
@@ -257,14 +234,7 @@ String formS04 = "S-04";
 // ใบรับคืน
 String formReturn = "SLIP005";
 
-enum TableManagerEnum {
-  openTable,
-  closeTable,
-  moveTable,
-  mergeTable,
-  informationTable,
-  splitTable
-}
+enum TableManagerEnum { openTable, closeTable, moveTable, mergeTable, informationTable, splitTable }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -336,14 +306,8 @@ int findPosHoldProcessResultIndex(String code) {
 
 Future<void> loadPrinter() async {
   printerLocalStrongData.clear();
-  List<String> printerCodes = [
-    printerConfigCashierCode,
-    printerConfigTicketCode
-  ];
-  List<String> printerNames = [
-    "Cashier",
-    "Ticket"
-  ];
+  List<String> printerCodes = [printerConfigCashierCode, printerConfigTicketCode];
+  List<String> printerNames = ["Cashier", "Ticket"];
   // Kitchen
   List<KitchenObjectBoxStruct> kitchenList = KitchenHelper().getAll();
   for (var kitchen in kitchenList) {
@@ -361,7 +325,7 @@ Future<void> loadPrinter() async {
   }
 }
 
-int posScreenToInt() {
+int posScreenToInt(PosScreenModeEnum posScreenMode) {
   switch (posScreenMode) {
     case PosScreenModeEnum.posSale:
       return 1;
@@ -413,7 +377,11 @@ bool isPhoneDevice() {
 }
 
 bool isTabletDevice() {
-  return deviceMode == DeviceModeEnum.ipad || deviceMode == DeviceModeEnum.androidTablet || deviceMode == DeviceModeEnum.windowsDesktop || deviceMode == DeviceModeEnum.linuxDesktop || deviceMode == DeviceModeEnum.macosDesktop;
+  return deviceMode == DeviceModeEnum.ipad ||
+      deviceMode == DeviceModeEnum.androidTablet ||
+      deviceMode == DeviceModeEnum.windowsDesktop ||
+      deviceMode == DeviceModeEnum.linuxDesktop ||
+      deviceMode == DeviceModeEnum.macosDesktop;
 }
 
 Future<void> getDeviceModel(BuildContext context) async {
@@ -431,7 +399,7 @@ Future<void> getDeviceModel(BuildContext context) async {
     }
   } else if (Platform.isIOS) {
     final iosInfo = await deviceInfo.iosInfo;
-    model = iosInfo.model!;
+    model = iosInfo.model;
     model = model.toLowerCase();
     if (model.contains("iphone")) {
       deviceMode = DeviceModeEnum.iphone;
@@ -601,19 +569,24 @@ Future<String> billRunning() async {
   String result = "";
   String countDigit = "";
   String lastDigit = "";
-  for (var item in global.posConfig.docformattaxinv.split("")) {
+  for (var item in posConfig.docformattaxinv.split("")) {
     if (item == "#") {
       countDigit += "0";
       lastDigit += "9";
     }
   }
-  String docFormat = global.posConfig.doccode + global.posConfig.docformattaxinv.replaceAll("#", "");
+  String docFormat = posConfig.doccode + posConfig.docformattaxinv.replaceAll("#", "");
   docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
   docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
   docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
   docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
   int number = 0;
-  var getLast = global.objectBoxStore.box<BillObjectBoxStruct>().query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit)).order(BillObjectBoxStruct_.doc_number, flags: Order.descending).build().findFirst();
+  var getLast = objectBoxStore
+      .box<BillObjectBoxStruct>()
+      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
+      .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
+      .build()
+      .findFirst();
   if (getLast != null) {
     if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
       number = int.parse(getLast.doc_number.substring(getLast.doc_number.length - countDigit.length));
@@ -735,12 +708,15 @@ Future<void> printQueueStartServer() async {
   }
 }
 
-String dateTimeFormatFull(DateTime dateTime, {bool showTime = true}) {
-  var formatter = DateFormat.yMMMMEEEEd('th_TH');
+String dateTimeFormatFull(DateTime dateTime, {bool showTime = false}) {
+  NumberFormat formatter = NumberFormat("00");
+  String day = formatter.format(dateTime.day);
+  String month = formatter.format(dateTime.month);
+  String year = formatter.format(dateTime.year + 543);
   if (showTime) {
-    return "${formatter.formatInBuddhistCalendarThai(dateTime)} - ${DateFormat.Hm().format(dateTime)}";
+    return "$day/$month/$year ${DateFormat.Hm().format(dateTime)}";
   } else {
-    return formatter.formatInBuddhistCalendarThai(dateTime);
+    return "$day/$month/$year";
   }
 }
 
@@ -756,19 +732,11 @@ String dateTimeFormatShort(DateTime dateTime, {bool showTime = false}) {
   }
 }
 
-String dateFormat(DateTime dateTime) {
-  var formatter = DateFormat.yMMMMEEEEd('th_TH');
-  return formatter.formatInBuddhistCalendarThai(dateTime);
-}
-
-String timeFormat(DateTime dateTime) {
-  return DateFormat.Hm().format(dateTime);
-}
-
 Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
-    SyncDeviceModel info = SyncDeviceModel(deviceId: deviceId, deviceName: deviceName, ip: "", holdCodeActive: "", docModeActive: 0, connected: true, isClient: false, isCashierTerminal: false);
+    SyncDeviceModel info =
+        SyncDeviceModel(deviceId: deviceId, deviceName: deviceName, ip: "", holdCodeActive: "", docModeActive: 0, connected: true, isClient: false, isCashierTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
     postToServer(
         ip: url,
@@ -810,7 +778,8 @@ Future<void> sendProcessToRemote() async {
     if (posRemoteDeviceList[index].connected) {
       var url = "${posRemoteDeviceList[index].ip}:$targetDeviceIpPort";
       try {
-        var jsonData = HttpPost(command: "process_result", data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posRemoteDeviceList[index].holdCodeActive!)].toJson()));
+        var jsonData =
+            HttpPost(command: "process_result", data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posRemoteDeviceList[index].holdCodeActive!)].toJson()));
         postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
         serviceLocator<Log>().error("$e : $url");
@@ -886,12 +855,12 @@ Future<void> loadDeviceConfigFromServer() async {
     // POS Setting
     var value = await apiRepository.getPosSetting(deviceId);
     print(jsonEncode(value.data));
-    global.posConfig = PosConfigModel.fromJson(value.data);
+    posConfig = PosConfigModel.fromJson(value.data);
     // ดึง logo
-    if (global.posConfig.logourl.isNotEmpty) {
-      var url = global.posConfig.logourl;
+    if (posConfig.logourl.isNotEmpty) {
+      var url = posConfig.logourl;
       var response = await http.get(Uri.parse(url));
-      var file = File(global.getPosLogoPathName());
+      var file = File(getPosLogoPathName());
       await file.writeAsBytes(response.bodyBytes);
     }
   } catch (e) {
@@ -915,7 +884,8 @@ Future<void> registerRemoteToTerminal() async {
     var url = "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
     var uri = Uri.parse(url);
     try {
-      SyncDeviceModel sendData = SyncDeviceModel(deviceId: "XXX", deviceName: "XXX", ip: ipAddress, holdCodeActive: posHoldActiveCode, docModeActive: 0, connected: true, isCashierTerminal: false, isClient: true);
+      SyncDeviceModel sendData = SyncDeviceModel(
+          deviceId: "XXX", deviceName: "XXX", ip: ipAddress, holdCodeActive: posHoldActiveCode, docModeActive: 0, connected: true, isCashierTerminal: false, isClient: true);
       var jsonEncodeStr = jsonEncode(sendData.toJson());
       await http
           .post(uri,
@@ -1063,15 +1033,8 @@ Future<String> getFromServer({required String json}) async {
   // String url = "$httpServerIp:$httpServerPort?data=$base64String";
 
   String url = "$targetDeviceIpAddress:$targetDeviceIpPort";
-  final response = await httpClient.get(
-      Uri.http(url, '/', {
-        'json': base64String
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-        "Accept": "text/event-stream"
-      });
+  final response =
+      await httpClient.get(Uri.http(url, '/', {'json': base64String}), headers: {"Content-Type": "application/json", "Cache-Control": "no-cache", "Accept": "text/event-stream"});
   if (response.statusCode == 200) {
     return response.body;
   } else {
@@ -1196,6 +1159,7 @@ bool isDesktopScreen() {
 
 String syncFindLastUpdate(List<SyncMasterStatusModel> dataList, String tableName) {
   for (var item in dataList) {
+    print(item.tableName);
     if (item.tableName == tableName) {
       return DateFormat(dateFormatSync).format(DateTime.parse(item.lastUpdate));
     }
@@ -1206,7 +1170,7 @@ String syncFindLastUpdate(List<SyncMasterStatusModel> dataList, String tableName
 Future<void> testPrinterConnect() async {
   if (printerLocalStrongData.isNotEmpty) {
     for (var printer in printerLocalStrongData) {
-      if (printer.printerConnectType == global.PrinterConnectEnum.ip) {
+      if (printer.printerConnectType == PrinterConnectEnum.ip) {
         if (printer.ipAddress.trim().isNotEmpty) {
           bool oldReady = printer.isReady;
           try {
@@ -1221,7 +1185,7 @@ Future<void> testPrinterConnect() async {
             }
           }
           if (oldReady != printer.isReady) {
-            global.posScreenAutoRefresh = true;
+            posScreenAutoRefresh = true;
           }
         }
       }
@@ -1275,7 +1239,8 @@ Future<void> checkOrderOnline() async {
     List<OrderTempObjectBoxStruct> orderSave = [];
     try {
       // ดึง Order ลูกค้าสั่งเอง
-      String selectQuery = "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
+      String selectQuery =
+          "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
       var value = await clickHouseSelect(selectQuery);
       if (value.isNotEmpty) {
         ResponseDataModel responseData = ResponseDataModel.fromJson(value);
@@ -1350,9 +1315,9 @@ Future<void> checkOrderOnline() async {
           await clickHouseExecute(updateQuery);
         }
         // save to objectbox
-        global.objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(orderSave, mode: PutMode.insert);
+        objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(orderSave, mode: PutMode.insert);
         // คำนวณยอดใหม่
-        global.orderSumAndUpdateTable(orderId);
+        orderSumAndUpdateTable(orderId);
       }
     } catch (e) {
       serviceLocator<Log>().error(e.toString());
@@ -1365,7 +1330,12 @@ Future<void> checkOrderOnline() async {
     List<String> orderIdList = [];
     try {
       // update isOrderSuccess และคำนวนณยอดรวม
-      final getData = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false))).build().find();
+      final getData = objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
+          .query(
+              OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+          .build()
+          .find();
       for (var data in getData) {
         if (!orderIdList.contains(data.orderId)) {
           orderIdList.add(data.orderId);
@@ -1373,7 +1343,14 @@ Future<void> checkOrderOnline() async {
       }
 
       for (var orderId in orderIdList) {
-        var orderTempUpdate = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false))).build().find();
+        var orderTempUpdate = objectBoxStore
+            .box<OrderTempObjectBoxStruct>()
+            .query(OrderTempObjectBoxStruct_.orderId
+                .equals(orderId)
+                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+            .build()
+            .find();
         for (var data in orderTempUpdate) {
           // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
           data.isOrder = false;
@@ -1397,7 +1374,16 @@ Future<void> checkOrderOnline() async {
     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
-    final getDataOrderId = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true)).and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false)).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))).build().find();
+    final getDataOrderId = objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.isOrder
+            .equals(false)
+            .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+            .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
     for (var data in getDataOrderId) {
       if (!orderIdList.contains(data.orderId)) {
         orderIdList.add(data.orderId);
@@ -1406,7 +1392,16 @@ Future<void> checkOrderOnline() async {
     for (var orderId in orderIdList) {
       // เลือกรายการ Order ทีละโต๊ะ
       List<OrderTempDataModel> orderTemp = [];
-      final getData = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true)).and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false)).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))).build().find();
+      final getData = objectBoxStore
+          .box<OrderTempObjectBoxStruct>()
+          .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isOrder
+              .equals(false)
+              .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+              .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+              .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+              .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
+          .build()
+          .find();
       for (var data in getData) {
         orderTemp.add(OrderTempDataModel(
           orderGuid: data.orderGuid,
@@ -1480,7 +1475,14 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   double amount = 0.0;
   {
     // รวมจาก OrderTemp ส่งรายการแล้ว
-    final result = objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(tableNumber).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))).build().find();
+    final result = objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.orderId
+            .equals(tableNumber)
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
     for (var order in result) {
       orderCount += order.qty;
       amount += orderCalcSumAmount(order);
@@ -1595,7 +1597,7 @@ Future<void> getProfile() async {
         if (profileSetting.company.logo!.isNotEmpty) {
           var url = profileSetting.company.logo!;
           var response = await http.get(Uri.parse(url));
-          var file = File(global.getShopLogoPathName());
+          var file = File(getShopLogoPathName());
           await file.writeAsBytes(response.bodyBytes);
         }
       }
@@ -1645,10 +1647,10 @@ Future<void> loadWalletProvider() async {
         code: data.code,
         guid_fixed: Uuid().v4(),
         bookbankcode: data.bookbankcode,
-        bookbankname: jsonEncode( data.names),
+        bookbankname: jsonEncode(data.names),
         countrycode: "th",
         feerate: 0,
-        names : jsonEncode( data.names),
+        names: jsonEncode(data.names),
         paymentcode: "",
         paymentlogo: data.paymentlogo,
         paymenttype: data.paymenttype,
@@ -1714,8 +1716,8 @@ Future<Directory> createPath(String mainPath, DateTime docDate) async {
 }
 
 int findFormByCode(String code) {
-  for (var i = 0; i < global.formDesignList.length; i++) {
-    if (global.formDesignList[i].code == code) {
+  for (var i = 0; i < formDesignList.length; i++) {
+    if (formDesignList[i].code == code) {
       return i;
     }
   }
@@ -1723,18 +1725,18 @@ int findFormByCode(String code) {
 }
 
 String getPosFormCodeByCode(String code) {
-  for (var i = 0; i < global.posConfig.slips.length; i++) {
-    if (global.posConfig.slips[i].code == code) {
-      return global.posConfig.slips[i].formcode;
+  for (var i = 0; i < posConfig.slips.length; i++) {
+    if (posConfig.slips[i].code == code) {
+      return posConfig.slips[i].formcode;
     }
   }
   return "";
 }
 
 String getPosFormNameByCode(String code) {
-  for (var i = 0; i < global.posConfig.slips.length; i++) {
-    if (global.posConfig.slips[i].code == code) {
-      return jsonEncode(global.posConfig.slips[i].formnames);
+  for (var i = 0; i < posConfig.slips.length; i++) {
+    if (posConfig.slips[i].code == code) {
+      return jsonEncode(posConfig.slips[i].formnames);
     }
   }
   return "[{}]";
@@ -1768,6 +1770,14 @@ double roundMoneyForPay(double value) {
   return result;
 }
 
+String getAppversion() {
+  return (environmentVersion != "PROD"
+      ? (environmentVersion == "DEV")
+          ? "(DEV)"
+          : "(UAT)"
+      : "");
+}
+
 Widget iconStatus(String pngFileName, bool status) {
   return SizedBox(
     width: 30,
@@ -1782,14 +1792,18 @@ Widget iconStatus(String pngFileName, bool status) {
           child: Container(
             height: 10,
             width: 10,
-            decoration: BoxDecoration(color: (status) ? Colors.greenAccent : Colors.redAccent, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white, width: 1), boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 2,
-                offset: const Offset(0, 1), // changes position of shadow
-              ),
-            ]),
+            decoration: BoxDecoration(
+                color: (status) ? Colors.greenAccent : Colors.redAccent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: const Offset(0, 1), // changes position of shadow
+                  ),
+                ]),
           )),
     ]),
   );

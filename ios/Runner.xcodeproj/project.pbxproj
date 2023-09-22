@@ -745,7 +745,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_BITCODE = NO;
 				FLUTTER_BUILD_NAME = 1.2.2;
 				FLUTTER_BUILD_NUMBER = 12;
@@ -757,7 +757,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.smlsoft.dedepos;
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1386,7 +1386,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_BITCODE = NO;
 				FLUTTER_BUILD_NAME = 1.2.2;
 				FLUTTER_BUILD_NUMBER = 12;
@@ -1398,7 +1398,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.smlsoft.dedepos;
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1422,7 +1422,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_BITCODE = NO;
 				FLUTTER_BUILD_NAME = 1.2.2;
 				FLUTTER_BUILD_NUMBER = 12;
@@ -1434,7 +1434,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.smlsoft.dedepos;
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1452,8 +1452,9 @@
 			baseConfigurationReference = BDC48C69A44B969BF00B06C2 /* Pods-Runner.debug-dev.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dev";
@@ -1463,8 +1464,9 @@
 			baseConfigurationReference = C3BBF24F1081BC77EA2E21FF /* Pods-Runner.profile-dev.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-dev";
@@ -1474,8 +1476,9 @@
 			baseConfigurationReference = 768EEC44C550416DFB601FD0 /* Pods-Runner.release-dev.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-dev";
@@ -1485,8 +1488,9 @@
 			baseConfigurationReference = 0272A264D796D95E5EC977B6 /* Pods-Runner.debug-dedepos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dedepos";
@@ -1496,8 +1500,9 @@
 			baseConfigurationReference = D1A0421F6B1C4D964BB5E466 /* Pods-Runner.profile-dedepos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-dedepos";
@@ -1507,8 +1512,9 @@
 			baseConfigurationReference = 4F61409CE183F8A46B992510 /* Pods-Runner.release-dedepos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 6WUC256236;
+				DEVELOPMENT_TEAM = 54Z26J3N57;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
+				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-dedepos";

@@ -15,7 +15,7 @@ EmployeeModel _$EmployeeModelFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       isenabled: json['isenabled'] as bool,
       pincode: json['pincode'] as String,
-      isusepos: json['isusepos'] as bool,
+      isusepos: json['isusepos'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$EmployeeModelToJson(EmployeeModel instance) =>

@@ -13,7 +13,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 class PayCreditCard extends StatefulWidget {
-  final PosProcessModel posProcess;
+  final PosHoldProcessModel posProcess;
   final BuildContext blocContext;
 
   const PayCreditCard({super.key, required this.posProcess, required this.blocContext});
@@ -26,16 +26,19 @@ class _PayCreditCardState extends State<PayCreditCard> {
   GlobalKey cardNumberKey = GlobalKey();
   GlobalKey approveNumberKey = GlobalKey();
   GlobalKey amountNumberKey = GlobalKey();
+  String bookBankCode = "";
   String bankCode = "";
   String bankName = "";
   String cardNumber = "";
   double cardAmount = 0;
   String approveNumber = "";
-  int _buttonIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    if (global.posConfig.creditcards!.isNotEmpty) {
+      bookBankCode = global.posConfig.creditcards![0].bookbank.accountcode!;
+    }
   }
 
   void refreshEvent() {
@@ -44,7 +47,8 @@ class _PayCreditCardState extends State<PayCreditCard> {
 
   bool saveData() {
     if (cardNumber.trim().isNotEmpty && cardAmount > 0) {
-      PayCreditCardModel data = PayCreditCardModel(bank_code: bankCode, bank_name: bankName, card_number: cardNumber, approved_code: approveNumber, amount: cardAmount);
+      PayCreditCardModel data =
+          PayCreditCardModel(book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, card_number: cardNumber, approved_code: approveNumber, amount: cardAmount);
       global.payScreenData.credit_card.add(data);
       return true;
     } else {
@@ -65,6 +69,26 @@ class _PayCreditCardState extends State<PayCreditCard> {
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(
+            children: [
+              for (var item in global.posConfig.creditcards!)
+                ElevatedButton(
+                    onPressed: () {
+                      bookBankCode = item.bookbank.bankcode!;
+                      refreshEvent();
+                    },
+                    child: Column(
+                      children: [
+                        Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(item.bookbank.bankcode!)))),
+                        Text(
+                          "${global.getNameFromLanguage(item.names!, global.userScreenLanguage)} ",
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    )),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               SizedBox(
@@ -84,7 +108,11 @@ class _PayCreditCardState extends State<PayCreditCard> {
                                             padding: const EdgeInsets.only(top: 4, bottom: 4),
                                             child: ElevatedButton(
                                               child: Row(children: [
-                                                Container(alignment: Alignment.center, width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
+                                                Container(
+                                                    alignment: Alignment.center,
+                                                    width: 100,
+                                                    height: 50,
+                                                    child: Image(image: NetworkToFileImage(url: global.findBankLogo(bankDataList[index].code)))),
                                                 const SizedBox(width: 10),
                                                 Text(bankDataList[index].names[0])
                                               ]),
@@ -102,7 +130,12 @@ class _PayCreditCardState extends State<PayCreditCard> {
                       },
                       child: Column(
                         children: [
-                          Expanded(child: Container(alignment: Alignment.center, width: 100, height: 50, child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
+                          Expanded(
+                              child: Container(
+                                  alignment: Alignment.center,
+                                  width: 100,
+                                  height: 50,
+                                  child: (bankCode.isNotEmpty) ? Image(image: NetworkToFileImage(url: global.findBankLogo(bankCode))) : Container())),
                           Text(
                             (bankName.isNotEmpty) ? bankName : global.language('bank'),
                             style: const TextStyle(fontSize: 16),
@@ -298,17 +331,22 @@ class _PayCreditCardState extends State<PayCreditCard> {
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: ListTile(
-              title: Row(
+              title: Column(
                 children: [
-                  SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.credit_card[index].bank_code)))),
-                  const SizedBox(width: 10),
-                  Text(
-                    '${global.language('card_number')}  : ',
-                    style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'CourrierPrime'),
-                  ),
-                  Text(
-                    global.payScreenData.credit_card[index].card_number,
-                    style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'CourrierPrime'),
+                  Text(global.payScreenData.credit_card[index].book_bank_code),
+                  Row(
+                    children: [
+                      SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.credit_card[index].bank_code)))),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${global.language('card_number')} : ',
+                        style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 16, fontFamily: 'CourrierPrime'),
+                      ),
+                      Text(
+                        global.payScreenData.credit_card[index].card_number,
+                        style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'CourrierPrime'),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -7,15 +7,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PosCancelBillDetailScreen extends StatefulWidget {
+  final global.PosScreenModeEnum posScreenMode;
   final String docNumber;
 
   @override
-  const PosCancelBillDetailScreen({Key? key, required this.docNumber})
-      : super(key: key);
+  const PosCancelBillDetailScreen({Key? key, required this.docNumber, required this.posScreenMode}) : super(key: key);
 
   @override
-  State<PosCancelBillDetailScreen> createState() =>
-      _PosCancelBillDetailScreenState();
+  State<PosCancelBillDetailScreen> createState() => _PosCancelBillDetailScreenState();
 }
 
 class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
@@ -25,9 +24,7 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<BillBloc>()
-        .add(BillLoadByDocNumber(docNumber: widget.docNumber));
+    context.read<BillBloc>().add(BillLoadByDocNumber(docNumber: widget.docNumber, posScreenMode: widget.posScreenMode));
   }
 
   @override
@@ -62,8 +59,7 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                             width: double.infinity,
                             child: Column(children: [
                               Table(
-                                defaultVerticalAlignment:
-                                    TableCellVerticalAlignment.middle,
+                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                 columnWidths: const {
                                   0: FlexColumnWidth(1),
                                   1: FlexColumnWidth(3),
@@ -92,32 +88,23 @@ class _PosCancelBillDetailScreenState extends State<PosCancelBillDetailScreen> {
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
-                                              title: Text(global
-                                                  .language("cancel_bill")),
+                                              title: Text(global.language("cancel_bill")),
                                               content: Text(bill.doc_number),
                                               actions: [
                                                 TextButton(
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text(global
-                                                        .language("cancel"))),
+                                                    child: Text(global.language("cancel"))),
                                                 TextButton(
                                                     onPressed: () {
                                                       bill.is_cancel = true;
-                                                      BillHelper().updatesIsCancel(
-                                                          docNumber:
-                                                              bill.doc_number,
-                                                          description:
-                                                              cancelDescriptionController
-                                                                  .text,
-                                                          value: true);
+                                                      BillHelper().updatesIsCancel(docNumber: bill.doc_number, description: cancelDescriptionController.text, value: true);
                                                       Navigator.pop(context);
                                                       Navigator.pop(context);
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text(global
-                                                        .language("confirm"))),
+                                                    child: Text(global.language("confirm"))),
                                               ],
                                             );
                                           });

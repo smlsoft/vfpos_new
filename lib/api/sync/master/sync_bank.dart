@@ -20,8 +20,7 @@ Future<ApiResponse> serverBankGetData({
   Dio client = Client().init();
 
   try {
-    String query =
-        "/master-sync/list?lastupdate=$lastupdate&module=bankmaster&offset=$offset&limit=$limit&action=all";
+    String query = "/master-sync/list?lastupdate=$lastupdate&module=bankmaster&offset=$offset&limit=$limit&action=all";
     final response = await client.get(query);
     try {
       final rawData = json.decode(response.toString());
@@ -38,8 +37,7 @@ Future<ApiResponse> serverBankGetData({
   }
 }
 
-Future syncBank(
-    List<ItemRemoveModel> removeList, List<SyncBankModel> newDataList) async {
+Future syncBank(List<ItemRemoveModel> removeList, List<SyncBankModel> newDataList) async {
   List<String> removeMany = [];
   List<BankObjectBoxStruct> manyForInsert = [];
   List<String> packNameValues = [];
@@ -80,38 +78,29 @@ Future syncBank(
 
 Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
   // Sync พนักงาน
-  String lastUpdateTime =
-      global.appStorage.read(global.syncBankTimeName) ?? global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncBankTimeName) ?? global.syncDateBegin;
   if (BankHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "bankmaster");
   if (lastUpdateTime != getLastUpdateTime) {
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await serverBankGetData(
-              offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await serverBankGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["bankmaster"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncBankModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncBankModel.fromJson(newCate))
-              .toList();
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncBankModel> newDataList = (dataList["new"] as List).map((newCate) => SyncBankModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncBank(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .error("************************************************* Error");
+          serviceLocator<Log>().error("************************************************* Error");
           loop = false;
         }
       });
