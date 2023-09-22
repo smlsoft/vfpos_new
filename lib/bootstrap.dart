@@ -74,11 +74,9 @@ Future<void> initializeEnvironmentConfig() async {
   await GetStorage.init();
   global.appStorage = GetStorage();
   //
-  try {
-    global.userScreenLanguage = GetStorage().read("language");
-  } catch (ex) {
-    global.userScreenLanguage = "th";
-  }
+
+  global.userScreenLanguage = "th";
+
   global.applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
   objectBoxInit();
   // Server

@@ -89,7 +89,7 @@ List<String> countryNames = ["English", "Thai", "Laos", "Chinese", "Japan", "Kor
 List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 List<LanguageSystemModel> languageSystemData = [];
 List<LanguageSystemCodeModel> languageSystemCode = [];
-String userScreenLanguage = "";
+String userScreenLanguage = "th";
 DisplayManager displayManager = DisplayManager();
 bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
