@@ -643,7 +643,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                     phoneNumber += ",${detail.addressforbilling.phonesecondary}";
                   }
                   return Row(children: [
-                    Expanded(flex: 5, child: Text(global.getNameFromLanguage(detail.names, global.userScreenLanguage) + " (" + detail.code + ")")),
+                    Expanded(flex: 4, child: Text(global.getNameFromLanguage(detail.names, global.userScreenLanguage) + " (" + detail.code + ")")),
                     Expanded(flex: 1, child: Text(phoneNumber)),
                     Expanded(
                         flex: 1,
@@ -2656,22 +2656,22 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       },
       child: const Icon(Icons.print),
     ));
-    if (widget.posScreenMode == global.PosScreenModeEnum.posSale) {
-      // ร้านอาหาร
-      iconMenu.add(const SizedBox(
-        width: 2,
-      ));
-      iconMenu.add(ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            minimumSize: Size.zero, // Set this
-            padding: const EdgeInsets.all(8) // and this
-            ),
-        onPressed: () async {
-          await holdBill(holdType: 2);
-        },
-        child: const Icon(Icons.table_restaurant),
-      ));
-    }
+    // if (widget.posScreenMode == global.PosScreenModeEnum.posSale) {
+    //   // ร้านอาหาร
+    //   iconMenu.add(const SizedBox(
+    //     width: 2,
+    //   ));
+    //   iconMenu.add(ElevatedButton(
+    //     style: ElevatedButton.styleFrom(
+    //         minimumSize: Size.zero, // Set this
+    //         padding: const EdgeInsets.all(8) // and this
+    //         ),
+    //     onPressed: () async {
+    //       await holdBill(holdType: 2);
+    //     },
+    //     child: const Icon(Icons.table_restaurant),
+    //   ));
+    // }
 
     // แสดงยอดรวมทั้งสิ้น
     return SizedBox(
@@ -2917,11 +2917,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
         onPressed: () {
           // Navigator.pop(context);
 
-          if (F.appFlavor == Flavor.VFPOS) {
-            context.router.pushAndPopUntil(const DashboardRoute(), predicate: (route) => false);
-          } else {
-            context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
-          }
+          context.router.pushAndPopUntil(const MenuRoute(), predicate: (route) => false);
         },
       )
     ];
@@ -3968,6 +3964,13 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
   }
 
   Widget posLayoutPhoneScreen() {
+    String saleCode = "";
+    String saleName = "";
+    int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+    if (holdIndex != -1) {
+      saleCode = global.posHoldProcessResult[holdIndex].saleCode.trim();
+      saleName = global.posHoldProcessResult[holdIndex].saleName.trim();
+    }
     return SafeArea(
         child: Column(children: [
       Container(height: 50, margin: const EdgeInsets.all(2), child: totalAndPayScreen()),
@@ -4005,10 +4008,89 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
                                           icon: Icon(Icons.search),
                                         ),
                                         Tab(
-                                          icon: Icon(Icons.menu),
+                                          icon: Icon(FontAwesomeIcons.addressBook),
                                         ),
                                       ],
                                     )),
+                                if (global.posHoldProcessResult[holdIndex].customerCode.isNotEmpty)
+                                  Row(children: [
+                                    Expanded(
+                                        child: Row(children: [
+                                      Text(
+                                        '${global.language('customer')} :',
+                                        style: const TextStyle(fontSize: 20, color: Colors.black),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        "${global.posHoldProcessResult[holdIndex].customerName} (${global.posHoldProcessResult[holdIndex].customerCode})",
+                                        style: const TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                                      )
+                                    ])),
+                                    IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      padding: const EdgeInsets.all(2),
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        setState(() {
+                                          int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+                                          global.posHoldProcessResult[holdIndex].customerCode = "";
+                                          global.posHoldProcessResult[holdIndex].customerName = "";
+                                        });
+                                      },
+                                    )
+                                  ]),
+                                if (global.posHoldProcessResult[holdIndex].customerCode.isEmpty && global.posHoldProcessResult[holdIndex].customerPhone.isNotEmpty)
+                                  Row(children: [
+                                    Expanded(
+                                        child: Row(children: [
+                                      Text(
+                                        '${global.language('customer_phone')} :',
+                                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        "${global.posHoldProcessResult[holdIndex].customerName} (${global.posHoldProcessResult[holdIndex].customerPhone})",
+                                        style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
+                                      )
+                                    ])),
+                                    IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: () {
+                                        setState(() {
+                                          int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+                                          global.posHoldProcessResult[holdIndex].customerPhone = "";
+                                          global.posHoldProcessResult[holdIndex].customerName = "";
+                                        });
+                                      },
+                                    )
+                                  ]),
+                                if (saleCode.isNotEmpty)
+                                  Row(children: [
+                                    Expanded(
+                                        child: Row(children: [
+                                      Text(
+                                        '${global.language('sale')} : ',
+                                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        "$saleName ($saleCode)",
+                                        style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
+                                      )
+                                    ])),
+                                    IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      padding: const EdgeInsets.all(2),
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        setState(() {
+                                          int holdIndex = global.findPosHoldProcessResultIndex(global.posHoldActiveCode);
+                                          global.posHoldProcessResult[holdIndex].saleCode = "";
+                                          global.posHoldProcessResult[holdIndex].saleName = "";
+                                        });
+                                      },
+                                    )
+                                  ]),
                                 Expanded(child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                                   return Column(children: [
                                     if ((Platform.isAndroid || Platform.isIOS) && qrCodeBarcodeScannerStart)

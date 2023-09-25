@@ -1630,7 +1630,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(30, 8931092861744922825),
       name: 'BillDetailObjectBoxStruct',
-      lastPropertyId: const IdUid(17, 9094434472717353325),
+      lastPropertyId: const IdUid(19, 166875630837276225),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -1717,6 +1717,16 @@ final _entities = <ModelEntity>[
             id: const IdUid(17, 9094434472717353325),
             name: 'doc_mode',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 9065526896521940588),
+            name: 'vat_type',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(19, 166875630837276225),
+            name: 'price_exclude_vat',
+            type: 8,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -3855,7 +3865,7 @@ ModelDefinition getObjectBoxModel() {
           final skuOffset = fbb.writeString(object.sku);
           final discount_textOffset = fbb.writeString(object.discount_text);
           final extra_jsonOffset = fbb.writeString(object.extra_json);
-          fbb.startTable(18);
+          fbb.startTable(20);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, doc_numberOffset);
           fbb.addInt64(2, object.line_number);
@@ -3873,6 +3883,8 @@ ModelDefinition getObjectBoxModel() {
           fbb.addOffset(14, extra_jsonOffset);
           fbb.addBool(15, object.is_except_vat);
           fbb.addInt64(16, object.doc_mode);
+          fbb.addInt64(17, object.vat_type);
+          fbb.addFloat64(18, object.price_exclude_vat);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -3912,6 +3924,10 @@ ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 32, '');
           final total_amountParam =
               const fb.Float64Reader().vTableGet(buffer, rootOffset, 30, 0);
+          final vat_typeParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 38, 0);
+          final price_exclude_vatParam =
+              const fb.Float64Reader().vTableGet(buffer, rootOffset, 40, 0);
           final object = BillDetailObjectBoxStruct(
               doc_mode: doc_modeParam,
               doc_number: doc_numberParam,
@@ -3928,7 +3944,9 @@ ModelDefinition getObjectBoxModel() {
               discount: discountParam,
               is_except_vat: is_except_vatParam,
               extra_json: extra_jsonParam,
-              total_amount: total_amountParam)
+              total_amount: total_amountParam,
+              vat_type: vat_typeParam,
+              price_exclude_vat: price_exclude_vatParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
 
           return object;
@@ -5318,6 +5336,15 @@ class BillDetailObjectBoxStruct_ {
   /// see [BillDetailObjectBoxStruct.doc_mode]
   static final doc_mode = QueryIntegerProperty<BillDetailObjectBoxStruct>(
       _entities[17].properties[16]);
+
+  /// see [BillDetailObjectBoxStruct.vat_type]
+  static final vat_type = QueryIntegerProperty<BillDetailObjectBoxStruct>(
+      _entities[17].properties[17]);
+
+  /// see [BillDetailObjectBoxStruct.price_exclude_vat]
+  static final price_exclude_vat =
+      QueryDoubleProperty<BillDetailObjectBoxStruct>(
+          _entities[17].properties[18]);
 }
 
 /// [WalletObjectBoxStruct] entity fields to define ObjectBox queries.

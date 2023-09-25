@@ -49,6 +49,7 @@ TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
       paymentdetail: TransPaymentDetailModel.fromJson(
           json['paymentdetail'] as Map<String, dynamic>),
       paymentdetailraw: json['paymentdetailraw'] as String,
+      posid: json['posid'] as String?,
       paycashamount: (json['paycashamount'] as num?)?.toDouble(),
       billtaxtype: json['billtaxtype'] as int?,
       canceldatetime: json['canceldatetime'] as String?,
@@ -117,6 +118,7 @@ Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
       'iscancel': instance.iscancel,
       'ismanualamount': instance.ismanualamount,
       'ispos': instance.ispos,
+      'posid': instance.posid,
       'membercode': instance.membercode,
       'salecode': instance.salecode,
       'salename': instance.salename,

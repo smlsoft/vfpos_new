@@ -17,6 +17,8 @@ BillDetailExtraObjectBoxStruct _$BillDetailExtraObjectBoxStructFromJson(
       qty: (json['qty'] as num).toDouble(),
       price: (json['price'] as num).toDouble(),
       is_except_vat: json['is_except_vat'] as bool,
+      vat_type: json['vat_type'] as int,
+      price_exclude_vat: (json['price_exclude_vat'] as num).toDouble(),
       total_amount: (json['total_amount'] as num).toDouble(),
     );
 
@@ -32,6 +34,8 @@ Map<String, dynamic> _$BillDetailExtraObjectBoxStructToJson(
       'price': instance.price,
       'total_amount': instance.total_amount,
       'is_except_vat': instance.is_except_vat,
+      'vat_type': instance.vat_type,
+      'price_exclude_vat': instance.price_exclude_vat,
     };
 
 BillPayObjectBoxStruct _$BillPayObjectBoxStructFromJson(

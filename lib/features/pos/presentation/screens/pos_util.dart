@@ -101,6 +101,10 @@ Future<SaveBillResultClass> saveBill(
           unit_name: element.unit_name,
           qty: element.qty,
           price: element.price,
+          // ***
+          price_exclude_vat: element.price_exclude_vat,
+          vat_type: element.vat_type,
+          //
           is_except_vat: element.is_except_vat,
           total_amount: element.total_amount));
     }
@@ -120,7 +124,9 @@ Future<SaveBillResultClass> saveBill(
         discount: value.discount,
         is_except_vat: value.is_except_vat,
         extra_json: jsonEncode(detailExtras),
-        total_amount: value.total_amount));
+        total_amount: value.total_amount,
+        vat_type: value.vat_type,
+        price_exclude_vat: value.price_exclude_vat));
     lineNumber++;
   }
   // รายละเอียดโต๊ะ (DEDE POS Cafe)

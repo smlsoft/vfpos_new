@@ -26,10 +26,16 @@ class PosProcessDetailModel {
   String image_url;
 
   /// ราคารวมภาษี (True = ราคารวมภาษี, False = ราคาไม่รวมภาษี)
-  bool price_exclude_vat;
+  bool price_exclude_vat_type;
 
   /// สินค้ายกเว้นภาษี (True = สินค้ายกเว้นภาษี, False = สินค้าไม่ยกเว้นภาษี)
   bool is_except_vat;
+
+  int vat_type;
+
+  /// ราคาไม่รวมภาษี
+  double price_exclude_vat;
+
   List<PosProcessDetailExtraModel> extra;
 
   PosProcessDetailModel({
@@ -50,9 +56,11 @@ class PosProcessDetailModel {
     required this.is_void,
     required this.remark,
     required this.image_url,
-    required this.price_exclude_vat,
+    required this.price_exclude_vat_type,
     required this.is_except_vat,
     required this.extra,
+    required this.vat_type,
+    required this.price_exclude_vat,
   });
 
   factory PosProcessDetailModel.fromJson(Map<String, dynamic> json) => _$PosProcessDetailModelFromJson(json);
@@ -77,10 +85,16 @@ class PosProcessDetailExtraModel {
   bool is_void;
 
   /// ราคารวมภาษี (True = ราคารวมภาษี, False = ราคาไม่รวมภาษี)
-  bool price_exclude_vat;
+  bool price_exclude_vat_type;
 
   /// สินค้ายกเว้นภาษี (True = สินค้ายกเว้นภาษี, False = สินค้าไม่ยกเว้นภาษี)
   bool is_except_vat;
+
+  /// ราคาไม่รวมภาษี
+  double price_exclude_vat;
+
+  /// ประเภทภาษีมูลค่าเพิ่ม 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_type;
 
   PosProcessDetailExtraModel(
       {required this.guid_auto_fixed,
@@ -96,9 +110,11 @@ class PosProcessDetailExtraModel {
       required this.qty_fixed,
       required this.price,
       required this.total_amount,
-      required this.price_exclude_vat,
+      required this.price_exclude_vat_type,
       required this.is_except_vat,
-      required this.is_void});
+      required this.vat_type,
+      required this.is_void,
+      required this.price_exclude_vat});
 
   factory PosProcessDetailExtraModel.fromJson(Map<String, dynamic> json) => _$PosProcessDetailExtraModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosProcessDetailExtraModelToJson(this);
