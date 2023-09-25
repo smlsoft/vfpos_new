@@ -206,17 +206,17 @@ Future<SaveBillResultClass> saveBill(
       sum_cheque: sumCheque());
 
   global.billHelper.insert(billData);
-  global.objectBoxStore.box<BillDetailObjectBoxStruct>().putMany(details);
+  global.objectBoxStore!.box<BillDetailObjectBoxStruct>().putMany(details);
   // update Order Temp ร้านอาหาร
   if (global.tableNumberSelected.isNotEmpty) {
-    final orderTemps = global.objectBoxStore
+    final orderTemps = global.objectBoxStore!
         .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.orderId.equals(global.tableNumberSelected).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
         .build()
         .find();
     for (int index = 0; index < orderTemps.length; index++) {
       orderTemps[index].isPaySuccess = true;
-      global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
+      global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
     }
   }
   return result;
@@ -312,7 +312,7 @@ Widget posBillDetail({required String docNumber}) {
   if (bill == null) {
     return Text("Bill {$docNumber} not found");
   }
-  List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+  List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore!
       .box<BillDetailObjectBoxStruct>()
       .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
       .order(BillDetailObjectBoxStruct_.line_number)

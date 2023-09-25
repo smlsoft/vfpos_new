@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/printer_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class PrinterHelper {
-  final box = global.objectBoxStore.box<PrinterObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<PrinterObjectBoxStruct>();
 
   List<PrinterObjectBoxStruct> selectAll() {
     return box.getAll();
@@ -19,10 +19,7 @@ class PrinterHelper {
 
   bool deleteByGuidFixed(String guidfixed) {
     bool result = false;
-    final find = box
-        .query(PrinterObjectBoxStruct_.guid_fixed.equals(guidfixed))
-        .build()
-        .findFirst();
+    final find = box.query(PrinterObjectBoxStruct_.guid_fixed.equals(guidfixed)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
@@ -46,10 +43,7 @@ class PrinterHelper {
 
   bool deleteByCode(String code) {
     bool result = false;
-    final find = box
-        .query(PrinterObjectBoxStruct_.code.equals(code))
-        .build()
-        .findFirst();
+    final find = box.query(PrinterObjectBoxStruct_.code.equals(code)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

@@ -488,7 +488,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
       if (value.docNumber.isNotEmpty) {
         printBill(posScreenMode: posScreenMode, docDate: value.docDate, docNo: value.docNumber, languageCode: global.userScreenLanguage);
         // ร้านอาหาร update โต๊ะ
-        final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+        final box = global.objectBoxStore!.box<TableProcessObjectBoxStruct>();
         final result = box.query(TableProcessObjectBoxStruct_.number.equals(global.tableNumberSelected)).build().findFirst();
         if (result != null) {
           // ถ้าเป็นโต๊ะเสริม ให้ลบออก
@@ -500,19 +500,19 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
           }
         }
         // Update Order ให้เป็นชำระเงินแล้ว
-        final boxOrder = global.objectBoxStore
+        final boxOrder = global.objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderGuid.equals(global.tableNumberSelected).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
             .build()
             .find();
         for (var item in boxOrder) {
           item.isPaySuccess = true;
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(item, mode: PutMode.update);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(item, mode: PutMode.update);
         }
         // ลบรายการพักบิล
-        var posLog = global.objectBoxStore.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(global.posHoldActiveCode)).build().find();
+        var posLog = global.objectBoxStore!.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(global.posHoldActiveCode)).build().find();
         for (var item in posLog) {
-          global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(item.id);
+          global.objectBoxStore!.box<PosLogObjectBoxStruct>().remove(item.id);
         }
 
         global.tableNumberSelected = "";

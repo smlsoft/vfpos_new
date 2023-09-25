@@ -65,7 +65,7 @@ class _PosHoldBillState extends State<PosHoldBill> with TickerProviderStateMixin
     print("hold : ${hold.code} : ${hold.logCount}");
     {
       // test
-      List<TableProcessObjectBoxStruct> tableInfo = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query().build().find();
+      List<TableProcessObjectBoxStruct> tableInfo = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query().build().find();
       for (var table in tableInfo) {
         print("table : ${table.number} : ${table.table_status}");
       }
@@ -86,7 +86,7 @@ class _PosHoldBillState extends State<PosHoldBill> with TickerProviderStateMixin
     if (widget.holdType == 2) {
       // ร้านอาหาร
       TableProcessObjectBoxStruct? tableInfo =
-          global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(hold.code.replaceAll("T-", ""))).build().findFirst();
+          global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(hold.code.replaceAll("T-", ""))).build().findFirst();
       String orderType = "";
       if (tableInfo != null) {
         if (tableInfo.table_al_la_crate_mode) {

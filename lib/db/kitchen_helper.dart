@@ -4,7 +4,7 @@ import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class KitchenHelper {
-  final box = global.objectBoxStore.box<KitchenObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<KitchenObjectBoxStruct>();
 
   int insert(KitchenObjectBoxStruct value) {
     return box.put(value);

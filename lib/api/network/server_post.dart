@@ -43,14 +43,14 @@ double orderCalcSumAmount(OrderTempObjectBoxStruct order) {
 }
 
 Future<void> rebuildOrderToHoldBill(String holdCode, String tableNumber) async {
-  var data = global.objectBoxStore.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(holdCode)).build().find();
+  var data = global.objectBoxStore!.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(holdCode)).build().find();
   if (data.isNotEmpty) {
     for (var item in data) {
-      global.objectBoxStore.box<PosLogObjectBoxStruct>().remove(item.id);
+      global.objectBoxStore!.box<PosLogObjectBoxStruct>().remove(item.id);
     }
   }
   // ดึงรายการที่สั่งไปแล้ว มาสร้างรายการ Hold Bill
-  var dataTemp = global.objectBoxStore
+  var dataTemp = global.objectBoxStore!
       .box<OrderTempObjectBoxStruct>()
       .query(OrderTempObjectBoxStruct_.orderId.equals(tableNumber).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
       .build()
@@ -135,7 +135,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
     case "staff.print_table_and_qrcode":
       var jsonObject = jsonDecode(httpPost.data);
       String tableNumber = jsonObject["number"];
-      final result = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(tableNumber)).build().findFirst();
+      final result = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(tableNumber)).build().findFirst();
       if (result != null) {
         printer.printTableQrCode(fullDetail: false, tableManagerMode: global.TableManagerEnum.openTable, table: result, qrCode: global.qrCodeOrderOnline(result.qr_code));
       }
@@ -146,12 +146,12 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       String orderNumber = jsonData["orderNumber"];
 
       // update Ticket ให้เป็น ทำอาหารทันที
-      var dataTicket = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.delivery_number.equals(orderNumber)).build().findFirst();
+      var dataTicket = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.delivery_number.equals(orderNumber)).build().findFirst();
       if (dataTicket != null) {
         dataTicket.make_food_immediately = true;
-        global.objectBoxStore.box<TableProcessObjectBoxStruct>().put(dataTicket, mode: PutMode.update);
+        global.objectBoxStore!.box<TableProcessObjectBoxStruct>().put(dataTicket, mode: PutMode.update);
         // update สถานะ รายการย่อย ให้พร้อมส่งเข้าครัว
-        var dataTicketDetail = global.objectBoxStore
+        var dataTicketDetail = global.objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId
                 .equals(dataTicket.number)
@@ -162,14 +162,14 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         for (var item in dataTicketDetail) {
           item.isOrderReadySendKds = true;
         }
-        global.objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(dataTicketDetail, mode: PutMode.update);
+        global.objectBoxStore!.box<OrderTempObjectBoxStruct>().putMany(dataTicketDetail, mode: PutMode.update);
       }
       response.write(true);
       break;
     case "staff.insert_delivery_ticket":
       late int runningNo;
       String runningStart = DateFormat("yyMMdd").format(DateTime.now());
-      var dataRunning = global.objectBoxStore
+      var dataRunning = global.objectBoxStore!
           .box<TableProcessObjectBoxStruct>()
           .query(TableProcessObjectBoxStruct_.delivery_number.notEquals("").and(TableProcessObjectBoxStruct_.delivery_number.lessThan("$runningStart-9999")))
           .order(TableProcessObjectBoxStruct_.delivery_number, flags: Order.descending)
@@ -184,35 +184,35 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       // สร้าง Ticket Delivery ใหม่
       var data = TableProcessObjectBoxStruct.fromJson(jsonDecode(httpPost.data));
       data.delivery_number = runningNumber;
-      global.objectBoxStore.box<TableProcessObjectBoxStruct>().put(data, mode: PutMode.insert);
+      global.objectBoxStore!.box<TableProcessObjectBoxStruct>().put(data, mode: PutMode.insert);
       response.write(runningNumber);
       break;
     case "staff.update_product_barcode_status_qty":
       var jsonData = jsonDecode(httpPost.data);
       String barcode = jsonData["barcode"];
       double qty = jsonData["qty"];
-      var productStatus = global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
+      var productStatus = global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
       if (productStatus != null) {
         productStatus.qtyBalance += qty;
-        global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(productStatus, mode: PutMode.update);
+        global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(productStatus, mode: PutMode.update);
       }
       break;
     case "kds.order_temp_update_kds_success_status":
       var jsonData = jsonDecode(httpPost.data);
       String guid = jsonData["guid"];
-      var order = global.objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderGuid.equals(guid)).build().findFirst();
+      var order = global.objectBoxStore!.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderGuid.equals(guid)).build().findFirst();
       if (order != null) {
         order.kdsSuccess = !order.kdsSuccess;
         order.kdsSuccessTime = DateTime.now();
-        global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(order, mode: PutMode.update);
+        global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(order, mode: PutMode.update);
       }
       break;
     case "staff.product_barcode_status_update":
       var data = ProductBarcodeStatusObjectBoxStruct.fromJson(jsonDecode(httpPost.data));
       var productBarcode =
-          global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(data.barcode)).build().findFirst();
+          global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(data.barcode)).build().findFirst();
       if (productBarcode != null) {
-        global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(data, mode: PutMode.update);
+        global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(data, mode: PutMode.update);
       }
       break;
     case "staff.order_temp_cancel_by_guid":
@@ -220,17 +220,17 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       var jsonData = jsonDecode(httpPost.data);
       String guid = jsonData["guid"];
       double qty = jsonData["qty"];
-      var oldOrder = global.objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderGuid.equals(guid)).build().findFirst();
+      var oldOrder = global.objectBoxStore!.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderGuid.equals(guid)).build().findFirst();
       if (oldOrder != null) {
         if (oldOrder.qty - qty >= 0) {
           oldOrder.qty = oldOrder.qty - qty;
           oldOrder.cancelQty = oldOrder.cancelQty + qty;
           oldOrder.lastUpdateDateTime = DateTime.now();
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(oldOrder, mode: PutMode.update);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(oldOrder, mode: PutMode.update);
           // ลบ Hold แล้วสร้างใหม่
           String holdId = "T-${oldOrder.orderId}";
-          global.objectBoxStore.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(holdId)).build().remove();
-          var orderList = global.objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(oldOrder.orderId)).build().find();
+          global.objectBoxStore!.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals(holdId)).build().remove();
+          var orderList = global.objectBoxStore!.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(oldOrder.orderId)).build().find();
           if (orderList.isNotEmpty) {
             for (var order in orderList) {
               // เพิ่มรายการ
@@ -283,7 +283,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       // กรณีมีการคุมสต๊อก คืนค่าสต๊อก
       var productBarcodeStatus = await ProductBarcodeStatusHelper().selectByBarcodeFirst(barcode);
       if (productBarcodeStatus != null && productBarcodeStatus.orderAutoStock) {
-        var orderTemp = global.objectBoxStore
+        var orderTemp = global.objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.barcode.equals(barcode)))
             .build()
@@ -291,12 +291,12 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         if (orderTemp.isNotEmpty) {
           for (var order in orderTemp) {
             productBarcodeStatus.qtyBalance += order.qty;
-            global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
+            global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
           }
         }
       }
       // ลบรายการ
-      global.objectBoxStore
+      global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId
               .equals(orderId)
@@ -310,7 +310,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
     case "staff.order_temp_delete_by_orderid":
       String orderId = httpPost.data;
       // กรณีมีการคุมสต๊อก คืนค่าสต๊อก
-      var orderTemp = global.objectBoxStore
+      var orderTemp = global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.orderId.equals(orderId)))
           .build()
@@ -320,11 +320,11 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
           var productBarcodeStatus = await ProductBarcodeStatusHelper().selectByBarcodeFirst(order.barcode);
           if (productBarcodeStatus != null && productBarcodeStatus.orderAutoStock) {
             productBarcodeStatus.qtyBalance += order.qty;
-            global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
+            global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
           }
         }
       }
-      global.objectBoxStore
+      global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.orderId.equals(orderId)))
           .build()
@@ -334,7 +334,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
     case "staff.order_temp_send_order_by_orderid":
       // ส่ง Order ไปที่ครัว และ Cashier
       String orderId = httpPost.data;
-      final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
+      final box = global.objectBoxStore!.box<OrderTempObjectBoxStruct>();
       final result = box
           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrder.equals(true)))
           .build()
@@ -352,7 +352,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       String orderId = jsonData["orderId"];
       String orderGuid = jsonData["guid"];
       // กรณีมีการคุมสต๊อก คืนค่าสต๊อก
-      var orderTempOld = global.objectBoxStore
+      var orderTempOld = global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId
               .equals(orderId)
@@ -365,10 +365,10 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         var productBarcodeStatus = await ProductBarcodeStatusHelper().selectByBarcodeFirst(orderTempOld.barcode);
         if (productBarcodeStatus != null && productBarcodeStatus.orderAutoStock) {
           productBarcodeStatus.qtyBalance += orderTempOld.qty;
-          global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
+          global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
         }
       }
-      global.objectBoxStore
+      global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId
               .equals(orderId)
@@ -393,7 +393,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
           isInsertOrUpdate = false;
         } else {
           productBarcodeStatus.qtyBalance -= jsonData.qty;
-          global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus);
+          global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus);
           result = 0;
           isInsertOrUpdate = true;
         }
@@ -402,7 +402,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         isInsertOrUpdate = true;
       }
       if (isInsertOrUpdate) {
-        final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
+        final box = global.objectBoxStore!.box<OrderTempObjectBoxStruct>();
         // ตรวจสอบว่าไม่มี Option และเคยสั่งไปแล้ว จะได้เพิ่ม Qty
         final findResult = box
             .query(OrderTempObjectBoxStruct_.orderId
@@ -433,14 +433,14 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       OrderTempUpdateForSplitModel jsonData = OrderTempUpdateForSplitModel.fromJson(jsonDecode(httpPost.data));
       // รายการเดิม ถ้ามีให้ update ถ้าไม่มีให้เพิ่ม
       print("ย้ายจาก ${jsonData.sourceTable} ไป ${jsonData.targetTable}");
-      final findSourceTempResult = global.objectBoxStore
+      final findSourceTempResult = global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId
               .equals(jsonData.sourceTable)
               .and(OrderTempObjectBoxStruct_.orderGuid.equals(jsonData.sourceGuid).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))))
           .build()
           .findFirst();
-      final findTargetTempResult = global.objectBoxStore
+      final findTargetTempResult = global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId.equals(jsonData.targetTable).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
           .build()
@@ -452,11 +452,11 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
             target.qty += 1;
             target.orderQty += 1;
             target.amount = orderCalcSumAmount(target);
-            global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(target, mode: PutMode.update);
+            global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(target, mode: PutMode.update);
             findSourceTempResult.qty -= 1;
             findSourceTempResult.orderQty -= 1;
             findSourceTempResult.amount = orderCalcSumAmount(findSourceTempResult);
-            global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(findSourceTempResult, mode: PutMode.update);
+            global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(findSourceTempResult, mode: PutMode.update);
             insertNewOrderData = false;
             break;
           }
@@ -467,7 +467,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
           findSourceTempResult.qty -= 1;
           findSourceTempResult.orderQty -= 1;
           findSourceTempResult.amount = orderCalcSumAmount(findSourceTempResult);
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(findSourceTempResult, mode: PutMode.update);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(findSourceTempResult, mode: PutMode.update);
           // เพิ่มข้อมูลใหม่
           final newOrderTemp = OrderTempObjectBoxStruct(
             id: 0,
@@ -507,14 +507,14 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
           newOrderTemp.qty = 1;
           newOrderTemp.orderQty = 1;
           newOrderTemp.amount = orderCalcSumAmount(newOrderTemp);
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(newOrderTemp, mode: PutMode.insert);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(newOrderTemp, mode: PutMode.insert);
         }
         {
           // เพิ่มโต๊ะปลายทาง
           final findSourceTableResult =
-              global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(jsonData.sourceTable)).build().findFirst();
+              global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(jsonData.sourceTable)).build().findFirst();
           final findTargetTableResult =
-              global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(jsonData.targetTable)).build().findFirst();
+              global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(jsonData.targetTable)).build().findFirst();
           if (findTargetTableResult == null) {
             final newTable = TableProcessObjectBoxStruct(
               number: jsonData.targetTable,
@@ -550,20 +550,20 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
               open_by_staff_code: findSourceTableResult.open_by_staff_code,
               make_food_immediately: findSourceTableResult.make_food_immediately,
             );
-            global.objectBoxStore.box<TableProcessObjectBoxStruct>().put(newTable, mode: PutMode.insert);
+            global.objectBoxStore!.box<TableProcessObjectBoxStruct>().put(newTable, mode: PutMode.insert);
           }
         }
       }
       {
         // ลบรายการ Qty = 0 ออก
-        final findSourceTempResultDelete = global.objectBoxStore
+        final findSourceTempResultDelete = global.objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId.equals(jsonData.sourceTable).or(OrderTempObjectBoxStruct_.orderId.equals(jsonData.targetTable)))
             .build()
             .find();
         for (var item in findSourceTempResultDelete) {
           if (item.orderQty == 0) {
-            global.objectBoxStore.box<OrderTempObjectBoxStruct>().remove(item.id);
+            global.objectBoxStore!.box<OrderTempObjectBoxStruct>().remove(item.id);
           }
         }
       }
@@ -580,7 +580,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       bool isUpdate = false;
       OrderTempObjectBoxStruct jsonData = OrderTempObjectBoxStruct.fromJson(jsonDecode(httpPost.data));
       // รายการเดิม
-      final findOldTempResult = global.objectBoxStore
+      final findOldTempResult = global.objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId
               .equals(jsonData.orderId)
@@ -598,7 +598,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         } else {
           isUpdate = true;
           productBarcodeStatus.qtyBalance -= (jsonData.qty - findOldTempResult.qty);
-          global.objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
+          global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().put(productBarcodeStatus, mode: PutMode.update);
           result = 0;
         }
       } else {
@@ -607,7 +607,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       if (isUpdate == true) {
         if (findOldTempResult != null) {
           jsonData.amount = orderCalcSumAmount(jsonData);
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(jsonData, mode: PutMode.update);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(jsonData, mode: PutMode.update);
           result = 0;
         } else {
           result = 2;
@@ -620,7 +620,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       String docNumber = "";
       var jsonObject = jsonDecode(httpPost.data);
       CloseTableModel closeData = CloseTableModel.fromJson(jsonObject);
-      final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+      final box = global.objectBoxStore!.box<TableProcessObjectBoxStruct>();
       final result = box.query(TableProcessObjectBoxStruct_.number.equals(closeData.table.number)).build().findFirst();
       if (result != null) {
         switch (closeData.payMode) {
@@ -659,12 +659,12 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
                   languageCode: global.userScreenLanguage,
                 );
                 // ลบรายการ Order Temp ออก
-                var dataTemp = global.objectBoxStore.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(closeData.table.number)).build().findIds();
-                global.objectBoxStore.box<OrderTempObjectBoxStruct>().removeMany(dataTemp);
+                var dataTemp = global.objectBoxStore!.box<OrderTempObjectBoxStruct>().query(OrderTempObjectBoxStruct_.orderId.equals(closeData.table.number)).build().findIds();
+                global.objectBoxStore!.box<OrderTempObjectBoxStruct>().removeMany(dataTemp);
                 // ลบรายการที่ Hold ออก
                 await PosLogHelper().deleteByHoldCode(holdCode: holdNumber);
                 // ร้านอาหาร update โต๊ะ
-                final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+                final box = global.objectBoxStore!.box<TableProcessObjectBoxStruct>();
                 final result = box.query(TableProcessObjectBoxStruct_.number.equals(closeData.table.number)).build().findFirst();
                 if (result != null) {
                   // ถ้าเป็นโต๊ะเสริม ให้ลบออก
@@ -702,7 +702,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
     case "staff.update_table":
       var jsonObject = jsonDecode(httpPost.data);
       TableProcessObjectBoxStruct getTable = TableProcessObjectBoxStruct.fromJson(jsonObject);
-      final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+      final box = global.objectBoxStore!.box<TableProcessObjectBoxStruct>();
       final result = box.query(TableProcessObjectBoxStruct_.number.equals(getTable.number)).build().findFirst();
       if (result != null) {
         box.put(getTable, mode: PutMode.update);
@@ -721,8 +721,8 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       var jsonObject = jsonDecode(httpPost.data);
       String fromTableNumber = jsonObject["from_table"];
       String toTableNumber = jsonObject["to_table"];
-      final fromTableResult = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(fromTableNumber)).build().findFirst();
-      final toTableResult = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(toTableNumber)).build().findFirst();
+      final fromTableResult = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(fromTableNumber)).build().findFirst();
+      final toTableResult = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(toTableNumber)).build().findFirst();
       if (fromTableResult != null && toTableResult != null) {
         // Update เปิดโต๊ะ ปลายทาง
         toTableResult.number_main = toTableResult.number;
@@ -735,7 +735,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         toTableResult.amount = fromTableResult.amount;
         toTableResult.order_count = fromTableResult.order_count;
         toTableResult.table_open_datetime = fromTableResult.table_open_datetime;
-        global.objectBoxStore.box<TableProcessObjectBoxStruct>().put(toTableResult, mode: PutMode.update);
+        global.objectBoxStore!.box<TableProcessObjectBoxStruct>().put(toTableResult, mode: PutMode.update);
         // Update ปิดโต๊ะ ต้นทาง
         fromTableResult.table_status = 0;
         fromTableResult.order_count = 0;
@@ -744,15 +744,15 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         fromTableResult.woman_count = 0;
         fromTableResult.child_count = 0;
         fromTableResult.number_main = "";
-        global.objectBoxStore.box<TableProcessObjectBoxStruct>().put(fromTableResult);
+        global.objectBoxStore!.box<TableProcessObjectBoxStruct>().put(fromTableResult);
         // ย้าย Order (Hold Bill)
-        final posLogs = global.objectBoxStore.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals("T-$fromTableNumber")).build().find();
+        final posLogs = global.objectBoxStore!.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals("T-$fromTableNumber")).build().find();
         for (int index = 0; index < posLogs.length; index++) {
           posLogs[index].hold_code = "T-$toTableNumber";
-          global.objectBoxStore.box<PosLogObjectBoxStruct>().put(posLogs[index]);
+          global.objectBoxStore!.box<PosLogObjectBoxStruct>().put(posLogs[index]);
         }
         // ย้าย Order (Order Temp)
-        final orderTemps = global.objectBoxStore
+        final orderTemps = global.objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId.equals(fromTableNumber).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
             .build()
@@ -760,7 +760,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         for (int index = 0; index < orderTemps.length; index++) {
           orderTemps[index].orderId = toTableNumber;
           orderTemps[index].orderIdMain = toTableNumber;
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
         }
         // print ticket to cashier and kitchen station
         printer.printTableQrCode(
@@ -782,8 +782,8 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       var jsonObject = jsonDecode(httpPost.data);
       String fromTableNumber = jsonObject["from_table"];
       String toTableNumber = jsonObject["to_table"];
-      final fromTableResult = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(fromTableNumber)).build().findFirst();
-      final toTableResult = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(toTableNumber)).build().findFirst();
+      final fromTableResult = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(fromTableNumber)).build().findFirst();
+      final toTableResult = global.objectBoxStore!.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(toTableNumber)).build().findFirst();
       if (fromTableResult != null && toTableResult != null) {
         // Update โต๊ะ ปลายทาง
         toTableResult.table_status = 1;
@@ -795,15 +795,15 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         toTableResult.amount = fromTableResult.amount;
         toTableResult.order_count = fromTableResult.order_count;
         toTableResult.table_open_datetime = fromTableResult.table_open_datetime;
-        global.objectBoxStore.box<TableProcessObjectBoxStruct>().put(toTableResult, mode: PutMode.update);
+        global.objectBoxStore!.box<TableProcessObjectBoxStruct>().put(toTableResult, mode: PutMode.update);
         // ย้าย Order (Hold Bill)
-        final posLogs = global.objectBoxStore.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals("T-$fromTableNumber")).build().find();
+        final posLogs = global.objectBoxStore!.box<PosLogObjectBoxStruct>().query(PosLogObjectBoxStruct_.hold_code.equals("T-$fromTableNumber")).build().find();
         for (int index = 0; index < posLogs.length; index++) {
           posLogs[index].hold_code = "T-$toTableNumber";
-          global.objectBoxStore.box<PosLogObjectBoxStruct>().put(posLogs[index]);
+          global.objectBoxStore!.box<PosLogObjectBoxStruct>().put(posLogs[index]);
         }
         // ย้าย Order (Order Temp)
-        final orderTemps = global.objectBoxStore
+        final orderTemps = global.objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId.equals(fromTableNumber).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
             .build()
@@ -811,11 +811,11 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
         for (int index = 0; index < orderTemps.length; index++) {
           orderTemps[index].orderId = toTableNumber;
           orderTemps[index].orderIdMain = toTableNumber.split("#")[0];
-          global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
+          global.objectBoxStore!.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
         }
         // ลบโต๊ กรณีเป็นโต๊ะลูก
         if (fromTableNumber.contains("#")) {
-          global.objectBoxStore.box<TableProcessObjectBoxStruct>().remove(fromTableResult.id);
+          global.objectBoxStore!.box<TableProcessObjectBoxStruct>().remove(fromTableResult.id);
         }
         // คำนวณใหม่
         await global.orderSumAndUpdateTable(fromTableNumber);
@@ -832,7 +832,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
       break;
     case "PosLogHelper.insert":
       PosLogObjectBoxStruct jsonData = PosLogObjectBoxStruct.fromJson(jsonDecode(httpPost.data));
-      final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
+      final box = global.objectBoxStore!.box<PosLogObjectBoxStruct>();
       response.write(box.put(jsonData));
       for (int index = 0; index < global.posRemoteDeviceList.length; index++) {
         if (global.posRemoteDeviceList[index].holdCodeActive == jsonData.hold_code) {
@@ -849,7 +849,7 @@ Future<void> serverPost(HttpPost httpPost, HttpResponse response) async {
     case "PosLogHelper.deleteByHoldCode":
       String holdCode = httpPost.data;
       int docMode = 0; //********* Dummy
-      final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
+      final box = global.objectBoxStore!.box<PosLogObjectBoxStruct>();
       final ids = box.query(PosLogObjectBoxStruct_.hold_code.equals(holdCode)).build().findIds();
       box.removeMany(ids);
       posCompileProcess(holdCode: holdCode, docMode: docMode, detailDiscountFormula: "").then((_) {

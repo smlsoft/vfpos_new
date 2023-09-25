@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class TableHelper {
-  final box = global.objectBoxStore.box<TableObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<TableObjectBoxStruct>();
 
   int insert(TableObjectBoxStruct value) {
     return box.put(value);

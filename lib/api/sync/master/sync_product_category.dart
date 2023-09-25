@@ -57,7 +57,7 @@ Future syncProductCategory(data) async {
   }
   if (global.syncRefreshProductCategory) {
     // Update Count Group
-    final box = global.objectBoxStore.box<ProductCategoryObjectBoxStruct>();
+    final box = global.objectBoxStore!.box<ProductCategoryObjectBoxStruct>();
     List<ProductCategoryObjectBoxStruct> selectCategory = box.getAll();
     for (var category in selectCategory) {
       final count = box.query(ProductCategoryObjectBoxStruct_.parent_guid_fixed.equals(category.guid_fixed)).build().count();

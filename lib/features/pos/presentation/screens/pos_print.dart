@@ -275,7 +275,7 @@ class PosPrintBillClass {
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: [FormDesignColumnModel(width: 1, text: headerDescription, text_align: PrintColumnAlign.center)]));
     }
     // Detail
-    List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+    List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore!
         .box<BillDetailObjectBoxStruct>()
         .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
         .order(BillDetailObjectBoxStruct_.line_number)

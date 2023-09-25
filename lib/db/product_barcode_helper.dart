@@ -8,7 +8,7 @@ import 'package:dedepos/objectbox.g.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 class ProductBarcodeHelper {
-  final box = global.objectBoxStore.box<ProductBarcodeObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<ProductBarcodeObjectBoxStruct>();
 
   void deleteByGuidFixedMany(List<String> guidfixed) {
     Condition<ProductBarcodeObjectBoxStruct>? ids;

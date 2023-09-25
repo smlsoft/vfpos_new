@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/employees_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class EmployeeHelper {
-  final box = global.objectBoxStore.box<EmployeeObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<EmployeeObjectBoxStruct>();
 
   int insert(EmployeeObjectBoxStruct value) {
     return box.put(value);
@@ -15,10 +15,7 @@ class EmployeeHelper {
 
   bool deleteByGuidFixed(String guid) {
     bool result = false;
-    final find = box
-        .query(EmployeeObjectBoxStruct_.guidfixed.equals(guid))
-        .build()
-        .findFirst();
+    final find = box.query(EmployeeObjectBoxStruct_.guidfixed.equals(guid)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

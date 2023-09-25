@@ -31,7 +31,7 @@ Future<void> syncMasterData() async {
         global.rebuildProductBarcodeStatus = false;
         // กรณีเป็นระบบร้านอาหาร จะทำการสร้าง ProductBarcodeStatusObjectBoxStruct
         List<ProductBarcodeObjectBoxStruct> productBarcode =
-            global.objectBoxStore.box<ProductBarcodeObjectBoxStruct>().query(ProductBarcodeObjectBoxStruct_.isalacarte.equals(true)).build().find();
+            global.objectBoxStore!.box<ProductBarcodeObjectBoxStruct>().query(ProductBarcodeObjectBoxStruct_.isalacarte.equals(true)).build().find();
         List<ProductBarcodeStatusObjectBoxStruct> productBarcodeStatus = ProductBarcodeStatusHelper().getAll();
         List<ProductBarcodeStatusObjectBoxStruct> productBarcodeStatusInsertMany = [];
         // ค้นหา ถ้าไม่มีให้เพิ่ม

@@ -27,7 +27,7 @@ Future syncBillData() async {
       )
     ];
 
-    List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+    List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore!
         .box<BillDetailObjectBoxStruct>()
         .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
         .order(BillDetailObjectBoxStruct_.line_number)

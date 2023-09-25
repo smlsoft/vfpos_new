@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/order_temp_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class OrderTempHelper {
-  final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<OrderTempObjectBoxStruct>();
 
   int insert(OrderTempObjectBoxStruct value) {
     return box.put(value);

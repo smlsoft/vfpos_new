@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/bank_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class BankHelper {
-  final box = global.objectBoxStore.box<BankObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<BankObjectBoxStruct>();
 
   void insertMany(List<BankObjectBoxStruct> values) {
     box.putMany(values);
@@ -14,9 +14,7 @@ class BankHelper {
   }
 
   BankObjectBoxStruct? selectByCode({String code = ""}) {
-    return (box.query(BankObjectBoxStruct_.code.equals(code)))
-        .build()
-        .findFirst();
+    return (box.query(BankObjectBoxStruct_.code.equals(code))).build().findFirst();
   }
 
   void deleteByGuidFixedMany(List<String> guidFixedList) {

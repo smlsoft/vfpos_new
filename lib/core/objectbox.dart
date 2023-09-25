@@ -24,8 +24,7 @@ import 'package:path_provider/path_provider.dart';
 
 Future<void> objectBoxInit() async {
   final appDirectory = await getApplicationDocumentsDirectory();
-  final objectBoxDirectory =
-      Directory("${appDirectory.path}/dedepos/objectbox");
+  final objectBoxDirectory = Directory("${appDirectory.path}/dedepos/objectbox");
   if (!objectBoxDirectory.existsSync()) {
     await objectBoxDirectory.create(recursive: true);
   }
@@ -38,13 +37,9 @@ Future<void> objectBoxInit() async {
       } catch (e) {
         dev.log(e.toString());
       }
-      objectBoxStore = Store(getObjectBoxModel(),
-          directory: objectBoxDirectory.path,
-          queriesCaseSensitiveDefault: false);
+      global.objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
     } else {
-      objectBoxStore = Store(getObjectBoxModel(),
-          directory: objectBoxDirectory.path,
-          queriesCaseSensitiveDefault: false);
+      global.objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
     }
   } catch (e) {
     dev.log("App Data : $appDirectory");
@@ -56,31 +51,28 @@ Future<void> objectBoxInit() async {
       await objectBoxDirectory.delete(recursive: true);
     }
 
-    objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path,
-        queriesCaseSensitiveDefault: false,
-        macosApplicationGroup: 'objectbox.demo');
+    global.objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false, macosApplicationGroup: 'objectbox.demo');
   }
 }
 
 void objectBoxDeleteAll() {
-  objectBoxStore.box<BankObjectBoxStruct>().removeAll();
-  objectBoxStore.box<BillObjectBoxStruct>().removeAll();
-  objectBoxStore.box<BuffetModeObjectBoxStruct>().removeAll();
-  objectBoxStore.box<EmployeeObjectBoxStruct>().removeAll();
-  objectBoxStore.box<FormDesignObjectBoxStruct>().removeAll();
-  objectBoxStore.box<KitchenObjectBoxStruct>().removeAll();
-  objectBoxStore.box<OrderTempObjectBoxStruct>().removeAll();
-  objectBoxStore.box<PosLogObjectBoxStruct>().removeAll();
-  objectBoxStore.box<PosTicketObjectBoxStruct>().removeAll();
-  objectBoxStore.box<PrinterObjectBoxStruct>().removeAll();
-  objectBoxStore.box<ProductBarcodeStatusObjectBoxStruct>().removeAll();
-  objectBoxStore.box<ProductBarcodeObjectBoxStruct>().removeAll();
-  objectBoxStore.box<ProductCategoryObjectBoxStruct>().removeAll();
-  objectBoxStore.box<ShiftObjectBoxStruct>().removeAll();
-  objectBoxStore.box<StaffClientObjectBoxStruct>().removeAll();
-  objectBoxStore.box<TableObjectBoxStruct>().removeAll();
-  objectBoxStore.box<WalletObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<BankObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<BillObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<BuffetModeObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<EmployeeObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<FormDesignObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<KitchenObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<OrderTempObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<PosLogObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<PosTicketObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<PrinterObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<ProductBarcodeStatusObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<ProductBarcodeObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<ProductCategoryObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<ShiftObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<StaffClientObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<TableObjectBoxStruct>().removeAll();
+  global.objectBoxStore!.box<WalletObjectBoxStruct>().removeAll();
 
   global.appStorage.remove(global.syncCategoryTimeName);
   global.appStorage.remove(global.syncProductBarcodeTimeName);

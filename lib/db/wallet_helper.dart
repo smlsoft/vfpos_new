@@ -4,7 +4,7 @@ import 'package:dedepos/model/objectbox/wallet_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class WalletHelper {
-  final box = global.objectBoxStore.box<WalletObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<WalletObjectBoxStruct>();
 
   int insert(WalletObjectBoxStruct value) {
     return box.put(value);

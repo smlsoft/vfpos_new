@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/table_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class TableProcessHelper {
-  final box = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<TableProcessObjectBoxStruct>();
 
   int insert(TableProcessObjectBoxStruct value) {
     return box.put(value);
@@ -13,7 +13,7 @@ class TableProcessHelper {
     box.putMany(values);
   }
 
-  void updateByTableNumber( TableProcessObjectBoxStruct value) {
+  void updateByTableNumber(TableProcessObjectBoxStruct value) {
     final find = getByTableNumber(value.number);
     if (find != null) {
       value.id = find.id;
@@ -22,18 +22,12 @@ class TableProcessHelper {
   }
 
   TableProcessObjectBoxStruct? getByTableNumber(String number) {
-    return box
-        .query(TableProcessObjectBoxStruct_.number.equals(number))
-        .build()
-        .findFirst();
+    return box.query(TableProcessObjectBoxStruct_.number.equals(number)).build().findFirst();
   }
 
   bool deleteByTableNumber(String number) {
     bool result = false;
-    final find = box
-        .query(TableProcessObjectBoxStruct_.number.equals(number))
-        .build()
-        .findFirst();
+    final find = box.query(TableProcessObjectBoxStruct_.number.equals(number)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

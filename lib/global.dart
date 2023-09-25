@@ -169,7 +169,8 @@ String syncKitchenTimeName = "lastSyncTableZone";
 String syncWalletTimeName = "lastSyncWallet";
 bool isOnline = false;
 PaymentModel? paymentData;
-late Store objectBoxStore;
+
+late Store? objectBoxStore;
 String dateFormatSync = "yyyy-MM-ddTHH:mm:ss";
 PosVersionEnum posVersion = PosVersionEnum.vfpos;
 bool customerDisplayDesktopMultiScreen = true;
@@ -582,7 +583,7 @@ Future<String> billRunning() async {
   docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
   int number = 0;
   var getLast = objectBoxStore
-      .box<BillObjectBoxStruct>()
+      ?.box<BillObjectBoxStruct>()
       .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
       .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
       .build()
@@ -1315,7 +1316,7 @@ Future<void> checkOrderOnline() async {
           await clickHouseExecute(updateQuery);
         }
         // save to objectbox
-        objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(orderSave, mode: PutMode.insert);
+        objectBoxStore?.box<OrderTempObjectBoxStruct>().putMany(orderSave, mode: PutMode.insert);
         // คำนวณยอดใหม่
         orderSumAndUpdateTable(orderId);
       }
@@ -1330,7 +1331,7 @@ Future<void> checkOrderOnline() async {
     List<String> orderIdList = [];
     try {
       // update isOrderSuccess และคำนวนณยอดรวม
-      final getData = objectBoxStore
+      final getData = objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(
               OrderTempObjectBoxStruct_.isOrder.equals(false).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
@@ -1343,7 +1344,7 @@ Future<void> checkOrderOnline() async {
       }
 
       for (var orderId in orderIdList) {
-        var orderTempUpdate = objectBoxStore
+        var orderTempUpdate = objectBoxStore!
             .box<OrderTempObjectBoxStruct>()
             .query(OrderTempObjectBoxStruct_.orderId
                 .equals(orderId)
@@ -1358,7 +1359,7 @@ Future<void> checkOrderOnline() async {
           // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
           data.isOrderSendKdsSuccess = false;
         }
-        objectBoxStore.box<OrderTempObjectBoxStruct>().putMany(orderTempUpdate, mode: PutMode.update);
+        objectBoxStore?.box<OrderTempObjectBoxStruct>().putMany(orderTempUpdate, mode: PutMode.update);
         // คำนวณ
         orderSumAndUpdateTable(orderId);
       }
@@ -1374,7 +1375,7 @@ Future<void> checkOrderOnline() async {
     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
-    final getDataOrderId = objectBoxStore
+    final getDataOrderId = objectBoxStore!
         .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.isOrder
             .equals(false)
@@ -1392,7 +1393,7 @@ Future<void> checkOrderOnline() async {
     for (var orderId in orderIdList) {
       // เลือกรายการ Order ทีละโต๊ะ
       List<OrderTempDataModel> orderTemp = [];
-      final getData = objectBoxStore
+      final getData = objectBoxStore!
           .box<OrderTempObjectBoxStruct>()
           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isOrder
               .equals(false)
@@ -1417,7 +1418,7 @@ Future<void> checkOrderOnline() async {
         ));
         // update สถานะ
         data.isOrderSendKdsSuccess = true;
-        objectBoxStore.box<OrderTempObjectBoxStruct>().put(data, mode: PutMode.update);
+        objectBoxStore!.box<OrderTempObjectBoxStruct>().put(data, mode: PutMode.update);
       }
       if (orderToKitchenPrintMode == 0) {
         // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
@@ -1475,7 +1476,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   double amount = 0.0;
   {
     // รวมจาก OrderTemp ส่งรายการแล้ว
-    final result = objectBoxStore
+    final result = objectBoxStore!
         .box<OrderTempObjectBoxStruct>()
         .query(OrderTempObjectBoxStruct_.orderId
             .equals(tableNumber)
@@ -1489,7 +1490,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
     }
   }
   {
-    final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
+    final boxTable = objectBoxStore!.box<TableProcessObjectBoxStruct>();
     final resultTable = boxTable.query(TableProcessObjectBoxStruct_.number.equals(tableNumber)).build().findFirst();
     if (resultTable != null) {
       resultTable.order_count = orderCount;
@@ -1499,7 +1500,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   }
   {
     // สร้าง Hold Bill สำหรับระบบ POS
-    final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
+    final boxTable = objectBoxStore!.box<TableProcessObjectBoxStruct>();
     final resultTable = boxTable.query(TableProcessObjectBoxStruct_.number.equals(tableNumber)).build().find();
     // เพิ่มกรณีไม่มี
     for (var table in resultTable) {
@@ -1657,7 +1658,7 @@ Future<void> loadWalletProvider() async {
         wallettype: data.wallettype,
       ));
     }
-    objectBoxStore.box<WalletObjectBoxStruct>().putMany(walletObjectBoxList);
+    objectBoxStore!.box<WalletObjectBoxStruct>().putMany(walletObjectBoxList);
   } catch (e) {
     print(e);
   }

@@ -3,7 +3,7 @@ import 'package:dedepos/model/objectbox/shift_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
 
 class ShiftHelper {
-  final box = global.objectBoxStore.box<ShiftObjectBoxStruct>();
+  final box = global.objectBoxStore!.box<ShiftObjectBoxStruct>();
 
   int insert(ShiftObjectBoxStruct value) {
     return box.put(value);

@@ -2564,7 +2564,7 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
       PosLogHelper logHelper = PosLogHelper();
       await logHelper.deleteByHoldCode(holdCode: global.posHoldActiveCode);
       // ปรับโต๊ะร้านอาหารให้เป็น 0
-      final boxTable = global.objectBoxStore.box<TableProcessObjectBoxStruct>();
+      final boxTable = global.objectBoxStore!.box<TableProcessObjectBoxStruct>();
       final resultTable = boxTable.query(TableProcessObjectBoxStruct_.number.equals(global.tableNumberSelected)).build().findFirst();
       if (resultTable != null) {
         resultTable.order_count = 0;
