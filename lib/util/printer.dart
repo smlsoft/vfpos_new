@@ -216,15 +216,22 @@ class PrinterClass {
   }
 }
 
-Future<void> printTableQrCode({required global.TableManagerEnum tableManagerMode, required TableProcessObjectBoxStruct table, bool fullDetail = true, String qrCode = "", String fromTable = "", String toTable = ""}) async {
+Future<void> printTableQrCode(
+    {required global.TableManagerEnum tableManagerMode,
+    required TableProcessObjectBoxStruct table,
+    bool fullDetail = true,
+    String qrCode = "",
+    String fromTable = "",
+    String toTable = ""}) async {
   // printerIndex 1 = Ticket Printer
   PrinterClass printer = PrinterClass(printerIndex: 1, qrCode: qrCode);
   print(printer.qrCode);
   // Reset Printer
   printer.addCommand(PosPrintBillCommandModel(mode: 0));
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-    FormDesignColumnModel(font_size: 40, width: 1, text: global.profileSetting.company.names[0].name, text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2,
+      posStyles: const PosStyles(bold: true),
+      columns: [FormDesignColumnModel(font_size: 40, width: 1, text: global.profileSetting.company.names[0].name, text_align: PrintColumnAlign.center)]));
   printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
     FormDesignColumnModel(font_size: 24, width: 1, text: "Printing time : ${DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now())}", text_align: PrintColumnAlign.center)
   ]));
@@ -246,9 +253,8 @@ Future<void> printTableQrCode({required global.TableManagerEnum tableManagerMode
     case global.TableManagerEnum.splitTable:
       break;
   }
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-    FormDesignColumnModel(font_size: 40, width: 1, text: tableTitle, text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2, posStyles: const PosStyles(bold: true), columns: [FormDesignColumnModel(font_size: 40, width: 1, text: tableTitle, text_align: PrintColumnAlign.center)]));
 
   printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
     FormDesignColumnModel(font_size: 30, width: 1, text: "เวลาเปิดโต๊ะ : ${DateFormat("HH:mm").format(table.table_open_datetime)}", text_align: PrintColumnAlign.center)
@@ -258,9 +264,10 @@ Future<void> printTableQrCode({required global.TableManagerEnum tableManagerMode
       FormDesignColumnModel(font_size: 30, width: 1, text: "จำนวนนาที : ${global.moneyFormat.format(global.buffetMaxMinute)} นาที", text_align: PrintColumnAlign.center)
     ]));
     String endTime = DateFormat("HH:mm").format(table.table_open_datetime.add(Duration(minutes: global.buffetMaxMinute)));
-    printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-      FormDesignColumnModel(font_size: 30, width: 1, text: "เวลาปิดโต๊ะ : $endTime", text_align: PrintColumnAlign.center)
-    ]));
+    printer.addCommand(PosPrintBillCommandModel(
+        mode: 2,
+        posStyles: const PosStyles(bold: true),
+        columns: [FormDesignColumnModel(font_size: 30, width: 1, text: "เวลาปิดโต๊ะ : $endTime", text_align: PrintColumnAlign.center)]));
   }
   if (fullDetail) {
     String countPeople = "";
@@ -275,9 +282,8 @@ Future<void> printTableQrCode({required global.TableManagerEnum tableManagerMode
       countPeople += "เด็ก ${table.child_count} คน";
     }
     if (countPeople.isNotEmpty) {
-      printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-        FormDesignColumnModel(font_size: 30, width: 1, text: "$countPeople", text_align: PrintColumnAlign.center)
-      ]));
+      printer.addCommand(PosPrintBillCommandModel(
+          mode: 2, posStyles: const PosStyles(bold: true), columns: [FormDesignColumnModel(font_size: 30, width: 1, text: "$countPeople", text_align: PrintColumnAlign.center)]));
     }
   }
   String orderType = "";
@@ -289,9 +295,10 @@ Future<void> printTableQrCode({required global.TableManagerEnum tableManagerMode
       orderType = global.buffetModeLists[buffetIndex].names[0];
     }
   }
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-    FormDesignColumnModel(font_size: 30, width: 1, text: "เงื่อนไข : $orderType", text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2,
+      posStyles: const PosStyles(bold: true),
+      columns: [FormDesignColumnModel(font_size: 30, width: 1, text: "เงื่อนไข : $orderType", text_align: PrintColumnAlign.center)]));
   printer.addCommand(PosPrintBillCommandModel(
     mode: 4,
     value: 80,
@@ -316,9 +323,10 @@ void shiftAndMoneyPrint(String guid) {
   print(printer.qrCode);
   // Reset Printer
   printer.addCommand(PosPrintBillCommandModel(mode: 0));
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-    FormDesignColumnModel(font_size: 40, width: 1, text: global.profileSetting.company.names[0].name, text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2,
+      posStyles: const PosStyles(bold: true),
+      columns: [FormDesignColumnModel(font_size: 40, width: 1, text: global.profileSetting.company.names[0].name, text_align: PrintColumnAlign.center)]));
   printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
     FormDesignColumnModel(font_size: 24, width: 1, text: "Printing time : ${DateFormat("dd/MM/yyyy - HH:mm").format(DateTime.now())}", text_align: PrintColumnAlign.center)
   ]));
@@ -337,24 +345,27 @@ void shiftAndMoneyPrint(String guid) {
       tableTitle = "นำเงินออก";
       break;
   }
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-    FormDesignColumnModel(font_size: 40, width: 1, text: tableTitle, text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2, posStyles: const PosStyles(bold: true), columns: [FormDesignColumnModel(font_size: 40, width: 1, text: tableTitle, text_align: PrintColumnAlign.center)]));
 
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: false), columns: [
-    FormDesignColumnModel(font_size: 32, width: 1, text: "วันเวลา : ${DateFormat("HH:mm").format(data.docdate)}", text_align: PrintColumnAlign.center)
-  ]));
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: false), columns: [
-    FormDesignColumnModel(font_size: 32, width: 1, text: "พนักงาน : ${data.username} (${data.usercode})", text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2,
+      posStyles: const PosStyles(bold: false),
+      columns: [FormDesignColumnModel(font_size: 32, width: 1, text: "วันเวลา : ${DateFormat("HH:mm").format(data.docdate)}", text_align: PrintColumnAlign.center)]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2,
+      posStyles: const PosStyles(bold: false),
+      columns: [FormDesignColumnModel(font_size: 32, width: 1, text: "พนักงาน : ${data.username} (${data.usercode})", text_align: PrintColumnAlign.center)]));
   if (data.remark.isNotEmpty) {
-    printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: false), columns: [
-      FormDesignColumnModel(font_size: 32, width: 1, text: "หมายเหตุ : ${data.remark}", text_align: PrintColumnAlign.center)
-    ]));
+    printer.addCommand(PosPrintBillCommandModel(
+        mode: 2,
+        posStyles: const PosStyles(bold: false),
+        columns: [FormDesignColumnModel(font_size: 32, width: 1, text: "หมายเหตุ : ${data.remark}", text_align: PrintColumnAlign.center)]));
   }
-  printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-    FormDesignColumnModel(font_size: 32, width: 1, text: "จำนวนเงิน ${global.moneyFormat.format(data.amount)} บาท", text_align: PrintColumnAlign.center)
-  ]));
+  printer.addCommand(PosPrintBillCommandModel(
+      mode: 2,
+      posStyles: const PosStyles(bold: true),
+      columns: [FormDesignColumnModel(font_size: 32, width: 1, text: "จำนวนเงิน ${global.moneyFormat.format(data.amount)} บาท", text_align: PrintColumnAlign.center)]));
   printer.addCommand(PosPrintBillCommandModel(
     mode: 4,
     value: 80,

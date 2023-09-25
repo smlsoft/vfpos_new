@@ -24,46 +24,31 @@ void main() {
     await serviceLocator.reset(dispose: true);
   });
 
-  final UserToken token =
-      UserToken.fromJson({"success": true, "token": "string"});
+  final UserToken token = UserToken.fromJson({"success": true, "token": "string"});
   final User user = User.fromJson({"name": "string", "username": "string"});
   // final ApiResponse apiResponse =
   //     ApiResponse.fromMap({"success": true, "data": user});
 
-  const apiResponseJson =
-      '{"success": true, "data" : {"name": "string", "username": "string"}}';
+  const apiResponseJson = '{"success": true, "data" : {"name": "string", "username": "string"}}';
 
   const errorResponseJson = '{"success": false, "message": "error string"}';
 
   test('should return user model on successful login', () async {
-    when(() => mockRequest.post('/login', data: any(named: 'data'))).thenAnswer(
-        (_) async => Response(
-            statusCode: 200,
-            data: token.toJson(),
-            requestOptions: RequestOptions(baseUrl: '', path: '')));
+    when(() => mockRequest.post('/login', data: any(named: 'data')))
+        .thenAnswer((_) async => Response(statusCode: 200, data: token.toJson(), requestOptions: RequestOptions(baseUrl: '', path: '')));
 
-    when(() => mockRequest.get('/profile')).thenAnswer((_) async => Response(
-        statusCode: 200,
-        data: apiResponseJson,
-        requestOptions: RequestOptions(baseUrl: '', path: '')));
+    when(() => mockRequest.get('/profile')).thenAnswer((_) async => Response(statusCode: 200, data: apiResponseJson, requestOptions: RequestOptions(baseUrl: '', path: '')));
 
-    final response = await loginRemoteDataSource.loginWithUserPassword(
-        username: 'username', password: 'password');
+    final response = await loginRemoteDataSource.loginWithUserPassword(username: 'username', password: 'password');
 
     expect(response, Right(user));
   });
 
   test('should return user model on successful tokenlogin', () async {
     when(() => mockRequest.post('/tokenlogin', data: any(named: 'data')))
-        .thenAnswer((_) async => Response(
-            statusCode: 200,
-            data: token.toJson(),
-            requestOptions: RequestOptions(baseUrl: '', path: '')));
+        .thenAnswer((_) async => Response(statusCode: 200, data: token.toJson(), requestOptions: RequestOptions(baseUrl: '', path: '')));
 
-    when(() => mockRequest.get('/profile')).thenAnswer((_) async => Response(
-        statusCode: 200,
-        data: apiResponseJson,
-        requestOptions: RequestOptions(baseUrl: '', path: '')));
+    when(() => mockRequest.get('/profile')).thenAnswer((_) async => Response(statusCode: 200, data: apiResponseJson, requestOptions: RequestOptions(baseUrl: '', path: '')));
 
     final response = await loginRemoteDataSource.loginWithToken(token: 'token');
 
@@ -72,10 +57,7 @@ void main() {
 
   test('should return Failure on error login', () async {
     when(() => mockRequest.post('/tokenlogin', data: any(named: 'data')))
-        .thenAnswer((_) async => Response(
-            statusCode: 400,
-            data: errorResponseJson,
-            requestOptions: RequestOptions(baseUrl: '', path: '')));
+        .thenAnswer((_) async => Response(statusCode: 400, data: errorResponseJson, requestOptions: RequestOptions(baseUrl: '', path: '')));
 
     final response = await loginRemoteDataSource.loginWithToken(token: 'token');
     expect(response, const Left(ConnectionFailure("error string")));

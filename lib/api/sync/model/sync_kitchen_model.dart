@@ -18,7 +18,6 @@ class SyncKitchenModel {
     required this.zones,
   });
 
-  factory SyncKitchenModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncKitchenModelFromJson(json);
+  factory SyncKitchenModel.fromJson(Map<String, dynamic> json) => _$SyncKitchenModelFromJson(json);
   Map<String, dynamic> toJson() => _$SyncKitchenModelToJson(this);
 }

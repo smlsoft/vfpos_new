@@ -382,104 +382,81 @@ class _MenuScreenState extends State<MenuScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.blue[100],
-        // appBar: AppBar(
-        //     centerTitle: true,
-        //     foregroundColor: Colors.white,
-        //     leading: Container(
-        //       margin: const EdgeInsets.all(5),
-        //       child: ((global.getShopLogoPathName().isNotEmpty) && (File(global.getShopLogoPathName()).existsSync()))
-        //           ? Image.file(
-        //               File(global.getShopLogoPathName()),
-        //             )
-        //           : Container(),
-        //     ),
-        //     title:
-        //         Text((global.appMode == global.AppModeEnum.posTerminal) ? "${global.language("pos_terminal")} : $companyName" : "${global.language("pos_remote")} : $companyName"),
-        //     actions: [
-        //       IconButton(
-        //         icon: Container(
-        //             decoration: BoxDecoration(
-        //               border: Border.all(color: Colors.grey.shade300, width: 2),
-        //             ),
-        //             child: Image.asset('assets/flags/${global.userScreenLanguage}.png')),
-        //         onPressed: () async {
-        //           await Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => const SelectLanguageScreen(),
-        //             ),
-        //           );
-        //           rebuildScreen();
-        //           setState(() {});
-        //         },
-        //       ),
-        //       PopupMenuButton(
-        //         elevation: 2,
-        //         icon: const Icon(Icons.more_vert),
-        //         offset: Offset(0.0, appBarHeight),
-        //         onSelected: (value) async {
-        //           switch (value) {
-        //             case 1:
-        //               // ตั้งค่าเครื่องพิมพ์
-        //               await global.loadPrinter();
-        //               if (mounted) {
-        //                 Navigator.push(
-        //                   context,
-        //                   MaterialPageRoute(
-        //                     builder: (context) => const PrinterConfigScreen(),
-        //                   ),
-        //                 ).then((value) async => {await global.loadPrinter()});
-        //               }
-        //               break;
-        //             case 3:
-        //               if (mounted) {
-        //                 Navigator.push(
-        //                   context,
-        //                   MaterialPageRoute(
-        //                     builder: (context) => const EmployeeChangePasswordPage(),
-        //                   ),
-        //                 ).then((value) async => {await global.loadPrinter()});
-        //               }
-        //               break;
-        //             case 9:
-        //               if (Platform.isAndroid) {
-        //                 SystemNavigator.pop();
-        //               } else if (Platform.isIOS) {
-        //                 exit(0);
-        //               } else {
-        //                 exit(0);
-        //               }
-        //               break;
-        //           }
-        //         },
-        //         shape: const RoundedRectangleBorder(
-        //           borderRadius: BorderRadius.only(
-        //             bottomLeft: Radius.circular(8.0),
-        //             bottomRight: Radius.circular(8.0),
-        //             topLeft: Radius.circular(8.0),
-        //             topRight: Radius.circular(8.0),
-        //           ),
-        //         ),
-        //         itemBuilder: (ctx) => [
-        //           buildPopupMenuItem(
-        //             title: global.language('printer_config'),
-        //             valueCode: 1,
-        //             iconData: Icons.print_rounded,
-        //           ),
-        //           buildPopupMenuItem(
-        //             title: global.language('change_password'),
-        //             valueCode: 3,
-        //             iconData: Icons.lock,
-        //           ),
-        //           buildPopupMenuItem(
-        //             title: global.language('logout'),
-        //             valueCode: 9,
-        //             iconData: Icons.logout,
-        //           ),
-        //         ],
-        //       )
-        //     ]),
-        // resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: Color(0xFF005CBF),
+            elevation: 0.0,
+            foregroundColor: Colors.white,
+            leading: Container(
+              margin: const EdgeInsets.all(5),
+              child: ((global.getShopLogoPathName().isNotEmpty) && (File(global.getShopLogoPathName()).existsSync()))
+                  ? Image.file(
+                      File(global.getShopLogoPathName()),
+                    )
+                  : Container(),
+            ),
+            title: Text((global.appMode == global.AppModeEnum.posTerminal) ? "${global.language("pos_terminal")}" : "${global.language("pos_remote")} : $companyName"),
+            actions: [
+              PopupMenuButton(
+                elevation: 2,
+                icon: const Icon(Icons.more_vert),
+                offset: Offset(0.0, appBarHeight),
+                onSelected: (value) async {
+                  switch (value) {
+                    case 1:
+                      // ตั้งค่าเครื่องพิมพ์
+                      await global.loadPrinter();
+                      if (mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PrinterConfigScreen(),
+                          ),
+                        ).then((value) async => {await global.loadPrinter()});
+                      }
+                      break;
+                    case 3:
+                      if (mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EmployeeChangePasswordPage(),
+                          ),
+                        ).then((value) async => {await global.loadPrinter()});
+                      }
+                      break;
+                    case 9:
+                      global.loginSuccess = false;
+                      global.userLogin = null;
+                      if (mounted) {
+                        context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
+                      }
+                      break;
+                  }
+                },
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(8.0),
+                    bottomRight: Radius.circular(8.0),
+                    topLeft: Radius.circular(8.0),
+                    topRight: Radius.circular(8.0),
+                  ),
+                ),
+                itemBuilder: (ctx) => [
+                  buildPopupMenuItem(
+                    title: global.language('change_password'),
+                    valueCode: 3,
+                    iconData: Icons.lock,
+                  ),
+                  buildPopupMenuItem(
+                    title: global.language('logout'),
+                    valueCode: 9,
+                    iconData: Icons.logout,
+                  ),
+                ],
+              )
+            ]),
+        resizeToAvoidBottomInset: false,
         // floatingActionButton: FloatingActionButton.extended(
         //     onPressed: () async {},
         //     backgroundColor: Colors.green,

@@ -60,16 +60,22 @@ Future<void> sendToKitchen({required String orderId, required List<OrderTempData
       PrinterClass printer = PrinterClass(printerIndex: printerIndex, qrCode: "");
       // Reset Printer
       printer.addCommand(PosPrintBillCommandModel(mode: 0));
-      printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-        FormDesignColumnModel(font_size: 80, width: 1, text: "โต๊ะ : $orderId", text_align: PrintColumnAlign.center)
-      ]));
+      printer.addCommand(PosPrintBillCommandModel(
+          mode: 2,
+          posStyles: const PosStyles(bold: true),
+          columns: [FormDesignColumnModel(font_size: 80, width: 1, text: "โต๊ะ : $orderId", text_align: PrintColumnAlign.center)]));
       for (var order in orderList) {
         if (kitchen.products.contains(order.barcode) == true) {
           // ค้นหาชื่อสินค้า
           ProductBarcodeObjectBoxStruct? findBarcode = await global.productBarcodeHelper.selectByBarcodeFirst(order.barcode);
           if (findBarcode != null) {
             printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-              FormDesignColumnModel(font_size: 24, width: 4, text: "${global.getNameFromJsonLanguage(findBarcode.names, global.userScreenLanguage)}-${global.getNameFromJsonLanguage(findBarcode.unit_names, global.userScreenLanguage)}", text_align: PrintColumnAlign.left),
+              FormDesignColumnModel(
+                  font_size: 24,
+                  width: 4,
+                  text:
+                      "${global.getNameFromJsonLanguage(findBarcode.names, global.userScreenLanguage)}-${global.getNameFromJsonLanguage(findBarcode.unit_names, global.userScreenLanguage)}",
+                  text_align: PrintColumnAlign.left),
               FormDesignColumnModel(font_size: 24, width: 1, text: global.moneyFormat.format(order.qty), text_align: PrintColumnAlign.right),
             ]));
             if (order.remark.trim().isNotEmpty) {
@@ -100,7 +106,11 @@ Future<void> sendToKitchen({required String orderId, required List<OrderTempData
         }
       }
       printer.addCommand(PosPrintBillCommandModel(mode: 2, posStyles: const PosStyles(bold: true), columns: [
-        FormDesignColumnModel(font_size: 32, width: 1, text: "${global.getNameFromJsonLanguage(kitchen.names, global.userScreenLanguage)} : เวลา : ${DateFormat("HH:mm").format(DateTime.now())}", text_align: PrintColumnAlign.center)
+        FormDesignColumnModel(
+            font_size: 32,
+            width: 1,
+            text: "${global.getNameFromJsonLanguage(kitchen.names, global.userScreenLanguage)} : เวลา : ${DateFormat("HH:mm").format(DateTime.now())}",
+            text_align: PrintColumnAlign.center)
       ]));
       printer.sendToPrinter();
     }

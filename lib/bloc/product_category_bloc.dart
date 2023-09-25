@@ -19,31 +19,22 @@ class ProductCategoryLoadSuccess extends ProductCategoryState {
   ProductCategoryLoadSuccess();
 }
 
-class ProductCategoryBloc
-    extends Bloc<ProductCategoryEvent, ProductCategoryState> {
+class ProductCategoryBloc extends Bloc<ProductCategoryEvent, ProductCategoryState> {
   final String categoryGuid;
 
-  ProductCategoryBloc({required this.categoryGuid})
-      : super(ProductCategoryStateInitialized()) {
+  ProductCategoryBloc({required this.categoryGuid}) : super(ProductCategoryStateInitialized()) {
     on<ProductCategoryLoadStart>(_productCategoryLoadStart);
     on<ProductCategoryLoadFinish>(_productCategoryLoadFinish);
   }
 
-  void _productCategoryLoadStart(ProductCategoryLoadStart event,
-      Emitter<ProductCategoryState> emit) async {
+  void _productCategoryLoadStart(ProductCategoryLoadStart event, Emitter<ProductCategoryState> emit) async {
     emit(ProductCategoryLoading());
-    global.productCategoryList =
-        await ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
-    PosProcess().sumCategoryCount(
-        value: global
-            .posHoldProcessResult[
-                global.findPosHoldProcessResultIndex(global.posHoldActiveCode)]
-            .posProcess);
+    global.productCategoryList = await ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
+    PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess);
     emit(ProductCategoryLoadSuccess());
   }
 
-  void _productCategoryLoadFinish(ProductCategoryLoadFinish event,
-      Emitter<ProductCategoryState> emit) async {
+  void _productCategoryLoadFinish(ProductCategoryLoadFinish event, Emitter<ProductCategoryState> emit) async {
     emit(ProductCategoryLoadStop());
   }
 }

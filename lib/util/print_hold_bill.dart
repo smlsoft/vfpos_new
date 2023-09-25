@@ -144,17 +144,16 @@ class PosPrintHoldBillClass {
     // Reset Printer
     commandList.add(PosPrintBillCommandModel(mode: 0));
 
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: "พักบิลเลขที่ : $holdNumber", font_size: 30, font_weight_bold: true, text_align: PrintColumnAlign.center)
-    ]));
+    commandList.add(PosPrintBillCommandModel(
+        mode: 2, columns: [FormDesignColumnModel(width: 1, text: "พักบิลเลขที่ : $holdNumber", font_size: 30, font_weight_bold: true, text_align: PrintColumnAlign.center)]));
 
     commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: global.getNameFromJsonLanguage(formDesign.names_json, languageCode), font_size: 30, font_weight_bold: true, text_align: PrintColumnAlign.center)
+      FormDesignColumnModel(
+          width: 1, text: global.getNameFromJsonLanguage(formDesign.names_json, languageCode), font_size: 30, font_weight_bold: true, text_align: PrintColumnAlign.center)
     ]));
 
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: (1 == 1) ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)" : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)", text_align: PrintColumnAlign.center)
-    ]));
+    commandList.add(PosPrintBillCommandModel(
+        mode: 2, columns: [FormDesignColumnModel(width: 1, text: (1 == 1) ? "(ราคารวมภาษีมูลค่าเพิ่มแล้ว)" : "(ราคาไม่รวมภาษีมูลค่าเพิ่ม)", text_align: PrintColumnAlign.center)]));
     List<PosProcessDetailModel> details = processResult.details;
     if (formDesign.sum_by_barcode) {
       // กรณีพิมพ์บิลแบบรวมรายการ
@@ -178,7 +177,8 @@ class PosPrintHoldBillClass {
 
     List<FormDesignColumnModel> formDetailList = (jsonDecode(formDesign.detail_json) as List).map((e) => FormDesignColumnModel.fromJson(e)).toList();
     List<FormDesignColumnModel> formDetailExtraList = (jsonDecode(formDesign.detail_extra_json) as List).map((e) => FormDesignColumnModel.fromJson(e)).toList();
-    List<List<FormDesignColumnModel>> formDetailColumnList = (jsonDecode(formDesign.detail_total_json) as List).map((e) => (e as List).map((e) => FormDesignColumnModel.fromJson(e)).toList()).toList();
+    List<List<FormDesignColumnModel>> formDetailColumnList =
+        (jsonDecode(formDesign.detail_total_json) as List).map((e) => (e as List).map((e) => FormDesignColumnModel.fromJson(e)).toList()).toList();
     // พิมพ์ หัว Column
     // Line
     commandList.add(PosPrintBillCommandModel(mode: 3));
@@ -186,7 +186,12 @@ class PosPrintHoldBillClass {
       List<FormDesignColumnModel> columns = [];
       for (var formDetail in formDetailList) {
         columns.add(
-          FormDesignColumnModel(width: formDetail.width, text: global.getNameFromLanguage(formDetail.header_names, languageCode), text_align: formDetail.text_align, font_weight_bold: true, font_size: formDetail.font_size),
+          FormDesignColumnModel(
+              width: formDetail.width,
+              text: global.getNameFromLanguage(formDetail.header_names, languageCode),
+              text_align: formDetail.text_align,
+              font_weight_bold: true,
+              font_size: formDetail.font_size),
         );
       }
       commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
@@ -200,7 +205,12 @@ class PosPrintHoldBillClass {
         for (var formDetail in formDetailList) {
           {
             columns.add(
-              FormDesignColumnModel(width: formDetail.width, text: findValueBillDetail(detail, formDetail.command_text), text_align: formDetail.text_align, font_weight_bold: false, font_size: formDetail.font_size),
+              FormDesignColumnModel(
+                  width: formDetail.width,
+                  text: findValueBillDetail(detail, formDetail.command_text),
+                  text_align: formDetail.text_align,
+                  font_weight_bold: false,
+                  font_size: formDetail.font_size),
             );
           }
         }
@@ -212,7 +222,12 @@ class PosPrintHoldBillClass {
           List<FormDesignColumnModel> columns = [];
           for (var formDetailExtra in formDetailExtraList) {
             columns.add(
-              FormDesignColumnModel(width: formDetailExtra.width, text: findValueBillDetailExtra(extra, formDetailExtra.command_text), text_align: formDetailExtra.text_align, font_weight_bold: formDetailExtra.font_weight_bold, font_size: formDetailExtra.font_size),
+              FormDesignColumnModel(
+                  width: formDetailExtra.width,
+                  text: findValueBillDetailExtra(extra, formDetailExtra.command_text),
+                  text_align: formDetailExtra.text_align,
+                  font_weight_bold: formDetailExtra.font_weight_bold,
+                  font_size: formDetailExtra.font_size),
             );
           }
           commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
@@ -231,7 +246,12 @@ class PosPrintHoldBillClass {
         for (FormDesignColumnModel column in formDetailColumns) {
           // พิมพ์ยอดรวม (รายการ
           columns.add(
-            FormDesignColumnModel(width: column.width, text: findValueBillTotal(processResult, column.command_text), text_align: column.text_align, font_weight_bold: column.font_weight_bold, font_size: column.font_size),
+            FormDesignColumnModel(
+                width: column.width,
+                text: findValueBillTotal(processResult, column.command_text),
+                text_align: column.text_align,
+                font_weight_bold: column.font_weight_bold,
+                font_size: column.font_size),
           );
         }
         commandList.add(PosPrintBillCommandModel(mode: 2, columns: columns));
@@ -240,18 +260,10 @@ class PosPrintHoldBillClass {
     // Line
     commandList.add(PosPrintBillCommandModel(mode: 3));
     // Footer
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: "ใบสรุปยอดเพื่อตรวจสอบ", text_align: PrintColumnAlign.center)
-    ]));
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: "ไม่ใช่ใบเสร็จรับเงิน", text_align: PrintColumnAlign.center)
-    ]));
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: "ยอดภาษี และยอดรวม อาจเปลี่ยนแปลง", text_align: PrintColumnAlign.center)
-    ]));
-    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [
-      FormDesignColumnModel(width: 1, text: "เมื่อถึงขึ้นตอนการชำระเงิน", text_align: PrintColumnAlign.center)
-    ]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [FormDesignColumnModel(width: 1, text: "ใบสรุปยอดเพื่อตรวจสอบ", text_align: PrintColumnAlign.center)]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [FormDesignColumnModel(width: 1, text: "ไม่ใช่ใบเสร็จรับเงิน", text_align: PrintColumnAlign.center)]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [FormDesignColumnModel(width: 1, text: "ยอดภาษี และยอดรวม อาจเปลี่ยนแปลง", text_align: PrintColumnAlign.center)]));
+    commandList.add(PosPrintBillCommandModel(mode: 2, columns: [FormDesignColumnModel(width: 1, text: "เมื่อถึงขึ้นตอนการชำระเงิน", text_align: PrintColumnAlign.center)]));
     return commandList;
   }
 
@@ -295,7 +307,11 @@ class PosPrintHoldBillClass {
             printProcess.column.clear();
             for (int index = 0; index < command.columns.length; index++) {
               printProcess.columnWidth.add(command.columns[index].width);
-              printProcess.column.add(PrintColumn(text: command.columns[index].text, align: command.columns[index].text_align, bold: command.columns[index].font_weight_bold, fontSize: command.columns[index].font_size));
+              printProcess.column.add(PrintColumn(
+                  text: command.columns[index].text,
+                  align: command.columns[index].text_align,
+                  bold: command.columns[index].font_weight_bold,
+                  fontSize: command.columns[index].font_size));
             }
             ui.Image result = await printProcess.lineFeedImage(command.posStyles ?? const PosStyles());
             canvas.drawImage(result, Offset(0, maxHeight), ui.Paint());

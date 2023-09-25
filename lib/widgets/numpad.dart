@@ -10,14 +10,7 @@ class NumberPad extends StatefulWidget {
   final TextAlign textAlign;
   final Color backgroundColor;
 
-  const NumberPad(
-      {Key? key,
-      required this.onChange,
-      this.title,
-      this.unitName,
-      this.textAlign = TextAlign.right,
-      this.backgroundColor = Colors.white,
-      this.header = ""})
+  const NumberPad({Key? key, required this.onChange, this.title, this.unitName, this.textAlign = TextAlign.right, this.backgroundColor = Colors.white, this.header = ""})
       : super(key: key);
 
   @override
@@ -166,10 +159,7 @@ class _NumberPadState extends State<NumberPad> {
                           ),
                         ],
                       ),
-                      child: Center(
-                          child: Text(widget.header,
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold)))),
+                      child: Center(child: Text(widget.header, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)))),
                 if (widget.title != null) Container(child: widget.title),
                 Container(
                     margin: const EdgeInsets.only(bottom: 4),
@@ -187,12 +177,8 @@ class _NumberPadState extends State<NumberPad> {
                           ),
                         ],
                         border: Border.all(color: Colors.blueAccent)),
-                    child: Text(
-                        global.moneyFormat
-                            .format(double.tryParse(numberStr) ?? 0.0),
-                        textAlign: widget.textAlign,
-                        style: const TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold))),
+                    child: Text(global.moneyFormat.format(double.tryParse(numberStr) ?? 0.0),
+                        textAlign: widget.textAlign, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold))),
                 Expanded(
                   child: Column(children: numPadColumnList),
                 ),

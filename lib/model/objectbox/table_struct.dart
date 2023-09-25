@@ -155,8 +155,7 @@ class TableProcessObjectBoxStruct {
     required this.table_child_count,
   });
 
-  factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$TableProcessObjectBoxStructFromJson(json);
+  factory TableProcessObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$TableProcessObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$TableProcessObjectBoxStructToJson(this);
 }
 
@@ -170,15 +169,9 @@ class CloseTableModel {
   PosProcessModel process;
   String discountFormula;
 
-  CloseTableModel(
-      {required this.table,
-      required this.payMode,
-      required this.slipImage,
-      required this.discountFormula,
-      required this.process});
+  CloseTableModel({required this.table, required this.payMode, required this.slipImage, required this.discountFormula, required this.process});
 
-  factory CloseTableModel.fromJson(Map<String, dynamic> json) =>
-      _$CloseTableModelFromJson(json);
+  factory CloseTableModel.fromJson(Map<String, dynamic> json) => _$CloseTableModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CloseTableModelToJson(this);
 }

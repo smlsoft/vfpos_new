@@ -45,9 +45,6 @@ class ProductBarcodeStatusObjectBoxStruct {
       required this.qtyBalance,
       required this.qtyMin});
 
-  factory ProductBarcodeStatusObjectBoxStruct.fromJson(
-          Map<String, dynamic> json) =>
-      _$ProductBarcodeStatusObjectBoxStructFromJson(json);
-  Map<String, dynamic> toJson() =>
-      _$ProductBarcodeStatusObjectBoxStructToJson(this);
+  factory ProductBarcodeStatusObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$ProductBarcodeStatusObjectBoxStructFromJson(json);
+  Map<String, dynamic> toJson() => _$ProductBarcodeStatusObjectBoxStructToJson(this);
 }

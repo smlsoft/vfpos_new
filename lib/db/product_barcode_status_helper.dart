@@ -19,11 +19,7 @@ class ProductBarcodeStatusHelper {
   }
 
   List<ProductBarcodeStatusObjectBoxStruct> getAll() {
-    return box
-        .query()
-        .order(ProductBarcodeStatusObjectBoxStruct_.barcode)
-        .build()
-        .find();
+    return box.query().order(ProductBarcodeStatusObjectBoxStruct_.barcode).build().find();
   }
 
   Future<List<ProductBarcodeStatusObjectBoxStruct>> selectByBarcodeList(
@@ -34,8 +30,7 @@ class ProductBarcodeStatusHelper {
       if (ids == null) {
         ids = ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode);
       } else {
-        ids = ids
-            .or(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode));
+        ids = ids.or(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode));
       }
     }
     if (ids != null) {
@@ -45,21 +40,14 @@ class ProductBarcodeStatusHelper {
     }
   }
 
-  Future<ProductBarcodeStatusObjectBoxStruct?> selectByBarcodeFirst(
-      String barcode) async {
+  Future<ProductBarcodeStatusObjectBoxStruct?> selectByBarcodeFirst(String barcode) async {
     if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcode);
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "selectByBarcodeFirst",
-          json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
+      HttpGetDataModel json = HttpGetDataModel(code: "selectByBarcodeFirst", json: jsonEncode(jsonParameter.toJson()));
+      String result = await global.getFromServer(json: jsonEncode(json.toJson()));
       return ProductBarcodeStatusObjectBoxStruct.fromJson(jsonDecode(result));
     } else {
-      return box
-          .query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode))
-          .build()
-          .findFirst();
+      return box.query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
     }
   }
 
@@ -69,10 +57,7 @@ class ProductBarcodeStatusHelper {
 
   bool deleteByBarcode(String barcode) {
     bool result = false;
-    final find = box
-        .query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode))
-        .build()
-        .findFirst();
+    final find = box.query(ProductBarcodeStatusObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

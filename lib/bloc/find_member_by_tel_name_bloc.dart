@@ -7,8 +7,7 @@ class FindMemberByTelNameLoadStart extends FindMemberByTelNameEvent {
   final int offset;
   final int limit;
 
-  FindMemberByTelNameLoadStart(
-      {required this.words, required this.offset, required this.limit});
+  FindMemberByTelNameLoadStart({required this.words, required this.offset, required this.limit});
 }
 
 class FindMemberByTelNameLoadSuccess extends FindMemberByTelNameState {
@@ -17,30 +16,24 @@ class FindMemberByTelNameLoadSuccess extends FindMemberByTelNameState {
   FindMemberByTelNameLoadSuccess({required this.result});
 }
 
-class FindMemberByTelNameBloc
-    extends Bloc<FindMemberByTelNameEvent, FindMemberByTelNameState> {
+class FindMemberByTelNameBloc extends Bloc<FindMemberByTelNameEvent, FindMemberByTelNameState> {
   final ApiRepository apiFindMemberByTelName;
 
   final int? offset;
   final int? limit;
 
-  FindMemberByTelNameBloc(
-      {required this.apiFindMemberByTelName, this.offset, this.limit})
-      : super(FindMemberByTelNameInitial()) {
+  FindMemberByTelNameBloc({required this.apiFindMemberByTelName, this.offset, this.limit}) : super(FindMemberByTelNameInitial()) {
     on<FindMemberByTelNameLoadStart>(_findMemberByTelName);
     on<FindMemberByTelNameLoadFinish>(_findMemberByTelNameLoadFinish);
   }
 
-  void _findMemberByTelName(FindMemberByTelNameLoadStart event,
-      Emitter<FindMemberByTelNameState> emit) async {
+  void _findMemberByTelName(FindMemberByTelNameLoadStart event, Emitter<FindMemberByTelNameState> emit) async {
     emit(FindMemberByTelNameLoading());
-    List<MemberModel> result = await apiFindMemberByTelName
-        .findMemberByTelName(event.words, event.offset, event.limit);
+    List<MemberModel> result = await apiFindMemberByTelName.findMemberByTelName(event.words, event.offset, event.limit);
     emit(FindMemberByTelNameLoadSuccess(result: result));
   }
 
-  void _findMemberByTelNameLoadFinish(FindMemberByTelNameLoadFinish event,
-      Emitter<FindMemberByTelNameState> emit) async {
+  void _findMemberByTelNameLoadFinish(FindMemberByTelNameLoadFinish event, Emitter<FindMemberByTelNameState> emit) async {
     emit(FindMemberByTelNameLoadStop());
   }
 }

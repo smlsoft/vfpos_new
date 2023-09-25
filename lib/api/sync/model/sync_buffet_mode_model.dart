@@ -16,8 +16,7 @@ class SyncBuffetModeModel {
     required this.prices,
   });
 
-  factory SyncBuffetModeModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncBuffetModeModelFromJson(json);
+  factory SyncBuffetModeModel.fromJson(Map<String, dynamic> json) => _$SyncBuffetModeModelFromJson(json);
   Map<String, dynamic> toJson() => _$SyncBuffetModeModelToJson(this);
 }
 
@@ -31,7 +30,6 @@ class SyncBuffetModePriceModel {
     required this.price,
   });
 
-  factory SyncBuffetModePriceModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncBuffetModePriceModelFromJson(json);
+  factory SyncBuffetModePriceModel.fromJson(Map<String, dynamic> json) => _$SyncBuffetModePriceModelFromJson(json);
   Map<String, dynamic> toJson() => _$SyncBuffetModePriceModelToJson(this);
 }

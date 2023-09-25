@@ -14,8 +14,7 @@ class OrderTempStruct {
     required this.orderTemp,
   });
 
-  factory OrderTempStruct.fromJson(Map<String, dynamic> json) =>
-      _$OrderTempStructFromJson(json);
+  factory OrderTempStruct.fromJson(Map<String, dynamic> json) => _$OrderTempStructFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderTempStructToJson(this);
 }
@@ -128,7 +127,6 @@ class OrderTempObjectBoxStruct {
     required this.lastUpdateDateTime,
   });
 
-  factory OrderTempObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$OrderTempObjectBoxStructFromJson(json);
+  factory OrderTempObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$OrderTempObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$OrderTempObjectBoxStructToJson(this);
 }

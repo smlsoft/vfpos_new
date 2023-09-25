@@ -15,10 +15,7 @@ class EmployeeHelper {
 
   bool deleteByGuidFixed(String guid) {
     bool result = false;
-    final find = box
-        .query(EmployeeObjectBoxStruct_.guidfixed.equals(guid))
-        .build()
-        .findFirst();
+    final find = box.query(EmployeeObjectBoxStruct_.guidfixed.equals(guid)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

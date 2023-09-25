@@ -5,8 +5,7 @@ class PromotionHelper {
     return 0;
   }
 
-  List<PromotionModel> select(
-      {String where = "", int limit = 0, int offset = 0}) {
+  List<PromotionModel> select({String where = "", int limit = 0, int offset = 0}) {
     return [];
   }
 

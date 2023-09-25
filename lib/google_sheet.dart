@@ -36,8 +36,7 @@ Future<void> googleMultiLanguageSheetAppendRow(List<String> values) async {
         ),
       );
       final gsheets = GSheets(googleCredentials);
-      final spreadsheet = await gsheets
-          .spreadsheet("1HpttLpbcDTHCBhPWw1tuiLmsoap1LFgPS94JarThNoU");
+      final spreadsheet = await gsheets.spreadsheet("1HpttLpbcDTHCBhPWw1tuiLmsoap1LFgPS94JarThNoU");
       Worksheet sheet = spreadsheet.worksheetByTitle("pos_language")!;
       await sheet.values.appendRow(values);
     }
@@ -49,8 +48,7 @@ Future<void> googleMultiLanguageSheetAppendRow(List<String> values) async {
 Future<void> googleMultiLanguageSheetLoad() async {
   try {
     final gsheets = GSheets(googleCredentials);
-    final spreadsheet = await gsheets
-        .spreadsheet("1HpttLpbcDTHCBhPWw1tuiLmsoap1LFgPS94JarThNoU");
+    final spreadsheet = await gsheets.spreadsheet("1HpttLpbcDTHCBhPWw1tuiLmsoap1LFgPS94JarThNoU");
     Worksheet sheet = spreadsheet.worksheetByTitle("pos_language")!;
     print('Google Sheet Successfully Load');
     global.languageSystemCode = [];
@@ -60,14 +58,11 @@ Future<void> googleMultiLanguageSheetLoad() async {
       int index = 2;
       String thaiText = (index < values[i].length) ? values[i][index++] : "";
       String laoTextAuto = (index < values[i].length) ? values[i][index++] : "";
-      String laoTextManual =
-          (index < values[i].length) ? values[i][index++] : "";
+      String laoTextManual = (index < values[i].length) ? values[i][index++] : "";
       String engTextAuto = (index < values[i].length) ? values[i][index++] : "";
-      String engTextManual =
-          (index < values[i].length) ? values[i][index++] : "";
+      String engTextManual = (index < values[i].length) ? values[i][index++] : "";
       String zhTextAuto = (index < values[i].length) ? values[i][index++] : "";
-      String zhTextManual =
-          (index < values[i].length) ? values[i][index++] : "";
+      String zhTextManual = (index < values[i].length) ? values[i][index++] : "";
       List<LanguageSystemModel> languageList = [];
       languageList.add(LanguageSystemModel(
         code: 'th',

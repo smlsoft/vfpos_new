@@ -54,8 +54,7 @@ class FormDesignObjectBoxStruct {
     required this.detail_footer_json,
   });
 
-  factory FormDesignObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$FormDesignObjectBoxStructFromJson(json);
+  factory FormDesignObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$FormDesignObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$FormDesignObjectBoxStructToJson(this);
 }
 
@@ -94,7 +93,6 @@ class FormDesignColumnModel {
     this.condition_join_is_vat_register = 0,
   });
 
-  factory FormDesignColumnModel.fromJson(Map<String, dynamic> json) =>
-      _$FormDesignColumnModelFromJson(json);
+  factory FormDesignColumnModel.fromJson(Map<String, dynamic> json) => _$FormDesignColumnModelFromJson(json);
   Map<String, dynamic> toJson() => _$FormDesignColumnModelToJson(this);
 }

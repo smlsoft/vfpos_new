@@ -14,18 +14,12 @@ class BuffetModeHelper {
   }
 
   BuffetModeObjectBoxStruct? getByCode(String code) {
-    return box
-        .query(BuffetModeObjectBoxStruct_.code.equals(code))
-        .build()
-        .findFirst();
+    return box.query(BuffetModeObjectBoxStruct_.code.equals(code)).build().findFirst();
   }
 
   bool deleteByCode(String code) {
     bool result = false;
-    final find = box
-        .query(BuffetModeObjectBoxStruct_.code.equals(code))
-        .build()
-        .findFirst();
+    final find = box.query(BuffetModeObjectBoxStruct_.code.equals(code)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

@@ -18,10 +18,7 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
     receiveAmount.text += value;
   }
 
-  void showMsgDialog(
-      {required String header,
-      required String msg,
-      required String type}) async {
+  void showMsgDialog({required String header, required String msg, required String type}) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -54,8 +51,7 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
 
   void backSpace() {
     if (receiveAmount.text.isNotEmpty) {
-      receiveAmount.text =
-          receiveAmount.text.substring(0, receiveAmount.text.length - 1);
+      receiveAmount.text = receiveAmount.text.substring(0, receiveAmount.text.length - 1);
     }
   }
 
@@ -81,8 +77,7 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
                               padding: EdgeInsets.all(8.0),
                               child: Text(
                                 "receive_money",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                             ),
                             Padding(
@@ -103,9 +98,7 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
                                 readOnly: true,
                                 controller: receiveAmount,
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 decoration: InputDecoration(
                                   icon: Icon(Icons.money),
                                   hintText: global.language("money_amount"),
@@ -118,8 +111,7 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
                               child: Row(
                                 children: [
                                   ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.amber.shade600),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.amber.shade600),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
@@ -127,8 +119,7 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
                                   ),
                                   const Spacer(),
                                   ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green.shade600),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade600),
                                     onPressed: () async {
                                       // String docNumber =
                                       //     const Uuid().v4();
@@ -155,15 +146,9 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
 
                                       Navigator.of(context).pop();
 
-                                      global.playSound(
-                                          word:
-                                              "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
+                                      global.playSound(word: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}");
 
-                                      showMsgDialog(
-                                          header: "บันทึกสำเร็จ",
-                                          msg:
-                                              "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}",
-                                          type: "success");
+                                      showMsgDialog(header: "บันทึกสำเร็จ", msg: "รับเงินทอน จำนวน ${receiveAmount.text} ${global.language("money_symbol")}", type: "success");
                                     },
                                     child: Text(global.language("save")),
                                   ),
@@ -183,139 +168,116 @@ class _MoneyReceiveState extends State<ReceiveMoneyDialog> {
                               child: Column(children: [
                                 SizedBox(
                                     height: 60,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '7',
-                                                callBack: () =>
-                                                    {textInputChanged("7")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '8',
-                                                callBack: () =>
-                                                    {textInputChanged("8")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '9',
-                                                callBack: () =>
-                                                    {textInputChanged("9")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: 'x',
-                                                callBack: () => {},
-                                              )),
-                                        ])),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '7',
+                                            callBack: () => {textInputChanged("7")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '8',
+                                            callBack: () => {textInputChanged("8")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '9',
+                                            callBack: () => {textInputChanged("9")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: 'x',
+                                            callBack: () => {},
+                                          )),
+                                    ])),
                                 SizedBox(
                                     height: 60,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '4',
-                                                callBack: () =>
-                                                    {textInputChanged("4")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '5',
-                                                callBack: () =>
-                                                    {textInputChanged("5")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '6',
-                                                callBack: () =>
-                                                    {textInputChanged("6")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '+',
-                                                callBack: () => {},
-                                              )),
-                                        ])),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '4',
+                                            callBack: () => {textInputChanged("4")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '5',
+                                            callBack: () => {textInputChanged("5")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '6',
+                                            callBack: () => {textInputChanged("6")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '+',
+                                            callBack: () => {},
+                                          )),
+                                    ])),
                                 SizedBox(
                                     height: 60,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '1',
-                                                callBack: () =>
-                                                    {textInputChanged("1")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '2',
-                                                callBack: () =>
-                                                    {textInputChanged("2")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '3',
-                                                callBack: () =>
-                                                    {textInputChanged("3")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: 'C',
-                                                callBack: () => {clearText()},
-                                              )),
-                                        ])),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '1',
+                                            callBack: () => {textInputChanged("1")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '2',
+                                            callBack: () => {textInputChanged("2")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '3',
+                                            callBack: () => {textInputChanged("3")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: 'C',
+                                            callBack: () => {clearText()},
+                                          )),
+                                    ])),
                                 SizedBox(
                                     height: 60,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '0',
-                                                callBack: () =>
-                                                    {textInputChanged("0")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                text: '.',
-                                                callBack: () =>
-                                                    {textInputChanged(".")},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                icon: Icons.backspace,
-                                                callBack: () => {backSpace()},
-                                              )),
-                                          Expanded(
-                                              flex: 2,
-                                              child: NumPadButton(
-                                                icon: Icons.expand,
-                                                callBack: () => {},
-                                              )),
-                                        ])),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '0',
+                                            callBack: () => {textInputChanged("0")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            text: '.',
+                                            callBack: () => {textInputChanged(".")},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            icon: Icons.backspace,
+                                            callBack: () => {backSpace()},
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: NumPadButton(
+                                            icon: Icons.expand,
+                                            callBack: () => {},
+                                          )),
+                                    ])),
                               ]),
                             ),
                           ],

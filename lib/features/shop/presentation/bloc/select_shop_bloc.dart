@@ -14,8 +14,7 @@ class SelectShopBloc extends Bloc<SelectShopEvent, SelectShopState> {
     on<SelectShopStarted>((event, emit) async {
       emit(const SelectShopState.loading());
 
-      var result =
-          await serviceLocator<ShopAuthenticationRepository>().listMyShop();
+      var result = await serviceLocator<ShopAuthenticationRepository>().listMyShop();
       result.fold(
         (failure) {
           emit(SelectShopState.error(failure.message));
@@ -27,8 +26,7 @@ class SelectShopBloc extends Bloc<SelectShopEvent, SelectShopState> {
     });
 
     on<ShopSelectSubmit>((event, emit) async {
-      var result = await serviceLocator<ShopAuthenticationRepository>()
-          .selectShop(shopid: event.shop.guidfixed);
+      var result = await serviceLocator<ShopAuthenticationRepository>().selectShop(shopid: event.shop.guidfixed);
 
       result.fold(
         (failure) {
@@ -41,8 +39,7 @@ class SelectShopBloc extends Bloc<SelectShopEvent, SelectShopState> {
     });
 
     on<SelectShopRefresh>((event, emit) async {
-      emit(SelectShopSubmitSuccessState(event.shop
-          .copyWith(shopid: event.shop.guidfixed, name: event.shop.name1)));
+      emit(SelectShopSubmitSuccessState(event.shop.copyWith(shopid: event.shop.guidfixed, name: event.shop.name1)));
     });
   }
 }

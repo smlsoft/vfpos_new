@@ -12,16 +12,9 @@ class ProductCategoryCodeListModel {
   String unitcode;
   List<LanguageDataModel> unitnames;
 
-  ProductCategoryCodeListModel(
-      {required this.code,
-      required this.names,
-      required this.xorder,
-      required this.barcode,
-      required this.unitcode,
-      required this.unitnames});
+  ProductCategoryCodeListModel({required this.code, required this.names, required this.xorder, required this.barcode, required this.unitcode, required this.unitnames});
 
-  factory ProductCategoryCodeListModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductCategoryCodeListModelFromJson(json);
+  factory ProductCategoryCodeListModel.fromJson(Map<String, dynamic> json) => _$ProductCategoryCodeListModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProductCategoryCodeListModelToJson(this);
 }
@@ -33,8 +26,7 @@ class SortDataModel {
 
   SortDataModel({required this.code, required this.xorder});
 
-  factory SortDataModel.fromJson(Map<String, dynamic> json) =>
-      _$SortDataModelFromJson(json);
+  factory SortDataModel.fromJson(Map<String, dynamic> json) => _$SortDataModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SortDataModelToJson(this);
 }
@@ -47,14 +39,8 @@ class BarcodeModel {
   final String unit_code;
   final String unit_name;
 
-  const BarcodeModel(
-      {this.barcode = '',
-      this.item_code = '',
-      this.item_name = '',
-      this.unit_code = '',
-      this.unit_name = ''});
-  factory BarcodeModel.fromJson(Map<String, dynamic> json) =>
-      _$BarcodeModelFromJson(json);
+  const BarcodeModel({this.barcode = '', this.item_code = '', this.item_name = '', this.unit_code = '', this.unit_name = ''});
+  factory BarcodeModel.fromJson(Map<String, dynamic> json) => _$BarcodeModelFromJson(json);
   Map<String, dynamic> toJson() => _$BarcodeModelToJson(this);
 
   /*factory BarcodeStruct.fromJson(dynamic json) {
@@ -74,11 +60,7 @@ class SelectItemConditionModel {
   String prices;
   BarcodeModel data;
 
-  SelectItemConditionModel(
-      {required this.command,
-      required this.data,
-      required this.qty,
-      required this.prices});
+  SelectItemConditionModel({required this.command, required this.data, required this.qty, required this.prices});
 }
 
 /*class ItemStruct {

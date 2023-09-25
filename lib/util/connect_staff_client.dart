@@ -15,8 +15,7 @@ class ConnectStaffClientPage extends StatefulWidget {
 
 class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
   late Timer timer;
-  String connectCode =
-      "${global.apiShopID}/${global.ipAddress}/${global.connectGuid}";
+  String connectCode = "${global.apiShopID}/${global.ipAddress}/${global.connectGuid}";
   late String connectSecureCode;
 
   @override
@@ -64,8 +63,7 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset:
-                              const Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                     ),
@@ -91,16 +89,14 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset:
-                              const Offset(0, 3), // changes position of shadow
+                          offset: const Offset(0, 3), // changes position of shadow
                         ),
                       ],
                     ),
                     child: Column(children: [
                       const Text(
                         "เครื่องลูกที่มีกล้องสามารถ Scan Qr Code ได้",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Expanded(
                           child: Center(
@@ -110,17 +106,14 @@ class _ConnectStaffClientPageState extends State<ConnectStaffClientPage> {
                         data: connectCode,
                         version: QrVersions.auto,
                       ))),
-                      const Text(
-                          "เครื่องลูกที่ไม่มีกล้อง สามารถเชื่อมต่อด้วย IP Address"),
+                      const Text("เครื่องลูกที่ไม่มีกล้อง สามารถเชื่อมต่อด้วย IP Address"),
                       Text(
                         "IP Address : ${global.ipAddress}",
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "รหัสสำหรับเชื่อมต่อ : $connectSecureCode",
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ])))
           ],

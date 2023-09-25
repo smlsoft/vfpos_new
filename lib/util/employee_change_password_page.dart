@@ -49,25 +49,20 @@ class _EmployeeChangePasswordState extends State<EmployeeChangePasswordPage> {
         lastStatus = global.language("old_password_not_match");
       });
       return;
-    } else if (newFirstPasswordController.text !=
-        newSecondPasswordController.text) {
+    } else if (newFirstPasswordController.text != newSecondPasswordController.text) {
       setState(() {
         lastStatus = global.language("new_password_not_match");
       });
       return;
     } else {
       ApiRepository apiRepository = ApiRepository();
-      apiRepository
-          .userChangePassword(
-              global.userLogin!.code, newFirstPasswordController.text)
-          .then((result) {
+      apiRepository.userChangePassword(global.userLogin!.code, newFirstPasswordController.text).then((result) {
         if (result == true) {
           global.loadConfig();
           if (mounted) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const LoginByEmployeePage()),
+              MaterialPageRoute(builder: (context) => const LoginByEmployeePage()),
             );
           }
         } else {
@@ -85,66 +80,7 @@ class _EmployeeChangePasswordState extends State<EmployeeChangePasswordPage> {
         child: Scaffold(
             backgroundColor: Colors.red[100],
             appBar: AppBar(
-              title: Text(
-                  "${global.language("change_password")} ${global.applicationName}"),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginByEmployeePage()),
-                  );
-                },
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () async {
-                      await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('ลงทะเบียนเครื่องใหม่'),
-                              content: const Text(
-                                  'ต้องการลงทะเบียนเครื่องใหม่ เพื่อใช้กับฐานข้อมูลอื่นๆ'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('ไม่ต้องการ'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    context.router.pushAndPopUntil(
-                                        const RegisterPosTerminalRoute(),
-                                        predicate: (route) => false);
-                                  },
-                                  child: const Text('ต้องการ'),
-                                ),
-                              ],
-                            );
-                          });
-                    },
-                    icon: const Icon(Icons.settings)),
-                IconButton(
-                  icon: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green, width: 2),
-                      ),
-                      child: Image.asset(
-                          'assets/flags/${global.userScreenLanguage}.png')),
-                  onPressed: () async {
-                    await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SelectLanguageScreen(),
-                        ));
-                    setState(() {});
-                  },
-                ),
-              ],
+              title: Text("${global.language("change_password")} ${global.applicationName}"),
             ),
             body: Center(
                 child: ConstrainedBox(
@@ -161,70 +97,61 @@ class _EmployeeChangePasswordState extends State<EmployeeChangePasswordPage> {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: const Offset(
-                                0, 3), // changes position of shadow
+                            offset: const Offset(0, 3), // changes position of shadow
                           ),
                         ],
                       ),
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.file(
-                              File(
-                                  global.getShopLogoPathName()),
-                              width: 100,
-                              height: 100,
-                            ),
-                            Text(
-                                global.getNameFromLanguage(
-                                    global.profileSetting.company.names,
-                                    global.userScreenLanguage),
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              autofocus: true,
-                              controller: oldPasswordController,
-                              decoration: InputDecoration(
-                                labelText: global.language("old_password"),
-                                border: const OutlineInputBorder(),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: newFirstPasswordController,
-                              decoration: InputDecoration(
-                                labelText: global.language("new_password"),
-                                border: const OutlineInputBorder(),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: newSecondPasswordController,
-                              decoration: InputDecoration(
-                                labelText:
-                                    global.language("new_password_confirm"),
-                                border: const OutlineInputBorder(),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              lastStatus,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const SizedBox(height: 10),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 45,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  changePassword();
-                                },
-                                child: Text(global.language("change_password")),
-                              ),
-                            ),
-                          ]),
+                      child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
+                        if (File(global.getShopLogoPathName()).existsSync())
+                          Image.file(
+                            File(global.getShopLogoPathName()),
+                            width: 100,
+                            height: 100,
+                          ),
+                        Text(global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage),
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          autofocus: true,
+                          controller: oldPasswordController,
+                          decoration: InputDecoration(
+                            labelText: global.language("old_password"),
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: newFirstPasswordController,
+                          decoration: InputDecoration(
+                            labelText: global.language("new_password"),
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: newSecondPasswordController,
+                          decoration: InputDecoration(
+                            labelText: global.language("new_password_confirm"),
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          lastStatus,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 45,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              changePassword();
+                            },
+                            child: Text(global.language("change_password")),
+                          ),
+                        ),
+                      ]),
                     )))));
   }
 }

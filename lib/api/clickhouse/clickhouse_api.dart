@@ -74,15 +74,13 @@ void clickHouseUpdate(String query) {
 void clickHouseUpdateTable(TableProcessObjectBoxStruct table) async {
   {
     /// ลบข้อมูลเก่า
-    String query =
-        "alter table dedeonline.tableinfo delete where shopid='${global.shopId}' and qrcode='${table.qr_code}'";
+    String query = "alter table dedeonline.tableinfo delete where shopid='${global.shopId}' and qrcode='${table.qr_code}'";
     print(query);
     await clickHouseExecute(query);
   }
   {
     /// เพิ่มข้อมูลใหม่
-    String tableOpenDateTime =
-        DateFormat('yyyy-MM-dd HH:mm:ss').format(table.table_open_datetime);
+    String tableOpenDateTime = DateFormat('yyyy-MM-dd HH:mm:ss').format(table.table_open_datetime);
     String query =
         "INSERT INTO dedeonline.tableinfo (shopid, guidfixed, tablenumber, tablename, tablezone, tablestatus, amount, ordersuccess, tableopendatetime, qrcode, mancount, womancount, childcount, tableallacratemode, buffetcode) VALUES ('${global.shopId}','${table.guidfixed}','${table.number}','${table.names}','${table.zone}',${table.table_status},${table.amount},${(table.order_success) ? '1' : '0'},'$tableOpenDateTime','${table.qr_code}',${table.man_count},${table.woman_count},${table.child_count},${(table.table_al_la_crate_mode) ? '1' : '0'},'${table.buffet_code}')";
     print(query);

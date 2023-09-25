@@ -1,6 +1,6 @@
 {
-    "name": "dedepos",
-    "short_name": "dedepos",
+    "name": "vfpos",
+    "short_name": "vfpos",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

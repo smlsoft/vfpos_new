@@ -10,7 +10,8 @@ class NumberPadText extends StatefulWidget {
   final TextAlign textAlign;
   final Color backgroundColor;
 
-  const NumberPadText({Key? key, required this.onChange, this.title, this.unitName, this.textAlign = TextAlign.left, this.backgroundColor = Colors.white, this.header = ""}) : super(key: key);
+  const NumberPadText({Key? key, required this.onChange, this.title, this.unitName, this.textAlign = TextAlign.left, this.backgroundColor = Colors.white, this.header = ""})
+      : super(key: key);
 
   @override
   State<NumberPadText> createState() => _NumberPadTextState();

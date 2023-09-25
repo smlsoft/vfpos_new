@@ -31,11 +31,8 @@ class _SelectLanguageScreenState extends State<SelectLanguageScreen> {
                     padding: const EdgeInsets.all(2),
                     child: ElevatedButton(
                         onPressed: () async {
-                          global.userScreenLanguage =
-                              global.countryCodes[index];
-                          await GetStorage()
-                              .write('language', global.userScreenLanguage)
-                              .then((value) {
+                          global.userScreenLanguage = global.countryCodes[index];
+                          await GetStorage().write('language', global.userScreenLanguage).then((value) {
                             global.languageSelect(global.userScreenLanguage);
                             Navigator.pop(context);
                           });

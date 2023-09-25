@@ -7,9 +7,7 @@ class DiscountPad extends StatefulWidget {
   final String header;
   final Widget? title;
 
-  const DiscountPad(
-      {Key? key, required this.onChange, this.title, this.header = ""})
-      : super(key: key);
+  const DiscountPad({Key? key, required this.onChange, this.title, this.header = ""}) : super(key: key);
 
   @override
   State<DiscountPad> createState() => _DiscountPadState();
@@ -46,21 +44,13 @@ class _DiscountPadState extends State<DiscountPad> {
       width: MediaQuery.of(context).size.width,
       child: Column(
         children: <Widget>[
-          if (widget.header != "")
-            Text(widget.header,
-                style:
-                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-          if (widget.title != null)
-            Container(
-                padding: const EdgeInsets.only(
-                    left: 4, right: 4, top: 10, bottom: 10),
-                child: widget.title),
+          if (widget.header != "") Text(widget.header, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+          if (widget.title != null) Container(padding: const EdgeInsets.only(left: 4, right: 4, top: 10, bottom: 10), child: widget.title),
           Container(
               margin: const EdgeInsets.only(left: 4, right: 4, bottom: 10),
               padding: const EdgeInsets.all(4),
               width: MediaQuery.of(context).size.width,
-              decoration:
-                  BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+              decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
               child: Text(number, style: const TextStyle(fontSize: 32))),
           Expanded(
             child: Row(

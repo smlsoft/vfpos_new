@@ -25,7 +25,15 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
   if (request.uri.path == '/scan') {
     bool isTerminal = (global.appMode == global.AppModeEnum.posTerminal);
     bool isClient = (global.appMode == global.AppModeEnum.posRemote);
-    SyncDeviceModel resultData = SyncDeviceModel(deviceId: global.deviceId, deviceName: global.deviceName, ip: global.ipAddress, connected: true, isCashierTerminal: isTerminal, holdCodeActive: "", docModeActive: 0, isClient: isClient);
+    SyncDeviceModel resultData = SyncDeviceModel(
+        deviceId: global.deviceId,
+        deviceName: global.deviceName,
+        ip: global.ipAddress,
+        connected: true,
+        isCashierTerminal: isTerminal,
+        holdCodeActive: "",
+        docModeActive: 0,
+        isClient: isClient);
     response.write(jsonEncode(resultData.toJson()));
   } else {
     String json = request.uri.query.split("json=")[1];
@@ -53,7 +61,8 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         }
         break;
       case "pos_information":
-        PosInformationModel data = PosInformationModel(shop_id: global.shopId, shop_name: global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage));
+        PosInformationModel data =
+            PosInformationModel(shop_id: global.shopId, shop_name: global.getNameFromLanguage(global.profileSetting.company.names, global.userScreenLanguage));
         response.write(jsonEncode(data.toJson()));
         break;
       case "staff.get_product_barcode_status":
@@ -64,7 +73,17 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         String kitchenId = jsonData["kitchenId"];
         final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
         int duration = DateTime.now().subtract(const Duration(minutes: 5)).millisecondsSinceEpoch;
-        final result = box.query(OrderTempObjectBoxStruct_.kdsId.equals(kitchenId).and(OrderTempObjectBoxStruct_.isOrder.equals(false)).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and((OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(true))).and((OrderTempObjectBoxStruct_.kdsSuccess.equals(false)).or(OrderTempObjectBoxStruct_.kdsSuccessTime.greaterThan(duration)))).order(OrderTempObjectBoxStruct_.kdsSuccess).order(OrderTempObjectBoxStruct_.orderDateTime).build().find();
+        final result = box
+            .query(OrderTempObjectBoxStruct_.kdsId
+                .equals(kitchenId)
+                .and(OrderTempObjectBoxStruct_.isOrder.equals(false))
+                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                .and((OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(true)))
+                .and((OrderTempObjectBoxStruct_.kdsSuccess.equals(false)).or(OrderTempObjectBoxStruct_.kdsSuccessTime.greaterThan(duration))))
+            .order(OrderTempObjectBoxStruct_.kdsSuccess)
+            .order(OrderTempObjectBoxStruct_.orderDateTime)
+            .build()
+            .find();
         response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
         break;
       case "staff.order_temp_get_data_from_orderid_and_barcode":
@@ -73,7 +92,21 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         String barcode = jsonData["barcode"];
         bool isOrder = jsonData["isOrder"];
         final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
-        final result = (barcode.isNotEmpty) ? box.query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.barcode.equals(barcode).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder)))).build().find() : box.query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder))).build().find();
+        final result = (barcode.isNotEmpty)
+            ? box
+                .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.barcode
+                    .equals(barcode)
+                    .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                    .and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder))))
+                .build()
+                .find()
+            : box
+                .query(OrderTempObjectBoxStruct_.orderId
+                    .equals(orderId)
+                    .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                    .and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder)))
+                .build()
+                .find();
         response.write(jsonEncode(result.map((e) => e.toJson()).toList()));
         break;
       case "staff.order_temp_get_data_from_orderid":
@@ -81,7 +114,11 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         String orderId = jsonData["orderId"];
         bool isOrder = jsonData["isOrder"];
         final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
-        final result = box.query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder))).build().find();
+        final result = box
+            .query(
+                OrderTempObjectBoxStruct_.orderId.equals(orderId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder)))
+            .build()
+            .find();
         double orderQty = 0;
         for (var item in result) {
           orderQty += item.qty;
@@ -94,7 +131,13 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         String orderMainId = jsonData["orderMainId"];
         bool isOrder = jsonData["isOrder"];
         final box = global.objectBoxStore.box<OrderTempObjectBoxStruct>();
-        final result = box.query(OrderTempObjectBoxStruct_.orderIdMain.equals(orderMainId).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)).and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder))).build().find();
+        final result = box
+            .query(OrderTempObjectBoxStruct_.orderIdMain
+                .equals(orderMainId)
+                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+                .and(OrderTempObjectBoxStruct_.isOrder.equals(isOrder)))
+            .build()
+            .find();
         double orderQty = 0;
         for (var item in result) {
           orderQty += item.qty;
@@ -116,7 +159,12 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         var jsonData = jsonDecode(httpGetData.json);
         bool sendSuccess = jsonData["sendSuccess"];
         print("sendSuccess : $sendSuccess");
-        List<TableProcessObjectBoxStruct> boxData = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.is_delivery.equals(true).and(TableProcessObjectBoxStruct_.delivery_send_success.equals(sendSuccess))).order(TableProcessObjectBoxStruct_.table_open_datetime, flags: Order.descending).build().find();
+        List<TableProcessObjectBoxStruct> boxData = global.objectBoxStore
+            .box<TableProcessObjectBoxStruct>()
+            .query(TableProcessObjectBoxStruct_.is_delivery.equals(true).and(TableProcessObjectBoxStruct_.delivery_send_success.equals(sendSuccess)))
+            .order(TableProcessObjectBoxStruct_.table_open_datetime, flags: Order.descending)
+            .build()
+            .find();
         response.write(jsonEncode(boxData.map((e) => e.toJson()).toList()));
         break;
       case "get_all_buffet_mode":
@@ -127,7 +175,11 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         var jsonData = jsonDecode(httpGetData.json);
         String mainNumber = jsonData["mainNumber"];
         String tableNumber = jsonData["number"];
-        TableProcessObjectBoxStruct? tableData = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(tableNumber).and(TableProcessObjectBoxStruct_.is_delivery.equals(false))).build().findFirst();
+        TableProcessObjectBoxStruct? tableData = global.objectBoxStore
+            .box<TableProcessObjectBoxStruct>()
+            .query(TableProcessObjectBoxStruct_.number.equals(tableNumber).and(TableProcessObjectBoxStruct_.is_delivery.equals(false)))
+            .build()
+            .findFirst();
         if (tableData == null) {
           // เพิ่มโต๊ะ
           final findSourceTableResult = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.number.equals(mainNumber)).build().findFirst();
@@ -172,7 +224,8 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         }
         break;
       case "get_all_table":
-        List<TableProcessObjectBoxStruct> tableData = global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.is_delivery.equals(false)).build().find();
+        List<TableProcessObjectBoxStruct> tableData =
+            global.objectBoxStore.box<TableProcessObjectBoxStruct>().query(TableProcessObjectBoxStruct_.is_delivery.equals(false)).build().find();
         // หาโต๊ะลูก
         for (var table in tableData) {
           table.table_child_count = 0;
@@ -200,7 +253,8 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
       case "PosLogHelper.selectByGuidFixed":
         final box = global.objectBoxStore.box<PosLogObjectBoxStruct>();
         HttpParameterModel jsonCategory = HttpParameterModel.fromJson(jsonDecode(httpGetData.json));
-        List<PosLogObjectBoxStruct> boxData = (box.query(PosLogObjectBoxStruct_.guid_auto_fixed.equals(jsonCategory.guid))..order(PosLogObjectBoxStruct_.log_date_time)).build().find();
+        List<PosLogObjectBoxStruct> boxData =
+            (box.query(PosLogObjectBoxStruct_.guid_auto_fixed.equals(jsonCategory.guid))..order(PosLogObjectBoxStruct_.log_date_time)).build().find();
         response.write(jsonEncode(boxData.map((e) => e.toJson()).toList()));
         break;
       case "get_process":
@@ -209,7 +263,8 @@ Future<void> serverGet(HttpRequest request, HttpResponse response) async {
         int docMode = json["docMode"];
         String discountFormula = json["discountFormula"];
         String detailDiscountFormula = json["detailDiscountFormula"];
-        PosProcessModel posProcess = await PosProcess().process(holdCode: holdCode, docMode: docMode, detailDiscountFormula: detailDiscountFormula, discountFormula: discountFormula);
+        PosProcessModel posProcess =
+            await PosProcess().process(holdCode: holdCode, docMode: docMode, detailDiscountFormula: detailDiscountFormula, discountFormula: discountFormula);
         response.write(jsonEncode(posProcess.toJson()));
         break;
       case "PosLogHelper.holdCount":

@@ -46,21 +46,6 @@ android {
             applicationId "org.villagefundth.vfpos"
             resValue "string", "app_name", "Village Fund POS DEV"
         }
-        dedepos {
-            dimension "flavor-type"
-            applicationId "com.smlsoft.dedepos"
-            resValue "string", "app_name", "DEDE POS"
-        }
-        smlsuperpos {
-            dimension "flavor-type"
-            applicationId "com.smlsoft.smlsuperpos"
-            resValue "string", "app_name", "SML Super POS"
-        }
-        smlmobilesales {
-            dimension "flavor-type"
-            applicationId "com.smlsoft.smlmobilesales"
-            resValue "string", "app_name", "SML Mobile Sales"
-        }
         vfpos {
             dimension "flavor-type"
             applicationId "org.villagefundth.vfpos"
@@ -90,7 +75,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         multiDexEnabled true
-        applicationId "com.smlsoft.dedepos"
+        applicationId "org.villagefundth.vfpos"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()

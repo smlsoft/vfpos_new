@@ -16,7 +16,6 @@ class SyncTableModel {
     required this.zone,
   });
 
-  factory SyncTableModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncTableModelFromJson(json);
+  factory SyncTableModel.fromJson(Map<String, dynamic> json) => _$SyncTableModelFromJson(json);
   Map<String, dynamic> toJson() => _$SyncTableModelToJson(this);
 }
