@@ -81,21 +81,21 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                             });
                       },
                       icon: const Icon(Icons.settings)),
-                  IconButton(
-                    icon: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green, width: 2),
-                        ),
-                        child: Image.asset('assets/flags/${global.userScreenLanguage}.png')),
-                    onPressed: () async {
-                      await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SelectLanguageScreen(),
-                          ));
-                      setState(() {});
-                    },
-                  ),
+                  // IconButton(
+                  //   icon: Container(
+                  //       decoration: BoxDecoration(
+                  //         border: Border.all(color: Colors.green, width: 2),
+                  //       ),
+                  //       child: Image.asset('assets/flags/${global.userScreenLanguage}.png')),
+                  //   onPressed: () async {
+                  //     await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => const SelectLanguageScreen(),
+                  //         ));
+                  //     setState(() {});
+                  //   },
+                  // ),
                 ],
               ),
               body: Center(

@@ -1616,7 +1616,7 @@
     },
     {
       "id": "30:8931092861744922825",
-      "lastPropertyId": "17:9094434472717353325",
+      "lastPropertyId": "19:166875630837276225",
       "name": "BillDetailObjectBoxStruct",
       "properties": [
         {
@@ -1704,6 +1704,16 @@
           "id": "17:9094434472717353325",
           "name": "doc_mode",
           "type": 6
+        },
+        {
+          "id": "18:9065526896521940588",
+          "name": "vat_type",
+          "type": 6
+        },
+        {
+          "id": "19:166875630837276225",
+          "name": "price_exclude_vat",
+          "type": 8
         }
       ],
       "relations": []

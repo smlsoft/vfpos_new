@@ -309,6 +309,12 @@ class BillDetailObjectBoxStruct {
   /// ยกเว้นภาษี (True=ยกเว้นภาษี,False=ไม่ยกเว้นภาษี)
   bool is_except_vat;
 
+  /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_type;
+
+  /// ราคาไม่รวมภาษีมูลค่าเพิ่ม
+  double price_exclude_vat;
+
   String extra_json;
 
   BillDetailObjectBoxStruct({
@@ -328,6 +334,8 @@ class BillDetailObjectBoxStruct {
     required this.is_except_vat,
     required this.extra_json,
     required this.total_amount,
+    required this.vat_type,
+    required this.price_exclude_vat,
   });
 }
 
@@ -360,6 +368,12 @@ class BillDetailExtraObjectBoxStruct {
   /// ยกเว้นภาษี (True=ยกเว้นภาษี,False=ไม่ยกเว้นภาษี)
   bool is_except_vat;
 
+  /// 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_type;
+
+  /// ราคาไม่รวมภาษีมูลค่าเพิ่ม
+  double price_exclude_vat;
+
   BillDetailExtraObjectBoxStruct(
       {required this.barcode,
       required this.item_code,
@@ -369,6 +383,8 @@ class BillDetailExtraObjectBoxStruct {
       required this.qty,
       required this.price,
       required this.is_except_vat,
+      required this.vat_type,
+      required this.price_exclude_vat,
       required this.total_amount});
 
   factory BillDetailExtraObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$BillDetailExtraObjectBoxStructFromJson(json);

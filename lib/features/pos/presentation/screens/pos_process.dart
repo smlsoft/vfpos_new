@@ -249,10 +249,12 @@ class PosProcess {
                   unit_code: logData.unit_code,
                   unit_name: logData.unit_name,
                   guid_category: "",
-                  price_exclude_vat: logData.price_exclude_vat,
+                  price_exclude_vat_type: logData.price_exclude_vat,
                   is_except_vat: logData.is_except_vat,
                   guid_auto_fixed: logData.guid_auto_fixed,
                   is_void: processResult.details[findIndex].is_void,
+                  vat_type: 0,
+                  price_exclude_vat: 0,
                   total_amount: double.parse((double.parse((logData.price).toStringAsFixed(2)) * processResult.details[findIndex].qty).toStringAsFixed(2)));
               processResult.details[findIndex].extra.add(extra);
             }
@@ -314,26 +316,29 @@ class PosProcess {
           if (findIndex == -1) {
             // เพิ่มบรรทัด
             PosProcessDetailModel detail = PosProcessDetailModel(
-                extra: [],
-                index: count++,
-                barcode: logData.barcode,
-                item_code: logData.code,
-                item_name: logData.name,
-                price: logData.price,
-                price_original: logData.price,
-                qty: logData.qty,
-                total_amount: double.parse((logData.price * logData.qty).toStringAsFixed(2)),
-                unit_code: logData.unit_code,
-                unit_name: logData.unit_name,
-                guid: logData.guid_auto_fixed,
-                discount_text: "",
-                discount: 0.0,
-                total_amount_with_extra: 0,
-                is_void: false,
-                remark: "",
-                image_url: productBarcode.images_url,
-                price_exclude_vat: logData.price_exclude_vat,
-                is_except_vat: logData.is_except_vat);
+              extra: [],
+              index: count++,
+              barcode: logData.barcode,
+              item_code: logData.code,
+              item_name: logData.name,
+              price: logData.price,
+              price_original: logData.price,
+              qty: logData.qty,
+              total_amount: double.parse((logData.price * logData.qty).toStringAsFixed(2)),
+              unit_code: logData.unit_code,
+              unit_name: logData.unit_name,
+              guid: logData.guid_auto_fixed,
+              discount_text: "",
+              discount: 0.0,
+              total_amount_with_extra: 0,
+              is_void: false,
+              remark: "",
+              image_url: productBarcode.images_url,
+              price_exclude_vat_type: logData.price_exclude_vat,
+              is_except_vat: logData.is_except_vat,
+              vat_type: 0,
+              price_exclude_vat: 0,
+            );
             processResult.details.add(detail);
             result.lineGuid = detail.guid;
           } else {

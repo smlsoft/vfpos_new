@@ -27,12 +27,14 @@ PosProcessDetailModel _$PosProcessDetailModelFromJson(
       is_void: json['is_void'] as bool,
       remark: json['remark'] as String,
       image_url: json['image_url'] as String,
-      price_exclude_vat: json['price_exclude_vat'] as bool,
+      price_exclude_vat_type: json['price_exclude_vat_type'] as bool,
       is_except_vat: json['is_except_vat'] as bool,
       extra: (json['extra'] as List<dynamic>)
           .map((e) =>
               PosProcessDetailExtraModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      vat_type: json['vat_type'] as int,
+      price_exclude_vat: (json['price_exclude_vat'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$PosProcessDetailModelToJson(
@@ -55,8 +57,10 @@ Map<String, dynamic> _$PosProcessDetailModelToJson(
       'is_void': instance.is_void,
       'remark': instance.remark,
       'image_url': instance.image_url,
-      'price_exclude_vat': instance.price_exclude_vat,
+      'price_exclude_vat_type': instance.price_exclude_vat_type,
       'is_except_vat': instance.is_except_vat,
+      'vat_type': instance.vat_type,
+      'price_exclude_vat': instance.price_exclude_vat,
       'extra': instance.extra,
     };
 
@@ -76,9 +80,11 @@ PosProcessDetailExtraModel _$PosProcessDetailExtraModelFromJson(
       qty_fixed: (json['qty_fixed'] as num).toDouble(),
       price: (json['price'] as num).toDouble(),
       total_amount: (json['total_amount'] as num).toDouble(),
-      price_exclude_vat: json['price_exclude_vat'] as bool,
+      price_exclude_vat_type: json['price_exclude_vat_type'] as bool,
       is_except_vat: json['is_except_vat'] as bool,
+      vat_type: json['vat_type'] as int,
       is_void: json['is_void'] as bool,
+      price_exclude_vat: (json['price_exclude_vat'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$PosProcessDetailExtraModelToJson(
@@ -98,8 +104,10 @@ Map<String, dynamic> _$PosProcessDetailExtraModelToJson(
       'price': instance.price,
       'total_amount': instance.total_amount,
       'is_void': instance.is_void,
-      'price_exclude_vat': instance.price_exclude_vat,
+      'price_exclude_vat_type': instance.price_exclude_vat_type,
       'is_except_vat': instance.is_except_vat,
+      'price_exclude_vat': instance.price_exclude_vat,
+      'vat_type': instance.vat_type,
     };
 
 PosProcessPromotionModel _$PosProcessPromotionModelFromJson(
