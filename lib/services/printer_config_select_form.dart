@@ -8,16 +8,13 @@ import 'package:flutter/material.dart';
 class PrinterConfigSelectFormPage extends StatefulWidget {
   final PrinterLocalStrongDataModel printer;
 
-  const PrinterConfigSelectFormPage({Key? key, required this.printer})
-      : super(key: key);
+  const PrinterConfigSelectFormPage({Key? key, required this.printer}) : super(key: key);
 
   @override
-  State<PrinterConfigSelectFormPage> createState() =>
-      _PrinterConfigSelectFormPageState();
+  State<PrinterConfigSelectFormPage> createState() => _PrinterConfigSelectFormPageState();
 }
 
-class _PrinterConfigSelectFormPageState
-    extends State<PrinterConfigSelectFormPage> {
+class _PrinterConfigSelectFormPageState extends State<PrinterConfigSelectFormPage> {
   Future<String> selectForm() async {
     String result = "";
     await showDialog(
@@ -31,8 +28,7 @@ class _PrinterConfigSelectFormPageState
                       result = item.code;
                       Navigator.pop(context);
                     },
-                    child: Text(
-                        "${item.code} : ${global.getNameFromJsonLanguage(item.names_json, global.userScreenLanguage)}"),
+                    child: Text("${item.code} : ${global.getNameFromJsonLanguage(item.names_json, global.userScreenLanguage)}"),
                   )
               ],
             ));
@@ -48,8 +44,7 @@ class _PrinterConfigSelectFormPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            "${global.language('printer_select_form')} : ${widget.printer.name}"),
+        title: Text("${global.language('printer_select_form')} : ${widget.printer.name}"),
       ),
       body: Center(
           child: Container(
@@ -77,9 +72,7 @@ class _PrinterConfigSelectFormPageState
                           saveData();
                           setState(() {});
                         },
-                        child: Text((widget.printer.formSummeryCode.isNotEmpty)
-                            ? widget.printer.formSummeryCode
-                            : global.language("select")))),
+                        child: Text((widget.printer.formSummeryCode.isNotEmpty) ? widget.printer.formSummeryCode : global.language("select")))),
                 const SizedBox(
                   width: 10,
                 ),
@@ -115,9 +108,7 @@ class _PrinterConfigSelectFormPageState
                           saveData();
                           setState(() {});
                         },
-                        child: Text((widget.printer.formTaxCode.isNotEmpty)
-                            ? widget.printer.formTaxCode
-                            : global.language("select")))),
+                        child: Text((widget.printer.formTaxCode.isNotEmpty) ? widget.printer.formTaxCode : global.language("select")))),
                 const SizedBox(
                   width: 10,
                 ),
@@ -153,9 +144,7 @@ class _PrinterConfigSelectFormPageState
                           saveData();
                           setState(() {});
                         },
-                        child: Text((widget.printer.formFullTaxCode.isNotEmpty)
-                            ? widget.printer.formFullTaxCode
-                            : global.language("select")))),
+                        child: Text((widget.printer.formFullTaxCode.isNotEmpty) ? widget.printer.formFullTaxCode : global.language("select")))),
                 const SizedBox(
                   width: 10,
                 ),

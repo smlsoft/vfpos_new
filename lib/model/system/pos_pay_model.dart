@@ -70,9 +70,15 @@ class PayCreditCardModel {
   String card_number; // เลขที่บัตรเครดิต
   String approved_code; // รหัสอนุมัติ
   double amount; // จำนวนเงิน
-
+  String book_bank_name;
   PayCreditCardModel(
-      {required this.book_bank_code, required this.bank_code, required this.bank_name, required this.card_number, required this.approved_code, required this.amount});
+      {required this.book_bank_code,
+      required this.book_bank_name,
+      required this.bank_code,
+      required this.bank_name,
+      required this.card_number,
+      required this.approved_code,
+      required this.amount});
 
   factory PayCreditCardModel.fromJson(Map<String, dynamic> json) => _$PayCreditCardModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayCreditCardModelToJson(this);
@@ -81,11 +87,12 @@ class PayCreditCardModel {
 @JsonSerializable(explicitToJson: true)
 class PayTransferModel {
   String book_bank_code; // รหัสบัญชีธนาคาร
+  String book_bank_name;
   String bank_code; // รหัสธนาคาร
   String bank_name; // ธนาคาร
   double amount; // จำนวนเงิน
 
-  PayTransferModel({required this.book_bank_code, required this.bank_code, required this.bank_name, required this.amount});
+  PayTransferModel({required this.book_bank_code, required this.book_bank_name, required this.bank_code, required this.bank_name, required this.amount});
 
   factory PayTransferModel.fromJson(Map<String, dynamic> json) => _$PayTransferModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayTransferModelToJson(this);

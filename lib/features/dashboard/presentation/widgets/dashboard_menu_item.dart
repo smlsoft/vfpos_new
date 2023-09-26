@@ -8,13 +8,7 @@ class ItemMenuDashboard extends StatelessWidget {
   final Color color;
   final Color iconColor;
 
-  const ItemMenuDashboard(
-      {super.key,
-      required this.icon,
-      required this.title,
-      this.color = Colors.white,
-      this.iconColor = AppColors.primaryColor,
-      required this.callBack});
+  const ItemMenuDashboard({super.key, required this.icon, required this.title, this.color = Colors.white, this.iconColor = AppColors.primaryColor, required this.callBack});
 
   @override
   Widget build(BuildContext context) {

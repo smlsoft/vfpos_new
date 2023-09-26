@@ -15,30 +15,19 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     on<ListInventoryLoad>(_onListInventoryLoad);
     on<ListInventoryById>(_onGetInventoryId);
   }
-  void _onListInventoryLoad(
-      ListInventoryLoad event, Emitter<InventoryState> emit) async {
+  void _onListInventoryLoad(ListInventoryLoad event, Emitter<InventoryState> emit) async {
     emit(InventoryInProgress());
 
     try {
-      final result = await _inventoryRepository.getInventoryFetchUpdate(
-          perPage: event.perPage, page: event.page, time: event.time);
+      final result = await _inventoryRepository.getInventoryFetchUpdate(perPage: event.perPage, page: event.page, time: event.time);
 
       if (result.success) {
-        List<SyncProductBarcodeModel> newItemBarcode =
-            (result.data["new"] as List)
-                .map((newItem) => SyncProductBarcodeModel.fromJson(newItem))
-                .toList();
-        List<SyncProductBarcodeModel> removeItemBarcode = (result.data["remove"]
-                as List)
-            .map((removeItem) => SyncProductBarcodeModel.fromJson(removeItem))
-            .toList();
+        List<SyncProductBarcodeModel> newItemBarcode = (result.data["new"] as List).map((newItem) => SyncProductBarcodeModel.fromJson(newItem)).toList();
+        List<SyncProductBarcodeModel> removeItemBarcode = (result.data["remove"] as List).map((removeItem) => SyncProductBarcodeModel.fromJson(removeItem)).toList();
         serviceLocator<Log>().debug(newItemBarcode);
         serviceLocator<Log>().debug(removeItemBarcode);
 
-        emit(InventoryLoadSuccess(
-            newItem: newItemBarcode,
-            removeItem: removeItemBarcode,
-            page: result.page));
+        emit(InventoryLoadSuccess(newItem: newItemBarcode, removeItem: removeItemBarcode, page: result.page));
       } else {
         emit(const InventoryLoadFailed(message: 'Inventory Not Found'));
       }
@@ -47,15 +36,13 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     }
   }
 
-  void _onGetInventoryId(
-      ListInventoryById event, Emitter<InventoryState> emit) async {
+  void _onGetInventoryId(ListInventoryById event, Emitter<InventoryState> emit) async {
     emit(InventorySearchInProgress());
     try {
       final result = await _inventoryRepository.getInventoryId(event.id);
 
       if (result.success) {
-        SyncProductBarcodeModel inventory =
-            SyncProductBarcodeModel.fromJson(result.data);
+        SyncProductBarcodeModel inventory = SyncProductBarcodeModel.fromJson(result.data);
         serviceLocator<Log>().debug(inventory);
         emit(InventorySearchLoadSuccess(inventory: inventory));
       } else {
@@ -79,8 +66,7 @@ class ListInventoryLoad extends InventoryEvent {
   final int perPage;
   final String time;
 
-  const ListInventoryLoad(
-      {required this.page, required this.perPage, required this.time});
+  const ListInventoryLoad({required this.page, required this.perPage, required this.time});
 
   @override
   List<Object> get props => [];
@@ -146,8 +132,7 @@ class InventoryLoadSuccess extends InventoryState {
   final List<SyncProductBarcodeModel> removeItem;
   final Pages? page;
 
-  const InventoryLoadSuccess(
-      {required this.newItem, required this.removeItem, required this.page});
+  const InventoryLoadSuccess({required this.newItem, required this.removeItem, required this.page});
 
   InventoryLoadSuccess copyWith({
     List<SyncProductBarcodeModel>? newItem,

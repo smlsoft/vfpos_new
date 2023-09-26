@@ -17,8 +17,7 @@ class SyncBankModel {
     this.names = const [],
   });
 
-  factory SyncBankModel.fromJson(Map<String, dynamic> json) =>
-      _$SyncBankModelFromJson(json);
+  factory SyncBankModel.fromJson(Map<String, dynamic> json) => _$SyncBankModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncBankModelToJson(this);
 }

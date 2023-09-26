@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dedepos/api/client.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart' as global_model;
 import 'package:dedepos/model/json/member_model.dart';
 import 'package:dio/dio.dart';
@@ -15,6 +16,30 @@ import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 // GET {{host}}/master-sync/list?lastupdate=2010-01-02T15:04&module=productunit&limit=1&offset=0&action=new
 class ApiRepository {
+  Future<ApiResponse> serverGetLastDocNumber({
+    required String docNumber,
+  }) async {
+    Dio client = Client().init();
+
+    try {
+      String query = "/transaction/sale-invoice/last-pos-docno?posid=${global.posConfig.code}&maxdocno=$docNumber";
+      final response = await client.get(query);
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        throw Exception(ex);
+      }
+    } catch (ex) {
+      String errorMessage = ex.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
   Future<List<global_model.SyncMasterStatusModel>> serverMasterStatus() async {
     Dio client = Client().init();
 
@@ -729,7 +754,7 @@ class ApiRepository {
     bool result = false;
     Dio client = Client().init();
     try {
-      final response = await client.post('/employee/password', data: {"code": code, "password": newPassword});
+      final response = await client.put('/shop/employee/password', data: {"code": code, "password": newPassword});
       try {
         final rawData = json.decode(response.toString());
         if (rawData['error'] != null) {

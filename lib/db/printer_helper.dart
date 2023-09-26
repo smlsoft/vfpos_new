@@ -19,10 +19,7 @@ class PrinterHelper {
 
   bool deleteByGuidFixed(String guidfixed) {
     bool result = false;
-    final find = box
-        .query(PrinterObjectBoxStruct_.guid_fixed.equals(guidfixed))
-        .build()
-        .findFirst();
+    final find = box.query(PrinterObjectBoxStruct_.guid_fixed.equals(guidfixed)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
@@ -46,10 +43,7 @@ class PrinterHelper {
 
   bool deleteByCode(String code) {
     bool result = false;
-    final find = box
-        .query(PrinterObjectBoxStruct_.code.equals(code))
-        .build()
-        .findFirst();
+    final find = box.query(PrinterObjectBoxStruct_.code.equals(code)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

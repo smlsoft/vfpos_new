@@ -49,7 +49,11 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                       setState(() {});
                       return;
                     }
-                    await Navigator.push(context, MaterialPageRoute(builder: (context) => PrinterConfigSelectPrinterScreen(printerCode: global.printerLocalStrongData[index].code, printerName: global.printerLocalStrongData[index].name))).then((value) async {
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PrinterConfigSelectPrinterScreen(
+                                printerCode: global.printerLocalStrongData[index].code, printerName: global.printerLocalStrongData[index].name))).then((value) async {
                       await global.loadPrinter();
                       setState(() {});
                     });
@@ -66,7 +70,8 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () async {
-                      await Navigator.push(context, MaterialPageRoute(builder: (context) => PrinterConfigSelectFormPage(printer: global.printerLocalStrongData[index]))).then((value) async {
+                      await Navigator.push(context, MaterialPageRoute(builder: (context) => PrinterConfigSelectFormPage(printer: global.printerLocalStrongData[index])))
+                          .then((value) async {
                         await global.loadPrinter();
                         setState(() {});
                       });
@@ -82,7 +87,8 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                 padding: const EdgeInsets.all(4),
                 child: Column(
                   children: [
-                    if (global.printerLocalStrongData[index].ipAddress.isNotEmpty) Text("${global.printerLocalStrongData[index].ipAddress}:${global.printerLocalStrongData[index].ipPort}"),
+                    if (global.printerLocalStrongData[index].ipAddress.isNotEmpty)
+                      Text("${global.printerLocalStrongData[index].ipAddress}:${global.printerLocalStrongData[index].ipPort}"),
                     if (global.printerLocalStrongData[index].deviceId.isNotEmpty) Text(global.printerLocalStrongData[index].deviceId),
                     if (global.printerLocalStrongData[index].deviceName.isNotEmpty) Text(global.printerLocalStrongData[index].deviceName),
                     if (global.printerLocalStrongData[index].manufacturer.isNotEmpty) Text(global.printerLocalStrongData[index].manufacturer)
@@ -111,9 +117,7 @@ class _PrinterConfigScreenState extends State<PrinterConfigScreen> {
                 child: Wrap(
                   spacing: 10,
                   runSpacing: 10,
-                  children: [
-                    for (int index = 0; index < global.printerLocalStrongData.length; index++) printer(index)
-                  ],
+                  children: [for (int index = 0; index < global.printerLocalStrongData.length; index++) printer(index)],
                 ))));
   }
 }

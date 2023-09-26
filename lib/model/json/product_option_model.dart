@@ -25,15 +25,9 @@ class ProductOptionModel {
   /// ตัวเลือกที่เลือก
   int? select_index = 0;
 
-  ProductOptionModel(
-      {required this.guid,
-      required this.choicetype,
-      required this.maxselect,
-      required this.names,
-      required this.choices});
+  ProductOptionModel({required this.guid, required this.choicetype, required this.maxselect, required this.names, required this.choices});
 
-  factory ProductOptionModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductOptionModelFromJson(json);
+  factory ProductOptionModel.fromJson(Map<String, dynamic> json) => _$ProductOptionModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProductOptionModelToJson(this);
 }
 
@@ -85,7 +79,6 @@ class ProductChoiceModel {
     required this.isstock,
     required this.selected,
   });
-  factory ProductChoiceModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductChoiceModelFromJson(json);
+  factory ProductChoiceModel.fromJson(Map<String, dynamic> json) => _$ProductChoiceModelFromJson(json);
   Map<String, dynamic> toJson() => _$ProductChoiceModelToJson(this);
 }

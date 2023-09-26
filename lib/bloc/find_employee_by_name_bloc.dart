@@ -14,30 +14,24 @@ class FindEmployeeByNameLoadSuccess extends FindEmployeeByNameState {
   FindEmployeeByNameLoadSuccess({required this.result});
 }
 
-class FindEmployeeByNameBloc
-    extends Bloc<FindEmployeeByNameEvent, FindEmployeeByNameState> {
+class FindEmployeeByNameBloc extends Bloc<FindEmployeeByNameEvent, FindEmployeeByNameState> {
   final RestApiFindEmployeeByWord apiFindEmployeeByName;
 
   final int? offset;
   final int? limit;
 
-  FindEmployeeByNameBloc(
-      {required this.apiFindEmployeeByName, this.offset, this.limit})
-      : super(FindEmployeeByNameInitial()) {
+  FindEmployeeByNameBloc({required this.apiFindEmployeeByName, this.offset, this.limit}) : super(FindEmployeeByNameInitial()) {
     on<FindEmployeeByNameLoadStart>(_findEmployeeByWord);
     on<FindEmployeeByNameLoadFinish>(_findEmployeeByNameLoadFinish);
   }
 
-  void _findEmployeeByWord(FindEmployeeByNameLoadStart event,
-      Emitter<FindEmployeeByNameState> emit) async {
+  void _findEmployeeByWord(FindEmployeeByNameLoadStart event, Emitter<FindEmployeeByNameState> emit) async {
     emit(FindEmployeeByNameLoading());
-    List<FindEmployeeModel> result =
-        await apiFindEmployeeByName.findEmployeeByWord(event.words);
+    List<FindEmployeeModel> result = await apiFindEmployeeByName.findEmployeeByWord(event.words);
     emit(FindEmployeeByNameLoadSuccess(result: result));
   }
 
-  void _findEmployeeByNameLoadFinish(FindEmployeeByNameLoadFinish event,
-      Emitter<FindEmployeeByNameState> emit) async {
+  void _findEmployeeByNameLoadFinish(FindEmployeeByNameLoadFinish event, Emitter<FindEmployeeByNameState> emit) async {
     emit(FindEmployeeByNameLoadStop());
   }
 }

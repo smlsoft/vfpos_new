@@ -5,8 +5,7 @@ class PromotionTempHelper {
     return 0;
   }
 
-  List<PromotionTempModel> select(
-      {String where = "", int limit = 0, int offset = 0}) {
+  List<PromotionTempModel> select({String where = "", int limit = 0, int offset = 0}) {
     return [];
   }
 }

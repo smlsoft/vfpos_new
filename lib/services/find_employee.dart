@@ -12,12 +12,10 @@ class FindEmployee extends StatefulWidget {
   State<FindEmployee> createState() => _FindEmployeeState();
 }
 
-class _FindEmployeeState extends State<FindEmployee>
-    with TickerProviderStateMixin {
+class _FindEmployeeState extends State<FindEmployee> with TickerProviderStateMixin {
   final debouncer = global.Debounce(500);
   final List<FindEmployeeModel> findResult = [];
-  final TextEditingController textFindByTextController =
-      TextEditingController();
+  final TextEditingController textFindByTextController = TextEditingController();
 
   @override
   void initState() {
@@ -26,20 +24,16 @@ class _FindEmployeeState extends State<FindEmployee>
   }
 
   Widget findByText() {
-    return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(
-        builder: (context, state) {
+    return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(builder: (context, state) {
       if (state is FindEmployeeByNameLoadSuccess) {
         findResult.addAll(state.result);
-        context
-            .read<FindEmployeeByNameBloc>()
-            .add(FindEmployeeByNameLoadFinish());
+        context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadFinish());
       }
       return Container(
           width: double.infinity,
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            border: Border.all(
-                color: const Color.fromARGB(255, 51, 204, 255), width: 1),
+            border: Border.all(color: const Color.fromARGB(255, 51, 204, 255), width: 1),
             borderRadius: BorderRadius.circular(5),
             shape: BoxShape.rectangle,
           ),
@@ -52,9 +46,7 @@ class _FindEmployeeState extends State<FindEmployee>
                     onChanged: (string) {
                       debouncer.run(() {
                         findResult.clear();
-                        context.read<FindEmployeeByNameBloc>().add(
-                            FindEmployeeByNameLoadStart(
-                                textFindByTextController.text));
+                        context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadStart(textFindByTextController.text));
                       });
                     },
                     decoration: InputDecoration(
@@ -74,11 +66,7 @@ class _FindEmployeeState extends State<FindEmployee>
 
   Widget employeeContent() {
     return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 3 / 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 200, childAspectRatio: 3 / 2, crossAxisSpacing: 20, mainAxisSpacing: 20),
         itemCount: findResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return employeeButton(index);
@@ -92,8 +80,7 @@ class _FindEmployeeState extends State<FindEmployee>
       child: SizedBox(
           child: ElevatedButton(
         onPressed: () async {
-          Navigator.pop(
-              context, [findResult[index].code, findResult[index].name]);
+          Navigator.pop(context, [findResult[index].code, findResult[index].name]);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -112,8 +99,7 @@ class _FindEmployeeState extends State<FindEmployee>
                         height: 80,
                         imageUrl: findResult[index].profile_picture,
                         fit: BoxFit.fill,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       )),
             Text((findResult[index].name),
                 style: const TextStyle(
@@ -137,7 +123,7 @@ class _FindEmployeeState extends State<FindEmployee>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: global.posTheme.secondary,
-        title:  Text(global.language("find_employee")),
+        title: Text(global.language("find_employee")),
       ),
       body: findByText(),
     );

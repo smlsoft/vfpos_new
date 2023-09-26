@@ -70,7 +70,7 @@ PosConfigModel posConfig = PosConfigModel(
   doccode: '',
   vattype: 0,
   vatrate: 0,
-  docformattaxinv: '',
+  docformatinv: '',
   billheader: [],
   billfooter: [],
   isvatregister: false,
@@ -554,50 +554,6 @@ double calcTextToNumber(String text) {
   return result;
 }
 
-Future<String> billRunning() async {
-  // Type 0=คริสต์ศักราช,1=พุทธศักราช
-  // YYYY = ปี
-  // MM = เดือน
-  // DD = วัน
-  // ###### = ลำดับ
-  // ตัวอย่าง 001################ สำหรับ Tax ABB เครื่อง POS (001=รหัสเครื่อง POS)
-  // ตัวอย่าง 002YYMMDD########## สำหรับ Tax ABB เครื่อง POS (002=รหัสเครื่อง POS)
-  // ตัวอย่าง SO-YYMMDD-###### สำหรับขาย
-  // ตัวอย่าง PO-YYMMDD-###### สำหรับซื้อ
-  DateTime dateTimeNow = DateTime.now();
-  String dateNow = DateFormat('yyyyMMdd').format(dateTimeNow);
-  String result = "";
-  String countDigit = "";
-  String lastDigit = "";
-  for (var item in posConfig.docformattaxinv.split("")) {
-    if (item == "#") {
-      countDigit += "0";
-      lastDigit += "9";
-    }
-  }
-  String docFormat = posConfig.doccode + posConfig.docformattaxinv.replaceAll("#", "");
-  docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
-  docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
-  docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
-  docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
-  int number = 0;
-  var getLast = objectBoxStore
-      .box<BillObjectBoxStruct>()
-      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
-      .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
-      .build()
-      .findFirst();
-  if (getLast != null) {
-    if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
-      number = int.parse(getLast.doc_number.substring(getLast.doc_number.length - countDigit.length));
-    }
-  }
-  result = "$docFormat${(NumberFormat(countDigit)).format(number + 1)}";
-  result = const Uuid().v4();
-  print("Doc Running : $result");
-  return result;
-}
-
 Future<bool> hasNetwork() async {
   try {
     final result = await InternetAddress.lookup('example.com');
@@ -812,6 +768,63 @@ double calcDiscountFormula({required double totalAmount, required String discoun
     }
   }
   return sumDiscount;
+}
+
+Future<String> billRunning() async {
+  // Type 0=คริสต์ศักราช,1=พุทธศักราช
+  // YYYY = ปี
+  // MM = เดือน
+  // DD = วัน
+  // ###### = ลำดับ
+  // ตัวอย่าง 001################ สำหรับ Tax ABB เครื่อง POS (001=รหัสเครื่อง POS)
+  // ตัวอย่าง 002YYMMDD########## สำหรับ Tax ABB เครื่อง POS (002=รหัสเครื่อง POS)
+  // ตัวอย่าง SO-YYMMDD-###### สำหรับขาย
+  // ตัวอย่าง PO-YYMMDD-###### สำหรับซื้อ
+  DateTime dateTimeNow = DateTime.now();
+  String dateNow = DateFormat('yyyyMMdd').format(dateTimeNow);
+  String result = "";
+  String countDigit = "";
+  String lastDigit = "";
+  for (var item in posConfig.docformatinv.split("")) {
+    if (item == "#") {
+      countDigit += "0";
+      lastDigit += "9";
+    }
+  }
+  String docFormat = posConfig.doccode + posConfig.docformatinv.replaceAll("#", "");
+  docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
+  docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
+  docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
+  docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
+  int number = 0;
+  var getLast = objectBoxStore
+      .box<BillObjectBoxStruct>()
+      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
+      .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
+      .build()
+      .findFirst();
+  if (getLast != null) {
+    if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
+      number = int.parse(getLast.doc_number.substring(getLast.doc_number.length - countDigit.length));
+    }
+  } else {
+    // ค้นหาข้อมูลบน Cloud
+    var lastDocNumberJson = await ApiRepository().serverGetLastDocNumber(docNumber: docFormat + lastDigit);
+    String lastDocNumber = "";
+    try {
+      lastDocNumber = lastDocNumberJson.data;
+    } catch (e) {
+      serviceLocator<Log>().error(e);
+    }
+    if (lastDocNumber.isNotEmpty) {
+      number = int.parse(lastDocNumber.substring(lastDocNumber.length - countDigit.length));
+    }
+    print(lastDocNumber);
+  }
+  result = "$docFormat${(NumberFormat(countDigit)).format(number + 1)}";
+  //result = Uuid().v4();
+  print("Doc Running : $result");
+  return result;
 }
 
 String language(String code) {

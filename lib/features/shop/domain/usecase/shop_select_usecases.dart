@@ -13,12 +13,10 @@ abstract class ShopSelectUseCases {
 
 class ShopSelectUseCasesImpl implements ShopSelectUseCases {
   @override
-  Future<Either<Failure, List<ShopUser>>> listMyShop() =>
-      serviceLocator<ShopAuthenticationRepository>().listMyShop();
+  Future<Either<Failure, List<ShopUser>>> listMyShop() => serviceLocator<ShopAuthenticationRepository>().listMyShop();
 
   @override
-  Future<Either<Failure, bool>> selectShop(String shopid) =>
-      serviceLocator<ShopAuthenticationRepository>().selectShop(shopid: shopid);
+  Future<Either<Failure, bool>> selectShop(String shopid) => serviceLocator<ShopAuthenticationRepository>().selectShop(shopid: shopid);
 
   @override
   Future<Either<Failure, Shop>> createShop(String shopName) async {

@@ -29,7 +29,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => PosTerminalBloc(posterminalRepository: ApiRepository())),
       ],
       child: MaterialApp.router(
-        title: 'Dedepos',
+        title: 'Village Fund POS',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

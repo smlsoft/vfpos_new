@@ -10,7 +10,8 @@ Future<PosProcessResultModel> posCompileProcess({required String holdCode, requi
     PosProcess posProcess = PosProcess();
     int holdIndex = global.findPosHoldProcessResultIndex(holdCode);
     if (holdIndex != -1) {
-      global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)].posProcess = await posProcess.process(holdCode: holdCode, docMode: docMode, detailDiscountFormula: detailDiscountFormula, discountFormula: "");
+      global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)].posProcess =
+          await posProcess.process(holdCode: holdCode, docMode: docMode, detailDiscountFormula: detailDiscountFormula, discountFormula: "");
       posProcess.sumCategoryCount(value: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(holdCode)].posProcess);
       processResult = posProcess.result;
     }
@@ -25,7 +26,8 @@ Future<PosProcessResultModel> posCompileProcess({required String holdCode, requi
           int holdIndex = global.findPosHoldProcessResultIndex(getHoldCode);
           if (holdIndex != -1) {
             PosProcess posProcess = PosProcess();
-            global.posHoldProcessResult[global.findPosHoldProcessResultIndex(getHoldCode)].posProcess = await posProcess.process(holdCode: getHoldCode, docMode: getDocMode, detailDiscountFormula: "", discountFormula: "");
+            global.posHoldProcessResult[global.findPosHoldProcessResultIndex(getHoldCode)].posProcess =
+                await posProcess.process(holdCode: getHoldCode, docMode: getDocMode, detailDiscountFormula: "", discountFormula: "");
             posProcess.sumCategoryCount(value: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(getHoldCode)].posProcess);
           }
         }

@@ -10,8 +10,7 @@ class UserRepository {
     Dio client = Client().init();
 
     try {
-      final response = await client
-          .post('/login', data: {"username": userName, "password": passWord});
+      final response = await client.post('/login', data: {"username": userName, "password": passWord});
       try {
         final result = json.decode(response.toString());
         final rawData = {"success": result["success"], "data": result};
@@ -78,8 +77,7 @@ class UserRepository {
     Dio client = Client().init();
 
     try {
-      final response =
-          await client.post('/select-shop', data: {"shopid": shopid});
+      final response = await client.post('/select-shop', data: {"shopid": shopid});
       try {
         final rawData = json.decode(response.toString());
 

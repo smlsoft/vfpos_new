@@ -23,6 +23,7 @@ class PayTransfer extends StatefulWidget {
 class _PayTransferState extends State<PayTransfer> {
   GlobalKey amountNumberKey = GlobalKey();
   String bookBankCode = "";
+  List<LanguageDataModel>? bookBankName = [];
   String bankCode = "";
   String bankName = "";
   double amount = 0;
@@ -33,6 +34,7 @@ class _PayTransferState extends State<PayTransfer> {
     super.initState();
     if (global.posConfig.transfers!.isNotEmpty) {
       bookBankCode = global.posConfig.transfers![0].bookbank.accountcode!;
+      bookBankName = global.posConfig.transfers![0].names;
     }
   }
 
@@ -42,7 +44,8 @@ class _PayTransferState extends State<PayTransfer> {
 
   bool saveData() {
     if (bankCode.trim().isNotEmpty && amount > 0) {
-      global.payScreenData.transfer.add(PayTransferModel(book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, amount: amount));
+      global.payScreenData.transfer.add(PayTransferModel(
+          book_bank_name: bookBankName!.firstWhere((ele) => ele.code == "th").name, book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, amount: amount));
       return true;
     } else {
       return false;
@@ -67,6 +70,7 @@ class _PayTransferState extends State<PayTransfer> {
                 ElevatedButton(
                     onPressed: () {
                       bookBankCode = item.bookbank.bankcode!;
+                      bookBankName = item.names;
                       refreshEvent();
                     },
                     child: Column(
@@ -231,7 +235,10 @@ class _PayTransferState extends State<PayTransfer> {
                 children: [
                   SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.transfer[index].bank_code)))),
                   const SizedBox(width: 10),
-                  buildDetailsBlock(label: global.language('total_amount'), value: global.moneyFormat.format(global.payScreenData.transfer[index].amount)),
+                  buildDetailsBlock(
+                      sendto: global.payScreenData.transfer[index].book_bank_name,
+                      label: global.language('total_amount'),
+                      value: global.moneyFormat.format(global.payScreenData.transfer[index].amount)),
                 ],
               ),
               trailing: IconButton(
@@ -274,10 +281,14 @@ class _PayTransferState extends State<PayTransfer> {
     );
   }
 
-  Column buildDetailsBlock({required String label, required String value}) {
+  Column buildDetailsBlock({required String sendto, required String label, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Text(
+          sendto,
+          style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.bold),
+        ),
         Text(
           label,
           style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.bold),

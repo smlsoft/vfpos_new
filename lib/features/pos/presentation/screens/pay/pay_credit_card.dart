@@ -27,6 +27,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
   GlobalKey approveNumberKey = GlobalKey();
   GlobalKey amountNumberKey = GlobalKey();
   String bookBankCode = "";
+  List<LanguageDataModel>? bookBankName = [];
   String bankCode = "";
   String bankName = "";
   String cardNumber = "";
@@ -38,6 +39,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
     super.initState();
     if (global.posConfig.creditcards!.isNotEmpty) {
       bookBankCode = global.posConfig.creditcards![0].bookbank.accountcode!;
+      bookBankName = global.posConfig.creditcards![0].names;
     }
   }
 
@@ -47,8 +49,14 @@ class _PayCreditCardState extends State<PayCreditCard> {
 
   bool saveData() {
     if (cardNumber.trim().isNotEmpty && cardAmount > 0) {
-      PayCreditCardModel data =
-          PayCreditCardModel(book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, card_number: cardNumber, approved_code: approveNumber, amount: cardAmount);
+      PayCreditCardModel data = PayCreditCardModel(
+          book_bank_name: bookBankName!.firstWhere((ele) => ele.code == "th").name,
+          book_bank_code: bookBankCode,
+          bank_code: bankCode,
+          bank_name: bankName,
+          card_number: cardNumber,
+          approved_code: approveNumber,
+          amount: cardAmount);
       global.payScreenData.credit_card.add(data);
       return true;
     } else {
@@ -74,6 +82,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
                 ElevatedButton(
                     onPressed: () {
                       bookBankCode = item.bookbank.bankcode!;
+                      bookBankName = item.names;
                       refreshEvent();
                     },
                     child: Column(
@@ -333,7 +342,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
             child: ListTile(
               title: Column(
                 children: [
-                  Text(global.payScreenData.credit_card[index].book_bank_code),
+                  Text(global.payScreenData.credit_card[index].book_bank_name),
                   Row(
                     children: [
                       SizedBox(width: 100, height: 50, child: Image(image: NetworkToFileImage(url: global.findBankLogo(global.payScreenData.credit_card[index].bank_code)))),

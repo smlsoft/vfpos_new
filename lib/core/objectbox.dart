@@ -24,8 +24,7 @@ import 'package:path_provider/path_provider.dart';
 
 Future<void> objectBoxInit() async {
   final appDirectory = await getApplicationDocumentsDirectory();
-  final objectBoxDirectory =
-      Directory("${appDirectory.path}/dedepos/objectbox");
+  final objectBoxDirectory = Directory("${appDirectory.path}/dedepos/objectbox");
   if (!objectBoxDirectory.existsSync()) {
     await objectBoxDirectory.create(recursive: true);
   }
@@ -38,13 +37,9 @@ Future<void> objectBoxInit() async {
       } catch (e) {
         dev.log(e.toString());
       }
-      objectBoxStore = Store(getObjectBoxModel(),
-          directory: objectBoxDirectory.path,
-          queriesCaseSensitiveDefault: false);
+      objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
     } else {
-      objectBoxStore = Store(getObjectBoxModel(),
-          directory: objectBoxDirectory.path,
-          queriesCaseSensitiveDefault: false);
+      objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
     }
   } catch (e) {
     dev.log("App Data : $appDirectory");
@@ -56,10 +51,7 @@ Future<void> objectBoxInit() async {
       await objectBoxDirectory.delete(recursive: true);
     }
 
-    objectBoxStore = Store(getObjectBoxModel(),
-        directory: objectBoxDirectory.path,
-        queriesCaseSensitiveDefault: false,
-        macosApplicationGroup: 'objectbox.demo');
+    objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false, macosApplicationGroup: 'objectbox.demo');
   }
 }
 

@@ -61,7 +61,19 @@ Future<void> loadFormDesign() async {
     ];
 
     // ใบสรุปยอด/ไม่ใช่ใบเสร็จรับเงิน
-    global.formDesignList.add(FormDesignObjectBoxStruct(guid_fixed: "", code: global.formS01, form_code: global.getPosFormCodeByCode(global.formS01), sum_by_type: true, sum_by_barcode: true, print_logo: true, print_prompt_pay: true, names_json: global.getPosFormNameByCode(global.formS01), detail_json: jsonEncode(detailColumn), detail_total_json: jsonEncode(detailTotalColumn), detail_extra_json: jsonEncode(detailExtraColumn), detail_footer_json: "{}"));
+    global.formDesignList.add(FormDesignObjectBoxStruct(
+        guid_fixed: "",
+        code: global.formS01,
+        form_code: global.getPosFormCodeByCode(global.formS01),
+        sum_by_type: true,
+        sum_by_barcode: true,
+        print_logo: true,
+        print_prompt_pay: true,
+        names_json: global.getPosFormNameByCode(global.formS01),
+        detail_json: jsonEncode(detailColumn),
+        detail_total_json: jsonEncode(detailTotalColumn),
+        detail_extra_json: jsonEncode(detailExtraColumn),
+        detail_footer_json: "{}"));
   }
   {
     List<FormDesignColumnModel> detailColumn = [
