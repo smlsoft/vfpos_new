@@ -89,7 +89,7 @@ class _MenuScreenState extends State<MenuScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const PosBillVatScreen(posScreenMode: global.PosScreenModeEnum.mainMenu),
+              builder: (context) => const PosBillVatScreen(posScreenMode: global.PosScreenModeEnum.posSale),
             ),
           );
         },
@@ -102,7 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => const PosCancelBillScreen(
-                posScreenMode: global.PosScreenModeEnum.mainMenu,
+                posScreenMode: global.PosScreenModeEnum.posSale,
               ),
             ),
           );
@@ -651,7 +651,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const PosCancelBillScreen(
-                                    posScreenMode: global.PosScreenModeEnum.mainMenu,
+                                    posScreenMode: global.PosScreenModeEnum.posSale,
                                   ),
                                 ),
                               );

@@ -18,6 +18,7 @@ class PayCashWidgetState extends State<PayCashWidget> {
 
   @override
   void initState() {
+    refreshEvent();
     super.initState();
   }
 

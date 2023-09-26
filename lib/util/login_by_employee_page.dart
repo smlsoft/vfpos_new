@@ -136,7 +136,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                     ElevatedButton(
                                       onPressed: () async {
                                         // ตรวจสอบ User,Password
-                                        var employee = global.employeeHelper.selectByCode(code: userController.text);
+                                        var employee = global.employeeHelper.loginByCode(code: userController.text, pinCode: passwordController.text);
                                         if (employee != null) {
                                           if (employee.pin_code == passwordController.text && employee.is_use_pos == false) {
                                             if (employee.pin_code == "123456") {
@@ -214,7 +214,7 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                                 ElevatedButton(
                                   onPressed: () async {
                                     // ตรวจสอบ User,Password
-                                    var employee = global.employeeHelper.selectByCode(code: userController.text);
+                                    var employee = global.employeeHelper.loginByCode(code: userController.text, pinCode: passwordController.text);
                                     if (employee != null) {
                                       if (employee.pin_code == passwordController.text && employee.is_use_pos == false) {
                                         if (employee.pin_code == "123456") {

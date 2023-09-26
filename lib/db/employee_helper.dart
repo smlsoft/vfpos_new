@@ -54,6 +54,10 @@ class EmployeeHelper {
     )).build().findFirst();
   }
 
+  EmployeeObjectBoxStruct? loginByCode({required String code, required String pinCode}) {
+    return (box.query(EmployeeObjectBoxStruct_.code.equals(code).and(EmployeeObjectBoxStruct_.pin_code.equals(pinCode)))).build().findFirst();
+  }
+
   int count() {
     return (box.query()).build().count();
   }
