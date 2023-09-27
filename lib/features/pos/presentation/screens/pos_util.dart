@@ -108,26 +108,28 @@ Future<SaveBillResultClass> saveBill(
           is_except_vat: element.is_except_vat,
           total_amount: element.total_amount));
     }
-    details.add(BillDetailObjectBoxStruct(
-        doc_mode: docMode,
-        doc_number: docNumber,
-        line_number: lineNumber,
-        barcode: value.barcode,
-        item_code: value.item_code,
-        item_name: value.item_name,
-        unit_code: value.unit_code,
-        unit_name: value.unit_name,
-        sku: "",
-        qty: value.qty,
-        price: value.price,
-        discount_text: value.discount_text,
-        discount: value.discount,
-        is_except_vat: value.is_except_vat,
-        extra_json: jsonEncode(detailExtras),
-        total_amount: value.total_amount,
-        vat_type: value.vat_type,
-        price_exclude_vat: value.price_exclude_vat));
-    lineNumber++;
+    if (!value.is_void) {
+      details.add(BillDetailObjectBoxStruct(
+          doc_mode: docMode,
+          doc_number: docNumber,
+          line_number: lineNumber,
+          barcode: value.barcode,
+          item_code: value.item_code,
+          item_name: value.item_name,
+          unit_code: value.unit_code,
+          unit_name: value.unit_name,
+          sku: "",
+          qty: value.qty,
+          price: value.price,
+          discount_text: value.discount_text,
+          discount: value.discount,
+          is_except_vat: value.is_except_vat,
+          extra_json: jsonEncode(detailExtras),
+          total_amount: value.total_amount,
+          vat_type: value.vat_type,
+          price_exclude_vat: value.price_exclude_vat));
+      lineNumber++;
+    }
   }
   // รายละเอียดโต๊ะ (DEDE POS Cafe)
   int manCount = 0;
