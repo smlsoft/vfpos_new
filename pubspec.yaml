@@ -3,7 +3,7 @@ description: vfpos pos project.
 
 publish_to: "none"
 
-version: 1.3.12+40
+version: 1.3.13+41
 
 environment:
   sdk: ">=2.19.6 <3.0.0"

@@ -161,7 +161,7 @@ Future syncBillData() async {
         taxdocdate: bill.date_time.toUtc().toIso8601String(),
         taxdocno: bill.doc_number,
         totalaftervat: bill.amount_after_calc_vat,
-        totalamount: bill.amount_after_calc_vat + bill.total_item_except_vat_amount + bill.total_discount,
+        totalamount: (bill.amount_after_calc_vat + bill.amount_except_vat) - bill.total_discount,
         totalbeforevat: bill.amount_before_calc_vat,
         totalcost: 0,
         totaldiscount: bill.total_discount,
