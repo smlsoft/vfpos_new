@@ -20,7 +20,6 @@ mixin _$AuthenticationEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
-    required TResult Function() onLoginWithGoogleTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -30,7 +29,6 @@ mixin _$AuthenticationEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult? Function()? onLoginWithGoogleTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -40,7 +38,6 @@ mixin _$AuthenticationEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult Function()? onLoginWithGoogleTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -51,8 +48,6 @@ mixin _$AuthenticationEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
-    required TResult Function(LoginWithGoogleEvent value)
-        onLoginWithGoogleTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -63,7 +58,6 @@ mixin _$AuthenticationEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult? Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -73,7 +67,6 @@ mixin _$AuthenticationEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -178,7 +171,6 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
-    required TResult Function() onLoginWithGoogleTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -191,7 +183,6 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult? Function()? onLoginWithGoogleTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -204,7 +195,6 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult Function()? onLoginWithGoogleTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -221,8 +211,6 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
-    required TResult Function(LoginWithGoogleEvent value)
-        onLoginWithGoogleTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -236,7 +224,6 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult? Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -249,7 +236,6 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -272,134 +258,6 @@ abstract class LoginUserPasswordEvent implements AuthenticationEvent {
   @JsonKey(ignore: true)
   _$$LoginUserPasswordEventCopyWith<_$LoginUserPasswordEvent> get copyWith =>
       throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$LoginWithGoogleEventCopyWith<$Res> {
-  factory _$$LoginWithGoogleEventCopyWith(_$LoginWithGoogleEvent value,
-          $Res Function(_$LoginWithGoogleEvent) then) =
-      __$$LoginWithGoogleEventCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$LoginWithGoogleEventCopyWithImpl<$Res>
-    extends _$AuthenticationEventCopyWithImpl<$Res, _$LoginWithGoogleEvent>
-    implements _$$LoginWithGoogleEventCopyWith<$Res> {
-  __$$LoginWithGoogleEventCopyWithImpl(_$LoginWithGoogleEvent _value,
-      $Res Function(_$LoginWithGoogleEvent) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
-
-class _$LoginWithGoogleEvent implements LoginWithGoogleEvent {
-  const _$LoginWithGoogleEvent();
-
-  @override
-  String toString() {
-    return 'AuthenticationEvent.onLoginWithGoogleTapped()';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoginWithGoogleEvent);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String userName, String password)
-        onLoginWithUserPasswordTapped,
-    required TResult Function() onLoginWithGoogleTapped,
-    required TResult Function(User user) authenticated,
-    required TResult Function() unAuthenticated,
-    required TResult Function(User user) onAuthenticatedRefresh,
-  }) {
-    return onLoginWithGoogleTapped();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String userName, String password)?
-        onLoginWithUserPasswordTapped,
-    TResult? Function()? onLoginWithGoogleTapped,
-    TResult? Function(User user)? authenticated,
-    TResult? Function()? unAuthenticated,
-    TResult? Function(User user)? onAuthenticatedRefresh,
-  }) {
-    return onLoginWithGoogleTapped?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String userName, String password)?
-        onLoginWithUserPasswordTapped,
-    TResult Function()? onLoginWithGoogleTapped,
-    TResult Function(User user)? authenticated,
-    TResult Function()? unAuthenticated,
-    TResult Function(User user)? onAuthenticatedRefresh,
-    required TResult orElse(),
-  }) {
-    if (onLoginWithGoogleTapped != null) {
-      return onLoginWithGoogleTapped();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LoginUserPasswordEvent value)
-        onLoginWithUserPasswordTapped,
-    required TResult Function(LoginWithGoogleEvent value)
-        onLoginWithGoogleTapped,
-    required TResult Function(AuthenticatedEvent value) authenticated,
-    required TResult Function(UserLogoutEvent value) unAuthenticated,
-    required TResult Function(AuthenticatedRefreshEvent value)
-        onAuthenticatedRefresh,
-  }) {
-    return onLoginWithGoogleTapped(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LoginUserPasswordEvent value)?
-        onLoginWithUserPasswordTapped,
-    TResult? Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
-    TResult? Function(AuthenticatedEvent value)? authenticated,
-    TResult? Function(UserLogoutEvent value)? unAuthenticated,
-    TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
-  }) {
-    return onLoginWithGoogleTapped?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LoginUserPasswordEvent value)?
-        onLoginWithUserPasswordTapped,
-    TResult Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
-    TResult Function(AuthenticatedEvent value)? authenticated,
-    TResult Function(UserLogoutEvent value)? unAuthenticated,
-    TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
-    required TResult orElse(),
-  }) {
-    if (onLoginWithGoogleTapped != null) {
-      return onLoginWithGoogleTapped(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class LoginWithGoogleEvent implements AuthenticationEvent {
-  const factory LoginWithGoogleEvent() = _$LoginWithGoogleEvent;
 }
 
 /// @nodoc
@@ -479,7 +337,6 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
-    required TResult Function() onLoginWithGoogleTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -492,7 +349,6 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult? Function()? onLoginWithGoogleTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -505,7 +361,6 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult Function()? onLoginWithGoogleTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -522,8 +377,6 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
-    required TResult Function(LoginWithGoogleEvent value)
-        onLoginWithGoogleTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -537,7 +390,6 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult? Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -550,7 +402,6 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -613,7 +464,6 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
-    required TResult Function() onLoginWithGoogleTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -626,7 +476,6 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult? Function()? onLoginWithGoogleTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -639,7 +488,6 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult Function()? onLoginWithGoogleTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -656,8 +504,6 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
-    required TResult Function(LoginWithGoogleEvent value)
-        onLoginWithGoogleTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -671,7 +517,6 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult? Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -684,7 +529,6 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -779,7 +623,6 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
-    required TResult Function() onLoginWithGoogleTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -792,7 +635,6 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult? Function()? onLoginWithGoogleTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -805,7 +647,6 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
-    TResult Function()? onLoginWithGoogleTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -822,8 +663,6 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
-    required TResult Function(LoginWithGoogleEvent value)
-        onLoginWithGoogleTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -837,7 +676,6 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult? Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -850,7 +688,6 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
-    TResult Function(LoginWithGoogleEvent value)? onLoginWithGoogleTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,

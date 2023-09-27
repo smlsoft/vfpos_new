@@ -48,22 +48,22 @@ class _LoginState extends State<POSLoginScreen> {
                 header: "Login Pin Code",
               )));
     } else {
-      screenWidget = Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // const Image(image: AssetImage('assets/icon.png')),
-          const Text("POS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48)),
-          const Text("POS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 96)),
-          ElevatedButton.icon(
-              icon: const Icon(Icons.lock_open_outlined),
-              label: const Text("Continue With Google Account"),
-              onPressed: () {
-                global.loginSuccess = true;
-                Navigator.of(context).pushReplacementNamed('/loading');
-              }),
-        ],
-      ));
+      // screenWidget = Center(
+      //     child: Column(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     // const Image(image: AssetImage('assets/icon.png')),
+      //     const Text("POS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 48)),
+      //     const Text("POS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 96)),
+      //     ElevatedButton.icon(
+      //         icon: const Icon(Icons.lock_open_outlined),
+      //         label: const Text("Continue With Google Account"),
+      //         onPressed: () {
+      //           global.loginSuccess = true;
+      //           Navigator.of(context).pushReplacementNamed('/loading');
+      //         }),
+      //   ],
+      // ));
     }
 
     return SafeArea(child: Scaffold(resizeToAvoidBottomInset: false, body: screenWidget));

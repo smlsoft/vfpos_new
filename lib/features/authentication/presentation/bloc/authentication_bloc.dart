@@ -24,19 +24,19 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       );
     });
 
-    on<LoginWithGoogleEvent>((event, emit) async {
-      emit(const AuthenticationLoadingState());
+    // on<LoginWithGoogleEvent>((event, emit) async {
+    //   emit(const AuthenticationLoadingState());
 
-      var result = await serviceLocator<LoginUserUseCase>().loginWithGoogle();
-      result.fold(
-        (failure) {
-          emit(AuthenticationState.error(failure.message));
-        },
-        (data) {
-          emit(AuthenticationState.loaded(user: data));
-        },
-      );
-    });
+    //   var result = await serviceLocator<LoginUserUseCase>().loginWithGoogle();
+    //   result.fold(
+    //     (failure) {
+    //       emit(AuthenticationState.error(failure.message));
+    //     },
+    //     (data) {
+    //       emit(AuthenticationState.loaded(user: data));
+    //     },
+    //   );
+    // });
 
     on<AuthenticatedEvent>((event, emit) async {
       emit(AuthenticationState.authenticated(user: event.user));

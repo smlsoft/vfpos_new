@@ -153,14 +153,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       passwordTextfield(),
                       const SizedBox(height: 12.0),
                       buttonLogin(),
-                      // const SizedBox(height: 12.0),
-                      // loginSeparatorLine(),
-                      // const SizedBox(height: 12.0),
-                      // buttonLoginWithGoogle(),
-                      // const SizedBox(height: 12.0),
-                      // // buttonLoginWithApple(),
-                      // // const SizedBox(height: 12.0),
-                      // Visibility(visible: Environment().isDev, child: buttonLoginDev()),
                     ],
                   );
                 },
@@ -227,18 +219,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       },
       icon: const Icon(Icons.person),
       label: const Text('Login'),
-      style: Styles.successButtonStyle(),
-    );
-  }
-
-  Widget buttonLoginWithGoogle() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        // on click
-        context.read<AuthenticationBloc>().add(const LoginWithGoogleEvent());
-      },
-      icon: const Icon(Icons.mail_outline),
-      label: const Text('Login with Google'),
       style: Styles.successButtonStyle(),
     );
   }

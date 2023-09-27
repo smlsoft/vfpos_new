@@ -26,20 +26,20 @@ class LoginUserUseCase {
     return response;
   }
 
-  Future<Either<Failure, User>> loginWithGoogle() async {
-    try {
-      // await serviceLocator<FirebaseAuthentication>().logInWithGoogle();
-      // final String? token =
-      //     await serviceLocator<FirebaseAuthentication>().getIdToken();
-      // if (token != null) {
-      //   return loginWithToken(token: token);
-      // }
+  // Future<Either<Failure, User>> loginWithGoogle() async {
+  //   try {
+  //     // await serviceLocator<FirebaseAuthentication>().logInWithGoogle();
+  //     // final String? token =
+  //     //     await serviceLocator<FirebaseAuthentication>().getIdToken();
+  //     // if (token != null) {
+  //     //   return loginWithToken(token: token);
+  //     // }
 
-      return left(const ConnectionFailure("Cannot Login With Google"));
-    } catch (e) {
-      return left(ConnectionFailure(e.toString()));
-    }
-  }
+  //     return left(const ConnectionFailure("Cannot Login With Google"));
+  //   } catch (e) {
+  //     return left(ConnectionFailure(e.toString()));
+  //   }
+  // }
 
   Future<bool> logout() async {
     final isDeleted = await serviceLocator<UserCacheService>().deleteUser();
