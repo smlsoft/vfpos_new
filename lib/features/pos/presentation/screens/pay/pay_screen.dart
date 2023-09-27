@@ -993,7 +993,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
       commandButton(
         index: 4,
         icon: FontAwesomeIcons.exchangeAlt,
-        label: global.language('transfer'),
+        label: global.language('money_transfer'),
         onPressed: () {
           tabBarMenuController.index = 4;
         },
@@ -1024,7 +1024,7 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
       commands.add(commandButton(
           index: 2,
           icon: FontAwesomeIcons.qrcode,
-          label: global.language('qr'),
+          label: global.language('qr_code'),
           onPressed: () {
             tabBarMenuController.index = 2;
           }));
