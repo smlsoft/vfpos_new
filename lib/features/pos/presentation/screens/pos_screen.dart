@@ -2759,6 +2759,10 @@ class _PosScreenState extends State<PosScreen> with TickerProviderStateMixin {
     findActiveLineByGuid = "";
     activeLineNumber = -1;
     textInput = "";
+    global.posHoldProcessResult[holdIndex].customerCode = "";
+    global.posHoldProcessResult[holdIndex].customerName = "";
+    global.posHoldProcessResult[holdIndex].saleCode = "";
+    global.posHoldProcessResult[holdIndex].saleName = "";
     global.posHoldProcessResult[holdIndex].payScreenData = PosPayModel();
     global.payScreenData = PosPayModel();
     processEvent(barcode: "", holdCode: global.posHoldActiveCode);

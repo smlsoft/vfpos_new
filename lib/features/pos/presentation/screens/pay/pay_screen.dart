@@ -991,24 +991,8 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
         },
       ),
       commandButton(
-        index: 2,
-        icon: FontAwesomeIcons.cashRegister,
-        label: global.language('qr_code'),
-        onPressed: () {
-          tabBarMenuController.index = 2;
-        },
-      ),
-      commandButton(
-        index: 3,
-        icon: FontAwesomeIcons.user,
-        label: global.language('credit_card'),
-        onPressed: () {
-          tabBarMenuController.index = 3;
-        },
-      ),
-      commandButton(
         index: 4,
-        icon: FontAwesomeIcons.user,
+        icon: FontAwesomeIcons.exchangeAlt,
         label: global.language('money_transfer'),
         onPressed: () {
           tabBarMenuController.index = 4;
@@ -1036,6 +1020,22 @@ class _PayScreenPageState extends State<PayScreenPage> with TickerProviderStateM
       //       tabBarMenuController.index = 7;
       //     }),
     ];
+    if (widget.posScreenMode == global.PosScreenModeEnum.posSale) {
+      commands.add(commandButton(
+          index: 2,
+          icon: FontAwesomeIcons.qrcode,
+          label: global.language('qr_code'),
+          onPressed: () {
+            tabBarMenuController.index = 2;
+          }));
+      commands.add(commandButton(
+          index: 3,
+          icon: FontAwesomeIcons.creditCard,
+          label: global.language('credit_card'),
+          onPressed: () {
+            tabBarMenuController.index = 3;
+          }));
+    }
 
     return LayoutBuilder(builder: (context, constraints) {
       int rowNumber = 1;
