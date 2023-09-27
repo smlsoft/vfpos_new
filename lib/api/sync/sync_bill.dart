@@ -254,7 +254,6 @@ Future syncShift() async {
 Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   Dio client = Client().init();
 
-  print(global.appStorage.read("token"));
   //String jsonPayload = jsonEncode(trx.toJson());
   try {
     final response = await client.post('/transaction/sale-invoice', data: trx.toJson());
