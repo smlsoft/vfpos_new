@@ -149,7 +149,7 @@ Future syncBillData() async {
         docreftype: 0,
         doctype: 0,
         guidref: "",
-        inquirytype: 0,
+        inquirytype: (bill.doc_mode == 1) ? 1 : 2,
         iscancel: bill.is_cancel,
         ismanualamount: false,
         ispos: true,
@@ -253,6 +253,8 @@ Future syncShift() async {
 
 Future<ApiResponse> saveTransaction(TransactionModel trx) async {
   Dio client = Client().init();
+
+  print(global.appStorage.read("token"));
   //String jsonPayload = jsonEncode(trx.toJson());
   try {
     final response = await client.post('/transaction/sale-invoice', data: trx.toJson());
