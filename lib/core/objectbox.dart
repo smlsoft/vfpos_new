@@ -32,11 +32,11 @@ Future<void> objectBoxInit() async {
     final isExists = await objectBoxDirectory.exists();
     if (isExists) {
       // ลบทิ้ง เพิ่มทดสอบใหม่
-      try {
-        await objectBoxDirectory.delete(recursive: true);
-      } catch (e) {
-        dev.log(e.toString());
-      }
+      // try {
+      //   await objectBoxDirectory.delete(recursive: true);
+      // } catch (e) {
+      //   dev.log(e.toString());
+      // }
       objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
     } else {
       objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false);
@@ -48,7 +48,7 @@ Future<void> objectBoxInit() async {
     final isExists = await objectBoxDirectory.exists();
     if (isExists) {
       dev.log("===??? $isExists");
-      await objectBoxDirectory.delete(recursive: true);
+      //  await objectBoxDirectory.delete(recursive: true);
     }
 
     objectBoxStore = Store(getObjectBoxModel(), directory: objectBoxDirectory.path, queriesCaseSensitiveDefault: false, macosApplicationGroup: 'objectbox.demo');

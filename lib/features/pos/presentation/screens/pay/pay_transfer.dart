@@ -45,7 +45,11 @@ class _PayTransferState extends State<PayTransfer> {
   bool saveData() {
     if (bankCode.trim().isNotEmpty && amount > 0) {
       global.payScreenData.transfer.add(PayTransferModel(
-          book_bank_name: bookBankName!.firstWhere((ele) => ele.code == "th").name, book_bank_code: bookBankCode, bank_code: bankCode, bank_name: bankName, amount: amount));
+          book_bank_name: bookBankName!.firstWhere((ele) => ele.code == "th").name,
+          book_bank_code: bookBankCode,
+          bank_code: bankCode,
+          bank_name: bankName,
+          amount: double.parse(amount.toStringAsFixed(2))));
       return true;
     } else {
       return false;

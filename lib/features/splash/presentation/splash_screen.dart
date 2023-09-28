@@ -15,6 +15,7 @@ import 'package:dedepos/services/user_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:get/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @RoutePage()
@@ -38,9 +39,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void getConfig() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    print("pos_terminal_token");
+    print(sharedPreferences.getString('pos_terminal_token'));
     global.posTerminalPinCode = sharedPreferences.getString('pos_terminal_pin_code') ?? "";
     global.posTerminalPinTokenId = sharedPreferences.getString('pos_terminal_token') ?? "";
     global.deviceId = sharedPreferences.getString('pos_device_id') ?? "";
+    print("pos_env_mode");
+    print(sharedPreferences.getString('pos_env_mode'));
+    sharedPreferences.getString('pos_env_mode') == "DEV" ? Environment().initConfig("DEV") : Environment().initConfig("PROD");
+    sharedPreferences.getString('pos_env_mode') == "DEV" ? global.environmentVersion = "DEV" : global.environmentVersion = "PROD";
   }
 
   void reload() {

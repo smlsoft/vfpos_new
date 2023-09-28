@@ -37,7 +37,8 @@ class PayQrWidgetState extends State<PayQrWidget> {
 
   bool saveData({required String providerCode, required String providerName, required payAmount, required String logo}) {
     if (payAmount > 0) {
-      global.payScreenData.qr.add(PayQrModel(provider_code: providerCode, provider_name: providerName, description: descriptionController.text, amount: payAmount, logo: logo));
+      global.payScreenData.qr.add(PayQrModel(
+          provider_code: providerCode, provider_name: providerName, description: descriptionController.text, amount: double.parse(payAmount.toStringAsFixed(2)), logo: logo));
       return true;
     }
     return false;
