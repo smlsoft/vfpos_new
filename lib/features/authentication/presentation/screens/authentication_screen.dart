@@ -38,6 +38,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     sharedPreferences.setString('pos_terminal_token', '');
     sharedPreferences.setString('pos_device_id', '');
     sharedPreferences.setString('pos_terminal_pin_code', '');
+
     global.posTerminalPinCode = "";
     global.posTerminalPinTokenId = "";
     global.deviceId = "";
@@ -115,13 +116,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       InkWell(
-                          onTap: () {
+                          onTap: () async {
+                            SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                             setState(() {
                               logoTouch = logoTouch + 1;
                               if (logoTouch >= 5) {
                                 if (global.environmentVersion == "PROD") {
                                   Environment().initConfig(Environment.DEV);
                                   global.environmentVersion = "DEV";
+                                  sharedPreferences.setString('pos_env_mode', 'DEV');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text("Develop Mode Active$logoTouch"),
@@ -131,6 +134,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                                 } else {
                                   Environment().initConfig(Environment.PROD);
                                   global.environmentVersion = "PROD";
+                                  sharedPreferences.setString('pos_env_mode', 'PROD');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text("Production Mode Active"),

@@ -56,7 +56,7 @@ class _PayCreditCardState extends State<PayCreditCard> {
           bank_name: bankName,
           card_number: cardNumber,
           approved_code: approveNumber,
-          amount: cardAmount);
+          amount: double.parse(cardAmount.toStringAsFixed(2)));
       global.payScreenData.credit_card.add(data);
       return true;
     } else {

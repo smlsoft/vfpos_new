@@ -95,7 +95,7 @@ bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
 var httpClient = http.Client();
 late BuildContext globalContext;
-String environmentVersion = "DEV";
+String environmentVersion = "PROD";
 bool tableSelected = false;
 String tableNumberSelected = "";
 late PosHoldProcessModel tableProcessSelected;
@@ -767,7 +767,7 @@ double calcDiscountFormula({required double totalAmount, required String discoun
       }
     }
   }
-  return sumDiscount;
+  return double.parse(sumDiscount.toStringAsFixed(2));
 }
 
 Future<String> billRunning() async {
