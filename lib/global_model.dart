@@ -627,6 +627,7 @@ class PosConfigModel {
   final int vattype;
   final double vatrate;
   final String docformatinv;
+  final String docformatesalereturn;
   final List<LanguageDataModel> billheader;
   final List<LanguageDataModel> billfooter;
   final bool isejournal;
@@ -646,6 +647,7 @@ class PosConfigModel {
     required this.vattype,
     required this.vatrate,
     required this.docformatinv,
+    required this.docformatesalereturn,
     required this.billheader,
     required this.billfooter,
     required this.isvatregister,

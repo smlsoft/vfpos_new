@@ -16,13 +16,38 @@ import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 
 // GET {{host}}/master-sync/list?lastupdate=2010-01-02T15:04&module=productunit&limit=1&offset=0&action=new
 class ApiRepository {
-  Future<ApiResponse> serverGetLastDocNumber({
+  Future<ApiResponse> serverGetLastDocNumber({required String docNumber, required int mode}) async {
+    Dio client = Client().init();
+
+    try {
+      String query = "/transaction/sale-invoice/last-pos-docno?posid=${global.posConfig.code}&maxdocno=$docNumber";
+      if (mode == 2) {
+        query = "/transaction/sale-invoice-return/last-pos-docno?posid=${global.posConfig.code}&maxdocno=$docNumber";
+      }
+      final response = await client.get(query);
+      try {
+        final rawData = json.decode(response.toString());
+        if (rawData['error'] != null) {
+          throw Exception('${rawData['code']}: ${rawData['message']}');
+        }
+        return ApiResponse.fromMap(rawData);
+      } catch (ex) {
+        throw Exception(ex);
+      }
+    } catch (ex) {
+      String errorMessage = ex.toString();
+      serviceLocator<Log>().error(errorMessage);
+      throw Exception(errorMessage);
+    }
+  }
+
+  Future<ApiResponse> serverGetLastReturnDocNumber({
     required String docNumber,
   }) async {
     Dio client = Client().init();
 
     try {
-      String query = "/transaction/sale-invoice/last-pos-docno?posid=${global.posConfig.code}&maxdocno=$docNumber";
+      String query = "/transaction/sale-invoice-return/last-pos-docno?posid=${global.posConfig.code}&maxdocno=$docNumber";
       final response = await client.get(query);
       try {
         final rawData = json.decode(response.toString());

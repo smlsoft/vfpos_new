@@ -24,7 +24,7 @@ Future<SaveBillResultClass> saveBill(
     required double discountAmount,
     required String posHoldActiveCode}) async {
   SaveBillResultClass result = SaveBillResultClass();
-  String docNumber = await global.billRunning();
+  String docNumber = await global.billRunning(docMode);
   DateTime docDate = DateTime.now();
   result.docNumber = docNumber;
   result.docDate = docDate;

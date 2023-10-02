@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/features/authentication/auth.dart';
+import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/util/loading_screen.dart';
 import 'package:dedepos/util/select_language_screen.dart';
@@ -56,29 +58,50 @@ class _LoginByEmployeeState extends State<LoginByEmployeePage> {
                 actions: [
                   IconButton(
                       onPressed: () async {
-                        await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('ลงทะเบียนเครื่องใหม่'),
-                                content: const Text('ต้องการลงทะเบียนเครื่องใหม่ เพื่อใช้กับฐานข้อมูลอื่นๆ'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('ไม่ต้องการ'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      context.read<AuthenticationBloc>().add(const UserLogoutEvent());
-                                    },
-                                    child: const Text('ต้องการ'),
-                                  ),
-                                ],
-                              );
-                            });
+                        List<BillObjectBoxStruct> bills = (global.billHelper.selectSyncIsFalse());
+                        if (bills.isEmpty) {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('ลงทะเบียนเครื่องใหม่'),
+                                  content: const Text('ต้องการลงทะเบียนเครื่องใหม่ เพื่อใช้กับฐานข้อมูลอื่นๆ'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('ไม่ต้องการ'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context.read<AuthenticationBloc>().add(const UserLogoutEvent());
+                                      },
+                                      child: const Text('ต้องการ'),
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('ไม่สามารถทำรายการได้'),
+                                  content: const Text('มีข้อมูลที่ยังไม่ได้ Sync จากฐานข้อมูลเดิม กรุณาทำรายการใหม่ภายหลัง'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        syncBillProcess();
+                                      },
+                                      child: const Text('ตกลง'),
+                                    ),
+                                  ],
+                                );
+                              });
+                        }
                       },
                       icon: const Icon(Icons.settings)),
                   // IconButton(
