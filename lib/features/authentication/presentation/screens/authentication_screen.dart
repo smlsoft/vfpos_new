@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/app/app.dart';
 import 'package:dedepos/core/core.dart';
 import 'package:dedepos/core/environment.dart';
+import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/flavors.dart';
@@ -72,6 +73,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
               child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
                 listener: (context, state) {
                   if (state is AuthenticationLoadedState) {
+                    objectBoxDeleteAll();
                     //context.router.push(const SelectShopRoute());
                     global.appStorage.write("apiUserName", _emailController.text);
                     global.appStorage.write("apiUserPassword", _passwordController.text);
