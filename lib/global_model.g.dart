@@ -571,6 +571,7 @@ PosConfigModel _$PosConfigModelFromJson(Map<String, dynamic> json) =>
       vattype: json['vattype'] as int,
       vatrate: (json['vatrate'] as num).toDouble(),
       docformatinv: json['docformatinv'] as String,
+      docformatesalereturn: json['docformatesalereturn'] as String,
       billheader: (json['billheader'] as List<dynamic>)
           .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -610,6 +611,7 @@ Map<String, dynamic> _$PosConfigModelToJson(PosConfigModel instance) =>
       'vattype': instance.vattype,
       'vatrate': instance.vatrate,
       'docformatinv': instance.docformatinv,
+      'docformatesalereturn': instance.docformatesalereturn,
       'billheader': instance.billheader.map((e) => e.toJson()).toList(),
       'billfooter': instance.billfooter.map((e) => e.toJson()).toList(),
       'isejournal': instance.isejournal,

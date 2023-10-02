@@ -71,6 +71,7 @@ PosConfigModel posConfig = PosConfigModel(
   vattype: 0,
   vatrate: 0,
   docformatinv: '',
+  docformatesalereturn: '',
   billheader: [],
   billfooter: [],
   isvatregister: false,
@@ -770,7 +771,7 @@ double calcDiscountFormula({required double totalAmount, required String discoun
   return double.parse(sumDiscount.toStringAsFixed(2));
 }
 
-Future<String> billRunning() async {
+Future<String> billRunning(int mode) async {
   // Type 0=คริสต์ศักราช,1=พุทธศักราช
   // YYYY = ปี
   // MM = เดือน
@@ -791,7 +792,12 @@ Future<String> billRunning() async {
       lastDigit += "9";
     }
   }
-  String docFormat = posConfig.doccode + posConfig.docformatinv.replaceAll("#", "");
+  String docFormat = posConfig.doccode;
+  if (mode == 1) {
+    docFormat += posConfig.docformatinv.replaceAll("#", "");
+  } else {
+    docFormat += posConfig.docformatinv.replaceAll("#", "");
+  }
   docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
   docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
   docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
@@ -799,7 +805,7 @@ Future<String> billRunning() async {
   int number = 0;
   var getLast = objectBoxStore
       .box<BillObjectBoxStruct>()
-      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit))
+      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit).and(BillObjectBoxStruct_.doc_mode.equals(mode)))
       .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
       .build()
       .findFirst();
@@ -809,7 +815,7 @@ Future<String> billRunning() async {
     }
   } else {
     // ค้นหาข้อมูลบน Cloud
-    var lastDocNumberJson = await ApiRepository().serverGetLastDocNumber(docNumber: docFormat + lastDigit);
+    var lastDocNumberJson = await ApiRepository().serverGetLastDocNumber(docNumber: docFormat + lastDigit, mode: mode);
     String lastDocNumber = "";
     try {
       lastDocNumber = lastDocNumberJson.data;
