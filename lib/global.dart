@@ -796,7 +796,7 @@ Future<String> billRunning(int mode) async {
   if (mode == 1) {
     docFormat += posConfig.docformatinv.replaceAll("#", "");
   } else {
-    docFormat += posConfig.docformatinv.replaceAll("#", "");
+    docFormat += posConfig.docformatesalereturn.replaceAll("#", "");
   }
   docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
   docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
