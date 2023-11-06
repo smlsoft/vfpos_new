@@ -105,6 +105,9 @@ dependencies:
     path: packages/lugentpay
   flutter_rounded_date_picker:
     path: packages/flutter_rounded_date_picker
+  firebase_core: ^2.16.0
+  firebase_auth: ^4.10.0
+  sign_in_with_apple: ^5.0.0
 
 dev_dependencies:
   flutter_driver:

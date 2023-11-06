@@ -20,6 +20,7 @@ mixin _$AuthenticationEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
+    required TResult Function(String token) onLoginWithTokenTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -29,6 +30,7 @@ mixin _$AuthenticationEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(String token)? onLoginWithTokenTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -38,6 +40,7 @@ mixin _$AuthenticationEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult Function(String token)? onLoginWithTokenTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -48,6 +51,7 @@ mixin _$AuthenticationEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
+    required TResult Function(LoginTokenEvent value) onLoginWithTokenTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -58,6 +62,7 @@ mixin _$AuthenticationEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -67,6 +72,7 @@ mixin _$AuthenticationEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -171,6 +177,7 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
+    required TResult Function(String token) onLoginWithTokenTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -183,6 +190,7 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(String token)? onLoginWithTokenTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -195,6 +203,7 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult Function(String token)? onLoginWithTokenTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -211,6 +220,7 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
+    required TResult Function(LoginTokenEvent value) onLoginWithTokenTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -224,6 +234,7 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -236,6 +247,7 @@ class _$LoginUserPasswordEvent implements LoginUserPasswordEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -257,6 +269,165 @@ abstract class LoginUserPasswordEvent implements AuthenticationEvent {
   String get password;
   @JsonKey(ignore: true)
   _$$LoginUserPasswordEventCopyWith<_$LoginUserPasswordEvent> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LoginTokenEventCopyWith<$Res> {
+  factory _$$LoginTokenEventCopyWith(
+          _$LoginTokenEvent value, $Res Function(_$LoginTokenEvent) then) =
+      __$$LoginTokenEventCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String token});
+}
+
+/// @nodoc
+class __$$LoginTokenEventCopyWithImpl<$Res>
+    extends _$AuthenticationEventCopyWithImpl<$Res, _$LoginTokenEvent>
+    implements _$$LoginTokenEventCopyWith<$Res> {
+  __$$LoginTokenEventCopyWithImpl(
+      _$LoginTokenEvent _value, $Res Function(_$LoginTokenEvent) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? token = null,
+  }) {
+    return _then(_$LoginTokenEvent(
+      token: null == token
+          ? _value.token
+          : token // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$LoginTokenEvent implements LoginTokenEvent {
+  const _$LoginTokenEvent({required this.token});
+
+  @override
+  final String token;
+
+  @override
+  String toString() {
+    return 'AuthenticationEvent.onLoginWithTokenTapped(token: $token)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LoginTokenEvent &&
+            (identical(other.token, token) || other.token == token));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, token);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoginTokenEventCopyWith<_$LoginTokenEvent> get copyWith =>
+      __$$LoginTokenEventCopyWithImpl<_$LoginTokenEvent>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String userName, String password)
+        onLoginWithUserPasswordTapped,
+    required TResult Function(String token) onLoginWithTokenTapped,
+    required TResult Function(User user) authenticated,
+    required TResult Function() unAuthenticated,
+    required TResult Function(User user) onAuthenticatedRefresh,
+  }) {
+    return onLoginWithTokenTapped(token);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String userName, String password)?
+        onLoginWithUserPasswordTapped,
+    TResult? Function(String token)? onLoginWithTokenTapped,
+    TResult? Function(User user)? authenticated,
+    TResult? Function()? unAuthenticated,
+    TResult? Function(User user)? onAuthenticatedRefresh,
+  }) {
+    return onLoginWithTokenTapped?.call(token);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String userName, String password)?
+        onLoginWithUserPasswordTapped,
+    TResult Function(String token)? onLoginWithTokenTapped,
+    TResult Function(User user)? authenticated,
+    TResult Function()? unAuthenticated,
+    TResult Function(User user)? onAuthenticatedRefresh,
+    required TResult orElse(),
+  }) {
+    if (onLoginWithTokenTapped != null) {
+      return onLoginWithTokenTapped(token);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoginUserPasswordEvent value)
+        onLoginWithUserPasswordTapped,
+    required TResult Function(LoginTokenEvent value) onLoginWithTokenTapped,
+    required TResult Function(AuthenticatedEvent value) authenticated,
+    required TResult Function(UserLogoutEvent value) unAuthenticated,
+    required TResult Function(AuthenticatedRefreshEvent value)
+        onAuthenticatedRefresh,
+  }) {
+    return onLoginWithTokenTapped(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoginUserPasswordEvent value)?
+        onLoginWithUserPasswordTapped,
+    TResult? Function(LoginTokenEvent value)? onLoginWithTokenTapped,
+    TResult? Function(AuthenticatedEvent value)? authenticated,
+    TResult? Function(UserLogoutEvent value)? unAuthenticated,
+    TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
+  }) {
+    return onLoginWithTokenTapped?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoginUserPasswordEvent value)?
+        onLoginWithUserPasswordTapped,
+    TResult Function(LoginTokenEvent value)? onLoginWithTokenTapped,
+    TResult Function(AuthenticatedEvent value)? authenticated,
+    TResult Function(UserLogoutEvent value)? unAuthenticated,
+    TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
+    required TResult orElse(),
+  }) {
+    if (onLoginWithTokenTapped != null) {
+      return onLoginWithTokenTapped(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class LoginTokenEvent implements AuthenticationEvent {
+  const factory LoginTokenEvent({required final String token}) =
+      _$LoginTokenEvent;
+
+  String get token;
+  @JsonKey(ignore: true)
+  _$$LoginTokenEventCopyWith<_$LoginTokenEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -337,6 +508,7 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
+    required TResult Function(String token) onLoginWithTokenTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -349,6 +521,7 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(String token)? onLoginWithTokenTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -361,6 +534,7 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult Function(String token)? onLoginWithTokenTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -377,6 +551,7 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
+    required TResult Function(LoginTokenEvent value) onLoginWithTokenTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -390,6 +565,7 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -402,6 +578,7 @@ class _$AuthenticatedEvent implements AuthenticatedEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -464,6 +641,7 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
+    required TResult Function(String token) onLoginWithTokenTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -476,6 +654,7 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(String token)? onLoginWithTokenTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -488,6 +667,7 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult Function(String token)? onLoginWithTokenTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -504,6 +684,7 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
+    required TResult Function(LoginTokenEvent value) onLoginWithTokenTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -517,6 +698,7 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -529,6 +711,7 @@ class _$UserLogoutEvent implements UserLogoutEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -623,6 +806,7 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String userName, String password)
         onLoginWithUserPasswordTapped,
+    required TResult Function(String token) onLoginWithTokenTapped,
     required TResult Function(User user) authenticated,
     required TResult Function() unAuthenticated,
     required TResult Function(User user) onAuthenticatedRefresh,
@@ -635,6 +819,7 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(String token)? onLoginWithTokenTapped,
     TResult? Function(User user)? authenticated,
     TResult? Function()? unAuthenticated,
     TResult? Function(User user)? onAuthenticatedRefresh,
@@ -647,6 +832,7 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String userName, String password)?
         onLoginWithUserPasswordTapped,
+    TResult Function(String token)? onLoginWithTokenTapped,
     TResult Function(User user)? authenticated,
     TResult Function()? unAuthenticated,
     TResult Function(User user)? onAuthenticatedRefresh,
@@ -663,6 +849,7 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(LoginUserPasswordEvent value)
         onLoginWithUserPasswordTapped,
+    required TResult Function(LoginTokenEvent value) onLoginWithTokenTapped,
     required TResult Function(AuthenticatedEvent value) authenticated,
     required TResult Function(UserLogoutEvent value) unAuthenticated,
     required TResult Function(AuthenticatedRefreshEvent value)
@@ -676,6 +863,7 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult? Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult? Function(AuthenticatedEvent value)? authenticated,
     TResult? Function(UserLogoutEvent value)? unAuthenticated,
     TResult? Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,
@@ -688,6 +876,7 @@ class _$AuthenticatedRefreshEvent implements AuthenticatedRefreshEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(LoginUserPasswordEvent value)?
         onLoginWithUserPasswordTapped,
+    TResult Function(LoginTokenEvent value)? onLoginWithTokenTapped,
     TResult Function(AuthenticatedEvent value)? authenticated,
     TResult Function(UserLogoutEvent value)? unAuthenticated,
     TResult Function(AuthenticatedRefreshEvent value)? onAuthenticatedRefresh,

@@ -1,3 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/app/app.dart';
 import 'package:dedepos/core/core.dart';
@@ -8,10 +12,13 @@ import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/user_cache_service.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 @RoutePage()
 class AuthenticationPage extends StatefulWidget {
@@ -30,6 +37,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   @override
   void initState() {
     // TODO: implement initState
+
     resetPrefer();
     super.initState();
   }
@@ -159,6 +167,8 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                       passwordTextfield(),
                       const SizedBox(height: 12.0),
                       buttonLogin(),
+                      // const SizedBox(height: 40.0),
+                      // if (Platform.isIOS) buttonLoginWithApple(),
                     ],
                   );
                 },
@@ -244,13 +254,54 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   Widget buttonLoginWithApple() {
     return ElevatedButton.icon(
       onPressed: () {
-        // on click
-        // context.router.push(const AuthenticationWithUserPasswordRoute());
+        _loginWithApple(context);
       },
       icon: const Icon(Icons.mail_outline),
       label: const Text('Login with Apple'),
       style: Styles.successButtonStyle(),
     );
+  }
+
+  Future<void> _loginWithApple(BuildContext context) async {
+    try {
+      final rawNonce = generateNonce();
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final oauthCredential = firebaseAuth.OAuthProvider("apple.com").credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+      final authResult = await firebaseAuth.FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      String? userIdToken = await getCurrentUserIdToken();
+      if (userIdToken != null) {
+        context.read<AuthenticationBloc>().add(AuthenticationEvent.onLoginWithTokenTapped(token: userIdToken));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to login with Apple")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to login with Apple: $e")),
+      );
+    }
+  }
+
+  Future<String?> getCurrentUserIdToken() async {
+    firebaseAuth.User? currentUser = firebaseAuth.FirebaseAuth.instance.currentUser;
+
+    if (currentUser != null) {
+      String? idToken = await currentUser.getIdToken();
+      return idToken;
+    } else {
+      // No user is signed in.
+      return null;
+    }
   }
 
   Widget buttonLoginDev() {
@@ -259,7 +310,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         // on click
         // context.router.push(const AuthenticationWithUserPasswordRoute());
         // add select shop event
-        loginDev();
+        // loginDev();
       },
       icon: const Icon(Icons.mail_outline),
       label: const Text('Login Auto'),
@@ -286,35 +337,35 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         ),
       );
 
-  void loginDev() {
-    // authen with dev user,dev password
-    serviceLocator<LoginUserRepository>().loginWithUserPassword(username: AppConstant.userDev, password: AppConstant.passwordDev).then((response) async {
-      if (response.isRight()) {
-        final remoteUser = response.getOrElse(() => User());
-        await serviceLocator<UserCacheService>().saveUser(remoteUser);
+  // void loginDev() {
+  //   // authen with dev user,dev password
+  //   serviceLocator<LoginUserRepository>().loginWithUserPassword(username: AppConstant.userDev, password: AppConstant.passwordDev).then((response) async {
+  //     if (response.isRight()) {
+  //       final remoteUser = response.getOrElse(() => User());
+  //       await serviceLocator<UserCacheService>().saveUser(remoteUser);
 
-        // select shop
-        serviceLocator<ShopAuthenticationRepository>().selectShop(shopid: AppConstant.shopIdDev).then((selectShopResponse) async {
-          if (selectShopResponse.isRight()) {
-            global.loginSuccess = true;
-            context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: remoteUser));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Auto Login Failed."),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Auto Login Failed."),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    });
-  }
+  //       // select shop
+  //       serviceLocator<ShopAuthenticationRepository>().selectShop(shopid: AppConstant.shopIdDev).then((selectShopResponse) async {
+  //         if (selectShopResponse.isRight()) {
+  //           global.loginSuccess = true;
+  //           context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: remoteUser));
+  //         } else {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             const SnackBar(
+  //               content: Text("Auto Login Failed."),
+  //               backgroundColor: Colors.red,
+  //             ),
+  //           );
+  //         }
+  //       });
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text("Auto Login Failed."),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //     }
+  //   });
+  // }
 }

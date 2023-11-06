@@ -16,7 +16,7 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
   Future<Either<Failure, User>> loginWithToken({required String token}) async {
     try {
       request.updateDioInterceptors();
-      final response = await request.post('/vftokenlogin', data: {"token": token});
+      final response = await request.post('/tokenlogin', data: {"token": token});
       final result = Json.decode(response.toString());
 
       if (response.statusCode == 200) {
