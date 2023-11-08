@@ -13,10 +13,20 @@ export PATH=`pwd`/flutter/bin:$PATH
 
 flutter channel stable
 flutter doctor
+
+
+echo "Installed flutter to `pwd`/flutter"
+
 flutter pub get
 # flutter build apk --release
 
 # # copy the APK where AppCenter will find it
 # mkdir -p android/app/build/outputs/apk/; mv build/app/outputs/apk/release/app-release.apk $_
 
-exit 0
+flutter build appbundle --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=STAGING
+
+# copy the APK where AppCenter will find it
+mkdir -p android/app/build/outputs/apk/; mv build/app/outputs/apk/release/app-release.apk $_
+
+# copy the AAB where AppCenter will find it
+#mkdir -p android/app/build/outputs/bundle/; mv build/app/outputs/bundle/release/app-release.aab $_
