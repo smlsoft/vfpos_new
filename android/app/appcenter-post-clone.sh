@@ -26,7 +26,7 @@ flutter pub get
 flutter build apk --flavor vfpos -t lib/main_vfpos.dart --debug --dart-define=ENVIRONMENT=STAGING
 
 # copy the APK where AppCenter will find it
-mkdir -p android/app/build/outputs/apk/; mv build/app/outputs/apk/release/app-release.apk $_
+mkdir -p android/app/build/outputs/apk/; mv build/app/outputs/flutter-apk/app-vfpos-debug.apk $_
 
 # copy the AAB where AppCenter will find it
 #mkdir -p android/app/build/outputs/bundle/; mv build/app/outputs/bundle/release/app-release.aab $_
