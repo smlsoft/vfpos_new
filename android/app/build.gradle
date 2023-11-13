@@ -92,9 +92,9 @@ android {
     signingConfigs {
         release {
             storeFile rootProject.file("app/vfpos-upload-keystore.jks")
-            storePassword System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
-            keyAlias System.getProperty("APPCENTER_KEY_ALIAS")
-            keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")
+            storePassword keystoreProperties['storeFile'] ? keystoreProperties['storePassword'] : System.getProperty("APPCENTER_KEYSTORE_PASSWORD")
+            keyAlias keystoreProperties['storeFile'] ? keystoreProperties['keyAlias'] : System.getProperty("APPCENTER_KEY_ALIAS")
+            keyPassword keystoreProperties['storeFile'] ? keystoreProperties['keyPassword'] : ystem.getProperty("APPCENTER_KEY_PASSWORD")
         }
     }
     
