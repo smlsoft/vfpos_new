@@ -94,6 +94,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     global.appStorage.write("token", state.user.token);
                     global.appStorage.write("refresh", state.user.refresh);
                     global.appStorage.write("isdev", state.user.isDev);
+                    Future.delayed(const Duration(milliseconds: 1000), () {
+                      context.router.pushAndPopUntil(const SelectShopRoute(), predicate: (route) => false);
+                    });
                     context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
                   } else if (state is AuthenticationErrorState) {
                     ScaffoldMessenger.of(context).showSnackBar(

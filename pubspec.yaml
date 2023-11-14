@@ -67,7 +67,6 @@ dependencies:
   network_info_plus: ^3.0.3
   network_tools: ^3.0.0+3
   esc_pos_utils: ^1.1.0
-  flutter_flavorizr: ^2.1.5
   presentation_displays: ^0.2.3
   video_player: ^2.6.1
   text_to_speech: ^0.2.3
@@ -121,7 +120,6 @@ dev_dependencies:
   json_serializable: ^6.6.1
   auto_route_generator: ^7.1.1
   msix: ^3.7.0
-  flutter_flavorizr: ^2.1.5
 
 dependency_overrides:
   intl: ^0.17.0
@@ -148,102 +146,6 @@ flutter:
         - asset: assets/fonts/prompt/Prompt-Regular.ttf
         - asset: assets/fonts/prompt/Prompt-Bold.ttf
         - asset: assets/fonts/prompt/Prompt-SemiBold.ttf
-
-flavorizr:
-  app:
-    android:
-      flavorDimensions: "flavor-type"
-    ios:
-    windows:
-    macos:
-
-  flavors:
-    dev:
-      app:
-        name: "Village Fund POS"
-        icon: "assets/vf-pos-logo.png"
-      android:
-        applicationId: "com.smlsoft.dedepos"
-      ios:
-        bundleId: "com.smlsoft.dedepos"
-      windows:
-        packageId: "com.smlsoft.dedepos"
-      macos:
-        bundleId: "com.smlsoft.dedepos"
-
-    dedepos:
-      app:
-        name: "Village Fund POS"
-        icon: "assets/icons/dede-pos-icon.png"
-      android:
-        applicationId: "com.smlsoft.dedepos"
-      ios:
-        bundleId: "com.smlsoft.dedepos"
-      windows:
-        packageId: "com.smlsoft.dedepos"
-        # customConfig:
-        #   msix_config:
-        #     display_name: DEDEPOS
-        #     publisher_display_name: SMLSoft
-        #     publisher: CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27
-        #     identity_name: 	SMLSoft.DEDEPOS
-        #     msix_version: 1.0.0.0
-        #     logo_path: .\assets\dede-pos-icon.png
-        #     capabilities: internetClient, location, microphone, webcam
-        #     # certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
-        #     # certificate_password: sml19682511
-      macos:
-        bundleId: "com.smlsoft.dedepos"
-
-    smlsuperpos:
-      app:
-        name: "SML Super POS"
-        icon: "assets/app_logo.png"
-      android:
-        applicationId: "com.smlsoft.smlsuperpos"
-      ios:
-        bundleId: "com.smlsoft.smlsuperpos"
-      windows:
-        packageId: "com.smlsoft.smlsuperpos"
-      macos:
-        bundleId: "com.smlsoft.smlsuperpos"
-
-    smlmobilesales:
-      app:
-        name: "SML Mobile Sales"
-        icon: "assets/app_logo.png"
-      android:
-        applicationId: "com.smlsoft.smlmobilesales"
-      ios:
-        bundleId: "com.smlsoft.smlmobilesales"
-      windows:
-        packageId: "com.smlsoft.smlmobilesales"
-      macos:
-        bundleId: "com.smlsoft.smlmobilesales"
-
-    vfpos:
-      app:
-        name: "Village Fund POS"
-        icon: "assets/vf-pos-logo.png"
-      android:
-        applicationId: "org.villagefundth.vfpos"
-        # signingConfig: // ใส่ชื่อ signingConfig ที่เราสร้างไว้ในไฟล์ android/app/build.gradle
-      ios:
-        bundleId: "org.villagefundth.vfpos"
-      windows:
-        packageId: "org.villagefundth.vfpos"
-        # customConfig:
-        #   msix_config:
-        #     display_name: VFPOS
-        #     publisher_display_name: SMLSoft
-        #     identity_name: com.smlsoft.vfpos
-        #     msix_version: 1.0.0.0
-        #     logo_path: .\assets\vf-pos-icon.png
-        #     capabilities: internetClient, location, microphone, webcam
-        #     certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
-        #     certificate_password: sml19682511
-      macos:
-        bundleId: "org.villagefundth.vfpos"
 msix_config:
   # # DEDE POS Store Config
   # display_name: DEDEPOS

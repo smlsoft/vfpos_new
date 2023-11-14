@@ -13,5 +13,7 @@ void main() async {
   Intl.defaultLocale = "th";
   global.applicationName = "Village Fund POS";
   await initializeApp();
-  runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
+  Future.delayed(Duration(seconds: 2), () {
+    runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
+  });
 }

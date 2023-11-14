@@ -105,11 +105,11 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
         }),
         BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
           if (state is AuthenticationInitialState) {
-            Future.delayed(const Duration(seconds: 1), () {
+            Future.delayed(const Duration(seconds: 2), () {
               context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
             });
           } else if (state is AuthenticationAuthenticatedState) {
-            Future.delayed(const Duration(seconds: 1), () {
+            Future.delayed(const Duration(seconds: 2), () {
               context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
             });
           }
