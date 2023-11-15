@@ -1,0 +1,6 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_vfpos.dart
+ASSET_PREFIX=vfpos
+BUNDLE_NAME=Village Fund POS
+BUNDLE_DISPLAY_NAME=Village Fund POS

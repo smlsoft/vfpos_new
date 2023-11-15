@@ -3,7 +3,7 @@ import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/objectbox.g.dart';
 
 class BillHelper {
-  final _box = global.objectBoxStore.box<BillObjectBoxStruct>();
+  final box = global.objectBoxStore.box<BillObjectBoxStruct>();
 
   /*static final BillHelper _instance = BillHelper.internal();
 
@@ -19,39 +19,80 @@ class BillHelper {
     }
   }*/
 
-  List<BillObjectBoxStruct> selectByDocNumber({String docNumber = ""}) {
-    return _box
-        .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
-        .build()
-        .find();
+  BillObjectBoxStruct? selectByDocNumber({required String docNumber, required int posScreenMode}) {
+    return box.query(BillObjectBoxStruct_.doc_number.equals(docNumber).and(BillObjectBoxStruct_.doc_mode.equals(posScreenMode))).build().findFirst();
   }
 
   List<BillObjectBoxStruct> selectSyncIsFalse() {
-    return _box
-        .query(BillObjectBoxStruct_.is_sync.equals(false))
-        .build()
-        .find();
+    return box.query(BillObjectBoxStruct_.is_sync.equals(false)).build().find();
   }
 
   int insert(BillObjectBoxStruct value) {
-    return _box.put(value);
+    return box.put(value, mode: PutMode.insert);
   }
 
-  List<BillObjectBoxStruct> select(
-      {String where = "", int limit = 0, int offset = 0}) {
-    if (where.isNotEmpty) where = " where " + where;
-    return (_box.query()).build().find();
+  List<BillObjectBoxStruct> select({required int posScreenMode, String where = "", int limit = 0, int offset = 0}) {
+    return (box.query(BillObjectBoxStruct_.doc_mode.equals(posScreenMode))).build().find();
+  }
+
+  List<BillObjectBoxStruct> selectOrderByDateTimeDesc({required int posScreenMode}) {
+    return (box.query(BillObjectBoxStruct_.doc_mode.equals(posScreenMode)).order(BillObjectBoxStruct_.date_time, flags: Order.descending).build()..limit = 100).find();
   }
 
   bool deleteByDocNumber(String docNumber) {
-    bool _result = false;
-    final _find = _box
-        .query(BillObjectBoxStruct_.doc_number.equals(docNumber))
-        .build()
-        .findFirst();
-    if (_find != null) {
-      _result = _box.remove(_find.id);
+    bool result = false;
+    final find = box.query(BillObjectBoxStruct_.doc_number.equals(docNumber)).build().findFirst();
+    if (find != null) {
+      result = box.remove(find.id);
     }
-    return _result;
+    return result;
+  }
+
+  void updatesIsCancel({required String docNumber, required bool value, required String description}) {
+    final find = box.query(BillObjectBoxStruct_.doc_number.equals(docNumber)).build().findFirst();
+    if (find != null) {
+      find.is_cancel = value;
+      find.cancel_date_time = DateTime.now().toString();
+      find.cancel_description = description;
+      find.is_sync = false;
+      box.put(find);
+    }
+  }
+
+  void updatesSyncSuccess({required String docNumber}) {
+    final find = box.query(BillObjectBoxStruct_.doc_number.equals(docNumber)).build().findFirst();
+    if (find != null) {
+      find.is_sync = true;
+      box.put(find);
+    }
+  }
+
+  void updateRePrintBill(String docNumber) {
+    final find = box.query(BillObjectBoxStruct_.doc_number.equals(docNumber)).build().findFirst();
+    if (find != null) {
+      find.print_copy_bill_date_time.add(DateTime.now().toString());
+      find.is_sync = false;
+      box.put(find);
+    }
+  }
+
+  void updatesFullVat({
+    required String docNumber,
+    required String taxId,
+    required String branchNumber,
+    required String customerCode,
+    required String customerName,
+    required String customerAddress,
+  }) {
+    final find = box.query(BillObjectBoxStruct_.doc_number.equals(docNumber)).build().findFirst();
+    if (find != null) {
+      find.full_vat_tax_id = taxId;
+      find.full_vat_branch_number = branchNumber;
+      find.customer_code = customerCode;
+      find.full_vat_name = customerName;
+      find.full_vat_address = customerAddress;
+      find.is_sync = false;
+      box.put(find);
+    }
   }
 }

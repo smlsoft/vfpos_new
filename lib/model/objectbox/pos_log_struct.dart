@@ -1,4 +1,5 @@
-import 'package:dedepos/global.dart' as global;
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:uuid/uuid.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -14,6 +15,9 @@ class PosLogObjectBoxStruct {
   @Unique()
   String guid_auto_fixed = "";
 
+  /// ประเภทเอกสาร (1 = ขาย, 2 = คืน)
+  int doc_mode;
+
   /// อ้างอิงในระบบ
   String guid_ref;
 
@@ -24,9 +28,9 @@ class PosLogObjectBoxStruct {
   @Property(type: PropertyType.date)
   DateTime log_date_time;
 
-  /// ลำดับการพักบิล
+  /// รหัสการพักบิล
   @Index()
-  int hold_number;
+  String hold_code;
 
   /// คำสั่ง (หมายเหตุด้านล่าง)
   int command_code;
@@ -75,6 +79,13 @@ class PosLogObjectBoxStruct {
 
   /// Barcode
   String barcode;
+
+  /// exclude vat (ราคาไม่รวมภาษี True=ไม่รวมภาษี, False=รวมภาษี)
+  bool price_exclude_vat;
+
+  /// สินค้ายกเว้นภาษี (True=ยกเว้นภาษี,False=ไม่ยกเว้นภาษี)
+  bool is_except_vat;
+
   /* 
       -- command
       1=เพิ่มสินค้า
@@ -93,10 +104,11 @@ class PosLogObjectBoxStruct {
 
   PosLogObjectBoxStruct({
     this.id = 0,
+    this.doc_mode = 1,
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,
-    required this.hold_number,
+    required this.hold_code,
     required this.command_code,
     this.barcode = "",
     this.is_void = 0,
@@ -113,11 +125,12 @@ class PosLogObjectBoxStruct {
     this.extra_code = "",
     this.unit_code = "",
     this.unit_name = "",
+    this.price_exclude_vat = false,
+    this.is_except_vat = false,
   }) {
-    this.guid_auto_fixed = Uuid().v4();
+    guid_auto_fixed = const Uuid().v4();
   }
 
-  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$PosLogObjectBoxStructFromJson(json);
+  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$PosLogObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$PosLogObjectBoxStructToJson(this);
 }

@@ -1,4 +1,3 @@
-import 'package:dedepos/api/sync/model/credit_card_payment_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'payment_model.g.dart';

@@ -1,17 +1,13 @@
 import 'dart:async';
-
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/widgets/numpad.dart';
-import 'package:dedepos/widgets/pin_numpad.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class PosClient extends StatefulWidget {
   const PosClient({Key? key}) : super(key: key);
 
   @override
-  _PosClientState createState() => _PosClientState();
+  State<PosClient> createState() => _PosClientState();
 }
 
 class _PosClientState extends State<PosClient> {
@@ -28,7 +24,7 @@ class _PosClientState extends State<PosClient> {
         findTerminalTimer.cancel();
         global.loginSuccess = true;
         setState(() {
-          Navigator.of(context).pushReplacementNamed('/menu');
+          Navigator.of(context).pushReplacementNamed('menu');
         });
       }
     });
@@ -44,33 +40,28 @@ class _PosClientState extends State<PosClient> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Container(
-                child: Column(children: [
-              TextField(
-                controller: posTerminalCodeController,
+    return SafeArea(
+      child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Column(children: [
+            TextField(
+              controller: posTerminalCodeController,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  List<String> split = posTerminalCodeController.text.split(',');
+                  global.scanServerById(split[0]);
+                  setState(() {
+                    scanStart = true;
+                  });
+                },
+                child: const Text("Connect Terminal")),
+            if (scanStart)
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 200,
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    List<String> split =
-                        posTerminalCodeController.text.split(',');
-                    global.scanServerByName(split[0]);
-                    setState(() {
-                      scanStart = true;
-                    });
-                  },
-                  child: Text("Connect Terminal")),
-              if (scanStart)
-                LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.blue,
-                  size: 200,
-                ),
-            ]))),
-      ),
+          ])),
     );
   }
 }

@@ -1,7 +1,5 @@
-import 'dart:developer';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/model/objectbox/product_category_struct.dart';
-import 'package:dedepos/pos_screen/pos_process.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_process.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/db/product_category_helper.dart';
 
@@ -21,28 +19,22 @@ class ProductCategoryLoadSuccess extends ProductCategoryState {
   ProductCategoryLoadSuccess();
 }
 
-class ProductCategoryBloc
-    extends Bloc<ProductCategoryEvent, ProductCategoryState> {
+class ProductCategoryBloc extends Bloc<ProductCategoryEvent, ProductCategoryState> {
   final String categoryGuid;
 
-  ProductCategoryBloc({required this.categoryGuid})
-      : super(ProductCategoryStateInitialized()) {
+  ProductCategoryBloc({required this.categoryGuid}) : super(ProductCategoryStateInitialized()) {
     on<ProductCategoryLoadStart>(_productCategoryLoadStart);
     on<ProductCategoryLoadFinish>(_productCategoryLoadFinish);
   }
 
-  void _productCategoryLoadStart(ProductCategoryLoadStart event,
-      Emitter<ProductCategoryState> emit) async {
+  void _productCategoryLoadStart(ProductCategoryLoadStart event, Emitter<ProductCategoryState> emit) async {
     emit(ProductCategoryLoading());
-    global.productCategoryList =
-        await ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
-    PosProcess().sumCategoryCount(
-        global.posHoldProcessResult[global.posHoldActiveNumber].posProcess);
+    global.productCategoryList = await ProductCategoryHelper().selectByCategoryParentGuid(categoryGuid);
+    PosProcess().sumCategoryCount(value: global.posHoldProcessResult[global.findPosHoldProcessResultIndex(global.posHoldActiveCode)].posProcess);
     emit(ProductCategoryLoadSuccess());
   }
 
-  void _productCategoryLoadFinish(ProductCategoryLoadFinish event,
-      Emitter<ProductCategoryState> emit) async {
+  void _productCategoryLoadFinish(ProductCategoryLoadFinish event, Emitter<ProductCategoryState> emit) async {
     emit(ProductCategoryLoadStop());
   }
 }

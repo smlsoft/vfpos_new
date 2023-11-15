@@ -6,7 +6,7 @@ class PrinterHelper {
   final box = global.objectBoxStore.box<PrinterObjectBoxStruct>();
 
   List<PrinterObjectBoxStruct> selectAll() {
-    return box.getAll();        
+    return box.getAll();
   }
 
   int insert(PrinterObjectBoxStruct value) {
@@ -18,42 +18,36 @@ class PrinterHelper {
   }
 
   bool deleteByGuidFixed(String guidfixed) {
-    bool _result = false;
-    final _find = box
-        .query(PrinterObjectBoxStruct_.guid_fixed.equals(guidfixed))
-        .build()
-        .findFirst();
-    if (_find != null) {
-      _result = box.remove(_find.id);
+    bool result = false;
+    final find = box.query(PrinterObjectBoxStruct_.guid_fixed.equals(guidfixed)).build().findFirst();
+    if (find != null) {
+      result = box.remove(find.id);
     }
-    return _result;
+    return result;
   }
 
   void deleteByGuidFixedMany(List<String> guidfixed) {
-    Condition<PrinterObjectBoxStruct>? _ids;
-    guidfixed.forEach((_guid) {
-      if (_ids == null)
-        _ids = PrinterObjectBoxStruct_.guid_fixed.equals(_guid);
-      else
-        _ids =
-            _ids?.or(PrinterObjectBoxStruct_.guid_fixed.equals(_guid));
-    });
-    if (_ids != null) {
-      final _find = box.query(_ids).build().find();
-      box.removeMany(_find.map((_data) => _data.id).toList());
+    Condition<PrinterObjectBoxStruct>? ids;
+    for (var guid in guidfixed) {
+      if (ids == null) {
+        ids = PrinterObjectBoxStruct_.guid_fixed.equals(guid);
+      } else {
+        ids = ids.or(PrinterObjectBoxStruct_.guid_fixed.equals(guid));
+      }
+    }
+    if (ids != null) {
+      final find = box.query(ids).build().find();
+      box.removeMany(find.map((data) => data.id).toList());
     }
   }
 
   bool deleteByCode(String code) {
-    bool _result = false;
-    final _find = box
-        .query(PrinterObjectBoxStruct_.code.equals(code))
-        .build()
-        .findFirst();
-    if (_find != null) {
-      _result = box.remove(_find.id);
+    bool result = false;
+    final find = box.query(PrinterObjectBoxStruct_.code.equals(code)).build().findFirst();
+    if (find != null) {
+      result = box.remove(find.id);
     }
-    return _result;
+    return result;
   }
 
   void deleteAll() {

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -6,17 +8,21 @@ class EmployeeObjectBoxStruct {
   @Unique()
   String guidfixed;
   String code;
-  String username;
-  String profilepicture;
+  String email;
+  bool is_enabled;
+  bool is_use_pos;
   String name;
-  //String roles;
+  String profile_picture;
+  String pin_code;
 
   EmployeeObjectBoxStruct({
     required this.guidfixed,
-    required this.username,
     required this.code,
-    //required this.roles,
-    required this.profilepicture,
+    required this.profile_picture,
     required this.name,
+    required this.email,
+    required this.is_enabled,
+    required this.is_use_pos,
+    required this.pin_code,
   });
 }

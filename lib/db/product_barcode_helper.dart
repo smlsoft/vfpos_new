@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dedepos/core/logger/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:dedepos/global_model.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -23,22 +25,23 @@ class ProductBarcodeHelper {
     }
   }
 
+  List<ProductBarcodeObjectBoxStruct> getAll() {
+    return box.query().build().find();
+  }
+
   int count() {
     return box.count();
   }
 
   void insertMany(List<ProductBarcodeObjectBoxStruct> values) {
-    for (var value in values) {
-      box.putAsync(value);
-    }
+    box.putMany(values);
   }
 
   Future insert(ProductBarcodeObjectBoxStruct value) async {
-    return box.putAsync(value);
+    return box.put(value);
   }
 
-  List<ProductBarcodeObjectBoxStruct> packData(
-      List<ProductBarcodeObjectBoxStruct> source) {
+  List<ProductBarcodeObjectBoxStruct> packData(List<ProductBarcodeObjectBoxStruct> source) {
     List<ProductBarcodeObjectBoxStruct> results = [];
     for (var data in source) {
       ProductBarcodeObjectBoxStruct newData = ProductBarcodeObjectBoxStruct(
@@ -49,6 +52,7 @@ class ProductBarcodeHelper {
           unit_code: data.unit_code,
           unit_names: data.unit_names,
           new_line: 0,
+          vat_type: data.vat_type,
           color_select: "",
           image_or_color: true,
           color_select_hex: "",
@@ -59,6 +63,10 @@ class ProductBarcodeHelper {
           item_unit_code: data.item_unit_code,
           options_json: "",
           images_url: data.images_url,
+          isalacarte: data.isalacarte,
+          ordertypes: data.ordertypes,
+          is_except_vat: data.is_except_vat,
+          issplitunitprint: data.issplitunitprint,
           product_count: 0);
       /*List<ProductOptionStruct> _jsonOption =  ProductOptionStruct.fromJson(jsonDecode(  _data.options));
       _data.options.forEach((_optionStr) {
@@ -102,17 +110,11 @@ class ProductBarcodeHelper {
   Future<List<ProductBarcodeObjectBoxStruct>> selectByBarcodeList(
     List<String> barcodeList,
   ) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
-      HttpParameterModel jsonParameter =
-          HttpParameterModel(barcode: barcodeList.join(","));
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "selectByBarcodeList",
-          json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
-      return (jsonDecode(result) as List)
-          .map((e) => ProductBarcodeObjectBoxStruct.fromJson(e))
-          .toList();
+    if (global.appMode == global.AppModeEnum.posRemote) {
+      HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcodeList.join(","));
+      HttpGetDataModel json = HttpGetDataModel(code: "selectByBarcodeList", json: jsonEncode(jsonParameter.toJson()));
+      String result = await global.getFromServer(json: jsonEncode(json.toJson()));
+      return (jsonDecode(result) as List).map((e) => ProductBarcodeObjectBoxStruct.fromJson(e)).toList();
     } else {
       Condition<ProductBarcodeObjectBoxStruct>? ids;
       for (var barcode in barcodeList) {
@@ -130,61 +132,39 @@ class ProductBarcodeHelper {
     }
   }
 
-  Future<ProductBarcodeObjectBoxStruct?> selectByBarcodeFirst(
-      String barcode) async {
-    if (global.appMode == global.AppModeEnum.posClient) {
+  Future<ProductBarcodeObjectBoxStruct?> selectByBarcodeFirst(String barcode) async {
+    if (global.appMode == global.AppModeEnum.posRemote) {
       HttpParameterModel jsonParameter = HttpParameterModel(barcode: barcode);
-      HttpGetDataModel json = HttpGetDataModel(
-          code: "selectByBarcodeFirst",
-          json: jsonEncode(jsonParameter.toJson()));
-      String result =
-          await global.getFromServer(json: jsonEncode(json.toJson()));
+      HttpGetDataModel json = HttpGetDataModel(code: "selectByBarcodeFirst", json: jsonEncode(jsonParameter.toJson()));
+      String result = await global.getFromServer(json: jsonEncode(json.toJson()));
       return ProductBarcodeObjectBoxStruct.fromJson(jsonDecode(result));
     } else {
-      return box
-          .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))
-          .build()
-          .findFirst();
+      return box.query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
     }
   }
 
-  List<ProductBarcodeObjectBoxStruct> xselect(
-      {String where = "", String order = "", int limit = 0, int offset = 0}) {
+  List<ProductBarcodeObjectBoxStruct> xselect({String where = "", String order = "", int limit = 0, int offset = 0}) {
     return box.query().build().find();
   }
 
-  List<ProductBarcodeObjectBoxStruct> selectByCodeNameBarCode(
-      {required String word,
-      required String order,
-      required int limit,
-      required int offset}) {
-    Condition<ProductBarcodeObjectBoxStruct>? conditionCode;
-    Condition<ProductBarcodeObjectBoxStruct>? conditionBarcode;
-    Condition<ProductBarcodeObjectBoxStruct>? conditionName;
+  List<ProductBarcodeObjectBoxStruct> selectByCodeNameBarCode({required String word, required String order, required int limit, required int offset}) {
+    Condition<ProductBarcodeObjectBoxStruct>? condition;
 
     List<String> wordBreak = global.wordSplit(word);
-    print(wordBreak);
+    serviceLocator<Log>().debug(wordBreak);
     for (int wordIndex = 0; wordIndex < wordBreak.length; wordIndex++) {
+      var currentCondition = ProductBarcodeObjectBoxStruct_.item_code
+          .contains(wordBreak[wordIndex])
+          .or(ProductBarcodeObjectBoxStruct_.barcode.contains(wordBreak[wordIndex]))
+          .or(ProductBarcodeObjectBoxStruct_.name_all.contains(wordBreak[wordIndex]));
+
       if (wordIndex == 0) {
-        conditionCode = ProductBarcodeObjectBoxStruct_.item_code
-            .contains(wordBreak[wordIndex]);
-        conditionBarcode = ProductBarcodeObjectBoxStruct_.barcode
-            .contains(wordBreak[wordIndex]);
-        conditionName = ProductBarcodeObjectBoxStruct_.name_all
-            .contains(wordBreak[wordIndex]);
+        condition = currentCondition;
       } else {
-        conditionCode = conditionCode?.and(ProductBarcodeObjectBoxStruct_
-            .item_code
-            .contains(wordBreak[wordIndex]));
-        conditionBarcode = conditionBarcode?.and(ProductBarcodeObjectBoxStruct_
-            .barcode
-            .contains(wordBreak[wordIndex]));
-        conditionName = conditionName?.and(ProductBarcodeObjectBoxStruct_
-            .name_all
-            .contains(wordBreak[wordIndex]));
+        condition = condition?.and(currentCondition);
       }
     }
-    var query = box.query(conditionName).build();
+    var query = box.query(condition).build();
     if (limit > 0) {
       query.offset = offset;
       query.limit = limit;
@@ -198,19 +178,16 @@ class ProductBarcodeHelper {
 
   bool deleteByBarcode(String barcode) {
     bool result = false;
-    final find = box
-        .query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode))
-        .build()
-        .findFirst();
+    final find = box.query(ProductBarcodeObjectBoxStruct_.barcode.equals(barcode)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
     return result;
   }
 
-  void deleteByBarcodeMany(List<String> barcodes) {
+  void deleteByBarcodeMany(List<String> barcodeList) {
     Condition<ProductBarcodeObjectBoxStruct>? ids;
-    for (var barcode in barcodes) {
+    for (var barcode in barcodeList) {
       if (ids == null) {
         ids = ProductBarcodeObjectBoxStruct_.barcode.equals(barcode);
       } else {
@@ -229,10 +206,7 @@ class ProductBarcodeHelper {
 
   bool deleteByGuidFixed(String guidfixed) {
     bool result = false;
-    final find = box
-        .query(ProductBarcodeObjectBoxStruct_.barcode.equals(guidfixed))
-        .build()
-        .findFirst();
+    final find = box.query(ProductBarcodeObjectBoxStruct_.barcode.equals(guidfixed)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }

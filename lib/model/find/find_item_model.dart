@@ -1,11 +1,15 @@
+// ignore_for_file: non_constant_identifier_names
+
+import 'package:dedepos/global_model.dart';
+
 class FindItemModel {
   late String barcode;
   late String item_code;
-  late List<String> item_names;
+  late String item_names;
   late String unit_code;
-  late List<String> unit_names;
+  late String unit_names;
   late int unit_type;
-  late List<double> prices;
+  late String prices;
   late List<String> images_guid_list;
   late double qty;
 

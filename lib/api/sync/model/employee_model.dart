@@ -3,23 +3,26 @@ part 'employee_model.g.dart';
 
 @JsonSerializable()
 class EmployeeModel {
-  late String code;
-  late String guidfixed;
-  late String username;
-  late String name;
-  late String profilepicture;
-  // late List<String> roles;
+  String guidfixed;
+  String code;
+  String email;
+  bool isenabled;
+  bool isusepos;
+  String name;
+  String profilepicture;
+  String pincode;
 
   EmployeeModel({
-    required this.code,
     required this.guidfixed,
-    required this.username,
+    required this.code,
     required this.profilepicture,
-    // required this.roles,
     required this.name,
-  });
+    required this.email,
+    required this.isenabled,
+    required this.pincode,
+    bool? isusepos = false,
+  }) : isusepos = isusepos ?? false;
 
-  factory EmployeeModel.fromJson(Map<String, dynamic> json) =>
-      _$EmployeeModelFromJson(json);
+  factory EmployeeModel.fromJson(Map<String, dynamic> json) => _$EmployeeModelFromJson(json);
   Map<String, dynamic> toJson() => _$EmployeeModelToJson(this);
 }

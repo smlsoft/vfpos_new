@@ -1,32 +1,21 @@
-import 'dart:developer';
 import 'package:dedepos/bloc/find_employee_by_name_bloc.dart';
-import 'package:dedepos/bloc/find_member_by_tel_name_bloc.dart';
 import 'package:dedepos/model/find/find_employee_model.dart';
-import 'package:dedepos/model/find/find_member_model.dart';
-import 'package:dedepos/model/objectbox/member_struct.dart';
-import 'package:dedepos/widgets/numpad.dart';
-import 'package:dedepos/model/find/find_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/services.dart';
-import 'package:dedepos/bloc/find_item_by_code_name_barcode_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:cached_network_image/cached_network_image.dart';
-import '../model/json/pos_model.dart';
 
 class FindEmployee extends StatefulWidget {
   const FindEmployee({Key? key}) : super(key: key);
 
   @override
-  _FindEmployeeState createState() => _FindEmployeeState();
+  State<FindEmployee> createState() => _FindEmployeeState();
 }
 
-class _FindEmployeeState extends State<FindEmployee>
-    with TickerProviderStateMixin {
-  final _debouncer = global.Debounce(500);
-  final List<FindEmployeeModel> _findResult = [];
-  final TextEditingController _textFindByTextController =
-      TextEditingController();
+class _FindEmployeeState extends State<FindEmployee> with TickerProviderStateMixin {
+  final debouncer = global.Debounce(500);
+  final List<FindEmployeeModel> findResult = [];
+  final TextEditingController textFindByTextController = TextEditingController();
 
   @override
   void initState() {
@@ -34,26 +23,17 @@ class _FindEmployeeState extends State<FindEmployee>
     context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadStart(''));
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Widget findByText() {
-    return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(
-        builder: (context, state) {
+    return BlocBuilder<FindEmployeeByNameBloc, FindEmployeeByNameState>(builder: (context, state) {
       if (state is FindEmployeeByNameLoadSuccess) {
-        _findResult.addAll(state.result);
-        context
-            .read<FindEmployeeByNameBloc>()
-            .add(FindEmployeeByNameLoadFinish());
+        findResult.addAll(state.result);
+        context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadFinish());
       }
       return Container(
           width: double.infinity,
           padding: const EdgeInsets.all(5),
           decoration: BoxDecoration(
-            border: Border.all(
-                color: const Color.fromARGB(255, 51, 204, 255), width: 1),
+            border: Border.all(color: const Color.fromARGB(255, 51, 204, 255), width: 1),
             borderRadius: BorderRadius.circular(5),
             shape: BoxShape.rectangle,
           ),
@@ -62,21 +42,19 @@ class _FindEmployeeState extends State<FindEmployee>
                 padding: const EdgeInsets.all(8),
                 width: double.infinity,
                 child: TextField(
-                    controller: _textFindByTextController,
+                    controller: textFindByTextController,
                     onChanged: (string) {
-                      _debouncer.run(() {
-                        _findResult.clear();
-                        context.read<FindEmployeeByNameBloc>().add(
-                            FindEmployeeByNameLoadStart(
-                                _textFindByTextController.text));
+                      debouncer.run(() {
+                        findResult.clear();
+                        context.read<FindEmployeeByNameBloc>().add(FindEmployeeByNameLoadStart(textFindByTextController.text));
                       });
                     },
                     decoration: InputDecoration(
                       hintText: "ข้อความบางส่วน (ชื่อ)",
                       suffixIcon: IconButton(
                         onPressed: () => setState(() {
-                          _findResult.clear();
-                          _textFindByTextController.clear();
+                          findResult.clear();
+                          textFindByTextController.clear();
                         }),
                         icon: const Icon(Icons.clear),
                       ),
@@ -88,12 +66,8 @@ class _FindEmployeeState extends State<FindEmployee>
 
   Widget employeeContent() {
     return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 200,
-            childAspectRatio: 3 / 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20),
-        itemCount: _findResult.length,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 200, childAspectRatio: 3 / 2, crossAxisSpacing: 20, mainAxisSpacing: 20),
+        itemCount: findResult.length,
         itemBuilder: (BuildContext ctx, index) {
           return employeeButton(index);
         });
@@ -106,8 +80,7 @@ class _FindEmployeeState extends State<FindEmployee>
       child: SizedBox(
           child: ElevatedButton(
         onPressed: () async {
-          Navigator.pop(
-              context, [_findResult[index].code, _findResult[index].name]);
+          Navigator.pop(context, [findResult[index].code, findResult[index].name]);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -119,14 +92,16 @@ class _FindEmployeeState extends State<FindEmployee>
                   border: Border.all(color: Colors.blueAccent),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: CachedNetworkImage(
-                  width: 100,
-                  height: 80,
-                  imageUrl: _findResult[index].profilepicture,
-                  fit: BoxFit.fill,
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                )),
-            Text((_findResult[index].name),
+                child: (findResult[index].profile_picture.trim().isEmpty)
+                    ? Container()
+                    : CachedNetworkImage(
+                        width: 100,
+                        height: 80,
+                        imageUrl: findResult[index].profile_picture,
+                        fit: BoxFit.fill,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      )),
+            Text((findResult[index].name),
                 style: const TextStyle(
                     color: Colors.white,
                     shadows: [
@@ -148,7 +123,7 @@ class _FindEmployeeState extends State<FindEmployee>
     return Scaffold(
       appBar: AppBar(
         backgroundColor: global.posTheme.secondary,
-        title: const Text("ค้นหา พนักงาน"),
+        title: Text(global.language("find_employee")),
       ),
       body: findByText(),
     );

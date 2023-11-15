@@ -25,9 +25,7 @@ class RoundMenu extends StatelessWidget {
     return Container(
       width: 100,
       height: 100,
-      color: (index == actived)
-          ? global.posTheme.secondary
-          : global.posTheme.background,
+      color: (index == actived) ? global.posTheme.secondary : global.posTheme.background,
       child: Material(
           type: MaterialType.transparency,
           child: InkWell(

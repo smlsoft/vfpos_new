@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dedepos/global.dart' as global;
 import 'button.dart';
 
 class PinNumberPad extends StatefulWidget {
@@ -8,11 +7,14 @@ class PinNumberPad extends StatefulWidget {
   final int pinLength;
 
   const PinNumberPad(
-      {Key? key, required this.onChange, this.header = "", this.pinLength = 4})
+      {Key? key,
+      required this.onChange,
+      this.header = "PIN",
+      this.pinLength = 4})
       : super(key: key);
 
   @override
-  _PinNumberPadState createState() => _PinNumberPadState();
+  State<PinNumberPad> createState() => _PinNumberPadState();
 }
 
 class _PinNumberPadState extends State<PinNumberPad> {
@@ -44,6 +46,7 @@ class _PinNumberPadState extends State<PinNumberPad> {
                   Text(widget.header,
                       style: const TextStyle(
                           fontSize: 32, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
                 Row(children: [
                   for (var i = 0; i < widget.pinLength; i++)
                     Expanded(
@@ -66,6 +69,7 @@ class _PinNumberPadState extends State<PinNumberPad> {
                                   ))
                                 : Container()))
                 ]),
+                const SizedBox(height: 16),
                 Expanded(
                   child: Column(
                     children: [

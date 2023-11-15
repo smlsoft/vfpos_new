@@ -10,10 +10,11 @@ PosLogObjectBoxStruct _$PosLogObjectBoxStructFromJson(
         Map<String, dynamic> json) =>
     PosLogObjectBoxStruct(
       id: json['id'] as int? ?? 0,
+      doc_mode: json['doc_mode'] as int? ?? 1,
       guid_ref: json['guid_ref'] as String? ?? "",
       guid_code_ref: json['guid_code_ref'] as String? ?? "",
       log_date_time: DateTime.parse(json['log_date_time'] as String),
-      hold_number: json['hold_number'] as int,
+      hold_code: json['hold_code'] as String,
       command_code: json['command_code'] as int,
       barcode: json['barcode'] as String? ?? "",
       is_void: json['is_void'] as int? ?? 0,
@@ -30,6 +31,8 @@ PosLogObjectBoxStruct _$PosLogObjectBoxStructFromJson(
       extra_code: json['extra_code'] as String? ?? "",
       unit_code: json['unit_code'] as String? ?? "",
       unit_name: json['unit_name'] as String? ?? "",
+      price_exclude_vat: json['price_exclude_vat'] as bool? ?? false,
+      is_except_vat: json['is_except_vat'] as bool? ?? false,
     )..guid_auto_fixed = json['guid_auto_fixed'] as String;
 
 Map<String, dynamic> _$PosLogObjectBoxStructToJson(
@@ -37,10 +40,11 @@ Map<String, dynamic> _$PosLogObjectBoxStructToJson(
     <String, dynamic>{
       'id': instance.id,
       'guid_auto_fixed': instance.guid_auto_fixed,
+      'doc_mode': instance.doc_mode,
       'guid_ref': instance.guid_ref,
       'guid_code_ref': instance.guid_code_ref,
       'log_date_time': instance.log_date_time.toIso8601String(),
-      'hold_number': instance.hold_number,
+      'hold_code': instance.hold_code,
       'command_code': instance.command_code,
       'is_void': instance.is_void,
       'success': instance.success,
@@ -57,4 +61,6 @@ Map<String, dynamic> _$PosLogObjectBoxStructToJson(
       'unit_code': instance.unit_code,
       'unit_name': instance.unit_name,
       'barcode': instance.barcode,
+      'price_exclude_vat': instance.price_exclude_vat,
+      'is_except_vat': instance.is_except_vat,
     };

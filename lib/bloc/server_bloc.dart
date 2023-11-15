@@ -1,8 +1,4 @@
-import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/global.dart' as global;
-import 'package:http/http.dart' as http;
-import 'package:dedepos/api/network/server.dart';
 
 abstract class ServerEvent {}
 

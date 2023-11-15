@@ -1,17 +1,14 @@
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dedepos/global.dart' as global;
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dedepos/core/logger/logger.dart';
+import 'package:dedepos/core/service_locator.dart';
 
 Future<void> connectivity() async {
   final connectivityResult = await (Connectivity().checkConnectivity());
   if (connectivityResult == ConnectivityResult.mobile) {
-    print("I am connected to a mobile network.");
+    serviceLocator<Log>().debug("I am connected to a mobile network.");
   } else if (connectivityResult == ConnectivityResult.wifi) {
-    print("I am connected to a wifi network.");
+    serviceLocator<Log>().debug("I am connected to a wifi network.");
   }
 }
 
@@ -23,7 +20,7 @@ Future<String> ipAddress() async {
   for (NetworkInterface interface in interfaces) {
     if (interface.name == 'lo') continue; // Skip the loopback interface
     for (InternetAddress address in interface.addresses) {
-      if (address.type == InternetAddressType.IPv4) {
+      if (address.address.contains("192.168.") && address.type == InternetAddressType.IPv4) {
         return address.address;
       }
     }

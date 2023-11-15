@@ -1,24 +1,41 @@
-import 'package:objectbox/objectbox.dart';
+// ignore_for_file: non_constant_identifier_names
 
+import 'package:objectbox/objectbox.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'wallet_struct.g.dart';
+
+@JsonSerializable()
 @Entity()
-class WalletStruct {
+class WalletObjectBoxStruct {
   int id = 0;
   @Unique()
   String code;
-  String name1;
-  String name2;
-  String name3;
-  String name4;
-  String name5;
-  String image;
+  String guid_fixed;
+  String bookbankcode;
+  String bookbankname;
+  String countrycode;
+  double feerate;
+  String names;
+  String paymentcode;
+  String paymentlogo;
+  int paymenttype;
+  int wallettype;
 
-  WalletStruct({
-    this.code = "",
-    this.name1 = "",
-    this.name2 = "",
-    this.name3 = "",
-    this.name4 = "",
-    this.name5 = "",
-    this.image = "",
+  WalletObjectBoxStruct({
+    required this.code,
+    required this.guid_fixed,
+    required this.bookbankcode,
+    required this.bookbankname,
+    required this.countrycode,
+    required this.feerate,
+    required this.names,
+    required this.paymentcode,
+    required this.paymentlogo,
+    required this.paymenttype,
+    required this.wallettype,
   });
+
+  factory WalletObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$WalletObjectBoxStructFromJson(json);
+  Map<String, dynamic> toJson() => _$WalletObjectBoxStructToJson(this);
 }

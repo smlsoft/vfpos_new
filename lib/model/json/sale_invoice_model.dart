@@ -28,7 +28,7 @@ class SaleInvoiceModel {
     this.createDatetime = "",
     this.issync = 0,
     this.syncdatetime = "",
-  }) : this.date_time = DateTime.now();
+  }) : date_time = DateTime.now();
 
   factory SaleInvoiceModel.fromJson(Map<String, dynamic> json) =>
       _$SaleInvoiceModelFromJson(json);

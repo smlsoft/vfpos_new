@@ -7,7 +7,14 @@ import 'package:crclib/crclib.dart';
 import 'package:either_option/either_option.dart';
 import 'package:promptpay/promptpay_data.dart';
 
+///
+/// 00
+///
 const versionID = "00";
+
+///
+/// 01
+///
 const qrTypeID = "01";
 const merchantAccountID = "29";
 
@@ -22,12 +29,27 @@ const subMerchantAccountIdentityID = "02";
 
 /// 03
 const subMerchantAccountEWalletID = "03";
+
+///
+/// Country ID : 58
+///
 const countryID = "58";
+
+///
+/// Currency ID: 53
+///
 const currencyID = "53";
 const amountID = "54";
 const checksumID = "63";
 
+///
+/// 02
+///
 const versionLength = "02";
+
+///
+/// 02
+///
 const qrTypeLength = "02";
 const merchantAccountLength = "37";
 const subMerchantApplicationIDLength = "16";
@@ -38,6 +60,10 @@ const checksumLength = "04";
 
 /// Version Data "01"
 const versionData = "01";
+
+///
+/// 11
+///
 const qrMultipleTypeData = "11";
 const qrOneTimeTypeData = "12";
 const applicationIDData = "A000000677010111";
@@ -88,7 +114,7 @@ class PromptPay {
     data.add(checksumID);
     data.add(checksumLength);
 
-    var checksum = _getCrc16XMODEM()
+    var checksum = _getCrc16XOR()
         .convert(utf8.encode(data.join()))
         .toRadixString(16)
         .toUpperCase();
@@ -104,19 +130,15 @@ class PromptPay {
         _formatAmount(amount);
     var isAlreadyAddAmount = false;
     var newQRData = data.fold("", (String qrData, element) {
-      if (element != null && element.typeID == amountID) {
+      if (element.typeID == amountID) {
         isAlreadyAddAmount = true;
         return qrData + amountData;
       }
 
-      if (element != null) {
-        return qrData +
-            element.typeID +
-            element.length.toString().padLeft(2, '0') +
-            element.data;
-      }
-
-      return qrData;
+      return qrData +
+          element.typeID +
+          element.length.toString().padLeft(2, '0') +
+          element.data;
     });
 
     if (!isAlreadyAddAmount) {
@@ -126,7 +148,7 @@ class PromptPay {
     newQRData = newQRData + checksumID + checksumLength;
 
     return newQRData +
-        _getCrc16XMODEM()
+        _getCrc16XOR()
             .convert(utf8.encode(newQRData))
             .toRadixString(16)
             .toUpperCase();
@@ -163,7 +185,7 @@ class PromptPay {
 
     final qrDataWithOutChecksum = qrData.substring(0, qrData.length - 4);
     final checksum = qrData.substring(qrData.length - 4, qrData.length);
-    final newChecksum = _getCrc16XMODEM()
+    final newChecksum = _getCrc16XOR()
         .convert(utf8.encode(qrDataWithOutChecksum))
         .toRadixString(16)
         .toUpperCase();
@@ -208,8 +230,8 @@ class PromptPay {
     return amount.toStringAsFixed(2);
   }
 
-  static ParametricCrc _getCrc16XMODEM() {
-    // width=16 poly=0x1021 init=0x0000 refin=false refout=false xorout=0x0000 check=0x31c3 residue=0x0000 name="CRC-16/XMODEM"
+  static ParametricCrc _getCrc16XOR() {
+    // width=16 poly=0x1021 init=0x0000 refin=false refout=false xorout=0x0000 check=0x31c3 residue=0x0000 name="CRC-16/XOR"
     return new ParametricCrc(16, 0x1021, 0xFFFF, 0x0000,
         inputReflected: false, outputReflected: false);
   }

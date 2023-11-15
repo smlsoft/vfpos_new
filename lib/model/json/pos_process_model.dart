@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/api/sync/model/promotion_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,86 +7,116 @@ part 'pos_process_model.g.dart';
 
 @JsonSerializable()
 class PosProcessDetailModel {
-  late String guid;
-  late int index;
-  late String barcode;
-  late String item_code;
-  late String item_name;
-  late String unit_code;
-  late String unit_name;
-  late double qty;
-  late double price;
-  late double price_original;
-  late String discount_text;
-  late double discount;
-  late double total_amount;
-  late double total_amount_with_extra;
-  late bool is_void;
-  late String remark;
-  late String image_url;
-  late List<PosProcessDetailExtraModel> extra;
+  String guid;
+  int index;
+  String barcode;
+  String item_code;
+  String item_name;
+  String unit_code;
+  String unit_name;
+  double qty;
+  double price;
+  double price_original;
+  String discount_text;
+  double discount;
+  double total_amount;
+  double total_amount_with_extra;
+  bool is_void;
+  String remark;
+  String image_url;
+
+  /// ราคารวมภาษี (True = ราคารวมภาษี, False = ราคาไม่รวมภาษี)
+  bool price_exclude_vat_type;
+
+  /// สินค้ายกเว้นภาษี (True = สินค้ายกเว้นภาษี, False = สินค้าไม่ยกเว้นภาษี)
+  bool is_except_vat;
+
+  int vat_type;
+
+  /// ราคาไม่รวมภาษี
+  double price_exclude_vat;
+
+  List<PosProcessDetailExtraModel> extra;
 
   PosProcessDetailModel({
-    this.guid = '',
-    this.index = 0,
-    this.barcode = '',
-    this.item_code = '',
-    this.item_name = '',
-    this.unit_code = '',
-    this.unit_name = '',
-    this.qty = 0,
-    this.price = 0,
-    this.price_original = 0,
-    this.discount_text = '',
-    this.discount = 0,
-    this.total_amount = 0,
-    this.total_amount_with_extra = 0,
-    this.is_void = false,
-    this.remark = "",
-    this.image_url = "",
+    required this.guid,
+    required this.index,
+    required this.barcode,
+    required this.item_code,
+    required this.item_name,
+    required this.unit_code,
+    required this.unit_name,
+    required this.qty,
+    required this.price,
+    required this.price_original,
+    required this.discount_text,
+    required this.discount,
+    required this.total_amount,
+    required this.total_amount_with_extra,
+    required this.is_void,
+    required this.remark,
+    required this.image_url,
+    required this.price_exclude_vat_type,
+    required this.is_except_vat,
     required this.extra,
+    required this.vat_type,
+    required this.price_exclude_vat,
   });
 
-  factory PosProcessDetailModel.fromJson(Map<String, dynamic> json) =>
-      _$PosProcessDetailModelFromJson(json);
+  factory PosProcessDetailModel.fromJson(Map<String, dynamic> json) => _$PosProcessDetailModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosProcessDetailModelToJson(this);
 }
 
 @JsonSerializable()
 class PosProcessDetailExtraModel {
-  late String guid_auto_fixed;
-  late String guid_code_or_ref;
-  late String guid_category;
-  late int index;
-  late String barcode;
-  late String item_code;
-  late String item_name;
-  late String unit_code;
-  late String unit_name;
-  late double qty;
-  late double qty_fixed;
-  late double price;
-  late double total_amount;
-  late bool is_void;
+  String guid_auto_fixed;
+  String guid_code_or_ref;
+  String guid_category;
+  int index;
+  String barcode;
+  String item_code;
+  String item_name;
+  String unit_code;
+  String unit_name;
+  double qty;
+  double qty_fixed;
+  double price;
+  double total_amount;
+  bool is_void;
+
+  /// ราคารวมภาษี (True = ราคารวมภาษี, False = ราคาไม่รวมภาษี)
+  bool price_exclude_vat_type;
+
+  /// สินค้ายกเว้นภาษี (True = สินค้ายกเว้นภาษี, False = สินค้าไม่ยกเว้นภาษี)
+  bool is_except_vat;
+
+  /// ราคาไม่รวมภาษี
+  double price_exclude_vat;
+
+  /// ประเภทภาษีมูลค่าเพิ่ม 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_type;
 
   PosProcessDetailExtraModel(
-      {this.guid_auto_fixed = '',
-      this.guid_category = '',
-      this.guid_code_or_ref = '',
-      this.index = 0,
-      this.barcode = '',
-      this.item_code = '',
-      this.item_name = '',
-      this.unit_code = '',
-      this.unit_name = '',
-      this.qty = 0,
-      this.qty_fixed = 0,
-      this.price = 0,
-      this.total_amount = 0,
-      this.is_void = false});
+      {required this.guid_auto_fixed,
+      required this.guid_category,
+      required this.guid_code_or_ref,
+      required this.index,
+      required this.barcode,
+      required this.item_code,
+      required this.item_name,
+      required this.unit_code,
+      required this.unit_name,
+      required this.qty,
+      required this.qty_fixed,
+      required this.price,
+      required this.total_amount,
+      required this.price_exclude_vat_type,
+      required this.is_except_vat,
+      required this.vat_type,
+      required this.is_void,
+      required this.price_exclude_vat});
 
-  factory PosProcessDetailExtraModel.fromJson(Map<String, dynamic> json) =>
-      _$PosProcessDetailExtraModelFromJson(json);
+  factory PosProcessDetailExtraModel.fromJson(Map<String, dynamic> json) => _$PosProcessDetailExtraModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosProcessDetailExtraModelToJson(this);
 }
 
@@ -97,42 +126,108 @@ class PosProcessPromotionModel {
   late String discount_word;
   late double discount;
 
-  PosProcessPromotionModel(
-      {required this.promotion_name,
-      required this.discount_word,
-      required this.discount});
+  PosProcessPromotionModel({required this.promotion_name, required this.discount_word, required this.discount});
 
-  factory PosProcessPromotionModel.fromJson(Map<String, dynamic> json) =>
-      _$PosProcessPromotionModelFromJson(json);
+  factory PosProcessPromotionModel.fromJson(Map<String, dynamic> json) => _$PosProcessPromotionModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosProcessPromotionModelToJson(this);
 }
 
 @JsonSerializable()
 class PosProcessModel {
-  late String customer_code;
-  late String customer_name;
-  late String customer_phone;
-  late double total_piece;
-  late double total_amount;
-  late double total_discount_from_promotion;
-  late String qr_code;
-  late List<PosProcessDetailModel> details;
-  late List<PromotionTempModel> select_promotion_temp_list;
-  late List<PosProcessPromotionModel> promotion_list;
+  /// จำนวนชิ้น
+  double total_piece;
+
+  /// จำนวนชิ้น สินค้ามีภาษี
+  double total_piece_vat;
+
+  /// จำนวนชิ้น สินค้ายกเว้นภาษี
+  double total_piece_except_vat;
+
+  /// ยอดรวมภาษี
+  double total_vat_amount;
+
+  /// ยอดรวมสินค้าก่อนหักส่วนลดสินค้า
+  double detail_total_amount_before_discount;
+
+  /// ยอดรวมทั้งสิ้นหลังหักส่วนลด
+  double total_amount;
+
+  /// ยอดรวม Promotion
+  double total_discount_from_promotion;
+
+  // Qr Code
+  String qr_code;
+
+  /// จดทะเบียนภาษีมูลค่าเพิ่ม
+  bool is_vat_register;
+
+  /// ประเภทภาษีมูลค่าเพิ่ม 1=ภาษีมูลค่าเพิ่มรวมใน,2=ภาษีมูลค่าเพิ่มแยกนอก
+  int vat_type;
+
+  /// อัตราภาษี
+  double vat_rate;
+
+  /// ยอดรวมสินค้ามีภาษี
+  double total_item_vat_amount;
+
+  /// ยอดรวมสินค้ายกเว้นภาษี
+  double total_item_except_vat_amount;
+
+  /// รายการสินค้า
+  List<PosProcessDetailModel> details;
+
+  /// รายการ Promotion
+  List<PromotionTempModel> select_promotion_temp_list;
+
+  /// รายการ Promotion ที่เลือก
+  List<PosProcessPromotionModel> promotion_list;
+
+  /// สูตรส่วนลด (ก่อนคิดเงิน)
+  String detail_discount_formula;
+
+  /// ส่วนลดทั้งหมด (ก่อนคิดเงิน)
+  double detail_total_discount;
+
+  /// ส่วนลดสินค้ามีภาษี
+  double total_discount_vat_amount;
+
+  /// ส่วนลดสินค้ายกเว้นภาษี
+  double total_discount_except_vat_amount;
+
+  /// ยอดรวมก่อนคำนวณภาษี (สินค้ามีภาษี)
+  double amount_before_calc_vat;
+
+  /// มูลค่าสินค้าหลังคิดภาษี
+  double amount_after_calc_vat;
+
+  /// มูลค่าสินค้ายกเว้นภาษี
+  double amount_except_vat;
 
   PosProcessModel(
       {this.total_piece = 0.0,
+      this.detail_total_amount_before_discount = 0.0,
+      this.total_piece_except_vat = 0,
+      this.total_piece_vat = 0,
       this.total_amount = 0.0,
       this.total_discount_from_promotion = 0,
-      this.customer_code = "",
-      this.customer_name = "",
-      this.customer_phone = "",
       this.qr_code = "",
+      this.vat_type = 0,
+      this.vat_rate = 0,
+      this.is_vat_register = false,
+      this.total_vat_amount = 0,
+      this.total_item_vat_amount = 0,
+      this.total_item_except_vat_amount = 0,
+      this.amount_except_vat = 0,
       this.details = const [],
       this.select_promotion_temp_list = const [],
+      this.detail_discount_formula = "",
+      this.detail_total_discount = 0,
+      this.total_discount_vat_amount = 0,
+      this.total_discount_except_vat_amount = 0,
+      this.amount_after_calc_vat = 0,
+      this.amount_before_calc_vat = 0,
       this.promotion_list = const []});
 
-  factory PosProcessModel.fromJson(Map<String, dynamic> json) =>
-      _$PosProcessModelFromJson(json);
+  factory PosProcessModel.fromJson(Map<String, dynamic> json) => _$PosProcessModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosProcessModelToJson(this);
 }

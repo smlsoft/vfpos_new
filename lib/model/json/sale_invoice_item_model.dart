@@ -1,4 +1,3 @@
-import 'package:dedepos/api/sync/model/sync_inventory_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'sale_invoice_item_model.g.dart';

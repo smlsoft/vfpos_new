@@ -1,23 +1,46 @@
+import 'dart:io';
+
+import 'package:dedepos/core/environment.dart';
 import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
-import 'app_const.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dio/io.dart';
 
 class Client {
   Dio init() {
-    Dio _dio = Dio();
-    _dio.interceptors.add(ApiInterceptors());
+    Dio dio = Dio();
+    dio.interceptors.add(ApiInterceptors());
 
-    String endPointService = AppConfig.serviceApi;
+    String endPointService = Environment().config.serviceApi;
 
-    endPointService +=
-        endPointService[endPointService.length - 1] == "/" ? "" : "/";
+    endPointService += endPointService[endPointService.length - 1] == "/" ? "" : "/";
 
-    _dio.options.baseUrl = endPointService;
-    _dio.options.connectTimeout = 20000; //20s
-    _dio.options.receiveTimeout = 30000; //5s
+    dio.options.baseUrl = endPointService;
+    dio.options.connectTimeout = const Duration(seconds: 20); //20s
+    dio.options.receiveTimeout = const Duration(seconds: 30); //5s
+    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+        // ignore: body_might_complete_normally_nullable
+        (HttpClient client) {
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    };
+    return dio;
+  }
 
-    return _dio;
+  Dio initExpress() {
+    Dio dio = Dio();
+
+    String endPointService = Environment().config.reportApi;
+
+    endPointService += endPointService[endPointService.length - 1] == "/" ? "" : "/";
+
+    dio.options.baseUrl = endPointService;
+    dio.options.connectTimeout = const Duration(seconds: 20); //20s
+    dio.options.receiveTimeout = const Duration(seconds: 30); //5s
+    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+        // ignore: body_might_complete_normally_nullable
+        (HttpClient client) {
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    };
+    return dio;
   }
 }
 
@@ -26,8 +49,8 @@ class ApiResponse<T> {
   late final bool error;
   // ignore: unnecessary_question_mark
   late final dynamic? data;
-  late final message;
-  late final code;
+  late final String? message;
+  late final int? code;
   final Pages? page;
 
   ApiResponse({
@@ -44,9 +67,7 @@ class ApiResponse<T> {
       success: map['success'] ?? false,
       error: map['error'] ?? true,
       data: map['data'],
-      page: map['pagination'] == null
-          ? Pages.empty
-          : Pages.fromMap(map['pagination']),
+      page: map['pagination'] == null ? Pages.empty : Pages.fromMap(map['pagination']),
     );
   }
 }
@@ -71,11 +92,7 @@ class Pages {
   bool get isNotEmpty => this == Pages.empty;
 
   factory Pages.fromMap(Map<String, dynamic> map) {
-    return Pages(
-        perPage: map['perPage'],
-        page: map['page'],
-        total: map['total'],
-        totalPage: map['totalPage']);
+    return Pages(perPage: map['perPage'], page: map['page'], total: map['total'], totalPage: map['totalPage']);
   }
 }
 
@@ -84,7 +101,7 @@ class ApiInterceptors extends Interceptor {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     String authorization = global.appStorage.read("token") ?? '';
     if (authorization.isNotEmpty) {
-      options.headers['Authorization'] = "Bearer " + authorization;
+      options.headers['Authorization'] = "Bearer $authorization";
     }
 
     super.onRequest(options, handler);

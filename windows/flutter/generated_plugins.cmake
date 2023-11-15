@@ -3,12 +3,15 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  audioplayers_windows
   charset_converter
   connectivity_plus
+  desktop_window
+  flutter_pos_printer_platform
+  geolocator_windows
   network_info_plus
   objectbox_flutter_libs
   permission_handler_windows
+  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
