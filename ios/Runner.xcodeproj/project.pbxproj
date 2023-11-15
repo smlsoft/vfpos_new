@@ -524,7 +524,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -678,7 +678,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -748,7 +748,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FLUTTER_BUILD_NAME = 1.2.2;
@@ -761,7 +761,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1268,7 +1268,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1399,7 +1399,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FLUTTER_BUILD_NAME = 1.2.2;
@@ -1412,7 +1412,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1436,7 +1436,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_BITCODE = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FLUTTER_BUILD_NAME = 1.2.2;
@@ -1449,7 +1449,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1467,10 +1467,10 @@
 			baseConfigurationReference = BDA429FD00010268585B9A2A /* Pods-Runner.debug-dev.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dev";
@@ -1480,10 +1480,10 @@
 			baseConfigurationReference = 229EBBA82596663CDE7DB9D1 /* Pods-Runner.profile-dev.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1494,10 +1494,10 @@
 			baseConfigurationReference = 8FD28A167A224AA66FA454FB /* Pods-Runner.release-dev.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1508,10 +1508,10 @@
 			baseConfigurationReference = 8D7F66FCD1D2DA8AF3FDC338 /* Pods-Runner.debug-dedepos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dedepos";
@@ -1521,10 +1521,10 @@
 			baseConfigurationReference = 194B52947F82F5CEEC3DBB51 /* Pods-Runner.profile-dedepos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1535,10 +1535,10 @@
 			baseConfigurationReference = CBC2F7206011CD3C3A9A9574 /* Pods-Runner.release-dedepos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.villagefundth.vfpos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1625,7 +1625,7 @@
 			baseConfigurationReference = A180D0277FADD536BC00186D /* Pods-Runner.debug-vfpos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
@@ -1637,7 +1637,7 @@
 			baseConfigurationReference = EE3D99F269295A67CD79D391 /* Pods-Runner.profile-vfpos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;
@@ -1650,7 +1650,7 @@
 			baseConfigurationReference = 030620D19BF7C0642A586C15 /* Pods-Runner.release-vfpos.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				DEVELOPMENT_TEAM = 54Z26J3N57;
+				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
 				PRODUCT_NAME = Runner;

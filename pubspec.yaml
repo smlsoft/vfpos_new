@@ -3,7 +3,7 @@ description: vfpos pos project.
 
 publish_to: "none"
 
-version: 1.3.18+46
+version: 1.3.19+47
 
 environment:
   sdk: ">=2.19.6 <3.0.0"
@@ -226,12 +226,12 @@ flavorizr:
         name: "Village Fund POS"
         icon: "assets/vf-pos-logo.png"
       android:
-        applicationId: "org.villagefundth.vfpos"
+        applicationId: "th.or.villagefund.pos"
         # signingConfig: // ใส่ชื่อ signingConfig ที่เราสร้างไว้ในไฟล์ android/app/build.gradle
       ios:
-        bundleId: "org.villagefundth.vfpos"
+        bundleId: "th.or.villagefund.pos"
       windows:
-        packageId: "org.villagefundth.vfpos"
+        packageId: "th.or.villagefund.pos"
         # customConfig:
         #   msix_config:
         #     display_name: VFPOS
@@ -243,7 +243,7 @@ flavorizr:
         #     certificate_path: D:\CODE2121\flutter\dedepos_testflight_deploy\key\CERTIFICATE.pfx
         #     certificate_password: sml19682511
       macos:
-        bundleId: "org.villagefundth.vfpos"
+        bundleId: "th.or.villagefund.pos"
 msix_config:
   # # DEDE POS Store Config
   # display_name: DEDEPOS
