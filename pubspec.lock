@@ -513,14 +513,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  enum_to_string:
-    dependency: transitive
-    description:
-      name: enum_to_string
-      sha256: bd9e83a33b754cb43a75b36a9af2a0b92a757bfd9847d2621ca0b1bed45f8e7a
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   equatable:
     dependency: "direct main"
     description:
@@ -672,14 +664,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.16"
-  flutter_pos_printer_platform:
-    dependency: "direct main"
-    description:
-      name: flutter_pos_printer_platform
-      sha256: "3fa011b012c85d1597c43335f25d898edca3f1baf707b6fc856bbc395df838ba"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   flutter_rounded_date_picker:
     dependency: "direct main"
     description:
@@ -1373,14 +1357,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.0"
-  ping_discover_network_forked:
-    dependency: transitive
-    description:
-      name: ping_discover_network_forked
-      sha256: d3975c4f3fbaa388f78fb4037ad9c33059d8e2ec0e804ed45e05277d2451fe77
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.1"
   platform:
     dependency: transitive
     description:
@@ -2122,5 +2098,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.1.0 <3.3.10"
+  dart: ">=3.1.0 <4.0.0"
   flutter: ">=3.13.0"
