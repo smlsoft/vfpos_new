@@ -89,10 +89,9 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
             global.apiShopID = state.shop.guidfixed;
             global.appStorage.write("cache_shopid", state.shop.guidfixed);
             global.loginSuccess = true;
-            context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user));
-            // Future.delayed(const Duration(seconds: 1), () {
-            //   context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
-            // });
+            //context.read<AuthenticationBloc>().add(AuthenticationEvent.authenticated(user: user));
+
+            context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
           } else if (state is SelectShopLoadedState) {
             if (state.shops.isNotEmpty) {
               if (state.shops.length == 1) {
@@ -108,11 +107,12 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
             Future.delayed(const Duration(seconds: 1), () {
               context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
             });
-          } else if (state is AuthenticationAuthenticatedState) {
-            Future.delayed(const Duration(seconds: 1), () {
-              context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
-            });
           }
+          // else if (state is AuthenticationAuthenticatedState) {
+          //   Future.delayed(const Duration(seconds: 1), () {
+          //     context.router.pushAndPopUntil(const RegisterPosTerminalRoute(), predicate: (route) => false);
+          //   });
+          // }
         }),
       ],
       child: Scaffold(
