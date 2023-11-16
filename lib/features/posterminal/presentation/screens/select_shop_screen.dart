@@ -99,9 +99,10 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
           BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
             if (state is AuthenticationInitialState) {
               context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
-            } else if (state is AuthenticationAuthenticatedState) {
-              context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
             }
+            // else if (state is AuthenticationAuthenticatedState) {
+            //   context.router.pushAndPopUntil(const InitShopRoute(), predicate: (route) => false);
+            // }
           }),
         ],
         child: Scaffold(

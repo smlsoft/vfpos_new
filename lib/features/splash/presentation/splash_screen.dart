@@ -31,9 +31,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     getConfig();
-    Timer(const Duration(seconds: 5), () {
-      reload();
-    });
+
+    reload();
+
     //reload();
   }
 
