@@ -43,8 +43,9 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SelectShopBloc>().add(const SelectShopEvent.onSelectShopStarted());
+
     initializeSelection();
+    context.read<SelectShopBloc>().add(const SelectShopEvent.onSelectShopStarted());
   }
 
   void initializeSelection() {
@@ -53,7 +54,6 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
 
   @override
   void dispose() {
-    _selected.clear();
     super.dispose();
   }
 
@@ -95,7 +95,9 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
           } else if (state is SelectShopLoadedState) {
             if (state.shops.isNotEmpty) {
               if (state.shops.length == 1) {
-                context.read<SelectShopBloc>().add(ShopSelectSubmit(shop: state.shops[0].toShop));
+                Future.delayed(const Duration(seconds: 1), () {
+                  context.read<SelectShopBloc>().add(ShopSelectSubmit(shop: state.shops[0].toShop));
+                });
               }
             }
           } else if (state is SelectShopBlocErrorState) {
@@ -104,9 +106,7 @@ class _SelectShopScreenState extends State<SelectShopScreen> {
         }),
         BlocListener<AuthenticationBloc, AuthenticationState>(listener: (context, state) {
           if (state is AuthenticationInitialState) {
-            Future.delayed(const Duration(seconds: 1), () {
-              context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
-            });
+            context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
           }
           // else if (state is AuthenticationAuthenticatedState) {
           //   Future.delayed(const Duration(seconds: 1), () {
@@ -310,20 +310,24 @@ class GridBuilderState extends State<GridBuilder> {
     return BlocBuilder<SelectShopBloc, SelectShopState>(
       builder: (context, state) {
         if (state is SelectShopLoadedState) {
-          return Padding(
-            padding: EdgeInsets.only(left: PD, right: PD, top: 20),
-            child: GridView.builder(
-                itemCount: state.shops.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: Cros,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  mainAxisExtent: 150,
-                ),
-                itemBuilder: (context, index) {
-                  return InkWell(onTap: () => _toggle(index), child: cardItem(state.shops[index]));
-                }),
-          );
+          if (state.shops.length > 1) {
+            return Padding(
+              padding: EdgeInsets.only(left: PD, right: PD, top: 20),
+              child: GridView.builder(
+                  itemCount: state.shops.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: Cros,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    mainAxisExtent: 150,
+                  ),
+                  itemBuilder: (context, index) {
+                    return InkWell(onTap: () => _toggle(index), child: cardItem(state.shops[index]));
+                  }),
+            );
+          } else {
+            return const Center(child: SizedBox(height: 30, child: CircularProgressIndicator()));
+          }
         }
         return Container();
       },

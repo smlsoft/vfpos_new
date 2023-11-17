@@ -18,6 +18,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Timer? timerSwitchToMenu;
 
   void init() async {
+    await global.startLoading();
     if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
         Navigator.of(context).pushReplacementNamed('client');

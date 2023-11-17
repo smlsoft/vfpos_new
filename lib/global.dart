@@ -86,14 +86,7 @@ PosConfigModel posConfig = PosConfigModel(
   warehouse: WarehouseModel(code: "", guidfixed: "", names: []),
 );
 List<FormDesignObjectBoxStruct> formDesignList = [];
-List<String> countryNames = [
-  "English",
-  "Thai",
-  "Laos",
-  "Chinese",
-  "Japan",
-  "Korea"
-];
+List<String> countryNames = ["English", "Thai", "Laos", "Chinese", "Japan", "Korea"];
 List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
 List<LanguageSystemModel> languageSystemData = [];
 List<LanguageSystemCodeModel> languageSystemCode = [];
@@ -144,8 +137,7 @@ bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
 PosPayModel payScreenData = PosPayModel();
-PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
-    PayScreenNumberPadWidgetEnum.number;
+PayScreenNumberPadWidgetEnum payScreenNumberPadWidget = PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
 late EmployeeObjectBoxStruct? userLogin;
 int machineNumber = 1;
@@ -187,8 +179,7 @@ int targetDeviceIpPort = 4040;
 bool targetDeviceConnected = false;
 Function? functionPosScreenRefresh;
 DeviceModeEnum deviceMode = DeviceModeEnum.none;
-PosScreenNewDataStyleEnum posScreenNewDataStyle =
-    PosScreenNewDataStyleEnum.addLastLine;
+PosScreenNewDataStyleEnum posScreenNewDataStyle = PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
 bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
@@ -244,14 +235,7 @@ String formS04 = "S-04";
 // ใบรับคืน
 String formReturn = "SLIP005";
 
-enum TableManagerEnum {
-  openTable,
-  closeTable,
-  moveTable,
-  mergeTable,
-  informationTable,
-  splitTable
-}
+enum TableManagerEnum { openTable, closeTable, moveTable, mergeTable, informationTable, splitTable }
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -323,28 +307,21 @@ int findPosHoldProcessResultIndex(String code) {
 
 Future<void> loadPrinter() async {
   printerLocalStrongData.clear();
-  List<String> printerCodes = [
-    printerConfigCashierCode,
-    printerConfigTicketCode
-  ];
+  List<String> printerCodes = [printerConfigCashierCode, printerConfigTicketCode];
   List<String> printerNames = ["Cashier", "Ticket"];
   // Kitchen
   List<KitchenObjectBoxStruct> kitchenList = KitchenHelper().getAll();
   for (var kitchen in kitchenList) {
     printerCodes.add(kitchen.code);
-    printerNames
-        .add(getNameFromJsonLanguage(kitchen.names, userScreenLanguage));
+    printerNames.add(getNameFromJsonLanguage(kitchen.names, userScreenLanguage));
   }
   for (var printerCode in printerCodes) {
     try {
       // ดึงข้อมูลจาก Local Storage
       String printerJson = await appStorage.read(printerCode);
-      printerLocalStrongData
-          .add(PrinterLocalStrongDataModel.fromJson(jsonDecode(printerJson)));
+      printerLocalStrongData.add(PrinterLocalStrongDataModel.fromJson(jsonDecode(printerJson)));
     } catch (e) {
-      printerLocalStrongData.add(PrinterLocalStrongDataModel(
-          code: printerCode,
-          name: printerNames[printerCodes.indexOf(printerCode)]));
+      printerLocalStrongData.add(PrinterLocalStrongDataModel(code: printerCode, name: printerNames[printerCodes.indexOf(printerCode)]));
     }
   }
 }
@@ -392,8 +369,7 @@ Future<Position> determinePosition() async {
 
   if (permission == LocationPermission.deniedForever) {
     // Permissions are denied forever, handle appropriately.
-    return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
+    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
   }
 
   // When we reach here, permissions are granted and we can
@@ -402,8 +378,7 @@ Future<Position> determinePosition() async {
 }
 
 bool isPhoneDevice() {
-  return deviceMode == DeviceModeEnum.iphone ||
-      deviceMode == DeviceModeEnum.androidPhone;
+  return deviceMode == DeviceModeEnum.iphone || deviceMode == DeviceModeEnum.androidPhone;
 }
 
 bool isTabletDevice() {
@@ -578,11 +553,7 @@ double calcTextToNumber(String text) {
     textTrim = textTrim.replaceAll(" ", "");
   }
   if (textTrim.isNotEmpty) {
-    textTrim = textTrim
-        .replaceAll("X", "")
-        .replaceAll("x", "")
-        .replaceAll("+", "")
-        .replaceAll("-", "");
+    textTrim = textTrim.replaceAll("X", "").replaceAll("x", "").replaceAll("+", "").replaceAll("-", "");
     result = double.parse(textTrim);
   }
   return result;
@@ -598,10 +569,7 @@ Future<bool> hasNetwork() async {
   }
 }
 
-void showAlertDialog(
-    {required BuildContext context,
-    required String title,
-    required String message}) {
+void showAlertDialog({required BuildContext context, required String title, required String message}) {
   Widget okButton = TextButton(
     child: Text(language("OK")),
     onPressed: () {
@@ -728,15 +696,8 @@ String dateTimeFormatShort(DateTime dateTime, {bool showTime = false}) {
 Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
-    SyncDeviceModel info = SyncDeviceModel(
-        deviceId: deviceId,
-        deviceName: deviceName,
-        ip: "",
-        holdCodeActive: "",
-        docModeActive: 0,
-        connected: true,
-        isClient: false,
-        isCashierTerminal: false);
+    SyncDeviceModel info =
+        SyncDeviceModel(deviceId: deviceId, deviceName: deviceName, ip: "", holdCodeActive: "", docModeActive: 0, connected: true, isClient: false, isCashierTerminal: false);
     var jsonData = HttpPost(command: "info", data: jsonEncode(info.toJson()));
     postToServer(
         ip: url,
@@ -744,8 +705,7 @@ Future<void> systemProcess() async {
         callBack: (value) {
           if (value.isNotEmpty) {
             try {
-              SyncDeviceModel getInfo =
-                  SyncDeviceModel.fromJson(jsonDecode(value));
+              SyncDeviceModel getInfo = SyncDeviceModel.fromJson(jsonDecode(value));
               customerDisplayDeviceList[index].connected = getInfo.connected;
             } catch (e) {
               serviceLocator<Log>().error(e);
@@ -760,28 +720,17 @@ Future<void> sendProcessToCustomerDisplay() async {
     if (customerDisplayDeviceList[index].connected) {
       var url = "${customerDisplayDeviceList[index].ip}:5041";
       try {
-        var jsonData = HttpPost(
-            command: "process",
-            data: jsonEncode(posHoldProcessResult[
-                    findPosHoldProcessResultIndex(posHoldActiveCode)]
-                .toJson()));
+        var jsonData = HttpPost(command: "process", data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posHoldActiveCode)].toJson()));
         dev.log("sendProcessToCustomerDisplay : $url");
-        postToServer(
-            ip: url,
-            jsonData: jsonEncode(jsonData.toJson()),
-            callBack: (value) {});
+        postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (value) {});
       } catch (e) {
         serviceLocator<Log>().error("$e : $url");
       }
     }
   }
-  if (Platform.isAndroid &&
-      displayMachine == DisplayMachineEnum.posTerminal &&
-      isInternalCustomerDisplayConnected == true) {
+  if (Platform.isAndroid && displayMachine == DisplayMachineEnum.posTerminal && isInternalCustomerDisplayConnected == true) {
     // Send to จอสอง
-    displayManager.transferDataToPresentation(jsonEncode(
-        posHoldProcessResult[findPosHoldProcessResultIndex(posHoldActiveCode)]
-            .toJson()));
+    displayManager.transferDataToPresentation(jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posHoldActiveCode)].toJson()));
   }
 }
 
@@ -790,13 +739,9 @@ Future<void> sendProcessToRemote() async {
     if (posRemoteDeviceList[index].connected) {
       var url = "${posRemoteDeviceList[index].ip}:$targetDeviceIpPort";
       try {
-        var jsonData = HttpPost(
-            command: "process_result",
-            data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(
-                    posRemoteDeviceList[index].holdCodeActive!)]
-                .toJson()));
-        postToServer(
-            ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
+        var jsonData =
+            HttpPost(command: "process_result", data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(posRemoteDeviceList[index].holdCodeActive!)].toJson()));
+        postToServer(ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
       } catch (e) {
         serviceLocator<Log>().error("$e : $url");
       }
@@ -804,11 +749,9 @@ Future<void> sendProcessToRemote() async {
   }
 }
 
-double calcDiscountFormula(
-    {required double totalAmount, required String discountText}) {
+double calcDiscountFormula({required double totalAmount, required String discountText}) {
   double sumDiscount = 0.0;
-  List<String> split =
-      discountText.trim().replaceAll(" ", "").replaceAll(" ", "").split(",");
+  List<String> split = discountText.trim().replaceAll(" ", "").replaceAll(" ", "").split(",");
   for (int index = 0; index < split.length; index++) {
     String discount = split[index];
     double result = 0.0;
@@ -866,21 +809,17 @@ Future<String> billRunning(int mode) async {
   int number = 0;
   var getLast = objectBoxStore
       .box<BillObjectBoxStruct>()
-      .query(BillObjectBoxStruct_.doc_number
-          .lessOrEqual(docFormat + lastDigit)
-          .and(BillObjectBoxStruct_.doc_mode.equals(mode)))
+      .query(BillObjectBoxStruct_.doc_number.lessOrEqual(docFormat + lastDigit).and(BillObjectBoxStruct_.doc_mode.equals(mode)))
       .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
       .build()
       .findFirst();
   if (getLast != null) {
     if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
-      number = int.parse(getLast.doc_number
-          .substring(getLast.doc_number.length - countDigit.length));
+      number = int.parse(getLast.doc_number.substring(getLast.doc_number.length - countDigit.length));
     }
   } else {
     // ค้นหาข้อมูลบน Cloud
-    var lastDocNumberJson = await ApiRepository()
-        .serverGetLastDocNumber(docNumber: docFormat + lastDigit, mode: mode);
+    var lastDocNumberJson = await ApiRepository().serverGetLastDocNumber(docNumber: docFormat + lastDigit, mode: mode);
     String lastDocNumber = "";
     try {
       lastDocNumber = lastDocNumberJson.data;
@@ -888,8 +827,7 @@ Future<String> billRunning(int mode) async {
       serviceLocator<Log>().error(e);
     }
     if (lastDocNumber.isNotEmpty) {
-      number = int.parse(
-          lastDocNumber.substring(lastDocNumber.length - countDigit.length));
+      number = int.parse(lastDocNumber.substring(lastDocNumber.length - countDigit.length));
     }
     print(lastDocNumber);
   }
@@ -932,10 +870,8 @@ void posScreenListHeightSet(double value) {
 
 Future<void> loadDeviceConfigFromServer() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  posTerminalPinCode =
-      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
-  posTerminalPinTokenId =
-      sharedPreferences.getString('pos_terminal_token') ?? "";
+  posTerminalPinCode = sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+  posTerminalPinTokenId = sharedPreferences.getString('pos_terminal_token') ?? "";
   deviceId = sharedPreferences.getString('pos_device_id') ?? "";
   ApiRepository apiRepository = ApiRepository();
   try {
@@ -968,19 +904,11 @@ Future<void> loadConfig() async {
 
 Future<void> registerRemoteToTerminal() async {
   if (appMode == AppModeEnum.posRemote) {
-    var url =
-        "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
+    var url = "http://$targetDeviceIpAddress:$targetDeviceIpPort?uuid=${const Uuid().v4()}";
     var uri = Uri.parse(url);
     try {
       SyncDeviceModel sendData = SyncDeviceModel(
-          deviceId: "XXX",
-          deviceName: "XXX",
-          ip: ipAddress,
-          holdCodeActive: posHoldActiveCode,
-          docModeActive: 0,
-          connected: true,
-          isCashierTerminal: false,
-          isClient: true);
+          deviceId: "XXX", deviceName: "XXX", ip: ipAddress, holdCodeActive: posHoldActiveCode, docModeActive: 0, connected: true, isCashierTerminal: false, isClient: true);
       var jsonEncodeStr = jsonEncode(sendData.toJson());
       await http
           .post(uri,
@@ -1128,12 +1056,8 @@ Future<String> getFromServer({required String json}) async {
   // String url = "$httpServerIp:$httpServerPort?data=$base64String";
 
   String url = "$targetDeviceIpAddress:$targetDeviceIpPort";
-  final response = await httpClient
-      .get(Uri.http(url, '/', {'json': base64String}), headers: {
-    "Content-Type": "application/json",
-    "Cache-Control": "no-cache",
-    "Accept": "text/event-stream"
-  });
+  final response =
+      await httpClient.get(Uri.http(url, '/', {'json': base64String}), headers: {"Content-Type": "application/json", "Cache-Control": "no-cache", "Accept": "text/event-stream"});
   if (response.statusCode == 200) {
     return response.body;
   } else {
@@ -1141,10 +1065,7 @@ Future<String> getFromServer({required String json}) async {
   }
 }
 
-Future<void> postToServer(
-    {required String ip,
-    required String jsonData,
-    required Function callBack}) async {
+Future<void> postToServer({required String ip, required String jsonData, required Function callBack}) async {
   String result = "";
   try {
     var request = http.Request("POST", Uri.parse("http://$ip"));
@@ -1164,8 +1085,7 @@ Future<void> postToServer(
   }
 }
 
-Future<String> postToServerAndWait(
-    {required String ip, required String jsonData}) async {
+Future<String> postToServerAndWait({required String ip, required String jsonData}) async {
   String result = "";
   try {
     var request = http.Request("POST", Uri.parse("http://$ip"));
@@ -1208,15 +1128,7 @@ Future scanServerById(String name) async {
   String subNet = ipAddress.substring(0, ipAddress.lastIndexOf("."));
   for (int i = 1; i < 255; i++) {
     String ip = "$subNet.$i";
-    ipList.add(SyncDeviceModel(
-        deviceId: "",
-        deviceName: "",
-        ip: ip,
-        holdCodeActive: "",
-        docModeActive: 0,
-        connected: false,
-        isClient: false,
-        isCashierTerminal: false));
+    ipList.add(SyncDeviceModel(deviceId: "", deviceName: "", ip: ip, holdCodeActive: "", docModeActive: 0, connected: false, isClient: false, isCashierTerminal: false));
   }
   int countTread = 0;
   bool loopScan = true;
@@ -1226,20 +1138,14 @@ Future scanServerById(String name) async {
       if (!ipList[index].connected) {
         if (countTread < 10) {
           countTread++;
-          String url =
-              "http://${ipList[index].ip}:$targetDeviceIpPort/scan?uuid=${const Uuid().v4()}";
+          String url = "http://${ipList[index].ip}:$targetDeviceIpPort/scan?uuid=${const Uuid().v4()}";
           try {
-            http
-                .post(Uri.parse(url))
-                .timeout(const Duration(seconds: 1))
-                .then((result) {
+            http.post(Uri.parse(url)).timeout(const Duration(seconds: 1)).then((result) {
               countTread--;
               if (result.statusCode == 200) {
                 if (result.body.isNotEmpty) {
-                  serviceLocator<Log>()
-                      .debug("Connected to ${ipList[index].ip}");
-                  SyncDeviceModel server =
-                      SyncDeviceModel.fromJson(jsonDecode(result.body));
+                  serviceLocator<Log>().debug("Connected to ${ipList[index].ip}");
+                  SyncDeviceModel server = SyncDeviceModel.fromJson(jsonDecode(result.body));
                   if (server.deviceId == name && server.isCashierTerminal!) {
                     ipList[index].connected = true;
                     loopScan = false;
@@ -1267,18 +1173,14 @@ Future scanServerById(String name) async {
 }
 
 bool isTabletScreen() {
-  return (deviceMode == DeviceModeEnum.androidTablet ||
-      deviceMode == DeviceModeEnum.ipad);
+  return (deviceMode == DeviceModeEnum.androidTablet || deviceMode == DeviceModeEnum.ipad);
 }
 
 bool isDesktopScreen() {
-  return (deviceMode == DeviceModeEnum.macosDesktop ||
-      deviceMode == DeviceModeEnum.linuxDesktop ||
-      deviceMode == DeviceModeEnum.windowsDesktop);
+  return (deviceMode == DeviceModeEnum.macosDesktop || deviceMode == DeviceModeEnum.linuxDesktop || deviceMode == DeviceModeEnum.windowsDesktop);
 }
 
-String syncFindLastUpdate(
-    List<SyncMasterStatusModel> dataList, String tableName) {
+String syncFindLastUpdate(List<SyncMasterStatusModel> dataList, String tableName) {
   for (var item in dataList) {
     print(item.tableName);
     if (item.tableName == tableName) {
@@ -1295,15 +1197,12 @@ Future<void> testPrinterConnect() async {
         if (printer.ipAddress.trim().isNotEmpty) {
           bool oldReady = printer.isReady;
           try {
-            final Socket socket = await Socket.connect(
-                printer.ipAddress, printer.ipPort,
-                timeout: const Duration(seconds: 1));
+            final Socket socket = await Socket.connect(printer.ipAddress, printer.ipPort, timeout: const Duration(seconds: 1));
             printer.isReady = true;
             socket.destroy();
           } catch (e) {
             printer.isReady = false;
-            String message =
-                "${language("printer")} : ${printer.name}/${printer.ipAddress}:${printer.ipPort} ${language("not_ready")}";
+            String message = "${language("printer")} : ${printer.name}/${printer.ipAddress}:${printer.ipPort} ${language("not_ready")}";
             if (!errorMessage.contains(message)) {
               // errorMessage.add(message);
             }
@@ -1338,9 +1237,7 @@ void languageSelect(String languageCode) {
   for (int i = 0; i < languageSystemCode.length; i++) {
     for (int j = 0; j < languageSystemCode[i].langs.length; j++) {
       if (languageSystemCode[i].langs[j].code == userScreenLanguage) {
-        languageSystemData.add(LanguageSystemModel(
-            code: languageSystemCode[i].code.trim(),
-            text: languageSystemCode[i].langs[j].text.trim()));
+        languageSystemData.add(LanguageSystemModel(code: languageSystemCode[i].code.trim(), text: languageSystemCode[i].langs[j].text.trim()));
       }
     }
   }
@@ -1358,227 +1255,226 @@ int findBuffetModeIndex(String code) {
   return -1;
 }
 
-Future<void> checkOrderOnline() async {
-  checkOrderActive = true;
-  {
-    List<OrderTempDataModel> orderTemp = [];
-    List<OrderTempObjectBoxStruct> orderSave = [];
-    try {
-      // ดึง Order ลูกค้าสั่งเอง
-      String selectQuery =
-          "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
-      var value = await clickHouseSelect(selectQuery);
-      if (value.isNotEmpty) {
-        ResponseDataModel responseData = ResponseDataModel.fromJson(value);
-        // Print
-        String orderId = "";
-        bool updateOrder = false;
-        for (var order in responseData.data) {
-          orderId = order["orderid"];
-          OrderTempDataModel orderData = OrderTempDataModel(
-            orderId: order["orderid"],
-            orderGuid: order["orderguid"],
-            barcode: order["barcode"],
-            qty: double.tryParse(order["qty"].toString()) ?? 0,
-            optionSelected: order["optionselected"],
-            remark: order["remark"],
-            orderDateTime: DateTime.parse(order["orderdatetime"]),
-            price: double.tryParse(order["price"].toString()) ?? 0,
-            amount: double.tryParse(order["amount"].toString()) ?? 0,
-            isTakeAway: order["istakeaway"],
-          );
-          orderTemp.add(orderData);
-          ProductBarcodeObjectBoxStruct? productBarcode =
-              await ProductBarcodeHelper()
-                  .selectByBarcodeFirst(orderData.barcode);
-          List<String> orderIdSplit = orderData.orderId.split("#");
-          String orderIdMain = (orderIdSplit.isNotEmpty) ? orderIdSplit[0] : "";
-          orderSave.add(OrderTempObjectBoxStruct(
-            id: 0,
-            orderId: orderData.orderId,
-            orderIdMain: orderIdMain,
-            orderGuid: orderData.orderGuid,
-            machineId: "",
-            orderDateTime: orderData.orderDateTime,
-            barcode: orderData.barcode,
-            qty: orderData.qty,
-            price: orderData.price,
-            amount: orderData.amount,
-            isOrder: false,
-            isPaySuccess: false,
-            optionSelected: orderData.optionSelected,
-            remark: orderData.remark,
-            names: productBarcode?.names ?? "",
-            takeAway: (orderData.isTakeAway == 1) ? true : false,
-            unitCode: productBarcode?.unit_code ?? "",
-            unitName: productBarcode?.unit_names ?? "",
-            imageUri: productBarcode?.images_url ?? "",
-            kdsSuccessTime: DateTime.now(),
-            kdsSuccess: false,
-            isOrderSuccess: true,
-            isOrderSendKdsSuccess: false,
-            kdsId: "",
-            cancelQty: 0,
-            orderQty: orderData.qty,
-            deliveryNumber: "",
-            deliveryCode: "",
-            isOrderReadySendKds: true,
-            deliveryName: "",
-            lastUpdateDateTime: DateTime.now(),
-          ));
-          if (orderToKitchenPrintMode == 0) {
-            // พิมพ์แยกใบ
-            await sendToKitchen(orderId: orderId, orderList: orderTemp);
-            updateOrder = true;
-            orderTemp.clear();
-          }
-        }
-        if (orderTemp.isNotEmpty) {
-          await sendToKitchen(orderId: orderId, orderList: orderTemp);
-          updateOrder = true;
-        }
-        if (updateOrder) {
-          // update สถานะ ว่า ส่งไปที่ครัวแล้ว
-          String updateQuery =
-              "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
-          await clickHouseExecute(updateQuery);
-        }
-        // save to objectbox
-        objectBoxStore
-            .box<OrderTempObjectBoxStruct>()
-            .putMany(orderSave, mode: PutMode.insert);
-        // คำนวณยอดใหม่
-        orderSumAndUpdateTable(orderId);
-      }
-    } catch (e) {
-      serviceLocator<Log>().error(e.toString());
-    }
-    // save to holdbill
-    saveOrderToHoldBill(orderSave);
-  }
-  {
-    // Order Staff สั่ง
-    List<String> orderIdList = [];
-    try {
-      // update isOrderSuccess และคำนวนณยอดรวม
-      final getData = objectBoxStore
-          .box<OrderTempObjectBoxStruct>()
-          .query(OrderTempObjectBoxStruct_.isOrder
-              .equals(false)
-              .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
-              .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
-          .build()
-          .find();
-      for (var data in getData) {
-        if (!orderIdList.contains(data.orderId)) {
-          orderIdList.add(data.orderId);
-        }
-      }
+// Future<void> checkOrderOnline() async {
+//   checkOrderActive = true;
+//   {
+//     List<OrderTempDataModel> orderTemp = [];
+//     List<OrderTempObjectBoxStruct> orderSave = [];
+//     try {
+//       // ดึง Order ลูกค้าสั่งเอง
+//       String selectQuery =
+//           "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
+//       var value = await clickHouseSelect(selectQuery);
+//       if (value.isNotEmpty) {
+//         ResponseDataModel responseData = ResponseDataModel.fromJson(value);
+//         // Print
+//         String orderId = "";
+//         bool updateOrder = false;
+//         for (var order in responseData.data) {
+//           orderId = order["orderid"];
+//           OrderTempDataModel orderData = OrderTempDataModel(
+//             orderId: order["orderid"],
+//             orderGuid: order["orderguid"],
+//             barcode: order["barcode"],
+//             qty: double.tryParse(order["qty"].toString()) ?? 0,
+//             optionSelected: order["optionselected"],
+//             remark: order["remark"],
+//             orderDateTime: DateTime.parse(order["orderdatetime"]),
+//             price: double.tryParse(order["price"].toString()) ?? 0,
+//             amount: double.tryParse(order["amount"].toString()) ?? 0,
+//             isTakeAway: order["istakeaway"],
+//           );
+//           orderTemp.add(orderData);
+//           ProductBarcodeObjectBoxStruct? productBarcode =
+//               await ProductBarcodeHelper()
+//                   .selectByBarcodeFirst(orderData.barcode);
+//           List<String> orderIdSplit = orderData.orderId.split("#");
+//           String orderIdMain = (orderIdSplit.isNotEmpty) ? orderIdSplit[0] : "";
+//           orderSave.add(OrderTempObjectBoxStruct(
+//             id: 0,
+//             orderId: orderData.orderId,
+//             orderIdMain: orderIdMain,
+//             orderGuid: orderData.orderGuid,
+//             machineId: "",
+//             orderDateTime: orderData.orderDateTime,
+//             barcode: orderData.barcode,
+//             qty: orderData.qty,
+//             price: orderData.price,
+//             amount: orderData.amount,
+//             isOrder: false,
+//             isPaySuccess: false,
+//             optionSelected: orderData.optionSelected,
+//             remark: orderData.remark,
+//             names: productBarcode?.names ?? "",
+//             takeAway: (orderData.isTakeAway == 1) ? true : false,
+//             unitCode: productBarcode?.unit_code ?? "",
+//             unitName: productBarcode?.unit_names ?? "",
+//             imageUri: productBarcode?.images_url ?? "",
+//             kdsSuccessTime: DateTime.now(),
+//             kdsSuccess: false,
+//             isOrderSuccess: true,
+//             isOrderSendKdsSuccess: false,
+//             kdsId: "",
+//             cancelQty: 0,
+//             orderQty: orderData.qty,
+//             deliveryNumber: "",
+//             deliveryCode: "",
+//             isOrderReadySendKds: true,
+//             deliveryName: "",
+//             lastUpdateDateTime: DateTime.now(),
+//           ));
+//           if (orderToKitchenPrintMode == 0) {
+//             // พิมพ์แยกใบ
+//             await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//             updateOrder = true;
+//             orderTemp.clear();
+//           }
+//         }
+//         if (orderTemp.isNotEmpty) {
+//           await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//           updateOrder = true;
+//         }
+//         if (updateOrder) {
+//           // update สถานะ ว่า ส่งไปที่ครัวแล้ว
+//           String updateQuery =
+//               "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
+//           await clickHouseExecute(updateQuery);
+//         }
+//         // save to objectbox
+//         objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .putMany(orderSave, mode: PutMode.insert);
+//         // คำนวณยอดใหม่
+//         orderSumAndUpdateTable(orderId);
+//       }
+//     } catch (e) {
+//       serviceLocator<Log>().error(e.toString());
+//     }
+//     // save to holdbill
+//     saveOrderToHoldBill(orderSave);
+//   }
+//   {
+//     // Order Staff สั่ง
+//     List<String> orderIdList = [];
+//     try {
+//       // update isOrderSuccess และคำนวนณยอดรวม
+//       final getData = objectBoxStore
+//           .box<OrderTempObjectBoxStruct>()
+//           .query(OrderTempObjectBoxStruct_.isOrder
+//               .equals(false)
+//               .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//               .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+//           .build()
+//           .find();
+//       for (var data in getData) {
+//         if (!orderIdList.contains(data.orderId)) {
+//           orderIdList.add(data.orderId);
+//         }
+//       }
 
-      for (var orderId in orderIdList) {
-        var orderTempUpdate = objectBoxStore
-            .box<OrderTempObjectBoxStruct>()
-            .query(OrderTempObjectBoxStruct_.orderId
-                .equals(orderId)
-                .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
-                .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
-            .build()
-            .find();
-        for (var data in orderTempUpdate) {
-          // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
-          data.isOrder = false;
-          data.isOrderSuccess = true;
-          // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
-          data.isOrderSendKdsSuccess = false;
-        }
-        objectBoxStore
-            .box<OrderTempObjectBoxStruct>()
-            .putMany(orderTempUpdate, mode: PutMode.update);
-        // คำนวณ
-        orderSumAndUpdateTable(orderId);
-      }
-      saveOrderToHoldBill(getData);
-    } catch (e) {
-      serviceLocator<Log>().error(e.toString());
-    }
-  }
-  {
-    // ประมวลผลส่งครัว
-    List<String> orderIdList = [];
+//       for (var orderId in orderIdList) {
+//         var orderTempUpdate = objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .query(OrderTempObjectBoxStruct_.orderId
+//                 .equals(orderId)
+//                 .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//                 .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+//             .build()
+//             .find();
+//         for (var data in orderTempUpdate) {
+//           // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
+//           data.isOrder = false;
+//           data.isOrderSuccess = true;
+//           // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
+//           data.isOrderSendKdsSuccess = false;
+//         }
+//         objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .putMany(orderTempUpdate, mode: PutMode.update);
+//         // คำนวณ
+//         orderSumAndUpdateTable(orderId);
+//       }
+//       saveOrderToHoldBill(getData);
+//     } catch (e) {
+//       serviceLocator<Log>().error(e.toString());
+//     }
+//   }
+//   {
+//     // ประมวลผลส่งครัว
+//     List<String> orderIdList = [];
 
-    /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
-    /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
-    /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
-    final getDataOrderId = objectBoxStore
-        .box<OrderTempObjectBoxStruct>()
-        .query(OrderTempObjectBoxStruct_.isOrder
-            .equals(false)
-            .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
-            .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
-            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
-            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
-        .build()
-        .find();
-    for (var data in getDataOrderId) {
-      if (!orderIdList.contains(data.orderId)) {
-        orderIdList.add(data.orderId);
-      }
-    }
-    for (var orderId in orderIdList) {
-      // เลือกรายการ Order ทีละโต๊ะ
-      List<OrderTempDataModel> orderTemp = [];
-      final getData = objectBoxStore
-          .box<OrderTempObjectBoxStruct>()
-          .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
-              OrderTempObjectBoxStruct_.isOrder
-                  .equals(false)
-                  .and(OrderTempObjectBoxStruct_.isOrderReadySendKds
-                      .equals(true))
-                  .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess
-                      .equals(false))
-                  .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
-                  .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
-          .build()
-          .find();
-      for (var data in getData) {
-        orderTemp.add(OrderTempDataModel(
-          orderGuid: data.orderGuid,
-          barcode: data.barcode,
-          qty: data.qty,
-          optionSelected: data.optionSelected,
-          remark: data.remark,
-          orderId: data.orderId,
-          orderDateTime: data.orderDateTime,
-          price: data.price,
-          amount: data.amount,
-          isTakeAway: (data.takeAway) ? 1 : 0,
-        ));
-        // update สถานะ
-        data.isOrderSendKdsSuccess = true;
-        objectBoxStore
-            .box<OrderTempObjectBoxStruct>()
-            .put(data, mode: PutMode.update);
-      }
-      if (orderToKitchenPrintMode == 0) {
-        // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
-        await sendToKitchen(orderId: orderId, orderList: orderTemp);
-        print("sendToKitchen 1 : ${orderTemp.length}");
-        orderTemp.clear();
-      }
-      if (orderTemp.isNotEmpty) {
-        // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
-        await sendToKitchen(orderId: orderId, orderList: orderTemp);
-        print("sendToKitchen 2 : ${orderTemp.length}");
-      }
-    }
-  }
-  checkOrderActive = false;
-}
+//     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
+//     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
+//     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
+//     final getDataOrderId = objectBoxStore
+//         .box<OrderTempObjectBoxStruct>()
+//         .query(OrderTempObjectBoxStruct_.isOrder
+//             .equals(false)
+//             .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+//             .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+//             .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//             .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+//         .build()
+//         .find();
+//     for (var data in getDataOrderId) {
+//       if (!orderIdList.contains(data.orderId)) {
+//         orderIdList.add(data.orderId);
+//       }
+//     }
+//     for (var orderId in orderIdList) {
+//       // เลือกรายการ Order ทีละโต๊ะ
+//       List<OrderTempDataModel> orderTemp = [];
+//       final getData = objectBoxStore
+//           .box<OrderTempObjectBoxStruct>()
+//           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
+//               OrderTempObjectBoxStruct_.isOrder
+//                   .equals(false)
+//                   .and(OrderTempObjectBoxStruct_.isOrderReadySendKds
+//                       .equals(true))
+//                   .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess
+//                       .equals(false))
+//                   .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//                   .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
+//           .build()
+//           .find();
+//       for (var data in getData) {
+//         orderTemp.add(OrderTempDataModel(
+//           orderGuid: data.orderGuid,
+//           barcode: data.barcode,
+//           qty: data.qty,
+//           optionSelected: data.optionSelected,
+//           remark: data.remark,
+//           orderId: data.orderId,
+//           orderDateTime: data.orderDateTime,
+//           price: data.price,
+//           amount: data.amount,
+//           isTakeAway: (data.takeAway) ? 1 : 0,
+//         ));
+//         // update สถานะ
+//         data.isOrderSendKdsSuccess = true;
+//         objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .put(data, mode: PutMode.update);
+//       }
+//       if (orderToKitchenPrintMode == 0) {
+//         // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
+//         await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//         print("sendToKitchen 1 : ${orderTemp.length}");
+//         orderTemp.clear();
+//       }
+//       if (orderTemp.isNotEmpty) {
+//         // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
+//         await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//         print("sendToKitchen 2 : ${orderTemp.length}");
+//       }
+//     }
+//   }
+//   checkOrderActive = false;
+// }
 
 String getNameFromJsonLanguage(String jsonNames, String languageCode) {
   try {
-    List<LanguageDataModel> names =
-        jsonDecode(jsonNames).map<LanguageDataModel>((item) {
+    List<LanguageDataModel> names = jsonDecode(jsonNames).map<LanguageDataModel>((item) {
       return LanguageDataModel.fromJson(item);
     }).toList();
     for (var item in names) {
@@ -1600,8 +1496,7 @@ String getNameFromLanguage(List<LanguageDataModel> names, String languageCode) {
 }
 
 double getProductPrice(String prices, int keyNumber) {
-  List<PriceDataModel> priceList =
-      jsonDecode(prices).map<PriceDataModel>((item) {
+  List<PriceDataModel> priceList = jsonDecode(prices).map<PriceDataModel>((item) {
     return PriceDataModel.fromJson(item);
   }).toList();
   for (var item in priceList) {
@@ -1632,10 +1527,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   }
   {
     final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
-    final resultTable = boxTable
-        .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
-        .build()
-        .findFirst();
+    final resultTable = boxTable.query(TableProcessObjectBoxStruct_.number.equals(tableNumber)).build().findFirst();
     if (resultTable != null) {
       resultTable.order_count = orderCount;
       resultTable.amount = amount;
@@ -1645,10 +1537,7 @@ Future<void> orderSumAndUpdateTable(String tableNumber) async {
   {
     // สร้าง Hold Bill สำหรับระบบ POS
     final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
-    final resultTable = boxTable
-        .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
-        .build()
-        .find();
+    final resultTable = boxTable.query(TableProcessObjectBoxStruct_.number.equals(tableNumber)).build().find();
     // เพิ่มกรณีไม่มี
     for (var table in resultTable) {
       int foundHoldIndex = -1;
@@ -1706,8 +1595,7 @@ Future<void> getProfile() async {
         logo: "",
       );
       List<String> languageList = [];
-      ProfileSettingConfigSystemModel configSystem =
-          ProfileSettingConfigSystemModel(
+      ProfileSettingConfigSystemModel configSystem = ProfileSettingConfigSystemModel(
         vatrate: 0,
         vattypesale: 0,
         vattypepurchase: 0,
@@ -1728,14 +1616,11 @@ Future<void> getProfile() async {
           var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
           languageList = List<String>.from(jsonDecodeBody["languageList"]);
         } else if (code == "ConfigSystem") {
-          configSystem =
-              ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+          configSystem = ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
         }
       }
       var branchValue = await apiRepository.getProfileSBranch();
-      List<ProfileSettingBranchModel> branchs =
-          List<ProfileSettingBranchModel>.from(branchValue.data
-              .map((e) => ProfileSettingBranchModel.fromJson(e)));
+      List<ProfileSettingBranchModel> branchs = List<ProfileSettingBranchModel>.from(branchValue.data.map((e) => ProfileSettingBranchModel.fromJson(e)));
 
       profileSetting = ProfileSettingModel(
         company: company,
@@ -1766,9 +1651,7 @@ Future<void> loadEmployee() async {
   try {
     ApiRepository apiRepository = ApiRepository();
     var value = await apiRepository.getEmployeeList();
-    List<EmployeeModel> employeeList = (value.data as List)
-        .map((e) => EmployeeModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    List<EmployeeModel> employeeList = (value.data as List).map((e) => EmployeeModel.fromJson(e as Map<String, dynamic>)).toList();
     employeeHelper.deleteAll();
     List<EmployeeObjectBoxStruct> employeeObjectBoxList = [];
     for (var data in employeeList) {
@@ -1793,9 +1676,7 @@ Future<void> loadWalletProvider() async {
   try {
     ApiRepository apiRepository = ApiRepository();
     var value = await apiRepository.getEmployeeList();
-    List<WalletModel> walletList = (value.data as List)
-        .map((e) => WalletModel.fromJson(e as Map<String, dynamic>))
-        .toList();
+    List<WalletModel> walletList = (value.data as List).map((e) => WalletModel.fromJson(e as Map<String, dynamic>)).toList();
     employeeHelper.deleteAll();
     List<WalletObjectBoxStruct> walletObjectBoxList = [];
     for (var data in walletList) {
@@ -1917,10 +1798,8 @@ double roundMoneyForPay(double value) {
     value = roundDouble(value, 2);
     double calcRound = roundDouble(value - value.floorToDouble(), 2);
     for (int index = 0; index < payTotalMoneyRoundStep.length; index++) {
-      if (calcRound >= payTotalMoneyRoundStep[index].begin &&
-          calcRound <= payTotalMoneyRoundStep[index].end) {
-        result =
-            roundDoubleDown(value, 0) + payTotalMoneyRoundStep[index].value;
+      if (calcRound >= payTotalMoneyRoundStep[index].begin && calcRound <= payTotalMoneyRoundStep[index].end) {
+        result = roundDoubleDown(value, 0) + payTotalMoneyRoundStep[index].value;
         break;
       }
     }
