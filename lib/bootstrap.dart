@@ -80,16 +80,16 @@ Future<void> initializeEnvironmentConfig() async {
   global.applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
   objectBoxInit();
   // Server
-  await global.startLoading();
+
   server.startServer();
   // ตรวจสอบ Order จากระบบ Order OnLine
-  Timer.periodic(const Duration(seconds: 1), (Timer t) async {
-    if (global.loginSuccess) {
-      if (global.shopId.isNotEmpty && global.checkOrderActive == false) {
-        global.checkOrderOnline();
-      }
-    }
-  });
+  // Timer.periodic(const Duration(seconds: 1), (Timer t) async {
+  //   if (global.loginSuccess) {
+  //     if (global.shopId.isNotEmpty && global.checkOrderActive == false) {
+  //       global.checkOrderOnline();
+  //     }
+  //   }
+  // });
 }
 
 Future<void> setupDisplay() async {

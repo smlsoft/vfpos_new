@@ -58,9 +58,9 @@ class _RegisterPosTerminalPageState extends State<RegisterPosTerminalPage> {
   void initState() {
     super.initState();
 
-    if (global.posTerminalPinTokenId.isNotEmpty && global.deviceId.isNotEmpty) {
-      checkPinCode();
-    }
+    // if (global.posTerminalPinTokenId.isNotEmpty && global.deviceId.isNotEmpty) {
+    //   checkPinCode();
+    // }
 
     context.read<PosTerminalBloc>().add(const PosTerminalLoad());
     // countDownTimerStart();

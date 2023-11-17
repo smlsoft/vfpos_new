@@ -268,6 +268,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
+
     rebuildScreen();
     syncBillProcess();
     global.buffetModeLists = BuffetModeHelper().getAll();

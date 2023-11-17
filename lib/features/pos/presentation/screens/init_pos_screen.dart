@@ -20,7 +20,6 @@ class _InitPOSScreenState extends State<InitPOSScreen> {
 
   void init() async {
 // set global value
-    // await global.startLoading();
 
     if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
