@@ -11,8 +11,8 @@ import 'firebase_options.dart';
 
 void main() async {
   F.appFlavor = Flavor.VFPOS;
-  initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeEnvironmentConfig();
   Intl.defaultLocale = "th";
 
   global.applicationName = "Village Fund POS";

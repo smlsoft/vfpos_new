@@ -37,28 +37,33 @@ Future<void> initializeApp() async {
   HttpOverrides.global = MyHttpOverrides();
   await setupDisplay();
 
-  if (kDebugMode) {
-    // Debug
-    // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
-    await googleMultiLanguageSheetLoad().then((_) {
-      String json = jsonEncode(global.languageSystemCode);
-      File file = File(jsonLanguageFileName);
-      file.writeAsString(json);
-    });
+  // if (kDebugMode) {
+  //   // Debug
+  //   // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
+  //   await googleMultiLanguageSheetLoad().then((_) {
+  //     String json = jsonEncode(global.languageSystemCode);
+  //     File file = File(jsonLanguageFileName);
+  //     file.writeAsString(json);
+  //   });
 
-    // global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
-  } else {
-    // release
-    // load ภาษาจาก assets (mode release)
-    try {
-      global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
-    } catch (_) {}
-  }
+  //   // global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
+  // } else {
+  // release
+  // load ภาษาจาก assets (mode release)
+  try {
+    global.languageSystemCode =
+        (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List)
+            .map((i) => LanguageSystemCodeModel.fromJson(i))
+            .toList();
+  } catch (_) {}
+  //}
   global.languageSelect(global.userScreenLanguage);
   //
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
     await setUpServiceLocator();
-  } else if (global.displayMachine == global.DisplayMachineEnum.customerDisplay) {
+    // server.startServer();
+  } else if (global.displayMachine ==
+      global.DisplayMachineEnum.customerDisplay) {
     initCustomerDisplayBanner();
   }
 }
@@ -77,11 +82,11 @@ Future<void> initializeEnvironmentConfig() async {
 
   global.userScreenLanguage = "th";
 
-  global.applicationDocumentsDirectory = await getApplicationDocumentsDirectory();
+  global.applicationDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
   objectBoxInit();
   // Server
 
-  server.startServer();
   // ตรวจสอบ Order จากระบบ Order OnLine
   // Timer.periodic(const Duration(seconds: 1), (Timer t) async {
   //   if (global.loginSuccess) {
@@ -126,27 +131,32 @@ void initCustomerDisplayBanner() {
   global.informationList.add(InformationModel(
     mode: 1,
     delaySecond: 60 * 5,
-    sourceUrl: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+    sourceUrl:
+        "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
   ));
   global.informationList.add(InformationModel(
     mode: 1,
     delaySecond: 60 * 5,
-    sourceUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    sourceUrl:
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
   ));
   global.informationList.add(InformationModel(
     mode: 1,
     delaySecond: 60 * 5,
-    sourceUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    sourceUrl:
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
   ));
   global.informationList.add(InformationModel(
     mode: 0,
     delaySecond: 10,
-    sourceUrl: "https://i.pinimg.com/originals/3c/33/31/3c333137070fb1a0fa346b0eee0f3084.gif",
+    sourceUrl:
+        "https://i.pinimg.com/originals/3c/33/31/3c333137070fb1a0fa346b0eee0f3084.gif",
   ));
   global.informationList.add(InformationModel(
     mode: 0,
     delaySecond: 10,
-    sourceUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/JPEG_compression_Example.jpg/800px-JPEG_compression_Example.jpg",
+    sourceUrl:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/JPEG_compression_Example.jpg/800px-JPEG_compression_Example.jpg",
   ));
   global.informationList.add(InformationModel(
     mode: 0,
