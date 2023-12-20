@@ -40,7 +40,6 @@ Future<ApiResponse> serverBankGetData({
 Future syncBank(List<ItemRemoveModel> removeList, List<SyncBankModel> newDataList) async {
   List<String> removeMany = [];
   List<BankObjectBoxStruct> manyForInsert = [];
-  List<String> packNameValues = [];
 
   // Delete
   for (var removeData in removeList) {
@@ -53,6 +52,7 @@ Future syncBank(List<ItemRemoveModel> removeList, List<SyncBankModel> newDataLis
   }
   // Insert
   for (var newData in newDataList) {
+    List<String> packNameValues = [];
     global.syncTimeIntervalSecond = 1;
     removeMany.add(newData.guidfixed);
 
