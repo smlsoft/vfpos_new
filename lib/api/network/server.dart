@@ -13,8 +13,10 @@ Future<void> startServer() async {
   if (global.ipAddress.isNotEmpty) {
     network.connectivity();
     global.targetDeviceIpAddress = global.ipAddress;
-    var server = await HttpServer.bind(global.ipAddress, global.targetDeviceIpPort);
-    dev.log("Server running on IP : ${server.address} On Port : ${server.port}");
+    var server =
+        await HttpServer.bind(global.ipAddress, global.targetDeviceIpPort);
+    dev.log(
+        "Server running on IP : ${server.address} On Port : ${server.port}");
     await for (HttpRequest request in server) {
       try {
         if (global.loginSuccess) {

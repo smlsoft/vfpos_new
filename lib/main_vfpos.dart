@@ -6,19 +6,19 @@ import 'package:intl/intl.dart';
 import 'package:dedepos/global.dart' as global;
 import 'app/app_view.dart';
 import 'flavors.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() async {
   F.appFlavor = Flavor.VFPOS;
-  initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeEnvironmentConfig();
   Intl.defaultLocale = "th";
 
   global.applicationName = "Village Fund POS";
   await initializeApp();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
 }

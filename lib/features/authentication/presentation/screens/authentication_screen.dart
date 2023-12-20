@@ -12,13 +12,13 @@ import 'package:dedepos/features/shop/shop.dart';
 import 'package:dedepos/flavors.dart';
 import 'package:dedepos/routes/app_routers.dart';
 import 'package:dedepos/services/user_cache_service.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+//import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 @RoutePage()
 class AuthenticationPage extends StatefulWidget {
@@ -125,6 +125,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      const SizedBox(height: 24.0),
                       InkWell(
                           onTap: () async {
                             SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -157,15 +158,15 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                             });
                           },
                           child: logo()),
-                      const SizedBox(height: 12.0),
+                      const SizedBox(height: 64.0),
                       if (global.getAppversion() != '')
                         Container(
                             margin: const EdgeInsets.only(bottom: 3),
                             child: Text("* ${global.getAppversion().replaceAll("(", "").replaceAll(")", "")} Mode", style: const TextStyle(color: Colors.red, fontSize: 12))),
                       userTextfield(),
-                      const SizedBox(height: 12.0),
+                      const SizedBox(height: 24.0),
                       passwordTextfield(),
-                      const SizedBox(height: 12.0),
+                      const SizedBox(height: 24.0),
                       buttonLogin(),
                       // const SizedBox(height: 40.0),
                       // if (Platform.isIOS) buttonLoginWithApple(),
@@ -198,7 +199,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     return TextField(
       controller: _emailController,
       decoration: const InputDecoration(
-        hintText: 'Username',
+        hintText: 'ชื่อผู้ใช้งาน',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(8.0),
@@ -212,7 +213,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     return TextField(
       controller: _passwordController,
       decoration: const InputDecoration(
-        hintText: 'Password',
+        hintText: 'รหัสผ่าน',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(8.0),
@@ -224,7 +225,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   }
 
   Widget buttonLogin() {
-    return ElevatedButton.icon(
+    return ElevatedButton(
       onPressed: () {
         // on click
         debugPrint('on login debug  ${_emailController.text} ${_passwordController.text}');
@@ -233,9 +234,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
         final password = _passwordController.text;
         context.read<AuthenticationBloc>().add(AuthenticationEvent.onLoginWithUserPasswordTapped(userName: userName, password: password));
       },
-      icon: const Icon(Icons.person),
-      label: const Text('Login'),
+      //icon: const Icon(Icons.person),
+      //label: const Text('เข้าสู่ระบบ'),
       style: Styles.successButtonStyle(),
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: const Text(
+          'เข้าสู่ระบบ',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 
@@ -251,58 +259,58 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     );
   }
 
-  Widget buttonLoginWithApple() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        _loginWithApple(context);
-      },
-      icon: const Icon(Icons.mail_outline),
-      label: const Text('Login with Apple'),
-      style: Styles.successButtonStyle(),
-    );
-  }
+  // Widget buttonLoginWithApple() {
+  //   return ElevatedButton.icon(
+  //     onPressed: () {
+  //       _loginWithApple(context);
+  //     },
+  //     icon: const Icon(Icons.mail_outline),
+  //     label: const Text('Login with Apple'),
+  //     style: Styles.successButtonStyle(),
+  //   );
+  // }
 
   Future<void> _loginWithApple(BuildContext context) async {
-    try {
-      final rawNonce = generateNonce();
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
+    // try {
+    //   final rawNonce = generateNonce();
+    //   final appleCredential = await SignInWithApple.getAppleIDCredential(
+    //     scopes: [
+    //       AppleIDAuthorizationScopes.email,
+    //       AppleIDAuthorizationScopes.fullName,
+    //     ],
+    //   );
 
-      final oauthCredential = firebaseAuth.OAuthProvider("apple.com").credential(
-        idToken: appleCredential.identityToken,
-        rawNonce: rawNonce,
-      );
-      final authResult = await firebaseAuth.FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      String? userIdToken = await getCurrentUserIdToken();
-      if (userIdToken != null) {
-        context.read<AuthenticationBloc>().add(AuthenticationEvent.onLoginWithTokenTapped(token: userIdToken));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Failed to login with Apple")),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to login with Apple: $e")),
-      );
-    }
+    //   final oauthCredential = firebaseAuth.OAuthProvider("apple.com").credential(
+    //     idToken: appleCredential.identityToken,
+    //     rawNonce: rawNonce,
+    //   );
+    //   final authResult = await firebaseAuth.FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    //   String? userIdToken = await getCurrentUserIdToken();
+    //   if (userIdToken != null) {
+    //     context.read<AuthenticationBloc>().add(AuthenticationEvent.onLoginWithTokenTapped(token: userIdToken));
+    //   } else {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(content: Text("Failed to login with Apple")),
+    //     );
+    //   }
+    // } catch (e) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Failed to login with Apple: $e")),
+    //   );
+    // }
   }
 
-  Future<String?> getCurrentUserIdToken() async {
-    firebaseAuth.User? currentUser = firebaseAuth.FirebaseAuth.instance.currentUser;
+  // Future<String?> getCurrentUserIdToken() async {
+  //   firebaseAuth.User? currentUser = firebaseAuth.FirebaseAuth.instance.currentUser;
 
-    if (currentUser != null) {
-      String? idToken = await currentUser.getIdToken();
-      return idToken;
-    } else {
-      // No user is signed in.
-      return null;
-    }
-  }
+  //   if (currentUser != null) {
+  //     String? idToken = await currentUser.getIdToken();
+  //     return idToken;
+  //   } else {
+  //     // No user is signed in.
+  //     return null;
+  //   }
+  // }
 
   Widget buttonLoginDev() {
     return ElevatedButton.icon(
