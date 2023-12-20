@@ -6,8 +6,7 @@ class ApplicationAuthentication extends StatefulWidget {
   const ApplicationAuthentication({super.key});
 
   @override
-  State<ApplicationAuthentication> createState() =>
-      _ApplicationAuthenticationState();
+  State<ApplicationAuthentication> createState() => _ApplicationAuthenticationState();
 }
 
 class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
@@ -54,8 +53,7 @@ class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
             child: Card(
               margin: const EdgeInsets.all(16.0),
               shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(10.0), // set border radius here
+                borderRadius: BorderRadius.circular(10.0), // set border radius here
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -97,19 +95,14 @@ class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
                           // navigate to home screen on successful login
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.blue), // set button background color
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          backgroundColor: MaterialStateProperty.all(Colors.blue), // set button background color
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  6.0), // set border radius here
+                              borderRadius: BorderRadius.circular(6.0), // set border radius here
                             ),
                           ),
-                          padding:
-                              MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            const EdgeInsets.symmetric(
-                                vertical: 16.0), // set button padding here
+                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            const EdgeInsets.symmetric(vertical: 16.0), // set button padding here
                           ),
                         ),
                         child: const Text(
@@ -120,18 +113,18 @@ class _ApplicationAuthenticationState extends State<ApplicationAuthentication> {
                       const SizedBox(height: 16.0),
                       const Text('or'),
                       const SizedBox(height: 16.0),
-                      ElevatedButton.icon(
-                          icon:
-                              Image.asset('assets/icons/icon-gmail-white.png'),
-                          onPressed: () {},
-                          style: ButtonStyle(
-                            padding:
-                                MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(
-                                  vertical: 16.0), // set button padding here
-                            ),
-                          ),
-                          label: const Text('Google'))
+                      // ElevatedButton.icon(
+                      //     icon:
+                      //         Image.asset('assets/icons/icon-gmail-white.png'),
+                      //     onPressed: () {},
+                      //     style: ButtonStyle(
+                      //       padding:
+                      //           MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      //         const EdgeInsets.symmetric(
+                      //             vertical: 16.0), // set button padding here
+                      //       ),
+                      //     ),
+                      //     label: const Text('Google'))
                     ],
                   ),
                 ),
@@ -148,8 +141,7 @@ class AuthService {
   // Login
   Future<bool> login() async {
     // Simulate a future for response after 2 second.
-    return await Future<bool>.delayed(
-        const Duration(seconds: 2), () => Random().nextBool());
+    return await Future<bool>.delayed(const Duration(seconds: 2), () => Random().nextBool());
   }
 
   // Logout

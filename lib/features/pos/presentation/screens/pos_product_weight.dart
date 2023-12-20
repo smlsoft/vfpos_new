@@ -8,9 +8,7 @@ class PosProductWeightScreen extends StatefulWidget {
   final String name;
   final String imageUrl;
 
-  const PosProductWeightScreen(
-      {Key? key, required this.name, required this.imageUrl})
-      : super(key: key);
+  const PosProductWeightScreen({Key? key, required this.name, required this.imageUrl}) : super(key: key);
 
   @override
   State<PosProductWeightScreen> createState() => _PosProductWeightScreenState();
@@ -36,12 +34,9 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
               child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                Expanded(child: Text("ชั่งครั้งที่ ${index + 1}")),
-                Text("${global.moneyFormat.format(weightList[index])} กรัม",
-                    style: const TextStyle(
-                        color: Colors.blue,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold)),
+                Expanded(child: Text("${global.language("weighing_count")} ${index + 1}")),
+                Text("${global.moneyFormat.format(weightList[index])} ${global.language("gram")}",
+                    style: const TextStyle(color: Colors.blue, fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(
                   width: 10,
                 ),
@@ -58,13 +53,13 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
   }
 
   Widget detail() {
-    Widget data = ((global.deviceMode == global.DeviceModeEnum.androidPhone ||
-            global.deviceMode == global.DeviceModeEnum.iphone))
+    Widget data = ((global.deviceMode == global.DeviceModeEnum.androidPhone || global.deviceMode == global.DeviceModeEnum.iphone))
         ? Row(children: [
             Image(
                 width: 150,
                 image: CachedNetworkImageProvider(
                   widget.imageUrl,
+                  headers: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                 )),
             Expanded(child: detailData())
           ])
@@ -73,6 +68,7 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                 height: 200,
                 image: CachedNetworkImageProvider(
                   widget.imageUrl,
+                  headers: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                 )),
             Expanded(child: detailData())
           ]);
@@ -82,9 +78,9 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                 ? Image(
                     image: CachedNetworkImageProvider(
                     widget.imageUrl,
+                    headers: {'Authorization': 'Bearer ${global.appStorage.read("token")}'},
                   ))
-                : const Icon(Icons.wallet_giftcard,
-                    color: Colors.grey, size: 200))
+                : const Icon(Icons.wallet_giftcard, color: Colors.grey, size: 200))
         : Column(
             children: [
               Expanded(child: data),
@@ -106,21 +102,11 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                       Expanded(
                         child: Container(
                             padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.cyan.shade100,
-                                border: Border.all(color: Colors.grey)),
-                            child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(
-                                      child: Text(global.language("total"))),
-                                  Text(
-                                      "${global.moneyFormat.format(totalWeight)} กรัม",
-                                      style: const TextStyle(
-                                          color: Colors.blue,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold)),
-                                ])),
+                            decoration: BoxDecoration(color: Colors.cyan.shade100, border: Border.all(color: Colors.grey)),
+                            child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                              Expanded(child: Text(global.language("total"))),
+                              Text("${global.moneyFormat.format(totalWeight)} กรัม", style: const TextStyle(color: Colors.blue, fontSize: 24, fontWeight: FontWeight.bold)),
+                            ])),
                       ),
                       const SizedBox(
                         width: 4,
@@ -175,16 +161,12 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
             if (key.runtimeType.toString() == 'RawKeyDownEvent') {
               String keyLabel = key.logicalKey.keyLabel.toUpperCase();
               if (keyLabel == "BACKSPACE") {
-                if (global.posNumPadProductWeightGlobalKey.currentState !=
-                    null) {
-                  global.posNumPadProductWeightGlobalKey.currentState!
-                      .backspace();
+                if (global.posNumPadProductWeightGlobalKey.currentState != null) {
+                  global.posNumPadProductWeightGlobalKey.currentState!.backspace();
                 }
               }
-              if (keyLabel.contains("NUMPAD") ||
-                  keyLabel.contains("MULTIPLY")) {
-                keyLabel =
-                    keyLabel.removeAllWhitespace.replaceAll("NUMPAD", "");
+              if (keyLabel.contains("NUMPAD") || keyLabel.contains("MULTIPLY")) {
+                keyLabel = keyLabel.removeAllWhitespace.replaceAll("NUMPAD", "");
                 if (keyLabel.contains("DECIMAL")) {
                   keyLabel = ".";
                 }
@@ -192,8 +174,7 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
                   keyLabel = "*";
                 }
                 if ("01234567890*.".contains(keyLabel)) {
-                  global.posNumPadProductWeightGlobalKey.currentState
-                      ?.addValue(keyLabel);
+                  global.posNumPadProductWeightGlobalKey.currentState?.addValue(keyLabel);
                 }
               }
             }
@@ -201,8 +182,7 @@ class _PosProductWeightScreenState extends State<PosProductWeightScreen> {
           child: Container(
               color: Colors.white,
               padding: const EdgeInsets.all(10),
-              child: (global.deviceMode == global.DeviceModeEnum.androidPhone ||
-                      global.deviceMode == global.DeviceModeEnum.iphone)
+              child: (global.deviceMode == global.DeviceModeEnum.androidPhone || global.deviceMode == global.DeviceModeEnum.iphone)
                   ? Column(
                       children: [
                         Expanded(child: detail()),

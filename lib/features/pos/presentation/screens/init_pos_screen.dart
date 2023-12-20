@@ -20,28 +20,15 @@ class _InitPOSScreenState extends State<InitPOSScreen> {
 
   void init() async {
 // set global value
-    // await global.startLoading();
 
     if (global.appMode == global.AppModeEnum.posRemote) {
       Timer(const Duration(seconds: 1), () {
         Navigator.of(context).pushReplacementNamed('client');
       });
     } else {
-      timerSwitchToMenu =
-          Timer.periodic(const Duration(seconds: 1), (timer) async {
+      timerSwitchToMenu = Timer.periodic(const Duration(seconds: 1), (timer) async {
         if (global.loginSuccess && global.syncDataSuccess) {
-          // Navigator.of(context).pushReplacementNamed('menu');
-
-          // context.router.pushAndPopUntil(
-          //     PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
-          //     predicate: (_) => false);
-
-          context.router.replace(
-              PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
-
-          // timerSwitchToMenu?.cancel();
-          // context.router.replace(
-          //     PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
+          context.router.replace(PosRoute(posScreenMode: global.PosScreenModeEnum.posSale));
         }
         setState(() {});
       });
@@ -64,26 +51,23 @@ class _InitPOSScreenState extends State<InitPOSScreen> {
   @override
   Widget build(BuildContext context) {
     global.getDeviceModel(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                LoadingAnimationWidget.staggeredDotsWave(
-                  color: Colors.blue,
-                  size: 200,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(global.language("sync_data")),
-              ],
-            ),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: Colors.blue,
+                size: 200,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text("Data Synchronization"),
+            ],
           ),
         ),
       ),

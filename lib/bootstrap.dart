@@ -1,16 +1,22 @@
+import 'package:dedepos/api/network/server.dart' as server;
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dedepos/app/http_verify.dart';
 import 'package:dedepos/core/environment.dart';
-import 'package:dedepos/core/language.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/global_model.dart';
+import 'package:dedepos/google_sheet.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:presentation_displays/display.dart';
 
 void bootstrap(FutureOr<Widget> Function() builder) async {
@@ -27,26 +33,68 @@ void bootstrap(FutureOr<Widget> Function() builder) async {
 }
 
 Future<void> initializeApp() async {
-  HttpOverrides.global = new MyHttpOverrides();
-  await GetStorage.init('AppStorage');
+  String jsonLanguageFileName = "assets/language.json";
+  HttpOverrides.global = MyHttpOverrides();
   await setupDisplay();
 
+  // if (kDebugMode) {
+  //   // Debug
+  //   // สร้าง json จาก google sheet (จะไม่ทำงานทันที เพราะสร้าง source code ต้อง rerun ใหม่)
+  //   await googleMultiLanguageSheetLoad().then((_) {
+  //     String json = jsonEncode(global.languageSystemCode);
+  //     File file = File(jsonLanguageFileName);
+  //     file.writeAsString(json);
+  //   });
+
+  //   // global.languageSystemCode = (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List).map((i) => LanguageSystemCodeModel.fromJson(i)).toList();
+  // } else {
+  // release
+  // load ภาษาจาก assets (mode release)
+  try {
+    global.languageSystemCode =
+        (json.decode(await rootBundle.loadString(jsonLanguageFileName)) as List)
+            .map((i) => LanguageSystemCodeModel.fromJson(i))
+            .toList();
+  } catch (_) {}
+  //}
+  global.languageSelect(global.userScreenLanguage);
+  //
   if (global.displayMachine == global.DisplayMachineEnum.posTerminal) {
-    await setupObjectBox();
-    await initLanguage();
     await setUpServiceLocator();
+    // server.startServer();
   } else if (global.displayMachine ==
       global.DisplayMachineEnum.customerDisplay) {
     initCustomerDisplayBanner();
   }
 }
 
-void initializeEnvironmentConfig() {
+Future<void> initializeEnvironmentConfig() async {
+  // Storage
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
     defaultValue: Environment.DEV,
   );
   Environment().initConfig(environment);
+  global.environmentVersion = environment;
+  await GetStorage.init();
+  global.appStorage = GetStorage();
+  //
+
+  global.userScreenLanguage = "th";
+
+  global.applicationDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
+  objectBoxInit();
+  // Server
+
+  // ตรวจสอบ Order จากระบบ Order OnLine
+  // Timer.periodic(const Duration(seconds: 1), (Timer t) async {
+  //   if (global.loginSuccess) {
+  //     if (global.shopId.isNotEmpty && global.checkOrderActive == false) {
+  //       global.checkOrderOnline();
+  //     }
+  //   }
+  // });
 }
 
 Future<void> setupDisplay() async {

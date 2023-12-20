@@ -10,6 +10,10 @@ class PosPayModel {
   double cash_amount; // ยอดชำระเงินสด
   String discount_formula; // สูตรส่วนลด
   double discount_amount; // ยอดส่วนลด
+  double total_after_discount; // ยอดรวมหลังหักส่วนลด
+  double round_amount; // ยอดปัดเศษ
+  double total_after_round; // ยอดรวมหลังหักส่วนลดและปัดเศษ
+  double credit_amount; // ยอดเงินเชื่อม
   List<PayCreditCardModel> credit_card; // บัตรเครดิต
   List<PayTransferModel> transfer; // เงินโอน
   List<PayChequeModel> cheque; // เช็ค
@@ -19,17 +23,19 @@ class PosPayModel {
   PosPayModel({
     this.cash_amount_text = "",
     this.cash_amount = 0,
+    this.total_after_discount = 0,
+    this.total_after_round = 0,
     this.discount_formula = "",
     this.discount_amount = 0,
-    this.credit_card = const [],
-    this.transfer = const [],
-    this.cheque = const [],
-    this.coupon = const [],
-    this.qr = const [],
-  });
+    this.credit_amount = 0,
+    this.round_amount = 0,
+  })  : credit_card = [],
+        transfer = [],
+        cheque = [],
+        coupon = [],
+        qr = [];
 
-  factory PosPayModel.fromJson(Map<String, dynamic> json) =>
-      _$PosPayModelFromJson(json);
+  factory PosPayModel.fromJson(Map<String, dynamic> json) => _$PosPayModelFromJson(json);
   Map<String, dynamic> toJson() => _$PosPayModelToJson(this);
 }
 
@@ -39,11 +45,9 @@ class PayCouponModel {
   String description; // รายละเอียด
   double amount; // จำนวนเงิน
 
-  PayCouponModel(
-      {required this.number, required this.description, required this.amount});
+  PayCouponModel({required this.number, required this.description, required this.amount});
 
-  factory PayCouponModel.fromJson(Map<String, dynamic> json) =>
-      _$PayCouponModelFromJson(json);
+  factory PayCouponModel.fromJson(Map<String, dynamic> json) => _$PayCouponModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayCouponModelToJson(this);
 }
 
@@ -54,46 +58,43 @@ class PayCashModel {
 
   PayCashModel({required this.wallet_id, required this.amount});
 
-  factory PayCashModel.fromJson(Map<String, dynamic> json) =>
-      _$PayCashModelFromJson(json);
+  factory PayCashModel.fromJson(Map<String, dynamic> json) => _$PayCashModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayCashModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
 class PayCreditCardModel {
+  String book_bank_code; // รหัสบัญชีธนาคาร
   String bank_code; // รหัสธนาคาร
   String bank_name; // ธนาคาร
   String card_number; // เลขที่บัตรเครดิต
   String approved_code; // รหัสอนุมัติ
   double amount; // จำนวนเงิน
-
+  String book_bank_name;
   PayCreditCardModel(
-      {required this.bank_code,
+      {required this.book_bank_code,
+      required this.book_bank_name,
+      required this.bank_code,
       required this.bank_name,
       required this.card_number,
       required this.approved_code,
       required this.amount});
 
-  factory PayCreditCardModel.fromJson(Map<String, dynamic> json) =>
-      _$PayCreditCardModelFromJson(json);
+  factory PayCreditCardModel.fromJson(Map<String, dynamic> json) => _$PayCreditCardModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayCreditCardModelToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
 class PayTransferModel {
+  String book_bank_code; // รหัสบัญชีธนาคาร
+  String book_bank_name;
   String bank_code; // รหัสธนาคาร
   String bank_name; // ธนาคาร
-  String account_number; // เลขที่บัญชี
   double amount; // จำนวนเงิน
 
-  PayTransferModel(
-      {required this.bank_code,
-      required this.bank_name,
-      required this.amount,
-      required this.account_number});
+  PayTransferModel({required this.book_bank_code, required this.book_bank_name, required this.bank_code, required this.bank_name, required this.amount});
 
-  factory PayTransferModel.fromJson(Map<String, dynamic> json) =>
-      _$PayTransferModelFromJson(json);
+  factory PayTransferModel.fromJson(Map<String, dynamic> json) => _$PayTransferModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayTransferModelToJson(this);
 }
 
@@ -106,16 +107,9 @@ class PayChequeModel {
   String cheque_number; // เลขที่เช็ค
   double amount; // จำนวนเงิน
 
-  PayChequeModel(
-      {required this.due_date,
-      required this.bank_code,
-      required this.bank_name,
-      required this.branch_number,
-      required this.cheque_number,
-      required this.amount});
+  PayChequeModel({required this.due_date, required this.bank_code, required this.bank_name, required this.branch_number, required this.cheque_number, required this.amount});
 
-  factory PayChequeModel.fromJson(Map<String, dynamic> json) =>
-      _$PayChequeModelFromJson(json);
+  factory PayChequeModel.fromJson(Map<String, dynamic> json) => _$PayChequeModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayChequeModelToJson(this);
 }
 
@@ -126,14 +120,9 @@ class PayDiscountModel {
   String formula; // สูตร
   double amount; // มูลค่าส่วนลด
 
-  PayDiscountModel(
-      {required this.code,
-      required this.description,
-      required this.formula,
-      required this.amount});
+  PayDiscountModel({required this.code, required this.description, required this.formula, required this.amount});
 
-  factory PayDiscountModel.fromJson(Map<String, dynamic> json) =>
-      _$PayDiscountModelFromJson(json);
+  factory PayDiscountModel.fromJson(Map<String, dynamic> json) => _$PayDiscountModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayDiscountModelToJson(this);
 }
 
@@ -142,15 +131,11 @@ class PayQrModel {
   String provider_code; // รหัสกระเป๋า เจ้าของเงิน (Provider)
   String provider_name; // เจ้าของเงิน (Provider)
   String description; // รายละเอียด (อื่นๆ)
+  String logo;
   double amount; // จำนวนเงิน
 
-  PayQrModel(
-      {this.provider_code = "",
-      this.provider_name = "",
-      this.description = "",
-      required this.amount});
+  PayQrModel({this.provider_code = "", this.provider_name = "", this.description = "", required this.amount, this.logo = ""});
 
-  factory PayQrModel.fromJson(Map<String, dynamic> json) =>
-      _$PayQrModelFromJson(json);
+  factory PayQrModel.fromJson(Map<String, dynamic> json) => _$PayQrModelFromJson(json);
   Map<String, dynamic> toJson() => _$PayQrModelToJson(this);
 }

@@ -1,37 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:get/utils.dart';
-import 'package:image/image.dart' as im;
 import 'dart:ui' as ui;
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:charset_converter/charset_converter.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:dedepos/global.dart' as global;
 import 'package:collection/collection.dart';
-import 'package:sunmi_printer_plus/column_maker.dart';
-import 'package:sunmi_printer_plus/enums.dart';
-import 'package:sunmi_printer_plus/sunmi_printer_plus.dart';
-import 'package:sunmi_printer_plus/sunmi_style.dart';
 
 enum PrintColumnAlign { left, right, center }
 
 class PrintColumn {
   late String text;
   late PrintColumnAlign align;
+  late double fontSize;
+  late bool bold;
 
-  PrintColumn({required this.text, this.align = PrintColumnAlign.left});
+  PrintColumn({required this.text, this.align = PrintColumnAlign.left, this.fontSize = 24, this.bold = false});
 }
 
 class PrintProcess {
-  int length;
+  final int printerIndex;
   List<PrintColumn> column = [];
   List<double> columnWidth = [];
 
-  PrintProcess({required this.length});
+  PrintProcess({
+    required this.printerIndex,
+  });
 
-  Future<int> thaiCount(String word) async {
+  /*Future<int> thaiCount(String word) async {
     int result = 0;
     await global.thaiEncode(word).then((value) {
       Uint8List ascii = Uint8List.fromList(value);
@@ -45,9 +39,9 @@ class PrintProcess {
       }
     });
     return result;
-  }
+  }*/
 
-  Future<void> lineFeedText(NetworkPrinter printer, PosStyles style) async {
+  /*Future<void> lineFeedText(NetworkPrinter printer, PosStyles style) async {
     List<List<PrintColumn>> rowList = [];
     int lastChar = 0;
     List<int> columnPositionList = [];
@@ -58,14 +52,15 @@ class PrintProcess {
     int position = 0;
     for (int loop = 0; loop < columnWidth.length; loop++) {
       columnPositionList.add(position);
-      double calc = (length * columnWidth[loop]) / sumColumnWidth;
+      double calc = (global.printerWidthByCharacter() * columnWidth[loop]) /
+          sumColumnWidth;
       calc = calc / style.width.value;
       columnWidthList.add(calc.toInt());
       position += columnWidthList[loop];
     }
     if (columnWidthList.length > 1) {
       columnWidthList[columnWidthList.length - 1] +=
-          length - columnWidthList.sum.toInt();
+          global.printerWidthByCharacter() - columnWidthList.sum.toInt();
     }
     // Build Row
     for (int loop1 = 0; loop1 < 10; loop1++) {
@@ -156,7 +151,9 @@ class PrintProcess {
       for (int lineIndex = 0; lineIndex < 10; lineIndex++) {
         for (int loopRow = 0; loopRow < 4; loopRow++) {
           List<int> lineList = [];
-          for (int loopColumn = 0; loopColumn < length; loopColumn++) {
+          for (int loopColumn = 0;
+              loopColumn < global.printerWidthByCharacter();
+              loopColumn++) {
             lineList.add((loopRow == 0) ? 32 : 0);
           }
           row.add(lineList);
@@ -169,7 +166,8 @@ class PrintProcess {
         Uint8List asciiCode = Uint8List.fromList(await global.thaiEncode(word));
         for (int index = 0; index < word.length; index++) {
           int char = asciiCode[index];
-          if (pos < length - 1 && columnLength < columnWidthList[loop]) {
+          if (pos < global.printerWidthByCharacter() - 1 &&
+              columnLength < columnWidthList[loop]) {
             if (char == 216 || char == 217) {
               row[1][pos] = char;
             } else if (char == 209 ||
@@ -190,7 +188,7 @@ class PrintProcess {
         }
       }
       List<int> packList = [];
-      for (int loop = 0; loop < length; loop++) {
+      for (int loop = 0; loop < global.printerWidthByCharacter(); loop++) {
         for (int loopRow = 0; loopRow < 4; loopRow++) {
           if (row[loopRow][loop] != 0) {
             packList.add(row[loopRow][loop]);
@@ -203,15 +201,15 @@ class PrintProcess {
       printer.textEncoded(dataPrint, styles: style);
     }
     column.clear();
-  }
+  }*/
 
-  Future<void> drawLine(NetworkPrinter printer) async {
+  /*Future<void> drawLine(NetworkPrinter printer) async {
     StringBuffer line = StringBuffer();
-    for (int loop = 0; loop < length; loop++) {
+    for (int loop = 0; loop < global.printerWidthByCharacter(); loop++) {
       line.write("-");
     }
     printer.text(line.toString());
-  }
+  }*/
 
   Future<ui.Image> lineFeedImage(PosStyles style) async {
     List<List<PrintColumn>> rowList = [];
@@ -220,7 +218,6 @@ class PrintProcess {
     int sumColumnWidth = columnWidth.sum.toInt();
     double position = 0;
     int maxHeight = 0;
-    double maxWidth = 576;
 
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
@@ -228,64 +225,37 @@ class PrintProcess {
       ..color = Colors.white
       ..style = PaintingStyle.fill;
 
-    canvas.drawRect(
-        Rect.fromLTWH(0.0, 0.0, maxWidth, 10000.0), backgroundPaint);
+    canvas.drawRect(Rect.fromLTWH(0.0, 0.0, global.printerWidthByPixel(printerIndex), 10000.0), backgroundPaint);
 
     for (int loop = 0; loop < columnWidth.length; loop++) {
       columnPositionList.add(position);
-      double calc = (maxWidth * columnWidth[loop]) / sumColumnWidth;
+      double calc = (global.printerWidthByPixel(printerIndex) * columnWidth[loop]) / sumColumnWidth;
       calc = calc / style.width.value;
       columnWidthList.add(calc);
       position += columnWidthList[loop];
     }
-    if (columnWidthList.length > 1) {
-      columnWidthList[columnWidthList.length - 1] +=
-          maxWidth - columnWidthList.sum;
-    }
     // Build Row
     for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
       List<PrintColumn> columnList = [];
-      for (int columnIndex = 0;
-          columnIndex < columnWidth.length;
-          columnIndex++) {
-        columnList.add(PrintColumn(
-            text: (rowIndex == 0) ? column[columnIndex].text : "",
-            align: column[columnIndex].align));
+      for (int columnIndex = 0; columnIndex < columnWidth.length; columnIndex++) {
+        columnList.add(PrintColumn(text: (rowIndex == 0) ? column[columnIndex].text : "", align: column[columnIndex].align, fontSize: column[columnIndex].fontSize));
       }
       rowList.add(columnList);
     }
     // Cut
     for (int rowIndex = 0; rowIndex < 20; rowIndex++) {
-      for (int columnIndex = 0;
-          columnIndex < columnWidth.length;
-          columnIndex++) {
+      for (int columnIndex = 0; columnIndex < columnWidth.length; columnIndex++) {
         String textColumn = rowList[rowIndex][columnIndex].text.trim();
         if (textColumn.isNotEmpty) {
-          TextSpan span = TextSpan(
-              style: TextStyle(color: Colors.black, fontSize: 24),
-              text: textColumn);
-          TextPainter tp =
-              TextPainter(text: span, textDirection: ui.TextDirection.ltr);
+          TextSpan span = TextSpan(style: TextStyle(color: Colors.black, fontSize: column[columnIndex].fontSize, fontFamily: 'Prompt'), text: textColumn);
+          TextPainter tp = TextPainter(text: span, textDirection: ui.TextDirection.ltr);
           tp.layout();
           double textWidth = tp.width;
-          int rowAdd = 0;
-          while (textWidth > columnWidthList[columnIndex]) {
-            String text = textColumn;
-            int textLength = text.length;
-            int cut =
-                (textLength * columnWidthList[columnIndex] / textWidth).floor();
-            rowList[rowIndex + rowAdd][columnIndex].text =
-                text.substring(0, cut);
-            rowList[rowIndex + rowAdd + 1][columnIndex].text =
-                text.substring(cut);
-            textColumn = rowList[rowIndex + rowAdd + 1][columnIndex].text;
-            span = TextSpan(
-                style: TextStyle(color: Colors.black, fontSize: 24),
-                text: textColumn);
-            tp = TextPainter(text: span, textDirection: ui.TextDirection.ltr);
-            tp.layout();
-            textWidth = tp.width;
-            rowAdd++;
+          if (textWidth > columnWidthList[columnIndex]) {
+            int textLength = textColumn.length;
+            int cut = (textLength * columnWidthList[columnIndex] / textWidth).floor() - 1;
+            rowList[rowIndex][columnIndex].text = textColumn.substring(0, cut);
+            rowList[rowIndex + 1][columnIndex].text = textColumn.substring(cut);
           }
         }
       }
@@ -293,16 +263,13 @@ class PrintProcess {
     // Process
     for (int rowIndex = 19; rowIndex > 0; rowIndex--) {
       bool remove = true;
-      for (int columnIndex = 0;
-          columnIndex < column.length && remove;
-          columnIndex++) {
-        while (rowList[rowIndex][columnIndex].text.isNotEmpty &&
-            rowList[rowIndex][columnIndex].text[0] == " ") {
-          rowList[rowIndex][columnIndex].text =
-              rowList[rowIndex][columnIndex].text.substring(1);
+      for (int columnIndex = 0; columnIndex < column.length && remove; columnIndex++) {
+        while (rowList[rowIndex][columnIndex].text.isNotEmpty && rowList[rowIndex][columnIndex].text[0] == " ") {
+          rowList[rowIndex][columnIndex].text = rowList[rowIndex][columnIndex].text.substring(1);
         }
         if (rowList[rowIndex][columnIndex].text.trim().isNotEmpty) {
           remove = false;
+          break;
         }
       }
       if (remove) {
@@ -310,11 +277,13 @@ class PrintProcess {
       }
     }
     for (int rowIndex = 0; rowIndex < rowList.length; rowIndex++) {
+      double dx = 0;
       int rowHeight = 0;
       for (int columnIndex = 0; columnIndex < column.length; columnIndex++) {
         String text = rowList[rowIndex][columnIndex].text;
         TextSpan span = TextSpan(
-            style: TextStyle(color: Colors.black, fontSize: 24), text: text);
+            style: TextStyle(color: Colors.black, fontSize: column[columnIndex].fontSize, fontWeight: (column[columnIndex].bold) ? FontWeight.bold : null, fontFamily: 'Prompt'),
+            text: text);
         TextPainter tp = TextPainter(
             text: span,
             textAlign: (column[columnIndex].align == PrintColumnAlign.right)
@@ -323,11 +292,11 @@ class PrintProcess {
                     ? TextAlign.center
                     : TextAlign.left,
             textDirection: TextDirection.ltr);
-        tp.layout(minWidth: columnWidthList[columnIndex]);
-        tp.paint(
-            canvas,
-            Offset((columnIndex == 0) ? 0 : columnWidthList[columnIndex - 1],
-                maxHeight.toDouble()));
+        tp.layout(
+          minWidth: columnWidthList[columnIndex],
+        );
+        tp.paint(canvas, Offset(dx, maxHeight.toDouble()));
+        dx += columnWidthList[columnIndex];
         if (tp.height > rowHeight) {
           rowHeight = tp.height.toInt();
         }
@@ -335,6 +304,6 @@ class PrintProcess {
       maxHeight += rowHeight;
     }
     column.clear();
-    return await recorder.endRecording().toImage(640, maxHeight + 1);
+    return await recorder.endRecording().toImage(global.printerWidthByPixel(printerIndex).toInt(), maxHeight + 1);
   }
 }

@@ -1,101 +1,43 @@
+import 'dart:convert';
+
+import 'package:dedepos/global_model.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pay/pay_util.dart';
 import 'dart:async';
-import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:dedepos/model/objectbox/order_temp_struct.dart';
+import 'package:dedepos/objectbox.g.dart';
 import 'package:flutter/material.dart';
 
-Future<String> saveBill(
-    {required double cashAmount,
+class SaveBillResultClass {
+  late String docNumber;
+  late DateTime docDate;
+}
+
+Future<SaveBillResultClass> saveBill(
+    {required int docMode,
+    required double totalAmountAfterDiscount,
+    required double roundAmount,
+    required double totalAmount,
+    required double cashAmount,
     required String discountFormula,
-    required double discountAmount}) async {
-  String docNumber = await global.billRunning();
+    required double discountAmount,
+    required String posHoldActiveCode}) async {
+  SaveBillResultClass result = SaveBillResultClass();
+  String docNumber = await global.billRunning(docMode);
+  DateTime docDate = DateTime.now();
+  result.docNumber = docNumber;
+  result.docDate = docDate;
 
-  // Header
-  global.billHelper.insert(BillObjectBoxStruct(
-      date_time: DateTime.now(),
-      doc_number: docNumber,
-      customer_code:
-          global.posHoldProcessResult[global.posHoldActiveNumber].customerCode,
-      customer_name:
-          global.posHoldProcessResult[global.posHoldActiveNumber].customerName,
-      customer_telephone: "",
-      sale_code:
-          global.posHoldProcessResult[global.posHoldActiveNumber].saleCode,
-      sale_name:
-          global.posHoldProcessResult[global.posHoldActiveNumber].saleName,
-      total_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_amount,
-      cashier_code: global.userLoginCode,
-      cashier_name: global.userLoginName,
-      pay_cash_amount: cashAmount,
-      is_sync: false,
-      vat_rate: global
-          .posHoldProcessResult[global.posHoldActiveNumber].posProcess.vat_rate,
-      total_before_amount: global
-          .posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess
-          .total_before_amount,
-      total_except_amount: global
-          .posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess
-          .total_except_amount,
-      total_vat_amount: global.posHoldProcessResult[global.posHoldActiveNumber]
-          .posProcess.total_vat_amount,
-      discount_formula: discountFormula,
-      sum_discount: discountAmount,
-      sum_coupon: sumCoupon(),
-      sum_qr_code: sumQr(),
-      sum_credit_card: sumCreditCard(),
-      sum_money_transfer: sumTransfer(),
-      sum_cheque: sumCheque()));
+  PosHoldProcessModel posHoldProcess = global.posHoldProcessResult[global.findPosHoldProcessResultIndex(posHoldActiveCode)];
 
-  // รายละเอียด
-  int lineNumber = 1;
-  List<BillDetailObjectBoxStruct> details = [];
-  for (var value in global
-      .posHoldProcessResult[global.posHoldActiveNumber].posProcess.details) {
-    details.add(BillDetailObjectBoxStruct(
-        doc_number: docNumber,
-        line_number: lineNumber,
-        barcode: value.barcode,
-        item_code: value.item_code,
-        item_name: value.item_name,
-        unit_code: value.unit_code,
-        unit_name: value.unit_name,
-        qty: value.qty,
-        price: value.price,
-        discount_text: value.discount_text,
-        discount: value.discount,
-        total_amount: value.total_amount));
-    List<BillDetailExtraObjectBoxStruct> detailExtras = [];
-    int extraLineNumber = 1;
-    for (var element in value.extra) {
-      detailExtras.add(BillDetailExtraObjectBoxStruct(
-          doc_number: docNumber,
-          line_number: extraLineNumber++,
-          ref_line_number: lineNumber,
-          barcode: element.barcode,
-          item_code: element.item_code,
-          item_name: element.item_name,
-          unit_code: element.unit_code,
-          unit_name: element.unit_name,
-          qty: element.qty,
-          total_amount: element.total_amount));
-    }
-    if (detailExtras.isNotEmpty) {
-      global.billDetailExtraHelper.insertMany(detailExtras);
-    }
-    lineNumber++;
-  }
-  global.billDetailHelper.insertMany(details);
   // จ่าย
   List<BillPayObjectBoxStruct> pays = [];
   // บัตรเครดิต
   for (var value in global.payScreenData.credit_card) {
     pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
       trans_flag: 1,
+      book_bank_code: value.book_bank_code,
       bank_code: value.bank_code,
       bank_name: value.bank_name,
       card_number: value.card_number,
@@ -105,18 +47,16 @@ Future<String> saveBill(
   // เงินโอน
   for (var value in global.payScreenData.transfer) {
     pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
       trans_flag: 2,
       bank_code: value.bank_code,
       bank_name: value.bank_name,
-      bank_account_no: value.account_number,
+      book_bank_code: value.book_bank_code,
       amount: value.amount,
     ));
   }
   // เช็ค
   for (var value in global.payScreenData.cheque) {
     BillPayObjectBoxStruct data = BillPayObjectBoxStruct(
-      doc_number: docNumber,
       trans_flag: 3,
       bank_code: value.bank_code,
       bank_name: value.bank_name,
@@ -130,7 +70,6 @@ Future<String> saveBill(
   // คูปอง
   for (var value in global.payScreenData.coupon) {
     pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
       trans_flag: 4,
       number: value.number,
       description: value.description,
@@ -140,7 +79,6 @@ Future<String> saveBill(
   // จ่ายด้วย QR
   for (var value in global.payScreenData.qr) {
     pays.add(BillPayObjectBoxStruct(
-      doc_number: docNumber,
       trans_flag: 5,
       provider_code: value.provider_code,
       provider_name: value.provider_name,
@@ -149,11 +87,147 @@ Future<String> saveBill(
     ));
   }
 
-  global.billPayHelper.insertMany(pays);
-  // Running เลขที่ใบเสร็จ
-  global.configHelper.update(ConfigObjectBoxStruct(
-      device_id: global.deviceId, last_doc_number: docNumber));
-  return docNumber;
+  // รายละเอียด
+  int lineNumber = 1;
+  List<BillDetailObjectBoxStruct> details = [];
+  for (var value in posHoldProcess.posProcess.details) {
+    List<BillDetailExtraObjectBoxStruct> detailExtras = [];
+    for (var element in value.extra) {
+      detailExtras.add(BillDetailExtraObjectBoxStruct(
+          barcode: element.barcode,
+          item_code: element.item_code,
+          item_name: element.item_name,
+          unit_code: element.unit_code,
+          unit_name: element.unit_name,
+          qty: element.qty,
+          price: element.price,
+          // ***
+          price_exclude_vat: element.price_exclude_vat,
+          vat_type: element.vat_type,
+          //
+          is_except_vat: element.is_except_vat,
+          total_amount: element.total_amount));
+    }
+    if (!value.is_void) {
+      details.add(BillDetailObjectBoxStruct(
+          doc_mode: docMode,
+          doc_number: docNumber,
+          line_number: lineNumber,
+          barcode: value.barcode,
+          item_code: value.item_code,
+          item_name: value.item_name,
+          unit_code: value.unit_code,
+          unit_name: value.unit_name,
+          sku: "",
+          qty: value.qty,
+          price: value.price,
+          discount_text: value.discount_text,
+          discount: value.discount,
+          is_except_vat: value.is_except_vat,
+          extra_json: jsonEncode(detailExtras),
+          total_amount: value.total_amount,
+          vat_type: value.vat_type,
+          price_exclude_vat: value.price_exclude_vat));
+      lineNumber++;
+    }
+  }
+  // รายละเอียดโต๊ะ (DEDE POS Cafe)
+  int manCount = 0;
+  int womanCount = 0;
+  int childCount = 0;
+  String buffetCode = "";
+  // ยอดรวมก่อนคำนวณภาษี
+  // Save
+  int billTaxType = 0;
+  if (global.posConfig.isvatregister == false) {
+    // ถ้าไม่ลงทะเบียนภาษีมูลค่าเพิ่ม
+    billTaxType = 0;
+  } else {
+    // ถ้าลงทะเบียนภาษีแล้ว ให้เป็น 1=อย่างย่อ
+    billTaxType = 1;
+    // ในกรณีที่เป็นลูกหนี้ออกแบบเต็มแบบ Makro อัตโนมัติ
+    // billTaxType = 2;
+  }
+  BillObjectBoxStruct billData = BillObjectBoxStruct(
+      doc_mode: docMode, // 1=ขาย,2=คืน
+      bill_tax_type: billTaxType,
+      vat_type: posHoldProcess.posProcess.vat_type,
+      is_cancel: false,
+      cancel_date_time: "",
+      cancel_user_code: "",
+      cancel_user_name: "",
+      cancel_description: "",
+      cancel_reason: "",
+      full_vat_address: "",
+      full_vat_branch_number: "",
+      full_vat_name: "",
+      full_vat_doc_number: "",
+      full_vat_print: false,
+      full_vat_tax_id: "",
+      table_al_la_crate_mode: false,
+      table_number: global.tableNumberSelected,
+      child_count: childCount,
+      woman_count: womanCount,
+      man_count: manCount,
+      buffet_code: buffetCode,
+      total_qty: posHoldProcess.posProcess.total_piece,
+      print_copy_bill_date_time: [],
+      date_time: docDate,
+      table_close_date_time: DateTime.now(),
+      table_open_date_time: DateTime.now(),
+      doc_number: docNumber,
+      customer_code: posHoldProcess.customerCode,
+      customer_name: posHoldProcess.customerName,
+      customer_telephone: posHoldProcess.customerPhone,
+      sale_code: posHoldProcess.saleCode,
+      sale_name: posHoldProcess.saleName,
+      total_amount: totalAmount,
+      cashier_code: global.userLogin!.code,
+      cashier_name: global.userLogin!.name,
+      pay_cash_amount: cashAmount,
+      pay_cash_change: (cashAmount + global.payScreenData.credit_amount + sumCoupon() + sumQr() + sumCreditCard() + sumTransfer() + sumCheque()) - totalAmount,
+      is_sync: false,
+      amount_except_vat: posHoldProcess.posProcess.amount_except_vat,
+      amount_before_calc_vat: posHoldProcess.posProcess.amount_before_calc_vat,
+      amount_after_calc_vat: posHoldProcess.posProcess.amount_after_calc_vat,
+      vat_rate: posHoldProcess.posProcess.vat_rate,
+      is_vat_register: posHoldProcess.posProcess.is_vat_register,
+      total_item_vat_amount: posHoldProcess.posProcess.total_item_vat_amount,
+      total_item_except_vat_amount: posHoldProcess.posProcess.total_item_except_vat_amount,
+      total_vat_amount: posHoldProcess.posProcess.total_vat_amount,
+      discount_formula: discountFormula,
+      total_discount: discountAmount,
+      total_discount_vat_amount: posHoldProcess.posProcess.total_discount_vat_amount,
+      total_discount_except_vat_amount: posHoldProcess.posProcess.total_discount_except_vat_amount,
+      detail_discount_formula: posHoldProcess.posProcess.detail_discount_formula,
+      detail_total_amount: posHoldProcess.posProcess.total_amount,
+      detail_total_discount: posHoldProcess.posProcess.detail_total_discount,
+      round_amount: roundAmount,
+      total_amount_after_discount: totalAmountAfterDiscount,
+      detail_total_amount_before_discount: posHoldProcess.posProcess.detail_total_amount_before_discount,
+      pay_json: jsonEncode(pays),
+      sum_credit: global.payScreenData.credit_amount,
+      sum_coupon: sumCoupon(),
+      sum_qr_code: sumQr(),
+      sum_credit_card: sumCreditCard(),
+      sum_money_transfer: sumTransfer(),
+      sum_cheque: sumCheque());
+
+  global.billHelper.insert(billData);
+  global.objectBoxStore.box<BillDetailObjectBoxStruct>().putMany(details);
+  // update Order Temp ร้านอาหาร
+  if (global.tableNumberSelected.isNotEmpty) {
+    final orderTemps = global.objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.orderId.equals(global.tableNumberSelected).and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false)))
+        .build()
+        .find();
+    for (int index = 0; index < orderTemps.length; index++) {
+      orderTemps[index].isPaySuccess = true;
+      global.objectBoxStore.box<OrderTempObjectBoxStruct>().put(orderTemps[index], mode: PutMode.update);
+    }
+  }
+  return result;
 }
 
 Future<void> processPromotionTemp() async {
@@ -201,6 +275,7 @@ Future<void> processPromotionTemp() async {
 
 Widget posBill(BillObjectBoxStruct bill) {
   return Container(
+      width: 300,
       padding: const EdgeInsets.all(4),
       child: Table(
         columnWidths: const {
@@ -209,28 +284,28 @@ Widget posBill(BillObjectBoxStruct bill) {
         },
         children: [
           TableRow(children: [
-            const Text("เลขที่"),
+            Text(global.language("doc_number")),
             Text(
               bill.doc_number,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
           TableRow(children: [
-            const Text("วันที่"),
+            Text(global.language("doc_date")),
             Text(
-              global.dateTimeFormat(bill.date_time),
+              global.dateTimeFormatFull(bill.date_time, showTime: true),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
           TableRow(children: [
-            const Text("มูลค่า"),
+            Text(global.language("amount")),
             Text(
               global.moneyFormat.format(bill.total_amount),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ]),
           TableRow(children: [
-            const Text("สำเนา"),
+            Text(global.language("copy")),
             Text(
               global.moneyFormat.format(bill.print_copy_bill_date_time.length),
               style: const TextStyle(fontWeight: FontWeight.bold),
@@ -240,8 +315,18 @@ Widget posBill(BillObjectBoxStruct bill) {
       ));
 }
 
-Widget posBillDetail(
-    BillObjectBoxStruct bill, List<BillDetailObjectBoxStruct> billDetails) {
+Widget posBillDetail({required String docNumber}) {
+  BillObjectBoxStruct? bill = global.billHelper.selectByDocNumber(docNumber: docNumber, posScreenMode: 1);
+  if (bill == null) {
+    return Text("Bill {$docNumber} not found");
+  }
+  List<BillDetailObjectBoxStruct> billDetails = global.objectBoxStore
+      .box<BillDetailObjectBoxStruct>()
+      .query(BillDetailObjectBoxStruct_.doc_number.equals(bill.doc_number))
+      .order(BillDetailObjectBoxStruct_.line_number)
+      .build()
+      .find();
+
   return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -274,7 +359,7 @@ Widget posBillDetail(
               TableRow(
                 children: [
                   Text(global.language("doc_date")),
-                  Text(global.dateTimeFormat(bill.date_time)),
+                  Text(global.dateTimeFormatFull(bill.date_time)),
                 ],
               ),
               TableRow(
@@ -313,63 +398,25 @@ Widget posBillDetail(
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       )),
+                  Padding(padding: const EdgeInsets.all(4), child: Text(global.language("item_name"), style: const TextStyle(fontWeight: FontWeight.bold))),
+                  Padding(padding: const EdgeInsets.all(4), child: Text(global.language("unit_name"), style: const TextStyle(fontWeight: FontWeight.bold))),
+                  Padding(padding: const EdgeInsets.all(4), child: Text(global.language("qty"), style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.right)),
+                  Padding(padding: const EdgeInsets.all(4), child: Text(global.language("price"), style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.right)),
                   Padding(
                       padding: const EdgeInsets.all(4),
-                      child: Text(global.language("item_name"),
-                          style: const TextStyle(fontWeight: FontWeight.bold))),
-                  Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(global.language("unit_name"),
-                          style: const TextStyle(fontWeight: FontWeight.bold))),
-                  Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(global.language("qty"),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.right)),
-                  Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(global.language("price"),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.right)),
-                  Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Text(global.language("total_amount"),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.right)),
+                      child: Text(global.language("total_amount"), style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.right)),
                 ],
               ),
               for (var i = 0; i < billDetails.length; i++)
                 TableRow(
-                  decoration: BoxDecoration(
-                      color:
-                          (i % 2 == 0) ? Colors.white : Colors.grey.shade200),
+                  decoration: BoxDecoration(color: (i % 2 == 0) ? Colors.white : Colors.grey.shade200),
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text((i + 1).toString(),
-                            textAlign: TextAlign.center)),
-                    Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(billDetails[i].item_name)),
-                    Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(billDetails[i].unit_name)),
-                    Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(
-                            global.moneyFormat.format(billDetails[i].qty),
-                            textAlign: TextAlign.right)),
-                    Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(
-                            global.moneyFormat.format(billDetails[i].price),
-                            textAlign: TextAlign.right)),
-                    Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(
-                            global.moneyFormat
-                                .format(billDetails[i].total_amount),
-                            textAlign: TextAlign.right)),
+                    Padding(padding: const EdgeInsets.all(4), child: Text((i + 1).toString(), textAlign: TextAlign.center)),
+                    Padding(padding: const EdgeInsets.all(4), child: Text(global.getNameFromJsonLanguage(billDetails[i].item_name, global.userScreenLanguage))),
+                    Padding(padding: const EdgeInsets.all(4), child: Text(global.getNameFromJsonLanguage(billDetails[i].unit_name, global.userScreenLanguage))),
+                    Padding(padding: const EdgeInsets.all(4), child: Text(global.moneyFormat.format(billDetails[i].qty), textAlign: TextAlign.right)),
+                    Padding(padding: const EdgeInsets.all(4), child: Text(global.moneyFormat.format(billDetails[i].price), textAlign: TextAlign.right)),
+                    Padding(padding: const EdgeInsets.all(4), child: Text(global.moneyFormat.format(billDetails[i].total_amount), textAlign: TextAlign.right)),
                   ],
                 ),
             ],

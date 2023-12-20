@@ -13,9 +13,8 @@ class BankHelper {
     return box.getAll();
   }
 
-  List<BankObjectBoxStruct> selectByCode(
-      {String code = "", int limit = 0, int offset = 0}) {
-    return (box.query()..order(BankObjectBoxStruct_.code)).build().find();
+  BankObjectBoxStruct? selectByCode({String code = ""}) {
+    return (box.query(BankObjectBoxStruct_.code.equals(code))).build().findFirst();
   }
 
   void deleteByGuidFixedMany(List<String> guidFixedList) {

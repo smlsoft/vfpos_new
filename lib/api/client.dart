@@ -12,8 +12,7 @@ class Client {
 
     String endPointService = Environment().config.serviceApi;
 
-    endPointService +=
-        endPointService[endPointService.length - 1] == "/" ? "" : "/";
+    endPointService += endPointService[endPointService.length - 1] == "/" ? "" : "/";
 
     dio.options.baseUrl = endPointService;
     dio.options.connectTimeout = const Duration(seconds: 20); //20s
@@ -21,8 +20,25 @@ class Client {
     (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
         // ignore: body_might_complete_normally_nullable
         (HttpClient client) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    };
+    return dio;
+  }
+
+  Dio initExpress() {
+    Dio dio = Dio();
+
+    String endPointService = Environment().config.reportApi;
+
+    endPointService += endPointService[endPointService.length - 1] == "/" ? "" : "/";
+
+    dio.options.baseUrl = endPointService;
+    dio.options.connectTimeout = const Duration(seconds: 20); //20s
+    dio.options.receiveTimeout = const Duration(seconds: 30); //5s
+    (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
+        // ignore: body_might_complete_normally_nullable
+        (HttpClient client) {
+      client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
     };
     return dio;
   }
@@ -51,9 +67,7 @@ class ApiResponse<T> {
       success: map['success'] ?? false,
       error: map['error'] ?? true,
       data: map['data'],
-      page: map['pagination'] == null
-          ? Pages.empty
-          : Pages.fromMap(map['pagination']),
+      page: map['pagination'] == null ? Pages.empty : Pages.fromMap(map['pagination']),
     );
   }
 }
@@ -78,11 +92,7 @@ class Pages {
   bool get isNotEmpty => this == Pages.empty;
 
   factory Pages.fromMap(Map<String, dynamic> map) {
-    return Pages(
-        perPage: map['perPage'],
-        page: map['page'],
-        total: map['total'],
-        totalPage: map['totalPage']);
+    return Pages(perPage: map['perPage'], page: map['page'], total: map['total'], totalPage: map['totalPage']);
   }
 }
 

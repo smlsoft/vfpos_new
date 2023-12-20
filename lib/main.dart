@@ -1,19 +1,17 @@
 import 'package:dedepos/bootstrap.dart';
-import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/features/pos/presentation/screens/pos_secondary_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-
 import 'app/app_view.dart';
 import 'flavors.dart';
+import 'package:dedepos/global.dart' as global;
 
 void main() async {
-  F.appFlavor = Flavor.DEDEPOS;
-  initializeEnvironmentConfig();
+  F.appFlavor = Flavor.VFPOS;
   WidgetsFlutterBinding.ensureInitialized();
+  initializeEnvironmentConfig();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
-  await setUpServiceLocator();
+  global.applicationName = "Village Fund POS";
   await initializeApp();
-  runApp(App());
+  runApp((isCustomerDisplayScreen()) ? const PosSecondaryScreen() : App());
 }

@@ -1,10 +1,15 @@
+import 'package:dedepos/api/sync/sync_bill.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/shift_helper.dart';
+import 'package:dedepos/model/objectbox/shift_struct.dart';
+import 'package:dedepos/util/printer.dart';
 import 'package:dedepos/widgets/numpad.dart';
 import 'package:flutter/material.dart';
 import 'package:dedepos/global.dart' as global;
+import 'package:uuid/uuid.dart';
 
-/// Mode (0=เปิดกะ+เงินทอน, 1=ปิดกะ+ส่งเงิน, 2=เติมเงินทอน, 3=นำเงินออก)
+/// Mode (1=เปิดกะ+เงินทอน, 2=ปิดกะ+ส่งเงิน, 3=เติมเงินทอน, 4=นำเงินออก)
 Widget shiftAndMoneyScreen({required int mode}) {
   TextEditingController remarkTextEditingController = TextEditingController();
   TextStyle textStyle = const TextStyle(
@@ -13,16 +18,16 @@ Widget shiftAndMoneyScreen({required int mode}) {
   String header = "";
   switch (mode) {
     case 0:
-      header = "เปิดกะ+เงินทอน";
+      header = global.language("open_the_cash_register_and_change"); // "เปิดกะ+เงินทอน";
       break;
     case 1:
-      header = "ปิดกะ+ส่งเงิน";
+      header = global.language("close_the_shift"); // "ปิดกะ+ส่งเงิน";
       break;
     case 2:
-      header = "เติมเงินทอน";
+      header = global.language("replenish_change"); // "เติมเงินทอน";
       break;
     case 3:
-      header = "นำเงินออก";
+      header = global.language("take_out_money"); // "นำเงินออก";
       break;
   }
   return Container(
@@ -50,8 +55,7 @@ Widget shiftAndMoneyScreen({required int mode}) {
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: Colors.blue.shade100,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
@@ -62,17 +66,13 @@ Widget shiftAndMoneyScreen({required int mode}) {
             ),
             child: Center(
                 child: Text(header,
-                    style: textStyle.copyWith(
-                        shadows: <Shadow>[
-                          const Shadow(
-                            offset: Offset(1.0, 1.0),
-                            blurRadius: 3.0,
-                            color: Colors.grey,
-                          )
-                        ],
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24,
-                        color: Colors.black)))),
+                    style: textStyle.copyWith(shadows: <Shadow>[
+                      const Shadow(
+                        offset: Offset(1.0, 1.0),
+                        blurRadius: 3.0,
+                        color: Colors.grey,
+                      )
+                    ], fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black)))),
         Expanded(
             child: Container(
                 padding: const EdgeInsets.all(10),
@@ -86,18 +86,14 @@ Widget shiftAndMoneyScreen({required int mode}) {
                       children: [
                         TableRow(
                           children: [
-                            Text("รหัสพนักงาน", style: textStyle),
-                            Text(global.userLoginCode,
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold)),
+                            Text(global.language("employee_code"), style: textStyle),
+                            Text(global.userLogin!.code, style: textStyle.copyWith(fontWeight: FontWeight.bold)),
                           ],
                         ),
                         TableRow(
                           children: [
-                            Text("ชื่อพนักงาน", style: textStyle),
-                            Text(global.userLoginName,
-                                style: textStyle.copyWith(
-                                    fontWeight: FontWeight.bold)),
+                            Text(global.language("employee_name"), style: textStyle),
+                            Text(global.userLogin!.name, style: textStyle.copyWith(fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ],
@@ -107,17 +103,39 @@ Widget shiftAndMoneyScreen({required int mode}) {
                       TextField(
                         controller: remarkTextEditingController,
                         style: textStyle,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'หมายเหตุ',
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          hintText: global.language("remark"),
                         ),
                       ),
                     if (mode == 2 || mode == 3) const SizedBox(height: 10),
                     Expanded(
                         child: NumberPad(
-                            header: "จำนวนเงิน",
+                            header: global.language("amount_of_money"),
                             onChange: (value) {
-                              serviceLocator<Log>().debug(value);
+                              double amount = double.tryParse(value) ?? 0;
+                              // กด ตกลง
+                              if (amount != 0) {
+                                String guid = Uuid().v4();
+                                ShiftObjectBoxStruct data = ShiftObjectBoxStruct(
+                                  isSync: false,
+                                  guidfixed: guid,
+                                  doctype: mode,
+                                  docdate: DateTime.now(),
+                                  remark: remarkTextEditingController.text,
+                                  usercode: global.userLogin!.code,
+                                  username: global.userLogin!.name,
+                                  amount: amount,
+                                  creditcard: 1,
+                                  promptpay: 2,
+                                  transfer: 3,
+                                  cheque: 4,
+                                  coupon: 5,
+                                );
+                                ShiftHelper().insert(data);
+                                shiftAndMoneyPrint(guid);
+                                syncBillProcess();
+                              }
                             })),
                   ],
                 )))

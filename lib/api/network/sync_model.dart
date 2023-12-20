@@ -19,22 +19,24 @@ class SyncCustomerDisplayModel {
 
 @JsonSerializable(explicitToJson: true)
 class SyncDeviceModel {
-  String device;
+  String deviceId;
+  String? deviceName;
   String ip;
   bool connected;
-  bool isCashierTerminal;
-  bool isClient;
-  int holdNumberActive;
-  int docModeActive;
-  bool processSuccess;
+  bool? isCashierTerminal;
+  bool? isClient;
+  String? holdCodeActive;
+  int? docModeActive;
+  bool? processSuccess;
 
   SyncDeviceModel(
-      {required this.device,
+      {required this.deviceId,
+      required this.deviceName,
       required this.ip,
       required this.connected,
       required this.isCashierTerminal,
       required this.isClient,
-      required this.holdNumberActive,
+      required this.holdCodeActive,
       required this.docModeActive,
       this.processSuccess = true});
 
@@ -42,4 +44,27 @@ class SyncDeviceModel {
       _$SyncDeviceModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SyncDeviceModelToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class SyncStaffDeviceModel {
+  // เชื่อมกับเครื่อง Staff
+  String serverShopId;
+  String serverIp;
+  String clientName;
+  String clientGuid;
+  String clientIp;
+
+  SyncStaffDeviceModel({
+    required this.serverShopId,
+    required this.serverIp,
+    required this.clientName,
+    required this.clientGuid,
+    required this.clientIp,
+  });
+
+  factory SyncStaffDeviceModel.fromJson(Map<String, dynamic> json) =>
+      _$SyncStaffDeviceModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SyncStaffDeviceModelToJson(this);
 }

@@ -22,8 +22,7 @@ class CheckUserLoginStatusImpl extends CheckUserLoginStatus {
 
   @override
   Future<Shop?> checkIfUserSelectedShop() async {
-    final result =
-        await serviceLocator<ShopAuthenticationRepository>().getSelectedShop();
+    final result = await serviceLocator<ShopAuthenticationRepository>().getSelectedShop();
     return result.fold((l) => null, (r) => r);
   }
 }

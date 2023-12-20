@@ -1,45 +1,39 @@
-import 'package:dedepos/model/find/find_member_model.dart';
+import 'package:dedepos/api/api_repository.dart';
+import 'package:dedepos/model/json/member_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dedepos/api/rest_api.dart';
 
 class FindMemberByTelNameLoadStart extends FindMemberByTelNameEvent {
   final String words;
   final int offset;
   final int limit;
 
-  FindMemberByTelNameLoadStart(this.words, this.offset, this.limit);
+  FindMemberByTelNameLoadStart({required this.words, required this.offset, required this.limit});
 }
 
 class FindMemberByTelNameLoadSuccess extends FindMemberByTelNameState {
-  List<FindMemberModel> result;
+  List<MemberModel> result;
 
   FindMemberByTelNameLoadSuccess({required this.result});
 }
 
-class FindMemberByTelNameBloc
-    extends Bloc<FindMemberByTelNameEvent, FindMemberByTelNameState> {
-  final RestApiFindMemberByTelName apiFindMemberByTelName;
+class FindMemberByTelNameBloc extends Bloc<FindMemberByTelNameEvent, FindMemberByTelNameState> {
+  final ApiRepository apiFindMemberByTelName;
 
   final int? offset;
   final int? limit;
 
-  FindMemberByTelNameBloc(
-      {required this.apiFindMemberByTelName, this.offset, this.limit})
-      : super(FindMemberByTelNameInitial()) {
+  FindMemberByTelNameBloc({required this.apiFindMemberByTelName, this.offset, this.limit}) : super(FindMemberByTelNameInitial()) {
     on<FindMemberByTelNameLoadStart>(_findMemberByTelName);
     on<FindMemberByTelNameLoadFinish>(_findMemberByTelNameLoadFinish);
   }
 
-  void _findMemberByTelName(FindMemberByTelNameLoadStart event,
-      Emitter<FindMemberByTelNameState> emit) async {
+  void _findMemberByTelName(FindMemberByTelNameLoadStart event, Emitter<FindMemberByTelNameState> emit) async {
     emit(FindMemberByTelNameLoading());
-    List<FindMemberModel> result = await apiFindMemberByTelName
-        .findMemberByTelName(event.words, event.offset, event.limit);
+    List<MemberModel> result = await apiFindMemberByTelName.findMemberByTelName(event.words, event.offset, event.limit);
     emit(FindMemberByTelNameLoadSuccess(result: result));
   }
 
-  void _findMemberByTelNameLoadFinish(FindMemberByTelNameLoadFinish event,
-      Emitter<FindMemberByTelNameState> emit) async {
+  void _findMemberByTelNameLoadFinish(FindMemberByTelNameLoadFinish event, Emitter<FindMemberByTelNameState> emit) async {
     emit(FindMemberByTelNameLoadStop());
   }
 }

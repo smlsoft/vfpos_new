@@ -11,9 +11,12 @@ class LoginUserRepositoryImpl extends LoginUserRepository {
   }
 
   @override
-  Future<Either<Failure, User>> loginWithUserPassword(
-      {required String username, required String password}) async {
-    return serviceLocator<LoginRemoteDataSource>()
-        .loginWithUserPassword(username: username, password: password);
+  Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password}) async {
+    return serviceLocator<LoginRemoteDataSource>().loginWithUserPassword(username: username, password: password);
+  }
+
+  @override
+  Future<Either<Failure, User>> profile() {
+    return serviceLocator<LoginRemoteDataSource>().profile();
   }
 }

@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/global.dart' as global;
 
 class PosReprintBillScreen extends StatefulWidget {
+  final global.PosScreenModeEnum posScreenMode;
+
   @override
-  const PosReprintBillScreen({Key? key}) : super(key: key);
+  const PosReprintBillScreen({Key? key, required this.posScreenMode}) : super(key: key);
 
   @override
   State<PosReprintBillScreen> createState() => _PosReprintBillScreenState();
@@ -20,7 +22,9 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<BillBloc>().add(BillLoad());
+    context.read<BillBloc>().add(BillLoad(
+          posScreenMode: widget.posScreenMode,
+        ));
   }
 
   @override
@@ -37,34 +41,27 @@ class _PosReprintBillScreenState extends State<PosReprintBillScreen> {
             ),
             body: Padding(
               padding: const EdgeInsets.all(10),
-              child: GridView.builder(
-                itemCount: dataList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: MediaQuery.of(context).size.width ~/ 250,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 2,
-                ),
-                itemBuilder: (context, index) {
-                  return ElevatedButton(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: List.generate(
+                  dataList.length,
+                  (index) => ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.black,
-                      backgroundColor: (dataList[index].is_cancel)
-                          ? Colors.red.shade100
-                          : Colors.blue.shade100,
+                      backgroundColor: (dataList[index].is_cancel) ? Colors.red.shade100 : Colors.blue.shade100,
                     ),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PosReprintBillDetailScreen(
-                              docNumber: dataList[index].doc_number),
+                          builder: (context) => PosReprintBillDetailScreen(posScreenMode: widget.posScreenMode, docNumber: dataList[index].doc_number),
                         ),
                       );
                     },
                     child: posBill(dataList[index]),
-                  );
-                },
+                  ),
+                ),
               ),
             ));
       },

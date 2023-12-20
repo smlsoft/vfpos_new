@@ -7,10 +7,9 @@ import 'package:dedepos/services/user_cache_service.dart';
 // import 'package:firebase_authentication/firebase_authentication.dart';
 
 class LoginUserUseCase {
-  Future<Either<Failure, User>> loginWithUserPassword(
-      {required String username, required String password}) async {
-    final response = await serviceLocator<LoginUserRepository>()
-        .loginWithUserPassword(username: username, password: password);
+  Future<Either<Failure, User>> loginWithUserPassword({required String username, required String password}) async {
+    final response = await serviceLocator<LoginUserRepository>().loginWithUserPassword(username: username, password: password);
+
     if (response.isRight()) {
       final remoteUser = response.getOrElse(() => User());
       await serviceLocator<UserCacheService>().saveUser(remoteUser);
@@ -19,8 +18,7 @@ class LoginUserUseCase {
   }
 
   Future<Either<Failure, User>> loginWithToken({required String token}) async {
-    final response = await serviceLocator<LoginUserRepository>()
-        .loginWithToken(token: token);
+    final response = await serviceLocator<LoginUserRepository>().loginWithToken(token: token);
     if (response.isRight()) {
       final remoteUser = response.getOrElse(() => User());
       await serviceLocator<UserCacheService>().saveUser(remoteUser);
@@ -28,20 +26,20 @@ class LoginUserUseCase {
     return response;
   }
 
-  Future<Either<Failure, User>> loginWithGoogle() async {
-    try {
-      // await serviceLocator<FirebaseAuthentication>().logInWithGoogle();
-      // final String? token =
-      //     await serviceLocator<FirebaseAuthentication>().getIdToken();
-      // if (token != null) {
-      //   return loginWithToken(token: token);
-      // }
+  // Future<Either<Failure, User>> loginWithGoogle() async {
+  //   try {
+  //     // await serviceLocator<FirebaseAuthentication>().logInWithGoogle();
+  //     // final String? token =
+  //     //     await serviceLocator<FirebaseAuthentication>().getIdToken();
+  //     // if (token != null) {
+  //     //   return loginWithToken(token: token);
+  //     // }
 
-      return left(const ConnectionFailure("Cannot Login With Google"));
-    } catch (e) {
-      return left(ConnectionFailure(e.toString()));
-    }
-  }
+  //     return left(const ConnectionFailure("Cannot Login With Google"));
+  //   } catch (e) {
+  //     return left(ConnectionFailure(e.toString()));
+  //   }
+  // }
 
   Future<bool> logout() async {
     final isDeleted = await serviceLocator<UserCacheService>().deleteUser();

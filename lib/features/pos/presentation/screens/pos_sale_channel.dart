@@ -28,18 +28,13 @@ class _PosSaleChannelScreenState extends State<PosSaleChannelScreen> {
             ),
             onPressed: () {
               global.posSaleChannelCode = global.posSaleChannelList[index].code;
-              global.posSaleChannelLogoUrl =
-                  global.posSaleChannelList[index].logoUrl;
+              global.posSaleChannelLogoUrl = global.posSaleChannelList[index].logoUrl;
               Navigator.pop(context);
             },
             child: (global.posSaleChannelList[index].logoUrl.isEmpty)
                 ? Center(child: Text(global.posSaleChannelList[index].name))
                 : Column(children: [
-                    (global.posSaleChannelList[index].logoUrl.isEmpty)
-                        ? Container()
-                        : Expanded(
-                            child: Image.network(
-                                global.posSaleChannelList[index].logoUrl)),
+                    (global.posSaleChannelList[index].logoUrl.isEmpty) ? Container() : Expanded(child: Image.network(global.posSaleChannelList[index].logoUrl)),
                     Center(child: Text(global.posSaleChannelList[index].name)),
                   ]),
           ),

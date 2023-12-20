@@ -67,8 +67,7 @@ class LandscapeTopBarDashboardClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     var path = Path();
     path.lineTo(0, size.height * 0.1);
-    path.quadraticBezierTo(
-        size.width * 0.1, size.height * 1.5, size.width * 1.1, 0);
+    path.quadraticBezierTo(size.width * 0.1, size.height * 1.5, size.width * 1.1, 0);
 
     path.lineTo(size.width, 0);
     path.close();

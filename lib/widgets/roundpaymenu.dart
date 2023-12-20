@@ -25,9 +25,7 @@ class RoundPayMenu extends StatelessWidget {
       child: TextButton(
         onPressed: onPressed,
         style: TextButton.styleFrom(
-          backgroundColor: actived == 0
-              ? global.posTheme.secondary
-              : global.posTheme.background,
+          backgroundColor: actived == 0 ? global.posTheme.secondary : global.posTheme.background,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,

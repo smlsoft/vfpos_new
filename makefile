@@ -12,3 +12,6 @@ build_production_vfpos:
 	flutter build ipa --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD
 flutter_android_build_gradie:
 	dart run flutter_flavorizr -p android:buildGradle
+flutter_run_dedepos:
+	flutter run --flavor dedepos -t lib/main_dedepos.dart
+	

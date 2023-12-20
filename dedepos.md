@@ -15,10 +15,14 @@ void main() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
   await setUpServiceLocator();
   await initializeApp();
   runApp(App());
 }
 
+```
+
+```
+
+flutter build appbundle --flavor dedepos -t lib/main_dedepos.dart --release --dart-define=ENVIRONMENT=PROD
 ```

@@ -1,31 +1,25 @@
 import 'package:decimal/decimal.dart';
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/model/system/bank_and_wallet_model.dart';
+import 'package:dedepos/global_model.dart';
 import 'package:flutter/material.dart';
 import 'package:lugentpayment/lugentpay.dart';
 import 'package:lugentpayment/qrpayment_response.dart';
 import 'package:promptpay/promptpay.dart';
 import 'package:countdown_progress_indicator/countdown_progress_indicator.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class PayQrScreen extends StatefulWidget {
-  final PaymentProviderModel provider;
+  final ProfileQrPaymentModel provider;
   final double amount;
   final BuildContext context;
 
-  const PayQrScreen(
-      {Key? key,
-      required this.provider,
-      required this.amount,
-      required this.context})
-      : super(key: key);
+  const PayQrScreen({Key? key, required this.provider, required this.amount, required this.context}) : super(key: key);
 
   @override
   State<PayQrScreen> createState() => _PayQrScreenState();
 }
 
-class _PayQrScreenState extends State<PayQrScreen>
-    with TickerProviderStateMixin {
-  var promptPayDataWithAmount = "0899223131";
+class _PayQrScreenState extends State<PayQrScreen> with TickerProviderStateMixin {
   final countDownController = CountDownController();
   String qrCodePayDataString = "";
 
@@ -33,22 +27,14 @@ class _PayQrScreenState extends State<PayQrScreen>
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
     QRPaymentResponse qrPayment =
-        await lugentPay.CreateThaiQRPaymentTransaction(
-            lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-            "SMLSOFT",
-            Decimal.parse(widget.amount.toString()),
-            "");
+        await lugentPay.CreateThaiQRPaymentTransaction(lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
   Future<QRPaymentResponse> qrLugentAliPay() async {
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
-    QRPaymentResponse qrPayment = await lugentPay.CreateAliPayTransaction(
-        lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-        "SMLSOFT",
-        Decimal.parse(widget.amount.toString()),
-        "");
+    QRPaymentResponse qrPayment = await lugentPay.CreateAliPayTransaction(lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
@@ -69,24 +55,19 @@ class _PayQrScreenState extends State<PayQrScreen>
   Future<QRPaymentResponse> qrLugentLinePay() async {
     // Promptpay ลูเจ้นท์ ไทย
     LugentPay lugentPay = LugentPay.InitDemoInstance();
-    QRPaymentResponse qrPayment = await lugentPay.CreateLinePayTransaction(
-        lugentPay.CreateReferenceWithUnixTime("SMLINV"),
-        "SMLSOFT",
-        Decimal.parse(widget.amount.toString()),
-        "");
+    QRPaymentResponse qrPayment = await lugentPay.CreateLinePayTransaction(lugentPay.CreateReferenceWithUnixTime("SMLINV"), "SMLSOFT", Decimal.parse(widget.amount.toString()), "");
     return qrPayment;
   }
 
   @override
   void initState() {
     super.initState();
-    switch (widget.provider.wallettype) {
-      case 101:
+    switch (widget.provider.qrtype) {
+      case 100:
         // Promptpay ทั่วไป
-        qrCodePayDataString = PromptPay.generateQRData(promptPayDataWithAmount,
-            amount: widget.amount.toDouble());
+        qrCodePayDataString = PromptPay.generateQRData(widget.provider.qrcode, amount: widget.amount.toDouble());
         break;
-      case 201:
+      case 110:
         // Promptpay ลูเจ้นท์ ไทย
         WidgetsBinding.instance.addPostFrameCallback((_) {
           qrLugentPromptPay().then((qrPayment) {
@@ -100,7 +81,21 @@ class _PayQrScreenState extends State<PayQrScreen>
           });
         });
         break;
-      case 202:
+      case 111:
+        // AliPay ลูเจ้นท์ ไทย
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          qrLugentAliPay().then((qrPayment) {
+            setState(() {
+              qrCodePayDataString = qrPayment.qrCode;
+              if (qrPayment.isSuccess()) {
+                // transactionId = qrPayment.transactionId;
+                qrCodePayDataString = qrPayment.qrCode;
+              }
+            });
+          });
+        });
+        break;
+      case 112:
         // True Money ลูเจ้นท์ ไทย
         WidgetsBinding.instance.addPostFrameCallback((_) {
           qrLugentTrueMoney().then((qrPayment) {
@@ -114,24 +109,10 @@ class _PayQrScreenState extends State<PayQrScreen>
           });
         });
         break;
-      case 203:
+      case 113:
         // Line Pay ลูเจ้นท์ ไทย
         WidgetsBinding.instance.addPostFrameCallback((_) {
           qrLugentLinePay().then((qrPayment) {
-            setState(() {
-              qrCodePayDataString = qrPayment.qrCode;
-              if (qrPayment.isSuccess()) {
-                // transactionId = qrPayment.transactionId;
-                qrCodePayDataString = qrPayment.qrCode;
-              }
-            });
-          });
-        });
-        break;
-      case 204:
-        // AliPay ลูเจ้นท์ ไทย
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          qrLugentAliPay().then((qrPayment) {
             setState(() {
               qrCodePayDataString = qrPayment.qrCode;
               if (qrPayment.isSuccess()) {
@@ -148,58 +129,61 @@ class _PayQrScreenState extends State<PayQrScreen>
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      SizedBox(
-          height: 100,
-          child: Image.asset(
-            ("assets/images/qrpay/${widget.provider.paymentcode}.png")
-                .toLowerCase(),
-          )),
-      Text(widget.provider.names[0].name,
-          style: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-      if (qrCodePayDataString.isNotEmpty)
-        // SizedBox(
-        //     width: 150,
-        //     height: 150,
-        //     child: QrImage(
-        //         data: qrCodePayDataString, versionData: QrVersions.auto)),
-        const SizedBox(height: 8),
-      SizedBox(
-          width: 150,
-          height: 150,
-          child: CountDownProgressIndicator(
-            controller: countDownController,
-            valueColor: Colors.red,
-            backgroundColor: Colors.blue,
-            initialPosition: 0,
-            duration: 5 * 60,
-            text: global.language('เหลือเวลาทำรายการ'),
-            onComplete: () {
-              Navigator.pop(context, false);
-            },
-            timeFormatter: (seconds) {
-              return Duration(seconds: seconds)
-                  .toString()
-                  .split('.')[0]
-                  .padLeft(8, '0');
-            },
-          )),
-      const SizedBox(height: 8),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (widget.provider.logo.isNotEmpty)
+            SizedBox(
+                height: 100,
+                child: Image.network(
+                  widget.provider.logo,
+                )),
+          if (widget.provider.logo.isNotEmpty) Spacer(),
+          SizedBox(
+              width: 100,
+              height: 100,
+              child: CountDownProgressIndicator(
+                controller: countDownController,
+                valueColor: Colors.red,
+                backgroundColor: Colors.blue,
+                initialPosition: 0,
+                duration: 5 * 60,
+                text: global.language('time_remaining_to_complete_the_transaction'),
+                onComplete: () {
+                  Navigator.pop(context, false);
+                },
+                timeFormatter: (seconds) {
+                  return Duration(seconds: seconds).toString().split('.')[0].substring(2);
+                },
+              )),
+        ],
+      ),
+      Text(global.getNameFromLanguage(widget.provider.qrnames, global.userScreenLanguage), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+      if (qrCodePayDataString.isNotEmpty) SizedBox(width: 100, height: 100, child: QrImageView(data: qrCodePayDataString, version: QrVersions.auto)),
       SizedBox(
           width: double.infinity,
           child: FittedBox(
               fit: BoxFit.fitWidth,
               child: Text(
-                '${global.language('จำนวนเงิน')} : ${global.moneyFormat.format(widget.amount)} ${global.language('money_symbol')}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                '${global.language('money_amount')} : ${global.moneyFormat.format(widget.amount)} ${global.language('money_symbol')}',
+                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, shadows: [
+                  Shadow(
+                    blurRadius: 5.0,
+                    color: Colors.grey,
+                    offset: Offset(1.0, 1.0),
+                  ),
+                ]),
               ))),
       const SizedBox(height: 8),
-      const SizedBox(
-          width: double.infinity,
-          child: FittedBox(
-            fit: BoxFit.fitWidth,
-            child: Text('นาย จตุรพรชัย รัตนปัญญา'),
-          )),
+      (widget.provider.qrcode.isNotEmpty)
+          ? SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(widget.provider.qrcode, style: TextStyle(fontWeight: FontWeight.bold)),
+              ))
+          : Container(),
       const SizedBox(height: 8),
       SizedBox(
           width: double.infinity,

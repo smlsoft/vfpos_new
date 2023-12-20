@@ -28,6 +28,22 @@ flutter run --flavor dedepos -t lib/main_dedepos.dart
 
 flutter build windows --flavor dedepos -t lib/main_dedepos.dart
 
+
+## Build Windows msix
+
+## Build dedepos windows
+```
+flutter build windows -t lib/main_dedepos.dart --dart-define=ENVIRONMENT=PROD  --dart-define=FLAVOR=dedepos
+flutter pub run msix:create --build-windows false
+```
+
+## Build vfpos windows
+```
+flutter build windows -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=PROD  --dart-define=FLAVOR=vfpos
+flutter build windows -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=DEV  --dart-define=FLAVOR=vfpos
+flutter pub run msix:create --build-windows false
+```
+
 flutter pub run msix:create --publisher "CN=55D8FA38-A305-463E-8BA0-21DE7B40BA27" --display-name "DEDE POS" --identity-name "SMLSoft.DEDEPOS" --version "1.0.0.0" --capabilities "internetClient, location, microphone, webcam" --logo-path ".\assets\dede-pos-icon.png" --publisher-display-name "SMLSoft" 
 
 ## Flavor 
@@ -51,9 +67,7 @@ void main() async {
   F.appFlavor = Flavor.DEDEPOS;
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
   await setUpServiceLocator();
-  // await GetStorage.init('AppStorage');
   await initializeApp();
   //runApp(const App());
   runApp(App());
@@ -188,3 +202,8 @@ flutter run --flavor vfpos -t lib/main_vfpos.dart --dart-define=ENVIRONMENT=STAG
             ]
         },
 ```
+
+
+webBot@19682511
+
+flutter build --release

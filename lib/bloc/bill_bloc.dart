@@ -1,5 +1,4 @@
 import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/db/bill_detail_helper.dart';
 import 'package:dedepos/model/objectbox/bill_struct.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dedepos/db/bill_helper.dart';
@@ -18,9 +17,7 @@ class BillLoadSuccess extends BillState {
 
 class BillLoadByDocNumberSuccess extends BillState {
   BillObjectBoxStruct? bill;
-  List<BillDetailObjectBoxStruct> billDetails = [];
-
-  BillLoadByDocNumberSuccess({required this.bill, this.billDetails = const []});
+  BillLoadByDocNumberSuccess({required this.bill});
 }
 
 class BillBloc extends Bloc<BillEvent, BillState> {
@@ -33,38 +30,32 @@ class BillBloc extends Bloc<BillEvent, BillState> {
 
   void billLoadStart(BillLoad event, Emitter<BillState> emit) async {
     emit(BillLoading());
-    List<BillObjectBoxStruct> bills = BillHelper()
-        .selectOrderByDateTimeDesc(posScreenMode: global.posScreenToInt());
+    List<BillObjectBoxStruct> bills = BillHelper().selectOrderByDateTimeDesc(posScreenMode: global.posScreenToInt(event.posScreenMode));
     emit(BillLoadSuccess(result: bills));
   }
 
-  void billLoadByDocNumberStart(
-      BillLoadByDocNumber event, Emitter<BillState> emit) async {
+  void billLoadByDocNumberStart(BillLoadByDocNumber event, Emitter<BillState> emit) async {
     emit(BillLoadingByDocNumber());
-    BillObjectBoxStruct? bill = BillHelper().selectByDocNumber(
-        docNumber: event.docNumber, posScreenMode: global.posScreenToInt());
-    if (bill != null) {
-      List<BillDetailObjectBoxStruct> billDetails =
-          BillDetailHelper().selectByDocNumber(docNumber: bill.doc_number);
-      emit(BillLoadByDocNumberSuccess(bill: bill, billDetails: billDetails));
-    } else {
-      emit(BillLoadByDocNumberSuccess(bill: bill, billDetails: []));
-    }
+    BillObjectBoxStruct? bill = BillHelper().selectByDocNumber(docNumber: event.docNumber, posScreenMode: global.posScreenToInt(event.posScreenMode));
+    emit(BillLoadByDocNumberSuccess(bill: bill));
   }
 
   void billLoadFinish(BillLoadFinish event, Emitter<BillState> emit) async {
     emit(BillLoadStop());
   }
 
-  void billLoadByDocNumberFinish(
-      BillLoadByDocNumberFinish event, Emitter<BillState> emit) async {
+  void billLoadByDocNumberFinish(BillLoadByDocNumberFinish event, Emitter<BillState> emit) async {
     emit(BillLoadByDocNumberStop());
   }
 }
 
 class BillLoadStop extends BillState {}
 
-class BillLoad extends BillEvent {}
+class BillLoad extends BillEvent {
+  final global.PosScreenModeEnum posScreenMode;
+
+  BillLoad({required this.posScreenMode});
+}
 
 class BillLoadFinish extends BillEvent {}
 
@@ -72,8 +63,9 @@ class BillLoading extends BillState {}
 
 class BillLoadByDocNumber extends BillEvent {
   final String docNumber;
+  final global.PosScreenModeEnum posScreenMode;
 
-  BillLoadByDocNumber({required this.docNumber});
+  BillLoadByDocNumber({required this.docNumber, required this.posScreenMode});
 }
 
 class BillLoadByDocNumberStop extends BillState {}

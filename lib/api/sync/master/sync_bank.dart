@@ -12,7 +12,7 @@ import 'package:dedepos/global_model.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
-Future<ApiResponse> serverBank({
+Future<ApiResponse> serverBankGetData({
   int limit = 0,
   int offset = 0,
   String lastupdate = '',
@@ -20,8 +20,7 @@ Future<ApiResponse> serverBank({
   Dio client = Client().init();
 
   try {
-    String query =
-        "/master-sync/list?lastupdate=$lastupdate&module=bankmaster&offset=$offset&limit=$limit&action=all";
+    String query = "/master-sync/list?lastupdate=$lastupdate&module=bankmaster&offset=$offset&limit=$limit&action=all";
     final response = await client.get(query);
     try {
       final rawData = json.decode(response.toString());
@@ -38,11 +37,9 @@ Future<ApiResponse> serverBank({
   }
 }
 
-Future syncBank(
-    List<ItemRemoveModel> removeList, List<SyncBankModel> newDataList) async {
+Future syncBank(List<ItemRemoveModel> removeList, List<SyncBankModel> newDataList) async {
   List<String> removeMany = [];
   List<BankObjectBoxStruct> manyForInsert = [];
-  List<String> packNameValues = [];
 
   // Delete
   for (var removeData in removeList) {
@@ -55,6 +52,7 @@ Future syncBank(
   }
   // Insert
   for (var newData in newDataList) {
+    List<String> packNameValues = [];
     global.syncTimeIntervalSecond = 1;
     removeMany.add(newData.guidfixed);
 
@@ -66,10 +64,8 @@ Future syncBank(
       guidfixed: newData.guidfixed,
       code: newData.code,
       names: packNameValues,
+      logo: newData.logo,
     );
-
-    serviceLocator<Log>().debug("Sync Bank : ${newData.code} ${newData.names}");
-
     manyForInsert.add(newBank);
   }
   if (removeMany.isNotEmpty) {
@@ -82,48 +78,34 @@ Future syncBank(
 
 Future<void> syncBankCompare(List<SyncMasterStatusModel> masterStatus) async {
   // Sync พนักงาน
-  String lastUpdateTime =
-      global.appStorage.read(global.syncBankTimeName) ?? global.syncDateBegin;
+  String lastUpdateTime = global.appStorage.read(global.syncBankTimeName) ?? global.syncDateBegin;
   if (BankHelper().count() == 0) {
     lastUpdateTime = global.syncDateBegin;
   }
-  lastUpdateTime =
-      DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
+  lastUpdateTime = DateFormat(global.dateFormatSync).format(DateTime.parse(lastUpdateTime));
   var getLastUpdateTime = global.syncFindLastUpdate(masterStatus, "bankmaster");
   if (lastUpdateTime != getLastUpdateTime) {
-    serviceLocator<Log>().debug("syncBank Start");
     var loop = true;
     var offset = 0;
     var limit = 10000;
     while (loop) {
-      await serverBank(offset: offset, limit: limit, lastupdate: lastUpdateTime)
-          .then((value) {
+      await serverBankGetData(offset: offset, limit: limit, lastupdate: lastUpdateTime).then((value) {
         if (value.success) {
           var dataList = value.data["bankmaster"];
-          List<ItemRemoveModel> removeList = (dataList["remove"] as List)
-              .map((removeCate) => ItemRemoveModel.fromJson(removeCate))
-              .toList();
-          List<SyncBankModel> newDataList = (dataList["new"] as List)
-              .map((newCate) => SyncBankModel.fromJson(newCate))
-              .toList();
-          serviceLocator<Log>().trace(
-              "offset : $offset remove : ${removeList.length} insert : ${newDataList.length}");
+          List<ItemRemoveModel> removeList = (dataList["remove"] as List).map((removeCate) => ItemRemoveModel.fromJson(removeCate)).toList();
+          List<SyncBankModel> newDataList = (dataList["new"] as List).map((newCate) => SyncBankModel.fromJson(newCate)).toList();
           if (newDataList.isEmpty && removeList.isEmpty) {
             loop = false;
           } else {
             syncBank(removeList, newDataList);
           }
         } else {
-          serviceLocator<Log>()
-              .error("************************************************* Error");
+          serviceLocator<Log>().error("************************************************* Error");
           loop = false;
         }
       });
       offset += limit;
     }
-    serviceLocator<Log>()
-        .trace("Update SyncBank Success : ${BankHelper().count()}");
     global.appStorage.write(global.syncBankTimeName, getLastUpdateTime);
-    global.createLogoImageFromBankProvider();
   }
 }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dedepos/core/service_locator.dart';
 import 'package:dedepos/features/authentication/domain/entity/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dedepos/global.dart' as global;
 
 const String USER_CACHE_KEY = 'usercache';
 
@@ -28,13 +29,20 @@ class UserCacheService {
     if (userMap == null) {
       return null;
     }
+
     usr = User.fromJson(jsonDecode(userMap));
     _user = usr;
+    /*if (global.userLogin != null) {
+      global.userLogin!.code = _user?.username ?? "";
+      global.userLogin!.name = _user?.name ?? "";
+    }*/
     return usr;
   }
 
   Future<bool> deleteUser() async {
     _user = null;
+    global.loginSuccess = false;
+
     return await sharedPrefers.remove(USER_CACHE_KEY);
   }
 }

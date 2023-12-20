@@ -15,10 +15,7 @@ class EmployeeHelper {
 
   bool deleteByGuidFixed(String guid) {
     bool result = false;
-    final find = box
-        .query(EmployeeObjectBoxStruct_.guidfixed.equals(guid))
-        .build()
-        .findFirst();
+    final find = box.query(EmployeeObjectBoxStruct_.guidfixed.equals(guid)).build().findFirst();
     if (find != null) {
       result = box.remove(find.id);
     }
@@ -51,7 +48,21 @@ class EmployeeHelper {
     return (box.query()).build().find();
   }
 
+  EmployeeObjectBoxStruct? selectByCode({required String code}) {
+    return (box.query(
+      EmployeeObjectBoxStruct_.code.equals(code),
+    )).build().findFirst();
+  }
+
+  EmployeeObjectBoxStruct? loginByCode({required String code, required String pinCode}) {
+    return (box.query(EmployeeObjectBoxStruct_.code.equals(code).and(EmployeeObjectBoxStruct_.pin_code.equals(pinCode)))).build().findFirst();
+  }
+
   int count() {
     return (box.query()).build().count();
+  }
+
+  void deleteAll() {
+    box.removeAll();
   }
 }

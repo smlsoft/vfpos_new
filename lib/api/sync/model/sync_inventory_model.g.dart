@@ -75,6 +75,24 @@ Map<String, dynamic> _$SyncProductOptionModelToJson(
       'choices': instance.choices.map((e) => e.toJson()).toList(),
     };
 
+ProductOrderTypeFromServerModel _$ProductOrderTypeFromServerModelFromJson(
+        Map<String, dynamic> json) =>
+    ProductOrderTypeFromServerModel(
+      code: json['code'] as String,
+      names: (json['names'] as List<dynamic>)
+          .map((e) => LanguageDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      price: (json['price'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$ProductOrderTypeFromServerModelToJson(
+        ProductOrderTypeFromServerModel instance) =>
+    <String, dynamic>{
+      'code': instance.code,
+      'names': instance.names.map((e) => e.toJson()).toList(),
+      'price': instance.price,
+    };
+
 SyncProductBarcodeModel _$SyncProductBarcodeModelFromJson(
         Map<String, dynamic> json) =>
     SyncProductBarcodeModel(
@@ -103,6 +121,13 @@ SyncProductBarcodeModel _$SyncProductBarcodeModelFromJson(
       prices: (json['prices'] as List<dynamic>?)
           ?.map((e) => SyncPriceDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isalacarte: json['isalacarte'] as bool?,
+      ordertypes: (json['ordertypes'] as List<dynamic>?)
+          ?.map((e) => ProductOrderTypeFromServerModel.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
+      vatcal: json['vatcal'] as int,
+      issplitunitprint: json['issplitunitprint'] as bool,
     );
 
 Map<String, dynamic> _$SyncProductBarcodeModelToJson(
@@ -122,6 +147,10 @@ Map<String, dynamic> _$SyncProductBarcodeModelToJson(
       'colorselecthex': instance.colorselecthex,
       'options': instance.options,
       'prices': instance.prices,
+      'isalacarte': instance.isalacarte,
+      'ordertypes': instance.ordertypes,
+      'vatcal': instance.vatcal,
+      'issplitunitprint': instance.issplitunitprint,
     };
 
 SyncCategoryModel _$SyncCategoryModelFromJson(Map<String, dynamic> json) =>

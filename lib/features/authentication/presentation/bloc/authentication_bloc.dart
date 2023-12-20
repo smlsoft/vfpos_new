@@ -8,14 +8,11 @@ part 'authentication_event.dart';
 part 'authentication_state.dart';
 part 'authentication_bloc.freezed.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc() : super(const AuthenticationInitialState()) {
     on<LoginUserPasswordEvent>((event, emit) async {
       emit(const AuthenticationLoadingState());
-      var result = await serviceLocator<LoginUserUseCase>()
-          .loginWithUserPassword(
-              username: event.userName, password: event.password);
+      var result = await serviceLocator<LoginUserUseCase>().loginWithUserPassword(username: event.userName, password: event.password);
 
       result.fold(
         (failure) {
@@ -27,10 +24,10 @@ class AuthenticationBloc
       );
     });
 
-    on<LoginWithGoogleEvent>((event, emit) async {
+    on<LoginTokenEvent>((event, emit) async {
       emit(const AuthenticationLoadingState());
 
-      var result = await serviceLocator<LoginUserUseCase>().loginWithGoogle();
+      var result = await serviceLocator<LoginUserUseCase>().loginWithToken(token: event.token);
       result.fold(
         (failure) {
           emit(AuthenticationState.error(failure.message));

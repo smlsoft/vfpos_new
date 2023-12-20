@@ -1,36 +1,47 @@
-import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
+import 'package:dedepos/api/api_repository.dart';
+import 'package:dedepos/api/clickhouse/clickhouse_api.dart';
+import 'package:dedepos/api/network/server.dart';
+import 'package:dedepos/api/network/server_post.dart';
+import 'package:dedepos/api/sync/model/employee_model.dart';
+import 'package:dedepos/api/sync/model/wallet_model.dart';
 import 'package:dedepos/core/logger/logger.dart';
 import 'package:dedepos/core/service_locator.dart';
+import 'package:dedepos/db/kitchen_helper.dart';
+import 'package:dedepos/db/shift_helper.dart';
+import 'package:dedepos/google_sheet.dart';
+import 'package:dedepos/model/objectbox/bill_struct.dart';
+import 'package:dedepos/model/objectbox/buffet_mode_struct.dart';
+import 'package:dedepos/model/objectbox/employees_struct.dart';
+import 'package:dedepos/model/objectbox/kitchen_struct.dart';
+import 'package:dedepos/model/objectbox/order_temp_struct.dart';
+import 'package:dedepos/model/objectbox/pos_log_struct.dart';
 import 'package:dedepos/model/objectbox/pos_ticket_struct.dart';
 import 'package:dedepos/features/pos/presentation/screens/pos_num_pad.dart';
+import 'package:dedepos/model/objectbox/staff_client_struct.dart';
+import 'package:dedepos/model/objectbox/table_struct.dart';
+import 'package:dedepos/model/objectbox/wallet_struct.dart';
+import 'package:dedepos/util/load_form_design.dart';
+import 'package:dedepos/util/print_kitchen.dart';
+import 'package:drop_shadow/drop_shadow.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:dedepos/db/bank_helper.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:presentation_displays/display.dart';
 import 'package:presentation_displays/displays_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
-import 'package:esc_pos_printer/esc_pos_printer.dart';
 import 'package:dedepos/api/network/sync_model.dart';
-import 'package:localstore/localstore.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
-import 'package:dedepos/db/bill_detail_extra_helper.dart';
-import 'package:dedepos/db/bill_detail_helper.dart';
-import 'package:dedepos/db/bill_pay_helper.dart';
 import 'package:dedepos/db/employee_helper.dart';
-import 'package:dedepos/db/member_helper.dart';
 import 'package:dedepos/global_model.dart';
-import 'package:dedepos/global.dart' as global;
-import 'package:dedepos/model/system/bank_and_wallet_model.dart';
 import 'package:dedepos/model/objectbox/bank_struct.dart';
-import 'package:dedepos/model/objectbox/member_struct.dart';
 import 'package:dedepos/model/json/payment_model.dart';
 import 'package:dedepos/model/system/pos_pay_model.dart';
 import 'package:dedepos/api/sync/master/sync_master.dart' as sync;
-import 'package:dedepos/model/system/printer_model.dart';
 import 'package:dedepos/model/objectbox/product_barcode_struct.dart';
 import 'package:dedepos/model/objectbox/product_category_struct.dart';
 import 'package:dedepos/objectbox.g.dart';
@@ -39,7 +50,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:dedepos/model/objectbox/config_struct.dart';
 import 'dart:async';
 import 'db/promotion_helper.dart';
 import 'db/promotion_temp_helper.dart';
@@ -47,45 +57,78 @@ import 'db/product_category_helper.dart';
 import 'db/product_barcode_helper.dart';
 import 'db/pos_log_helper.dart';
 import 'db/bill_helper.dart';
-import 'db/config_helper.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:charset_converter/charset_converter.dart';
-import 'model/json/language_model.dart';
+import 'model/objectbox/form_design_struct.dart';
 
+String applicationName = "";
+late Directory applicationDocumentsDirectory;
+late ProfileSettingModel profileSetting;
+PosConfigModel posConfig = PosConfigModel(
+  code: '',
+  doccode: '',
+  vattype: 0,
+  vatrate: 0,
+  docformatinv: '',
+  docformatesalereturn: '',
+  billheader: [],
+  billfooter: [],
+  isvatregister: false,
+  isejournal: false,
+  devicenumber: '',
+  slips: [],
+  logourl: '',
+  creditcards: [],
+  qrcodes: [],
+  transfers: [],
+  location: LocationModel(code: "", names: []),
+  warehouse: WarehouseModel(code: "", guidfixed: "", names: []),
+);
+List<FormDesignObjectBoxStruct> formDesignList = [];
+List<String> countryNames = [
+  "English",
+  "Thai",
+  "Laos",
+  "Chinese",
+  "Japan",
+  "Korea"
+];
+List<String> countryCodes = ["en", "th", "lo", "ch", "jp", "kr"];
+List<LanguageSystemModel> languageSystemData = [];
+List<LanguageSystemCodeModel> languageSystemCode = [];
+String userScreenLanguage = "th";
 DisplayManager displayManager = DisplayManager();
 bool isInternalCustomerDisplayConnected = false;
 late Display internalCustomerDisplay;
 var httpClient = http.Client();
 late BuildContext globalContext;
+String environmentVersion = "PROD";
+bool tableSelected = false;
+String tableNumberSelected = "";
+late PosHoldProcessModel tableProcessSelected;
 void posProcessRefresh = () {};
 String ipAddress = "";
 List<String> errorMessage = [];
 List<InformationModel> informationList = <InformationModel>[];
 bool initSuccess = false;
-late List<LanguageSystemCodeModel> languageSystemCode;
-late String pathApplicationDocumentsDirectory;
 List<PosHoldProcessModel> posHoldProcessResult = [];
-int posHoldActiveNumber = 0;
+String posHoldActiveCode = "0";
 ProductCategoryHelper productCategoryHelper = ProductCategoryHelper();
 ProductBarcodeHelper productBarcodeHelper = ProductBarcodeHelper();
-MemberHelper memberHelper = MemberHelper();
 EmployeeHelper employeeHelper = EmployeeHelper();
 PosLogHelper posLogHelper = PosLogHelper();
 BillHelper billHelper = BillHelper();
-BillDetailHelper billDetailHelper = BillDetailHelper();
-BillDetailExtraHelper billDetailExtraHelper = BillDetailExtraHelper();
-BillPayHelper billPayHelper = BillPayHelper();
-ConfigHelper configHelper = ConfigHelper();
 PromotionHelper promotionHelper = PromotionHelper();
 PromotionTempHelper promotionTempHelper = PromotionTempHelper();
+ShiftHelper shiftHelper = ShiftHelper();
 int syncTimeIntervalMaxBySecond = 10;
 int syncTimeIntervalSecond = 1;
 final moneyFormat = NumberFormat("##,##0.##");
+final moneyFormatAndDot = NumberFormat("##,##0.00");
 final qtyShortFormat = NumberFormat("##,##0");
-String objectBoxDatabaseName = "smlposmobile.db";
-String deviceId = "POS01";
-String deviceName = "เครื่อง POS สำนักงานใหญ่ 1";
+String deviceId = "";
+String deviceName = "";
 List<SyncDeviceModel> customerDisplayDeviceList = [];
 List<SyncDeviceModel> posRemoteDeviceList = [];
 //"http://192.168.1.4:8084";
@@ -95,29 +138,16 @@ String providerName = "DATA";
 String databaseName = "DEMO"; // "DATA1 or DEMO";
 bool speechToTextVisible = false;
 bool loginSuccess = false;
-GetStorage appStorage = GetStorage('AppStorage');
-Localstore appLocalStore = Localstore.instance;
-late LocalStrongDataModel appLocalStrongData;
+late GetStorage appStorage;
+List<PrinterLocalStrongDataModel> printerLocalStrongData = [];
 bool loginProcess = false;
 bool syncDataSuccess = false;
 bool syncDataProcess = false;
 PosPayModel payScreenData = PosPayModel();
-bool lugenPaymentProvider = true;
-List<PaymentProviderModel> lugenPaymentProviderList = [];
-List<PaymentProviderModel> qrPaymentProviderList = [];
-bool payScreenNumberPadIsActive = false;
-double payScreenNumberPadLeft = 100;
-double payScreenNumberPadTop = 100;
-String payScreenNumberPadText = "";
-double payScreenNumberPadAmount = 0;
 PayScreenNumberPadWidgetEnum payScreenNumberPadWidget =
     PayScreenNumberPadWidgetEnum.number;
 VoidCallback numberPadCallBack = () {};
-String? userLanguage;
-String userLoginCode = "001";
-String userLoginName = "สมชาย";
-String employeeLogin = "";
-String employeeLoginName = "";
+late EmployeeObjectBoxStruct? userLogin;
 int machineNumber = 1;
 String selectTableCode = "";
 String selectTableGroup = "";
@@ -128,39 +158,29 @@ List<ProductCategoryObjectBoxStruct> productCategoryCodeSelected = [];
 List<ProductCategoryObjectBoxStruct> productCategoryList = [];
 List<ProductBarcodeObjectBoxStruct> productListByCategory = [];
 List<ProductCategoryObjectBoxStruct> productCategoryChildList = [];
-List<PrinterModel> printerList = [];
-String cashierPrinterCode = 'E2'; // เครื่องพิมพ์สำหรับพิมพ์บิล
-String tablePrinterCode = 'E3'; // เครื่องพิมพ์สำหรับพิมพ์โต๊/ปิดโต๊
-String orderSummeryPrinterCode = "E1"; // ใบสรุปรายการสั่งอาหาร
 AppModeEnum appMode = AppModeEnum.posTerminal;
 bool apiConnected = false;
-String apiUserName = "maxkorn";
-String apiUserPassword = "maxkorn";
-String apiShopID = "2Eh6e3pfWvXTp0yV3CyFEhKPjdI";
+String apiUserName = "";
+String apiUserPassword = "";
+String apiShopID = "";
 bool syncRefreshProductCategory = true;
 bool syncRefreshProductBarcode = true;
 bool syncRefreshPrinter = true;
 String syncDateBegin = "2000-01-01T00:00:00";
 String syncCategoryTimeName = "lastSyncCategory";
 String syncProductBarcodeTimeName = "lastSyncProductBarcode";
-String syncPrinterTimeName = "lastSyncPrinter";
 String syncInventoryTimeName = "lastSyncInventory";
 String syncMemberTimeName = "lastSyncMember";
-String syncEmployeeTimeName = "lastSyncEmployee";
 String syncBankTimeName = "lastSyncBank";
 String syncTableTimeName = "lastSyncTable";
-String syncTableZoneTimeName = "lastSyncTableZone";
-String syncDeviceTimeName = "lastSyncDevice";
+String syncBuffetModeTimeName = "lastSyncBuffetMode";
+String syncKitchenTimeName = "lastSyncTableZone";
+String syncWalletTimeName = "lastSyncWallet";
 bool isOnline = false;
-MemberObjectBoxStruct? userData;
 PaymentModel? paymentData;
 late Store objectBoxStore;
 String dateFormatSync = "yyyy-MM-ddTHH:mm:ss";
 PosVersionEnum posVersion = PosVersionEnum.vfpos;
-PrinterCashierTypeEnum printerCashierType = PrinterCashierTypeEnum.thermal;
-PrinterCashierConnectEnum printerCashierConnect = PrinterCashierConnectEnum.ip;
-String printerCashierIpAddress = "";
-int printerCashierIpPort = 9100;
 bool customerDisplayDesktopMultiScreen = true;
 String targetDeviceIpAddress = "";
 int targetDeviceIpPort = 4040;
@@ -171,16 +191,39 @@ PosScreenNewDataStyleEnum posScreenNewDataStyle =
     PosScreenNewDataStyleEnum.addLastLine;
 DisplayMachineEnum displayMachine = DisplayMachineEnum.posTerminal;
 PosTicketObjectBoxStruct posTicket = PosTicketObjectBoxStruct();
-PosScreenModeEnum posScreenMode = PosScreenModeEnum.posSale;
 bool posUseSaleType = true; // ใช้ประเภทการขายหรือไม่
 String posSaleChannelCode = "XXX"; // XXX=หน้าร้าน
 String posSaleChannelLogoUrl = "";
-
+List<String> googleLanguageCode = [];
 List<PosSaleChannelModel> posSaleChannelList = [];
+List<StaffClientObjectBoxStruct> staffClientList = [];
+String connectGuid = "";
+List<BuffetModeObjectBoxStruct> buffetModeLists = [];
+int buffetMaxMinute = 120;
+String printerConfigCashierCode = "printer_config_cashier";
+String printerConfigTicketCode = "printer_config_ticket";
+String shopId = "";
+bool checkOrderActive = false;
+int orderToKitchenPrintMode = 1; // ทำไว้ก่อนค่อยแก้ 0=แยกบิล,1=รวมบิล
+String posTerminalPinCode = "";
+String posTerminalPinTokenId = "";
+bool useEdc = false; // เชื่อมต่อเครื่อง EDC
+bool posScreenAutoRefresh = false;
+bool rebuildProductBarcodeStatus = true;
+// วิธีการปัดเศษเงินยอดรวม 0=ไม่ปัดเศษ,1=ปัดเศษตามกฏหมาย,2=ปัดเศษขึ้นเป็นจำนวนเต็ม,3=ปัดเศษลงเป็นจำนวนเต็ม
+int payTotalMoneyRoundType = 1;
+// Step การปัดเศษ ค่าว่าง=จำนวนเต็มอัตโนมัติ,0.25,0.5,0.75
+List<MoneyRoundPayModel> payTotalMoneyRoundStep = [
+  MoneyRoundPayModel(begin: 0.01, end: 0.12, value: 0),
+  MoneyRoundPayModel(begin: 0.13, end: 0.37, value: 0.25),
+  MoneyRoundPayModel(begin: 0.38, end: 0.62, value: 0.5),
+  MoneyRoundPayModel(begin: 0.63, end: 0.87, value: 0.75),
+  MoneyRoundPayModel(begin: 0.88, end: 0.99, value: 1.0),
+];
 
-enum PrinterCashierTypeEnum { thermal, dot, laser, inkjet }
+enum PrinterTypeEnum { thermal, dot, laser, inkjet }
 
-enum PrinterCashierConnectEnum { ip, bluetooth, usb, serial, sunmi1 }
+enum PrinterConnectEnum { ip, bluetooth, usb, windows, sunmi1 }
 
 enum PosVersionEnum { pos, restaurant, vfpos }
 
@@ -188,7 +231,27 @@ enum SoundEnum { beep, fail, buttonTing }
 
 enum DisplayMachineEnum { customerDisplay, posTerminal }
 
-enum PosScreenModeEnum { posSale, posReturn }
+enum PosScreenModeEnum { posSale, posReturn, mainMenu }
+
+/// ฟอร์มใบสรุปยอด
+String formS01 = "S-01";
+// ฟอร์มใบเสร็จรับเงิน/ใบกำกับภาษีแบบย่อ
+String formS02 = "S-02";
+// ฟอร์มใบเสร็จรับเงิน/ใบกำกับภาษีแบบเต็ม
+String formS03 = "S-03";
+// ใบเสร็จรับเงิน (ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม)
+String formS04 = "S-04";
+// ใบรับคืน
+String formReturn = "SLIP005";
+
+enum TableManagerEnum {
+  openTable,
+  closeTable,
+  moveTable,
+  mergeTable,
+  informationTable,
+  splitTable
+}
 
 enum AppModeEnum {
   // posTerminal = โปรแกรมที่ใช้งานได้เฉพาะเครื่อง POS เท่านั้น
@@ -217,7 +280,80 @@ enum DeviceModeEnum {
   androidTablet,
 }
 
-int posScreenToInt() {
+/*PrinterTypeEnum printerType(int printerType) {
+  switch (printerType) {
+    case 0:
+      return PrinterTypeEnum.thermal;
+    case 1:
+      return PrinterTypeEnum.dot;
+    case 2:
+      return PrinterTypeEnum.laser;
+    case 3:
+      return PrinterTypeEnum.inkjet;
+    default:
+      return PrinterTypeEnum.thermal;
+  }
+}
+
+PrinterConnectEnum printerConnectType(int printerConnectType) {
+  switch (printerConnectType) {
+    case 0:
+      return PrinterConnectEnum.ip;
+    case 1:
+      return PrinterConnectEnum.bluetooth;
+    case 2:
+      return PrinterConnectEnum.usb;
+    case 3:
+      return PrinterConnectEnum.windows;
+    case 4:
+      return PrinterConnectEnum.sunmi1;
+    default:
+      return PrinterConnectEnum.ip;
+  }
+}*/
+
+int findPosHoldProcessResultIndex(String code) {
+  for (var i = 0; i < posHoldProcessResult.length; i++) {
+    if (posHoldProcessResult[i].code == code) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+Future<void> loadPrinter() async {
+  printerLocalStrongData.clear();
+  List<String> printerCodes = [
+    printerConfigCashierCode,
+    printerConfigTicketCode
+  ];
+  List<String> printerNames = ["Cashier", "Ticket"];
+  // Kitchen
+  List<KitchenObjectBoxStruct> kitchenList = KitchenHelper().getAll();
+  for (var kitchen in kitchenList) {
+    printerCodes.add(kitchen.code);
+    printerNames
+        .add(getNameFromJsonLanguage(kitchen.names, userScreenLanguage));
+  }
+  for (var printerCode in printerCodes) {
+    try {
+      // ดึงข้อมูลจาก Local Storage
+      String printerJson = await appStorage.read(printerCode);
+      printerLocalStrongData
+          .add(PrinterLocalStrongDataModel.fromJson(jsonDecode(printerJson)));
+    } catch (e) {
+      printerLocalStrongData.add(PrinterLocalStrongDataModel(
+          code: printerCode,
+          name: printerNames[printerCodes.indexOf(printerCode)]));
+    }
+  }
+}
+
+String getApiUserName() {
+  return appStorage.read("apiUserName") ?? "";
+}
+
+int posScreenToInt(PosScreenModeEnum posScreenMode) {
   switch (posScreenMode) {
     case PosScreenModeEnum.posSale:
       return 1;
@@ -272,7 +408,10 @@ bool isPhoneDevice() {
 
 bool isTabletDevice() {
   return deviceMode == DeviceModeEnum.ipad ||
-      deviceMode == DeviceModeEnum.androidTablet;
+      deviceMode == DeviceModeEnum.androidTablet ||
+      deviceMode == DeviceModeEnum.windowsDesktop ||
+      deviceMode == DeviceModeEnum.linuxDesktop ||
+      deviceMode == DeviceModeEnum.macosDesktop;
 }
 
 Future<void> getDeviceModel(BuildContext context) async {
@@ -290,7 +429,7 @@ Future<void> getDeviceModel(BuildContext context) async {
     }
   } else if (Platform.isIOS) {
     final iosInfo = await deviceInfo.iosInfo;
-    model = iosInfo.model!;
+    model = iosInfo.model;
     model = model.toLowerCase();
     if (model.contains("iphone")) {
       deviceMode = DeviceModeEnum.iphone;
@@ -449,43 +588,6 @@ double calcTextToNumber(String text) {
   return result;
 }
 
-Future<String> billRunning() async {
-  // Format : DEVICE-DATE-#####
-  String dateNow = DateFormat('yyMMdd').format(DateTime.now());
-  String result = "";
-  bool success = false;
-  while (success == false) {
-    int number = 0;
-    List<ConfigObjectBoxStruct> configGet = configHelper.select();
-    if (configGet.isNotEmpty) {
-      ConfigObjectBoxStruct config = configGet[0];
-      List<String> split = config.last_doc_number.split("-");
-      if (split.isNotEmpty) {
-        number = int.tryParse(split[split.length - 1]) ?? 0;
-        if (split.length > 1) {
-          String date = split[1];
-          if (date != dateNow) {
-            number = 0;
-          }
-        }
-      }
-    }
-    result =
-        "${global.deviceId}-$dateNow-${(NumberFormat("00000")).format(number + 1)}";
-
-    /// ค้นหาว่ามีเลขที่เอกสารนี้อยู่ในฐานข้อมูลหรือไม่
-    var find = billHelper.selectByDocNumber(
-        docNumber: result, posScreenMode: global.posScreenToInt());
-    if (find == null) {
-      success = true;
-    } else {
-      configHelper.update(ConfigObjectBoxStruct(
-          device_id: global.deviceId, last_doc_number: result));
-    }
-  }
-  return result;
-}
-
 Future<bool> hasNetwork() async {
   try {
     final result = await InternetAddress.lookup('example.com');
@@ -501,7 +603,7 @@ void showAlertDialog(
     required String title,
     required String message}) {
   Widget okButton = TextButton(
-    child: const Text("OK"),
+    child: Text(language("OK")),
     onPressed: () {
       Navigator.pop(context);
     },
@@ -599,12 +701,27 @@ Future<void> printQueueStartServer() async {
   }
 }
 
-String dateTimeFormat(DateTime dateTime, {bool showTime = true}) {
-  var formatter = DateFormat.yMMMMEEEEd('th_TH');
+String dateTimeFormatFull(DateTime dateTime, {bool showTime = false}) {
+  NumberFormat formatter = NumberFormat("00");
+  String day = formatter.format(dateTime.day);
+  String month = formatter.format(dateTime.month);
+  String year = formatter.format(dateTime.year + 543);
   if (showTime) {
-    return "${formatter.formatInBuddhistCalendarThai(dateTime)} - ${DateFormat.Hm().format(dateTime)}";
+    return "$day/$month/$year ${DateFormat.Hm().format(dateTime)}";
   } else {
-    return formatter.formatInBuddhistCalendarThai(dateTime);
+    return "$day/$month/$year";
+  }
+}
+
+String dateTimeFormatShort(DateTime dateTime, {bool showTime = false}) {
+  NumberFormat formatter = NumberFormat("00");
+  String day = formatter.format(dateTime.day);
+  String month = formatter.format(dateTime.month);
+  String year = formatter.format(dateTime.year + 543).substring(2, 4);
+  if (showTime) {
+    return "$day/$month/$year ${DateFormat.Hm().format(dateTime)}";
+  } else {
+    return "$day/$month/$year";
   }
 }
 
@@ -612,9 +729,10 @@ Future<void> systemProcess() async {
   for (int index = 0; index < customerDisplayDeviceList.length; index++) {
     var url = "${customerDisplayDeviceList[index].ip}:5041";
     SyncDeviceModel info = SyncDeviceModel(
-        device: deviceId,
+        deviceId: deviceId,
+        deviceName: deviceName,
         ip: "",
-        holdNumberActive: 0,
+        holdCodeActive: "",
         docModeActive: 0,
         connected: true,
         isClient: false,
@@ -644,8 +762,9 @@ Future<void> sendProcessToCustomerDisplay() async {
       try {
         var jsonData = HttpPost(
             command: "process",
-            data:
-                jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+            data: jsonEncode(posHoldProcessResult[
+                    findPosHoldProcessResultIndex(posHoldActiveCode)]
+                .toJson()));
         dev.log("sendProcessToCustomerDisplay : $url");
         postToServer(
             ip: url,
@@ -660,8 +779,9 @@ Future<void> sendProcessToCustomerDisplay() async {
       displayMachine == DisplayMachineEnum.posTerminal &&
       isInternalCustomerDisplayConnected == true) {
     // Send to จอสอง
-    displayManager.transferDataToPresentation(
-        jsonEncode(posHoldProcessResult[posHoldActiveNumber].toJson()));
+    displayManager.transferDataToPresentation(jsonEncode(
+        posHoldProcessResult[findPosHoldProcessResultIndex(posHoldActiveCode)]
+            .toJson()));
   }
 }
 
@@ -672,8 +792,8 @@ Future<void> sendProcessToRemote() async {
       try {
         var jsonData = HttpPost(
             command: "process_result",
-            data: jsonEncode(posHoldProcessResult[
-                    posRemoteDeviceList[index].holdNumberActive]
+            data: jsonEncode(posHoldProcessResult[findPosHoldProcessResultIndex(
+                    posRemoteDeviceList[index].holdCodeActive!)]
                 .toJson()));
         postToServer(
             ip: url, jsonData: jsonEncode(jsonData.toJson()), callBack: (_) {});
@@ -709,67 +829,91 @@ double calcDiscountFormula(
       }
     }
   }
-  return sumDiscount;
+  return double.parse(sumDiscount.toStringAsFixed(2));
 }
 
-Future<void> createLogoImageFromBankProvider() async {
-  List<BankObjectBoxStruct> bankDataList = BankHelper().selectAll();
-  for (var element in bankDataList) {
-    if (element.logo != "") {
-      String base64 = element.logo.replaceFirst("data:image/png;base64,", "");
-      Uint8List bytes = base64Decode(base64);
-      File file = File(
-          "$pathApplicationDocumentsDirectory/bank${element.code.toLowerCase()}.png");
-      file.writeAsBytes(bytes);
+Future<String> billRunning(int mode) async {
+  // Type 0=คริสต์ศักราช,1=พุทธศักราช
+  // YYYY = ปี
+  // MM = เดือน
+  // DD = วัน
+  // ###### = ลำดับ
+  // ตัวอย่าง 001################ สำหรับ Tax ABB เครื่อง POS (001=รหัสเครื่อง POS)
+  // ตัวอย่าง 002YYMMDD########## สำหรับ Tax ABB เครื่อง POS (002=รหัสเครื่อง POS)
+  // ตัวอย่าง SO-YYMMDD-###### สำหรับขาย
+  // ตัวอย่าง PO-YYMMDD-###### สำหรับซื้อ
+  DateTime dateTimeNow = DateTime.now();
+  String dateNow = DateFormat('yyyyMMdd').format(dateTimeNow);
+  String result = "";
+  String countDigit = "";
+  String lastDigit = "";
+  for (var item in posConfig.docformatinv.split("")) {
+    if (item == "#") {
+      countDigit += "0";
+      lastDigit += "9";
     }
   }
-}
-
-String findLogoImageFromCreditCardProvider(String code) {
-  return "$pathApplicationDocumentsDirectory/bank${code.toLowerCase()}.png";
+  String docFormat = posConfig.doccode;
+  if (mode == 1) {
+    docFormat += posConfig.docformatinv.replaceAll("#", "");
+  } else {
+    docFormat += posConfig.docformatesalereturn.replaceAll("#", "");
+  }
+  docFormat = docFormat.replaceAll("YYYY", dateNow.substring(0, 4));
+  docFormat = docFormat.replaceAll("YY", dateNow.substring(2, 4));
+  docFormat = docFormat.replaceAll("MM", dateNow.substring(4, 6));
+  docFormat = docFormat.replaceAll("DD", dateNow.substring(6, 8));
+  int number = 0;
+  var getLast = objectBoxStore
+      .box<BillObjectBoxStruct>()
+      .query(BillObjectBoxStruct_.doc_number
+          .lessOrEqual(docFormat + lastDigit)
+          .and(BillObjectBoxStruct_.doc_mode.equals(mode)))
+      .order(BillObjectBoxStruct_.doc_number, flags: Order.descending)
+      .build()
+      .findFirst();
+  if (getLast != null) {
+    if (getLast.doc_number.substring(0, docFormat.length) == docFormat) {
+      number = int.parse(getLast.doc_number
+          .substring(getLast.doc_number.length - countDigit.length));
+    }
+  } else {
+    // ค้นหาข้อมูลบน Cloud
+    var lastDocNumberJson = await ApiRepository()
+        .serverGetLastDocNumber(docNumber: docFormat + lastDigit, mode: mode);
+    String lastDocNumber = "";
+    try {
+      lastDocNumber = lastDocNumberJson.data;
+    } catch (e) {
+      serviceLocator<Log>().error(e);
+    }
+    if (lastDocNumber.isNotEmpty) {
+      number = int.parse(
+          lastDocNumber.substring(lastDocNumber.length - countDigit.length));
+    }
+    print(lastDocNumber);
+  }
+  result = "$docFormat${(NumberFormat(countDigit)).format(number + 1)}";
+  //result = Uuid().v4();
+  print("Doc Running : $result");
+  return result;
 }
 
 String language(String code) {
-  String result = "";
-  int left = 0;
-  int right = languageSystemCode.length - 1;
-
-  while (left <= right) {
-    int middle = (left + right) ~/ 2;
-    int comparison = languageSystemCode[middle].code.compareTo(code);
-
-    if (comparison == 0) {
-      int langLeft = 0;
-      int langRight = languageSystemCode[middle].langs.length - 1;
-
-      while (langLeft <= langRight) {
-        int langMiddle = (langLeft + langRight) ~/ 2;
-        int langComparison = languageSystemCode[middle]
-            .langs[langMiddle]
-            .code
-            .compareTo(userLanguage ?? 'th');
-
-        if (langComparison == 0) {
-          result = languageSystemCode[middle].langs[langMiddle].text;
-          break;
-        } else if (langComparison < 0) {
-          langLeft = langMiddle + 1;
-        } else {
-          langRight = langMiddle - 1;
-        }
-      }
-      break;
-    } else if (comparison < 0) {
-      left = middle + 1;
-    } else {
-      right = middle - 1;
+  code = code.trim().toLowerCase();
+  for (int i = 0; i < languageSystemData.length; i++) {
+    if (languageSystemData[i].code == code) {
+      return languageSystemData[i].text;
     }
   }
-
-  if (result.trim().isEmpty) {
-    dev.log(code);
-  }
-  return (result.trim().isEmpty) ? code : result;
+  print(code);
+  /*if (!found) {
+    dev.log("language not found: $code");
+    if (developerMode && code.trim().isNotEmpty && kIsWeb == false) {
+      googleMultiLanguageSheetAppendRow(["pos_client", code]);
+    }
+  }*/
+  return code;
 }
 
 Color colorFromHex(String hexColor) {
@@ -786,56 +930,40 @@ void posScreenListHeightSet(double value) {
   appStorage.write(posScreenListHeightName, value);
 }
 
-void loadConfig() {
-  appLocalStrongData = LocalStrongDataModel();
+Future<void> loadDeviceConfigFromServer() async {
+  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  posTerminalPinCode =
+      sharedPreferences.getString('pos_terminal_pin_code') ?? "";
+  posTerminalPinTokenId =
+      sharedPreferences.getString('pos_terminal_token') ?? "";
+  deviceId = sharedPreferences.getString('pos_device_id') ?? "";
+  ApiRepository apiRepository = ApiRepository();
   try {
-    appLocalStore.collection("dedepos").doc("device").get().then((value) {
-      try {
-        appLocalStrongData =
-            LocalStrongDataModel.fromJson(jsonDecode(jsonEncode(value)));
-      } catch (_) {}
-      {
-        // ประเภทเครื่องพิมพ์ Cashier
-        switch (appLocalStrongData.printerCashierType) {
-          case 0:
-            printerCashierType = PrinterCashierTypeEnum.thermal;
-            break;
-          case 1:
-            printerCashierType = PrinterCashierTypeEnum.dot;
-            break;
-          case 2:
-            printerCashierType = PrinterCashierTypeEnum.laser;
-            break;
-          case 3:
-            printerCashierType = PrinterCashierTypeEnum.inkjet;
-            break;
-        }
-      }
-      {
-        // การเชื่อมต่อเครื่องพิมพ์ Cashier
-        switch (appLocalStrongData.connectType) {
-          case 0:
-            printerCashierConnect = PrinterCashierConnectEnum.ip;
-            break;
-          case 1:
-            printerCashierConnect = PrinterCashierConnectEnum.bluetooth;
-            break;
-          case 3:
-            printerCashierConnect = PrinterCashierConnectEnum.usb;
-            break;
-          case 100:
-            printerCashierConnect = PrinterCashierConnectEnum.sunmi1;
-            break;
-        }
-      }
-      {
-        printerCashierIpAddress = appLocalStrongData.ipAddress;
-        printerCashierIpPort = appLocalStrongData.ipPort;
-      }
-    });
+    // POS Setting
+    var value = await apiRepository.getPosSetting(deviceId);
+    print(jsonEncode(value.data));
+    posConfig = PosConfigModel.fromJson(value.data);
+    // ดึง logo
+    if (posConfig.logourl.isNotEmpty) {
+      var url = posConfig.logourl;
+      var response = await http.get(Uri.parse(url));
+      var file = File(getPosLogoPathName());
+      await file.writeAsBytes(response.bodyBytes);
+    }
   } catch (e) {
-    dev.log(e.toString());
+    serviceLocator<Log>().error(e);
   }
+}
+
+Future<void> loadConfig() async {
+  try {
+    await loadDeviceConfigFromServer();
+  } catch (e) {
+    serviceLocator<Log>().error(e);
+  }
+  await loadPrinter();
+  await loadFormDesign();
+  await loadEmployee();
 }
 
 Future<void> registerRemoteToTerminal() async {
@@ -845,9 +973,10 @@ Future<void> registerRemoteToTerminal() async {
     var uri = Uri.parse(url);
     try {
       SyncDeviceModel sendData = SyncDeviceModel(
-          device: "XXX",
+          deviceId: "XXX",
+          deviceName: "XXX",
           ip: ipAddress,
-          holdNumberActive: posHoldActiveNumber,
+          holdCodeActive: posHoldActiveCode,
           docModeActive: 0,
           connected: true,
           isCashierTerminal: false,
@@ -874,20 +1003,17 @@ Future<void> registerRemoteToTerminal() async {
 /// - register DartPingIOS
 /// - setupObjectBox (core/objectbox.dart)
 /// - register sync master
-/// - สร้าง Process Result ตามจำนวน Hold บิล (global.generatePosHoldProcess)
+/// - สร้าง Process Result ตามจำนวน Hold บิล (generatePosHoldProcess)
 Future<void> startLoading() async {
   {
-    serviceLocator<Log>().debug("Start Loading... POS Screen ");
-    loadConfig();
     // Payment
-    qrPaymentProviderList.add(PaymentProviderModel(
+    /*qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "",
       paymentcode: "promptpay",
       bookbankcode: "001",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
@@ -895,62 +1021,58 @@ Future<void> startLoading() async {
       wallettype: 101,
     ));
     // Lugen
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       paymentcode: "promptpay",
       bookbankcode: "002",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Prompt Pay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 20,
       feeRate: 0.0,
       wallettype: 201,
     ));
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       paymentcode: "truemoney",
       bookbankcode: "002",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "True Money", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "True Money", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
       wallettype: 202,
     ));
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       bookbankcode: "002",
       paymentcode: "linepay",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Line Pay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Line Pay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
       wallettype: 203,
     ));
-    lugenPaymentProviderList.add(PaymentProviderModel(
+    qrPaymentProviderList.add(PaymentProviderModel(
       providercode: "LUGEN",
       bookbankcode: "002",
       paymentcode: "alipay",
       paymentlogo: "",
       names: [
-        LanguageModel(
-            code: "th", codeTranslator: "th", name: "Alipay", use: true)
+        LanguageModel(code: "th", codeTranslator: "th", name: "Alipay", use: true)
       ],
       countrycode: "TH",
       paymenttype: 1,
       feeRate: 0.0,
       wallettype: 204,
-    ));
+    ));*/
   }
   //WidgetsFlutterBinding.ensureInitialized();
   //await GetStorage.init();
@@ -964,20 +1086,13 @@ Future<void> startLoading() async {
 
   DartPingIOS.register();
 
-  // objectbox
-  // move to after login & Select shop
-  // await setupObjectBox();
-
-  int xxx = ProductBarcodeHelper().count();
-  serviceLocator<Log>().debug("ProductBarcodeHelper().count() $xxx");
-  //global.objectBoxStore =Store(getObjectBoxModel(), directory: value.path + '/xobjectbox');
-  //global.objectBoxStore = await openStore(maxDBSizeInKB: 102400);
+  //int xxx = ProductBarcodeHelper().count();
   {
     /// Sync Master (ข้อมูลหลัก)
     int syncMasterSecondCount = 0;
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 10), (timer) {
       if (loginSuccess && syncDataProcess == false) {
-        //log('Sync Data Master : ' + DateTime.now().toString());
+        print('Sync Data Master : ' + DateTime.now().toString());
         syncMasterSecondCount++;
         if (syncMasterSecondCount > syncTimeIntervalSecond) {
           sync.syncMasterProcess();
@@ -998,16 +1113,13 @@ Future<void> startLoading() async {
   });
 
   generatePosHoldProcess();
-  pathApplicationDocumentsDirectory =
-      (await getApplicationDocumentsDirectory()).path;
-
   initSuccess = true;
 }
 
 /// สร้าง Process Result ตามจำนวน Hold บิล
 void generatePosHoldProcess() {
   for (int loop = 0; loop < 50; loop++) {
-    posHoldProcessResult.add(PosHoldProcessModel(holdNumber: loop));
+    posHoldProcessResult.add(PosHoldProcessModel(code: loop.toString()));
   }
 }
 
@@ -1072,42 +1184,6 @@ Future<String> postToServerAndWait(
   return result;
 }
 
-void openCashDrawer() async {
-  PaperSize paper = PaperSize.mm80;
-  CapabilityProfile profile = await CapabilityProfile.load();
-  NetworkPrinter printer = NetworkPrinter(paper, profile);
-
-  try {
-    PosPrintResult res = await printer.connect(printerCashierIpAddress,
-        port: printerCashierIpPort);
-    if (res == PosPrintResult.success) {
-      printer.drawer();
-      printer.disconnect();
-    }
-  } catch (e) {
-    serviceLocator<Log>().error(e);
-  }
-}
-
-String getImageForTest() {
-  List<String> images = [
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/cokecan_1024x1024@2x.png?v=1586878773',
-    '',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/c3ef1fb0352b565a9b710dc50b9790c8_1024x1024@2x.jpg?v=1588397618',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/green_cross_500ml_1024x1024@2x.jpg?v=1590209308',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1MGpbJWKQ_Mha_cHowinO9xm7gNpK6Jnk_1024x1024@2x.jpg?v=1586007533',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/40456_1024x1024@2x.jpg?v=1587914211',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/15464fbbc5eb8baa71425d9c2ed97ea7_1024x1024@2x.jpg?v=1588397501',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/251_FIT_N__RIGHT_FOUR_SEASONS_330ML_1024x1024@2x.jpg?v=1586836584',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/nestle_ice_cream_oreo_cone_1_1024x1024@2x.jpg?v=1587117184',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/1ts9iXyMxStMrVq_md9dNcYw3PtHxwqtq_1024x1024@2x.png?v=1585991136',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/faa22afb6b279e9a57ac6756d7100c5a_medium_96b3c449-e5c9-4b18-909f-16089453972a_360x.png?v=1587173843',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/VITAMILKCHOCOSHAKE300ML-500x500_1024x1024@2x.jpg?v=1586880107',
-    'https://cdn.shopify.com/s/files/1/0280/7126/4308/products/unnamed_1024x1024@2x.jpg?v=1587129692'
-  ];
-  return images[Random().nextInt(images.length)];
-}
-
 Future<String> getIpAddress() async {
   // Get a list of the network interfaces available on the device
   List<NetworkInterface> interfaces = await NetworkInterface.list();
@@ -1126,16 +1202,17 @@ Future<String> getIpAddress() async {
   return "";
 }
 
-Future scanServerByName(String name) async {
+Future scanServerById(String name) async {
   List<SyncDeviceModel> ipList = [];
   String ipAddress = await getIpAddress();
   String subNet = ipAddress.substring(0, ipAddress.lastIndexOf("."));
   for (int i = 1; i < 255; i++) {
     String ip = "$subNet.$i";
     ipList.add(SyncDeviceModel(
-        device: "",
+        deviceId: "",
+        deviceName: "",
         ip: ip,
-        holdNumberActive: 0,
+        holdCodeActive: "",
         docModeActive: 0,
         connected: false,
         isClient: false,
@@ -1163,7 +1240,7 @@ Future scanServerByName(String name) async {
                       .debug("Connected to ${ipList[index].ip}");
                   SyncDeviceModel server =
                       SyncDeviceModel.fromJson(jsonDecode(result.body));
-                  if (server.device == name && server.isCashierTerminal) {
+                  if (server.deviceId == name && server.isCashierTerminal!) {
                     ipList[index].connected = true;
                     loopScan = false;
                     targetDeviceIpAddress = ipList[index].ip;
@@ -1203,6 +1280,7 @@ bool isDesktopScreen() {
 String syncFindLastUpdate(
     List<SyncMasterStatusModel> dataList, String tableName) {
   for (var item in dataList) {
+    print(item.tableName);
     if (item.tableName == tableName) {
       return DateFormat(dateFormatSync).format(DateTime.parse(item.lastUpdate));
     }
@@ -1210,21 +1288,681 @@ String syncFindLastUpdate(
   return DateFormat(dateFormatSync).format(DateTime.parse(syncDateBegin));
 }
 
-void testPrinterConnect() async {
-  if (printerList.isNotEmpty) {
-    for (var printer in printerList) {
-      try {
-        final Socket socket = await Socket.connect(
-            printer.printer_ip_address, printer.printer_port,
-            timeout: const Duration(seconds: 5));
-        printer.is_ready = true;
-        socket.destroy();
-      } catch (e) {
-        serviceLocator<Log>().error(e.toString());
-        printer.is_ready = false;
-        errorMessage.add(
-            "${language("printer")} : ${printer.name}/${printer.printer_ip_address}:${printer.printer_port} ${language("not_ready")} $e");
+Future<void> testPrinterConnect() async {
+  if (printerLocalStrongData.isNotEmpty) {
+    for (var printer in printerLocalStrongData) {
+      if (printer.printerConnectType == PrinterConnectEnum.ip) {
+        if (printer.ipAddress.trim().isNotEmpty) {
+          bool oldReady = printer.isReady;
+          try {
+            final Socket socket = await Socket.connect(
+                printer.ipAddress, printer.ipPort,
+                timeout: const Duration(seconds: 1));
+            printer.isReady = true;
+            socket.destroy();
+          } catch (e) {
+            printer.isReady = false;
+            String message =
+                "${language("printer")} : ${printer.name}/${printer.ipAddress}:${printer.ipPort} ${language("not_ready")}";
+            if (!errorMessage.contains(message)) {
+              // errorMessage.add(message);
+            }
+          }
+          if (oldReady != printer.isReady) {
+            posScreenAutoRefresh = true;
+          }
+        }
       }
     }
   }
+}
+
+int printerWidthByCharacter(int printerIndex) {
+  if (printerLocalStrongData[printerIndex].paperType == 1) {
+    return 32;
+  } else {
+    return 48;
+  }
+}
+
+double printerWidthByPixel(int printerIndex) {
+  if (printerLocalStrongData[printerIndex].paperType == 1) {
+    return 384;
+  } else {
+    return 576;
+  }
+}
+
+void languageSelect(String languageCode) {
+  languageSystemData = [];
+  for (int i = 0; i < languageSystemCode.length; i++) {
+    for (int j = 0; j < languageSystemCode[i].langs.length; j++) {
+      if (languageSystemCode[i].langs[j].code == userScreenLanguage) {
+        languageSystemData.add(LanguageSystemModel(
+            code: languageSystemCode[i].code.trim(),
+            text: languageSystemCode[i].langs[j].text.trim()));
+      }
+    }
+  }
+  languageSystemData.sort((a, b) {
+    return a.code.compareTo(b.code);
+  });
+}
+
+int findBuffetModeIndex(String code) {
+  for (var item in buffetModeLists) {
+    if (item.code == code) {
+      return buffetModeLists.indexOf(item);
+    }
+  }
+  return -1;
+}
+
+// Future<void> checkOrderOnline() async {
+//   checkOrderActive = true;
+//   {
+//     List<OrderTempDataModel> orderTemp = [];
+//     List<OrderTempObjectBoxStruct> orderSave = [];
+//     try {
+//       // ดึง Order ลูกค้าสั่งเอง
+//       String selectQuery =
+//           "select orderid,orderguid,barcode,qty,optionselected,remark,orderdatetime,istakeaway,price,amount from ordertemp where shopid='$shopId' and isclose=1 order by orderdatetime";
+//       var value = await clickHouseSelect(selectQuery);
+//       if (value.isNotEmpty) {
+//         ResponseDataModel responseData = ResponseDataModel.fromJson(value);
+//         // Print
+//         String orderId = "";
+//         bool updateOrder = false;
+//         for (var order in responseData.data) {
+//           orderId = order["orderid"];
+//           OrderTempDataModel orderData = OrderTempDataModel(
+//             orderId: order["orderid"],
+//             orderGuid: order["orderguid"],
+//             barcode: order["barcode"],
+//             qty: double.tryParse(order["qty"].toString()) ?? 0,
+//             optionSelected: order["optionselected"],
+//             remark: order["remark"],
+//             orderDateTime: DateTime.parse(order["orderdatetime"]),
+//             price: double.tryParse(order["price"].toString()) ?? 0,
+//             amount: double.tryParse(order["amount"].toString()) ?? 0,
+//             isTakeAway: order["istakeaway"],
+//           );
+//           orderTemp.add(orderData);
+//           ProductBarcodeObjectBoxStruct? productBarcode =
+//               await ProductBarcodeHelper()
+//                   .selectByBarcodeFirst(orderData.barcode);
+//           List<String> orderIdSplit = orderData.orderId.split("#");
+//           String orderIdMain = (orderIdSplit.isNotEmpty) ? orderIdSplit[0] : "";
+//           orderSave.add(OrderTempObjectBoxStruct(
+//             id: 0,
+//             orderId: orderData.orderId,
+//             orderIdMain: orderIdMain,
+//             orderGuid: orderData.orderGuid,
+//             machineId: "",
+//             orderDateTime: orderData.orderDateTime,
+//             barcode: orderData.barcode,
+//             qty: orderData.qty,
+//             price: orderData.price,
+//             amount: orderData.amount,
+//             isOrder: false,
+//             isPaySuccess: false,
+//             optionSelected: orderData.optionSelected,
+//             remark: orderData.remark,
+//             names: productBarcode?.names ?? "",
+//             takeAway: (orderData.isTakeAway == 1) ? true : false,
+//             unitCode: productBarcode?.unit_code ?? "",
+//             unitName: productBarcode?.unit_names ?? "",
+//             imageUri: productBarcode?.images_url ?? "",
+//             kdsSuccessTime: DateTime.now(),
+//             kdsSuccess: false,
+//             isOrderSuccess: true,
+//             isOrderSendKdsSuccess: false,
+//             kdsId: "",
+//             cancelQty: 0,
+//             orderQty: orderData.qty,
+//             deliveryNumber: "",
+//             deliveryCode: "",
+//             isOrderReadySendKds: true,
+//             deliveryName: "",
+//             lastUpdateDateTime: DateTime.now(),
+//           ));
+//           if (orderToKitchenPrintMode == 0) {
+//             // พิมพ์แยกใบ
+//             await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//             updateOrder = true;
+//             orderTemp.clear();
+//           }
+//         }
+//         if (orderTemp.isNotEmpty) {
+//           await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//           updateOrder = true;
+//         }
+//         if (updateOrder) {
+//           // update สถานะ ว่า ส่งไปที่ครัวแล้ว
+//           String updateQuery =
+//               "alter table ordertemp update isclose=2 where shopid='$shopId' and orderid='$orderId'";
+//           await clickHouseExecute(updateQuery);
+//         }
+//         // save to objectbox
+//         objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .putMany(orderSave, mode: PutMode.insert);
+//         // คำนวณยอดใหม่
+//         orderSumAndUpdateTable(orderId);
+//       }
+//     } catch (e) {
+//       serviceLocator<Log>().error(e.toString());
+//     }
+//     // save to holdbill
+//     saveOrderToHoldBill(orderSave);
+//   }
+//   {
+//     // Order Staff สั่ง
+//     List<String> orderIdList = [];
+//     try {
+//       // update isOrderSuccess และคำนวนณยอดรวม
+//       final getData = objectBoxStore
+//           .box<OrderTempObjectBoxStruct>()
+//           .query(OrderTempObjectBoxStruct_.isOrder
+//               .equals(false)
+//               .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//               .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+//           .build()
+//           .find();
+//       for (var data in getData) {
+//         if (!orderIdList.contains(data.orderId)) {
+//           orderIdList.add(data.orderId);
+//         }
+//       }
+
+//       for (var orderId in orderIdList) {
+//         var orderTempUpdate = objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .query(OrderTempObjectBoxStruct_.orderId
+//                 .equals(orderId)
+//                 .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//                 .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(false)))
+//             .build()
+//             .find();
+//         for (var data in orderTempUpdate) {
+//           // ปรับปรุง ว่าส่ง order แล้ว จะได้ไม่วนกลับมาสร้างใหม่
+//           data.isOrder = false;
+//           data.isOrderSuccess = true;
+//           // ถือว่ายังไม่ส่งครัว รอ Step ถัดไป
+//           data.isOrderSendKdsSuccess = false;
+//         }
+//         objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .putMany(orderTempUpdate, mode: PutMode.update);
+//         // คำนวณ
+//         orderSumAndUpdateTable(orderId);
+//       }
+//       saveOrderToHoldBill(getData);
+//     } catch (e) {
+//       serviceLocator<Log>().error(e.toString());
+//     }
+//   }
+//   {
+//     // ประมวลผลส่งครัว
+//     List<String> orderIdList = [];
+
+//     /// ถ้า isOrderReadySendKds = true คือ ส่ง Order ได้เลย
+//     /// ถ้า isOrderSendKdsSuccess = false คือ ยังไม่ส่ง Order
+//     /// ถ้า isOrderSuccess = true คือ ส่ง Order ไปรายการคิดเงินแล้ว
+//     final getDataOrderId = objectBoxStore
+//         .box<OrderTempObjectBoxStruct>()
+//         .query(OrderTempObjectBoxStruct_.isOrder
+//             .equals(false)
+//             .and(OrderTempObjectBoxStruct_.isOrderReadySendKds.equals(true))
+//             .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess.equals(false))
+//             .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//             .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+//         .build()
+//         .find();
+//     for (var data in getDataOrderId) {
+//       if (!orderIdList.contains(data.orderId)) {
+//         orderIdList.add(data.orderId);
+//       }
+//     }
+//     for (var orderId in orderIdList) {
+//       // เลือกรายการ Order ทีละโต๊ะ
+//       List<OrderTempDataModel> orderTemp = [];
+//       final getData = objectBoxStore
+//           .box<OrderTempObjectBoxStruct>()
+//           .query(OrderTempObjectBoxStruct_.orderId.equals(orderId).and(
+//               OrderTempObjectBoxStruct_.isOrder
+//                   .equals(false)
+//                   .and(OrderTempObjectBoxStruct_.isOrderReadySendKds
+//                       .equals(true))
+//                   .and(OrderTempObjectBoxStruct_.isOrderSendKdsSuccess
+//                       .equals(false))
+//                   .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+//                   .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true))))
+//           .build()
+//           .find();
+//       for (var data in getData) {
+//         orderTemp.add(OrderTempDataModel(
+//           orderGuid: data.orderGuid,
+//           barcode: data.barcode,
+//           qty: data.qty,
+//           optionSelected: data.optionSelected,
+//           remark: data.remark,
+//           orderId: data.orderId,
+//           orderDateTime: data.orderDateTime,
+//           price: data.price,
+//           amount: data.amount,
+//           isTakeAway: (data.takeAway) ? 1 : 0,
+//         ));
+//         // update สถานะ
+//         data.isOrderSendKdsSuccess = true;
+//         objectBoxStore
+//             .box<OrderTempObjectBoxStruct>()
+//             .put(data, mode: PutMode.update);
+//       }
+//       if (orderToKitchenPrintMode == 0) {
+//         // พิมพ์แยกใบ พร้อม update KDS ว่าส่ง order แล้ว
+//         await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//         print("sendToKitchen 1 : ${orderTemp.length}");
+//         orderTemp.clear();
+//       }
+//       if (orderTemp.isNotEmpty) {
+//         // พิมพ์ รวม พร้อม update KDS ว่าส่ง order แล้ว
+//         await sendToKitchen(orderId: orderId, orderList: orderTemp);
+//         print("sendToKitchen 2 : ${orderTemp.length}");
+//       }
+//     }
+//   }
+//   checkOrderActive = false;
+// }
+
+String getNameFromJsonLanguage(String jsonNames, String languageCode) {
+  try {
+    List<LanguageDataModel> names =
+        jsonDecode(jsonNames).map<LanguageDataModel>((item) {
+      return LanguageDataModel.fromJson(item);
+    }).toList();
+    for (var item in names) {
+      if (item.code == languageCode) {
+        return item.name;
+      }
+    }
+  } catch (_) {}
+  return "";
+}
+
+String getNameFromLanguage(List<LanguageDataModel> names, String languageCode) {
+  for (var item in names) {
+    if (item.code == languageCode) {
+      return item.name;
+    }
+  }
+  return "*";
+}
+
+double getProductPrice(String prices, int keyNumber) {
+  List<PriceDataModel> priceList =
+      jsonDecode(prices).map<PriceDataModel>((item) {
+    return PriceDataModel.fromJson(item);
+  }).toList();
+  for (var item in priceList) {
+    if (item.keynumber == keyNumber) {
+      return item.price;
+    }
+  }
+  return 0;
+}
+
+Future<void> orderSumAndUpdateTable(String tableNumber) async {
+  double orderCount = 0;
+  double amount = 0.0;
+  {
+    // รวมจาก OrderTemp ส่งรายการแล้ว
+    final result = objectBoxStore
+        .box<OrderTempObjectBoxStruct>()
+        .query(OrderTempObjectBoxStruct_.orderId
+            .equals(tableNumber)
+            .and(OrderTempObjectBoxStruct_.isPaySuccess.equals(false))
+            .and(OrderTempObjectBoxStruct_.isOrderSuccess.equals(true)))
+        .build()
+        .find();
+    for (var order in result) {
+      orderCount += order.qty;
+      amount += orderCalcSumAmount(order);
+    }
+  }
+  {
+    final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
+    final resultTable = boxTable
+        .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
+        .build()
+        .findFirst();
+    if (resultTable != null) {
+      resultTable.order_count = orderCount;
+      resultTable.amount = amount;
+      boxTable.put(resultTable, mode: PutMode.update);
+    }
+  }
+  {
+    // สร้าง Hold Bill สำหรับระบบ POS
+    final boxTable = objectBoxStore.box<TableProcessObjectBoxStruct>();
+    final resultTable = boxTable
+        .query(TableProcessObjectBoxStruct_.number.equals(tableNumber))
+        .build()
+        .find();
+    // เพิ่มกรณีไม่มี
+    for (var table in resultTable) {
+      int foundHoldIndex = -1;
+      for (var hold in posHoldProcessResult) {
+        if (hold.holdType == 2) {
+          if (hold.tableNumber == table.number) {
+            foundHoldIndex = posHoldProcessResult.indexOf(hold);
+            break;
+          }
+        }
+      }
+      if (foundHoldIndex == -1) {
+        posHoldProcessResult.add(PosHoldProcessModel(
+          code: "T-${table.number}",
+          tableNumber: table.number,
+          holdType: 2,
+          isDelivery: table.is_delivery,
+          deliveryNumber: table.delivery_number,
+        ));
+      } else {}
+    }
+  }
+}
+
+String generateRandomPin(int pinLength) {
+  String pin = "";
+  var rnd = new Random();
+  for (var i = 0; i < pinLength; i++) {
+    pin += rnd.nextInt(10).toString();
+  }
+  return pin;
+}
+
+Future<void> getProfile() async {
+  ApiRepository apiRepository = ApiRepository();
+  {
+    var value = await apiRepository.getProfileShop();
+    shopId = value.data["guidfixed"];
+  }
+  {
+    try {
+      ProfileSettingCompanyModel company = ProfileSettingCompanyModel(
+        names: [],
+        taxID: "",
+        branchNames: [],
+        addresses: [],
+        phones: [],
+        emailOwners: [],
+        emailStaffs: [],
+        latitude: "",
+        longitude: "",
+        usebranch: false,
+        usedepartment: false,
+        images: [],
+        logo: "",
+      );
+      List<String> languageList = [];
+      ProfileSettingConfigSystemModel configSystem =
+          ProfileSettingConfigSystemModel(
+        vatrate: 0,
+        vattypesale: 0,
+        vattypepurchase: 0,
+        inquirytypesale: 0,
+        inquirytypepurchase: 0,
+        headerreceiptpos: "",
+        footerreciptpos: "",
+      );
+
+      var value = await apiRepository.getProfileSetting();
+      var jsonData = value.data;
+      for (var data in jsonData) {
+        String code = data["code"];
+        String body = data["body"];
+        if (code == "company") {
+          company = ProfileSettingCompanyModel.fromJson(jsonDecode(body));
+        } else if (code == "ConfigLanguage") {
+          var jsonDecodeBody = jsonDecode(body) as Map<String, dynamic>;
+          languageList = List<String>.from(jsonDecodeBody["languageList"]);
+        } else if (code == "ConfigSystem") {
+          configSystem =
+              ProfileSettingConfigSystemModel.fromJson(jsonDecode(body));
+        }
+      }
+      var branchValue = await apiRepository.getProfileSBranch();
+      List<ProfileSettingBranchModel> branchs =
+          List<ProfileSettingBranchModel>.from(branchValue.data
+              .map((e) => ProfileSettingBranchModel.fromJson(e)));
+
+      profileSetting = ProfileSettingModel(
+        company: company,
+        languagelist: languageList,
+        configsystem: configSystem,
+        branch: branchs,
+      );
+      appStorage.write('profile', profileSetting.toJson());
+      if (profileSetting.company.logo != null) {
+        // Download Logo
+        if (profileSetting.company.logo!.isNotEmpty) {
+          var url = profileSetting.company.logo!;
+          var response = await http.get(Uri.parse(url));
+          var file = File(getShopLogoPathName());
+          await file.writeAsBytes(response.bodyBytes);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    var getProfile = await appStorage.read('profile');
+    profileSetting = ProfileSettingModel.fromJson(getProfile);
+  }
+  await loadConfig();
+}
+
+Future<void> loadEmployee() async {
+  try {
+    ApiRepository apiRepository = ApiRepository();
+    var value = await apiRepository.getEmployeeList();
+    List<EmployeeModel> employeeList = (value.data as List)
+        .map((e) => EmployeeModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    employeeHelper.deleteAll();
+    List<EmployeeObjectBoxStruct> employeeObjectBoxList = [];
+    for (var data in employeeList) {
+      employeeObjectBoxList.add(EmployeeObjectBoxStruct(
+        guidfixed: data.guidfixed,
+        code: data.code,
+        name: data.name,
+        email: data.email,
+        is_enabled: data.isenabled,
+        is_use_pos: data.isusepos,
+        pin_code: data.pincode,
+        profile_picture: data.profilepicture,
+      ));
+    }
+    employeeHelper.insertMany(employeeObjectBoxList);
+  } catch (e) {
+    print(e);
+  }
+}
+
+Future<void> loadWalletProvider() async {
+  try {
+    ApiRepository apiRepository = ApiRepository();
+    var value = await apiRepository.getEmployeeList();
+    List<WalletModel> walletList = (value.data as List)
+        .map((e) => WalletModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    employeeHelper.deleteAll();
+    List<WalletObjectBoxStruct> walletObjectBoxList = [];
+    for (var data in walletList) {
+      walletObjectBoxList.add(WalletObjectBoxStruct(
+        code: data.code,
+        guid_fixed: Uuid().v4(),
+        bookbankcode: data.bookbankcode,
+        bookbankname: jsonEncode(data.names),
+        countrycode: "th",
+        feerate: 0,
+        names: jsonEncode(data.names),
+        paymentcode: "",
+        paymentlogo: data.paymentlogo,
+        paymenttype: data.paymenttype,
+        wallettype: data.wallettype,
+      ));
+    }
+    objectBoxStore.box<WalletObjectBoxStruct>().putMany(walletObjectBoxList);
+  } catch (e) {
+    print(e);
+  }
+}
+
+String findBankLogo(String code) {
+  BankObjectBoxStruct? bankDataList = BankHelper().selectByCode(code: code);
+  if (bankDataList != null) {
+    return bankDataList.logo;
+  }
+  return "";
+}
+
+double paperWidth(int paperType) {
+  switch (paperType) {
+    case 1: // 58
+      return 378;
+    case 2: // 80
+      return 575;
+    default:
+      return 575;
+  }
+}
+
+String getShopLogoPathName() {
+  return "${applicationDocumentsDirectory.path}/logo.png";
+}
+
+String getPosLogoPathName() {
+  return "${applicationDocumentsDirectory.path}/poslogo.png";
+}
+
+String qrCodeOrderOnline(String qrCode) {
+  return "https://dedefoodorder.web.app/?shop=$shopId&ticket=$qrCode";
+}
+
+Future<Directory> createPath(String mainPath, DateTime docDate) async {
+  final directory = await getApplicationDocumentsDirectory();
+
+  // Format date as YYYYMMDD
+  final dateFormatter = DateFormat('yyyyMMdd');
+  String formattedDate = dateFormatter.format(docDate);
+
+  // Create a new directory for the main path
+  final mainDirectory = Directory('${directory.path}/$mainPath');
+  if (!await mainDirectory.exists()) {
+    await mainDirectory.create();
+  }
+
+  // Create a new directory for the date
+  final dateDirectory = Directory('${directory.path}/$mainPath/$formattedDate');
+  if (!await dateDirectory.exists()) {
+    await dateDirectory.create();
+  }
+  return dateDirectory;
+}
+
+int findFormByCode(String code) {
+  for (var i = 0; i < formDesignList.length; i++) {
+    if (formDesignList[i].code == code) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+String getPosFormCodeByCode(String code) {
+  for (var i = 0; i < posConfig.slips.length; i++) {
+    if (posConfig.slips[i].code == code) {
+      return posConfig.slips[i].formcode;
+    }
+  }
+  return "";
+}
+
+String getPosFormNameByCode(String code) {
+  for (var i = 0; i < posConfig.slips.length; i++) {
+    if (posConfig.slips[i].code == code) {
+      return jsonEncode(posConfig.slips[i].formnames);
+    }
+  }
+  return "[{}]";
+}
+
+double roundDouble(double value, int places) {
+  num mod = pow(10.0, places);
+  return ((value * mod).round().toDouble() / mod);
+}
+
+double roundDoubleDown(double value, int precision) {
+  final divideBy = pow(10, precision);
+  return ((value * divideBy).floorToDouble() / divideBy);
+}
+
+double roundMoneyForPay(double value) {
+  double result = value;
+  if (payTotalMoneyRoundStep.isEmpty) {
+    // ถ้าเป็นค่าว่าง ให้ปัดจำนวนเต็มอัตโนมัติ
+    result = roundDouble(value, 0);
+  } else {
+    value = roundDouble(value, 2);
+    double calcRound = roundDouble(value - value.floorToDouble(), 2);
+    for (int index = 0; index < payTotalMoneyRoundStep.length; index++) {
+      if (calcRound >= payTotalMoneyRoundStep[index].begin &&
+          calcRound <= payTotalMoneyRoundStep[index].end) {
+        result =
+            roundDoubleDown(value, 0) + payTotalMoneyRoundStep[index].value;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+String getAppversion() {
+  return (environmentVersion != "PROD"
+      ? (environmentVersion == "DEV")
+          ? "(DEV)"
+          : "(UAT)"
+      : "");
+}
+
+Widget iconStatus(String pngFileName, bool status) {
+  return SizedBox(
+    width: 30,
+    height: 24,
+    child: Stack(children: [
+      Image.asset(
+        "assets/images/$pngFileName.png",
+      ),
+      Positioned(
+          bottom: 0,
+          right: 5,
+          child: Container(
+            height: 10,
+            width: 10,
+            decoration: BoxDecoration(
+                color: (status) ? Colors.greenAccent : Colors.redAccent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 2,
+                    offset: const Offset(0, 1), // changes position of shadow
+                  ),
+                ]),
+          )),
+    ]),
+  );
 }

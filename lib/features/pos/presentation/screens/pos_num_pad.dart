@@ -8,14 +8,7 @@ class PosNumPad extends StatefulWidget {
   final Widget? title;
   final String? unitName;
 
-  const PosNumPad(
-      {Key? key,
-      required this.onChange,
-      this.title,
-      required this.onSubmit,
-      this.unitName,
-      this.header = ""})
-      : super(key: key);
+  const PosNumPad({Key? key, required this.onChange, this.title, required this.onSubmit, this.unitName, this.header = ""}) : super(key: key);
 
   @override
   PosNumPadState createState() => PosNumPadState();
@@ -58,42 +51,25 @@ class PosNumPadState extends State<PosNumPad> {
         backgroundColor: Colors.transparent,
         body: Container(
             padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.blueAccent)),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4), border: Border.all(color: Colors.blueAccent)),
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: <Widget>[
-                if (widget.header != "")
-                  Text(widget.header,
-                      style: const TextStyle(
-                          fontSize: 32, fontWeight: FontWeight.bold)),
-                if (widget.title != null)
-                  Container(
-                      padding: const EdgeInsets.only(
-                          left: 4, right: 4, top: 10, bottom: 10),
-                      child: widget.title),
+                if (widget.header != "") Text(widget.header, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                if (widget.title != null) Container(padding: const EdgeInsets.only(left: 4, right: 4, top: 10, bottom: 10), child: widget.title),
                 Container(
                     margin: const EdgeInsets.all(2),
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: const Offset(
-                                0, 3), // changes position of shadow
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(4),
-                        color: Colors.grey.shade100,
-                        border: Border.all(color: Colors.blueAccent)),
-                    child: Text(number,
-                        style: const TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold))),
+                    decoration: BoxDecoration(boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3), // changes position of shadow
+                      ),
+                    ], borderRadius: BorderRadius.circular(4), color: Colors.grey.shade100, border: Border.all(color: Colors.blueAccent)),
+                    child: Text(number, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold))),
                 Expanded(
                   child: Column(
                     children: [

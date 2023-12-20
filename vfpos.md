@@ -15,7 +15,6 @@ void main() async {
   initializeEnvironmentConfig();
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = "th";
-  initializeDateFormatting();
   await setUpServiceLocator();
   await initializeApp();
   runApp(App());
@@ -27,10 +26,10 @@ void main() async {
 
 ### Release App
 ```cli
-flutter build ipa --flavor vfpos -t lib/main_vfpos.dart
+flutter build ipa --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=PROD
 
 
-c
+
 
 
 flutter build appbundle --flavor vfpos -t lib/main_vfpos.dart --release --dart-define=ENVIRONMENT=PROD

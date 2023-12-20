@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:dedepos/core/environment.dart';
-import 'package:dedepos/core/objectbox.dart';
 import 'package:dedepos/features/authentication/auth.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/dashboard_menu_item.dart';
 import 'package:dedepos/features/dashboard/presentation/widgets/top_bar_shop.dart';
@@ -30,37 +29,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget buttonMenuMoneyFill() => ItemMenuDashboard(
         icon: Icons.payments,
-        title: 'รับเงินทอน',
+        title: global.language("add_change_money"), // 'รับเงินทอน',
         callBack: () {
           showDialogShiftAndMoney(0);
         },
       );
 
-  Widget buttonMenuPrintFullVatInvoice() => ItemMenuDashboard(
-        icon: Icons.receipt,
-        title: 'พิมพ์ใบกำกับภาษี (แบบเต็ม)',
-        callBack: () {},
-      );
+// ย้ายไป ในหน้าจอ POS
+  // Widget buttonMenuPrintFullVatInvoice() => ItemMenuDashboard(
+  //       icon: Icons.receipt,
+  //       title: global.language(
+  //           "print_tax_invoice_full_format"), // พิมพ์ใบกำกับภาษี (แบบเต็ม)
+  //       callBack: () {},
+  //     );
+
+  Widget buttonPrinterConfig() => ItemMenuDashboard(
+      icon: Icons.print_rounded,
+      title: global.language('printer_config'),
+      callBack: () {
+        context.router.push(const PrinterConfigRoute());
+      });
 
   Widget buttonCancelBillPos() => ItemMenuDashboard(
         icon: Icons.add,
-        title: 'ยกเลิกใบเสร็จ',
+        title: global.language("cancel_invoice"), // 'ยกเลิกใบเสร็จ',
         callBack: () {},
       );
 
   Widget buttonReprintPos() => ItemMenuDashboard(
         icon: Icons.text_snippet,
-        title: 'พิมพ์สำเนาใบเสร็จ',
+        title: global.language("re_print_invoice"), // 'พิมพ์สำเนาใบเสร็จ',
         callBack: () {},
       );
 
   Widget buttonProductReturn() => ItemMenuDashboard(
         icon: Icons.repartition,
-        title: 'คืนสินค้า',
+        title: global.language("return_product"), //'คืนสินค้า',
         callBack: () {
-          context.router.pushAndPopUntil(
-              PosRoute(posScreenMode: global.PosScreenModeEnum.posSale),
-              predicate: (_) => false);
+          context.router.pushAndPopUntil(PosRoute(posScreenMode: global.PosScreenModeEnum.posSale), predicate: (_) => false);
+        },
+      );
+
+  Widget buttonSubmitSale() => ItemMenuDashboard(
+        icon: Icons.monetization_on,
+        title: global.language("submit_sales"), // 'ส่งยอดขาย',
+        callBack: () {
+          showDialogShiftAndMoney(1);
         },
       );
 
@@ -69,8 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return BlocListener<AuthenticationBloc, AuthenticationState>(
       listener: (context, state) {
         if (state is AuthenticationInitialState) {
-          context.router.pushAndPopUntil(const AuthenticationRoute(),
-              predicate: (route) => false);
+          context.router.pushAndPopUntil(const AuthenticationRoute(), predicate: (route) => false);
         }
       },
       child: Scaffold(
@@ -140,13 +153,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         flex: 3,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: ItemMenuDashboard(
-                            icon: Icons.monetization_on,
-                            title: 'ส่งยอดขาย',
-                            callBack: () {
-                              showDialogShiftAndMoney(1);
-                            },
-                          ),
+                          child: buttonSubmitSale(),
                         ),
                       ),
                     ],
@@ -184,7 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         flex: 3,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: buttonMenuPrintFullVatInvoice(),
+                          child: buttonPrinterConfig(),
                         ),
                       ),
                     ],
@@ -226,36 +233,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             flex: 3,
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: buttonMenuPrintFullVatInvoice(),
+                              child: buttonPrinterConfig(),
                             ),
                           ),
                         ],
                       ),
                     ],
                   )),
-              Visibility(
-                visible: Environment().isDev,
-                child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ItemMenuDashboard(
-                              icon: Icons.receipt,
-                              title: 'Other Menu',
-                              callBack: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const MenuScreen()));
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-              ),
+              // Visibility(
+              //   visible: Environment().isDev,
+              //   child: Padding(
+              //       padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+              //       child: Row(
+              //         children: [
+              //           Expanded(
+              //             flex: 3,
+              //             child: Padding(
+              //               padding: const EdgeInsets.all(8.0),
+              //               child: ItemMenuDashboard(
+              //                 icon: Icons.receipt,
+              //                 title: 'Other Menu',
+              //                 callBack: () {
+              //                   Navigator.of(context).push(MaterialPageRoute(
+              //                       builder: (context) => const MenuScreen()));
+              //                 },
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       )),
+              // ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                 child: Row(
@@ -266,11 +273,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: ItemMenuDashboard(
                           icon: Icons.logout,
-                          title: 'ออกจากระบบ',
+                          title: global.language("log_out"), // 'ออกจากระบบ',
                           callBack: () {
-                            context
-                                .read<AuthenticationBloc>()
-                                .add(const UserLogoutEvent());
+                            global.loginSuccess = false;
+                            global.userLogin = null;
+                            if (mounted) {
+                              context.router.pushAndPopUntil(const LoginByEmployeeRoute(), predicate: (route) => false);
+                            }
                           },
                         ),
                       ),
@@ -294,8 +303,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               insetPadding: const EdgeInsets.all(0),
               contentPadding: const EdgeInsets.all(0),
               backgroundColor: Colors.transparent,
-              content: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
+              content: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
                 return shiftAndMoneyScreen(mode: mode);
               }));
         });

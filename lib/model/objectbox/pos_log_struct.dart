@@ -28,9 +28,9 @@ class PosLogObjectBoxStruct {
   @Property(type: PropertyType.date)
   DateTime log_date_time;
 
-  /// ลำดับการพักบิล
+  /// รหัสการพักบิล
   @Index()
-  int hold_number;
+  String hold_code;
 
   /// คำสั่ง (หมายเหตุด้านล่าง)
   int command_code;
@@ -79,6 +79,13 @@ class PosLogObjectBoxStruct {
 
   /// Barcode
   String barcode;
+
+  /// exclude vat (ราคาไม่รวมภาษี True=ไม่รวมภาษี, False=รวมภาษี)
+  bool price_exclude_vat;
+
+  /// สินค้ายกเว้นภาษี (True=ยกเว้นภาษี,False=ไม่ยกเว้นภาษี)
+  bool is_except_vat;
+
   /* 
       -- command
       1=เพิ่มสินค้า
@@ -101,7 +108,7 @@ class PosLogObjectBoxStruct {
     this.guid_ref = "",
     this.guid_code_ref = "",
     required this.log_date_time,
-    required this.hold_number,
+    required this.hold_code,
     required this.command_code,
     this.barcode = "",
     this.is_void = 0,
@@ -118,11 +125,12 @@ class PosLogObjectBoxStruct {
     this.extra_code = "",
     this.unit_code = "",
     this.unit_name = "",
+    this.price_exclude_vat = false,
+    this.is_except_vat = false,
   }) {
     guid_auto_fixed = const Uuid().v4();
   }
 
-  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) =>
-      _$PosLogObjectBoxStructFromJson(json);
+  factory PosLogObjectBoxStruct.fromJson(Map<String, dynamic> json) => _$PosLogObjectBoxStructFromJson(json);
   Map<String, dynamic> toJson() => _$PosLogObjectBoxStructToJson(this);
 }
