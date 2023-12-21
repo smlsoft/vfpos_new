@@ -32,6 +32,7 @@ class App extends StatelessWidget {
         title: 'Village Fund POS',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          useMaterial3: false,
         ),
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
