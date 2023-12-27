@@ -524,7 +524,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -678,7 +678,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -743,6 +743,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/RunnerProfile.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -761,7 +762,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1268,7 +1269,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1394,6 +1395,7 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1412,7 +1414,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1431,6 +1433,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1449,7 +1452,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1466,11 +1469,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BDA429FD00010268585B9A2A /* Pods-Runner.debug-dev.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dev";
@@ -1479,11 +1483,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 229EBBA82596663CDE7DB9D1 /* Pods-Runner.profile-dev.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1493,11 +1498,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8FD28A167A224AA66FA454FB /* Pods-Runner.release-dev.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1507,11 +1513,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8D7F66FCD1D2DA8AF3FDC338 /* Pods-Runner.debug-dedepos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-dedepos";
@@ -1520,11 +1527,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 194B52947F82F5CEEC3DBB51 /* Pods-Runner.profile-dedepos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1534,11 +1542,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CBC2F7206011CD3C3A9A9574 /* Pods-Runner.release-dedepos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_KEY_CFBundleDisplayName = "DeDe POS";
-				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.pos;
+				PRODUCT_BUNDLE_IDENTIFIER = th.or.villagefund.vfp;
 				PRODUCT_NAME = Runner;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -1548,6 +1557,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8A641A06AB71FF841F8D900C /* Pods-Runner.debug-smlsuperpos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1560,6 +1570,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CE1BBADF6AD88C6C1C69802A /* Pods-Runner.profile-smlsuperpos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1573,6 +1584,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7D4F21B5E4F5674852508C29 /* Pods-Runner.release-smlsuperpos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1586,6 +1598,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 244F7197F67B7F3BD928E860 /* Pods-Runner.debug-smlmobilesales.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1598,6 +1611,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C288C39A636EF65B46B04EB7 /* Pods-Runner.profile-smlmobilesales.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1611,6 +1625,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D47B0D2D7B2371C825D30608 /* Pods-Runner.release-smlmobilesales.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = 54Z26J3N57;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1624,6 +1639,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A180D0277FADD536BC00186D /* Pods-Runner.debug-vfpos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1636,6 +1652,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EE3D99F269295A67CD79D391 /* Pods-Runner.profile-vfpos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1649,6 +1666,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 030620D19BF7C0642A586C15 /* Pods-Runner.release-vfpos.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				DEVELOPMENT_TEAM = LG4354XCN5;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
