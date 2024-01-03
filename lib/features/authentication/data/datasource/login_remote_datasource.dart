@@ -52,7 +52,7 @@ class LoginRemoteDataSource implements ILoginRemoteDataSource {
       var resultLogin = {"status": "error", "message": "", "code": 0, "token": ""};
       var result = Json.decode(response.toString());
       request.updateDioInterceptors();
-      if (result['code'] == 401) {
+      if (result['code'] >= 400 && result['code'] < 500) {
         final responseDev = await request.post('/login', data: {"username": username, "password": password});
         final resultDev = Json.decode(responseDev.toString());
         if (resultDev['success']) {
